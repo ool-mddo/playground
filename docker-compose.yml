@@ -17,9 +17,9 @@ services:
       MDDO_NETOVIZ_MODEL_DIR: ${MDDO_NETOVIZ_MODEL_DIR}
     volumes:
       - ./repos/netomox-exp:/netomox-exp # for development
-      - ./configs:${MDDO_CONFIGS_DIR}
-      - ./models:${MDDO_MODELS_DIR}
-      - ./netoviz_model:${MDDO_NETOVIZ_MODEL_DIR}
+      - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
+      - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
+      - ${SHARED_NETOVIZ_MODEL_DIR}:${MDDO_NETOVIZ_MODEL_DIR}
     depends_on:
       - batfish
   netoviz:
@@ -27,7 +27,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./netoviz_model:/home/netoviz/static/model
+      - ${SHARED_NETOVIZ_MODEL_DIR}:/home/netoviz/static/model
     depends_on:
       - netomox-exp
   batfish-wrapper:
@@ -40,7 +40,7 @@ services:
       - "5000:5000"
     volumes:
       - ./repos/batfish-wrapper:/batfish-wrapper # for development
-      - ./configs:${MDDO_CONFIGS_DIR}
-      - ./models:${MDDO_MODELS_DIR}
+      - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
+      - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
     depends_on:
       - batfish
