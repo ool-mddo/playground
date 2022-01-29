@@ -1,0 +1,43 @@
+version: "3"
+services:
+  batfish:
+    image: "batfish/batfish"
+    ports:
+      - "9996:9996"
+      - "9997:9997"
+  netomox-exp:
+    build:
+      context: ./repos/netomox-exp
+      dockerfile: Dockerfile
+    environment:
+      - BATFISH_HOST=batfish
+      - BATFISH_WRAPPER_HOST=batfish-wrapper:5000
+    volumes:
+      # - ./repos/netomox:exp:/netomox-exp # for development
+      - ./configs:/netomox-exp/configs
+      - ./models:/netomox-exp/models
+      - ./netoviz_model:/netomox-exp/netoviz_model
+    depends_on:
+      - batfish
+  netoviz:
+    image: netoviz/allinone
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./netoviz_model:/home/netoviz/static/model
+    depends_on:
+      - netomox-exp
+  batfish-wrapper:
+    build:
+      context: ./repos/batfish-wrapper
+      dockerfile: Dockerfile
+    environment:
+      - BATFISH_HOST=batfish
+    ports:
+      - "5000:5000"
+    volumes:
+      # - ./repos/batfish-wrapper:/batfish-wrapper # for development
+      - ./configs:/batfish-wrapper/configs
+      - ./models:/batfish-wrapper/models
+    depends_on:
+      - batfish

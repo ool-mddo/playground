@@ -1,0 +1,12 @@
+[submodule "configs/batfish-test-topology"]
+	path = configs/batfish-test-topology
+	url = https://github.com/corestate55/batfish-test-topology.git
+[submodule "configs/pushed_configs"]
+	path = configs/pushed_configs
+	url = https://github.com/ool-mddo/pushed_configs.git
+[submodule "repos/netomox-exp"]
+	path = repos/netomox-exp
+	url = https://github.com/ool-mddo/netomox-exp.git
+[submodule "repos/batfish-wrapper"]
+	path = repos/batfish-wrapper
+	url = https://github.com/ool-mddo/batfish-wrapper.git
