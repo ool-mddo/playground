@@ -10,13 +10,16 @@ services:
       context: ./repos/netomox-exp
       dockerfile: Dockerfile
     environment:
-      - BATFISH_HOST=batfish
-      - BATFISH_WRAPPER_HOST=batfish-wrapper:5000
+      BATFISH_HOST: batfish
+      BATFISH_WRAPPER_HOST: batfish-wrapper:5000
+      MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
+      MDDO_MODELS_DIR: ${MDDO_MODELS_DIR}
+      MDDO_NETOVIZ_MODEL_DIR: ${MDDO_NETOVIZ_MODEL_DIR}
     volumes:
-      # - ./repos/netomox:exp:/netomox-exp # for development
-      - ./configs:/netomox-exp/configs
-      - ./models:/netomox-exp/models
-      - ./netoviz_model:/netomox-exp/netoviz_model
+      - ./repos/netomox-exp:/netomox-exp # for development
+      - ./configs:${MDDO_CONFIGS_DIR}
+      - ./models:${MDDO_MODELS_DIR}
+      - ./netoviz_model:${MDDO_NETOVIZ_MODEL_DIR}
     depends_on:
       - batfish
   netoviz:
@@ -32,12 +35,12 @@ services:
       context: ./repos/batfish-wrapper
       dockerfile: Dockerfile
     environment:
-      - BATFISH_HOST=batfish
+      BATFISH_HOST: batfish
     ports:
       - "5000:5000"
     volumes:
-      # - ./repos/batfish-wrapper:/batfish-wrapper # for development
-      - ./configs:/batfish-wrapper/configs
-      - ./models:/batfish-wrapper/models
+      - ./repos/batfish-wrapper:/batfish-wrapper # for development
+      - ./configs:${MDDO_CONFIGS_DIR}
+      - ./models:${MDDO_MODELS_DIR}
     depends_on:
       - batfish
