@@ -59,6 +59,11 @@ services:
     environment:
       BASE_URL: ${FISH_TRACER_BASE_URL}
     volumes:
-      - ./repos/fish-tracer:/fish-tracer
+      - ./repos/fish-tracer/components:/fish-tracer/components
+      - ./repos/fish-tracer/layouts:/fish-tracer/layouts
+      - ./repos/fish-tracer/nuxt.config.js:/fish-tracer/nuxt.config.js
+      - ./repos/fish-tracer/pages:/fish-tracer/pages
+      - ./repos/fish-tracer/static:/fish-tracer/static
+      - ./repos/fish-tracer/store:/fish-tracer/store
     depends_on:
       - batfish-wrapper
