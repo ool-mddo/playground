@@ -13,6 +13,15 @@ Build container images
 docker-compose build
 ```
 
+Notice: if you use fish-tracer with local volume mount for developing,
+you have to install npm packages locally at first.
+
+```shell
+cd repos/fish-tracer
+yarn install
+cd -
+```
+
 ## Generate all data
 
 ### Up containers
