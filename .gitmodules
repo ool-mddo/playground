@@ -10,3 +10,6 @@
 [submodule "repos/batfish-wrapper"]
 	path = repos/batfish-wrapper
 	url = https://github.com/ool-mddo/batfish-wrapper.git
+[submodule "repos/fish-tracer"]
+	path = repos/fish-tracer
+	url = https://github.com/ool-mddo/fish-tracer.git
