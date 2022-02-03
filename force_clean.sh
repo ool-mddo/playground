@@ -1,7 +1,10 @@
 #!/bin/sh
 
-rm -rf configs/*_drawoff
-rm -rf configs/*_linkdown
-rm -rf models/*
-rm -f netoviz_model/*drawoff.json
-rm -f netoviz_model/*linkdown*.json
+cd "$(dirname $0)" || exit
+. ./.env
+
+echo rm -rf ${SHARED_CONFIGS_DIR}/*_drawoff
+echo rm -rf ${SHARED_CONFIGS_DIR}/*_linkdown
+echo rm -rf ${SHARED_MODELS_DIR}/*
+echo rm -f ${SHARED_NETOVIZ_MODEL_DIR}/*drawoff.json
+echo rm -f ${SHARED_NETOVIZ_MODEL_DIR}/*linkdown*.json
