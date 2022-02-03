@@ -27,6 +27,8 @@ services:
     image: netoviz/allinone
     ports:
       - "3000:3000"
+    environment:
+      MDDO_NETOVIZ_MODEL_DIR: /home/netoviz/static/model
     volumes:
       - ${SHARED_NETOVIZ_MODEL_DIR}:/home/netoviz/static/model
   batfish-wrapper:
@@ -35,6 +37,8 @@ services:
       dockerfile: Dockerfile
     environment:
       BATFISH_HOST: batfish
+      MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
+      MDDO_MODELS_DIR: ${MDDO_MODELS_DIR}
     ports:
       - "5000:5000"
     volumes:
