@@ -8,12 +8,6 @@ Pull development resources
 git submodule update --init --recursive
 ```
 
-Build container images
-
-```shell
-docker-compose build
-```
-
 ## Generate all data
 
 ### Up containers

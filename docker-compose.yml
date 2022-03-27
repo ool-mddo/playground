@@ -6,9 +6,7 @@ services:
       - "9996:9996"
       - "9997:9997"
   netomox-exp:
-    build:
-      context: ./repos/netomox-exp
-      dockerfile: Dockerfile
+    image: ghcr.io/ool-mddo/netmox-exp:develop
     environment:
       BATFISH_HOST: batfish
       BATFISH_WRAPPER_HOST: batfish-wrapper:5000
@@ -16,7 +14,8 @@ services:
       MDDO_MODELS_DIR: ${MDDO_MODELS_DIR}
       MDDO_NETOVIZ_MODEL_DIR: ${MDDO_NETOVIZ_MODEL_DIR}
     volumes:
-      - ./repos/netomox-exp:/netomox-exp # for development
+      - ./repos/netomox-exp/model_defs:/netomox-exp/model_defs # for development
+      - ./repos/netomox-exp/exe:/netomox-exp/exe # for development
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
       - ${SHARED_NETOVIZ_MODEL_DIR}:${MDDO_NETOVIZ_MODEL_DIR}
@@ -32,9 +31,7 @@ services:
     volumes:
       - ${SHARED_NETOVIZ_MODEL_DIR}:/home/netoviz/static/model
   batfish-wrapper:
-    build:
-      context: ./repos/batfish-wrapper
-      dockerfile: Dockerfile
+    image: ghcr.io/ool-mddo/batfish-wrapper:main
     environment:
       BATFISH_HOST: batfish
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
@@ -57,9 +54,7 @@ services:
       - fish-tracer
       - batfish-wrapper
   fish-tracer:
-    build:
-      context: ./repos/fish-tracer
-      dockerfile: Dockerfile
+    image: ghcr.io/ool-mddo/fish-tracer:main
     environment:
       BASE_URL: ${FISH_TRACER_BASE_URL}
     volumes:
