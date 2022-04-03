@@ -17,7 +17,7 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: git checkout pushed_configs
-      run: cd configs/pushed_configs; git checkout `ls -1 ../../pushed-flug/`
+      run: cd configs/pushed_configs; git checkout `ls -1 ../../pushed-flug/`; git pull origin `ls -1 ../../pushed-flug/`
 
     - name: prepare netomox
       run: docker-compose up -d
