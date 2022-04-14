@@ -3,3 +3,9 @@ models
 netoviz_model
 .idea
 .vscode
+
+docker_stats_*/
+*.dat
+*.png
+*.zip
+
