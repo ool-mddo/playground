@@ -23,7 +23,7 @@ services:
     depends_on:
       - batfish-wrapper
   netoviz:
-    image: netoviz/allinone
+    image: netoviz/allinone:mddo-trial
     ports:
       - "3000:3000"
     environment:
