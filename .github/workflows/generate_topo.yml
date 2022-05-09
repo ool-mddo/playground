@@ -21,6 +21,9 @@ jobs:
           cd configs/pushed_configs
           git checkout -b `ls -1 ../../pushed_flag/` origin/`ls -1 ../../pushed_flag/`
 
+    - name: sed .env file
+      run: cat .env | sed -e "s/IP-or-FQDN/172.17.0.1/g" > .env
+
     - name: prepare netomox
       run: docker-compose up -d
 
