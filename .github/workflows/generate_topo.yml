@@ -27,12 +27,12 @@ jobs:
         FISH_TRACER_BASE_URL: http://172.17.0.1:15000
 
     - name: bundle exec rake
-      run: docker-compose run netomox-exp bundle exec rake --trace > netomox.log
+      run: docker-compose run netomox-exp bundle exec rake 
 
     - name: commit files
       run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git commit -m "Update netoviz_model"
+          git commit --allow-empty -m "finished generate netoviz_model"
           git push
