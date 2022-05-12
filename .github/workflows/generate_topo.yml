@@ -27,7 +27,7 @@ jobs:
         FISH_TRACER_BASE_URL: http://172.17.0.1:15000
 
     - name: bundle exec rake
-      run: docker-compose run netomox-exp bundle exec rake --trace
+      run: docker-compose run netomox-exp bundle exec rake --trace > netomox.log
 
     - name: commit files
       run: |
