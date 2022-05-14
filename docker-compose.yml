@@ -1,68 +1,36 @@
 version: "3"
 services:
   batfish:
-    image: "batfish/batfish"
-    ports:
-      - "9996:9996"
-      - "9997:9997"
+    image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
   netomox-exp:
-    image: ghcr.io/ool-mddo/netmox-exp:develop
+    image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
+    tty: true
     environment:
-      BATFISH_HOST: batfish
-      BATFISH_WRAPPER_HOST: batfish-wrapper:5000
+      BATFISH_WRAPPER_HOST: batfish-wrapper:${BATFISH_WRAPPER_PORT}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_MODELS_DIR: ${MDDO_MODELS_DIR}
       MDDO_NETOVIZ_MODEL_DIR: ${MDDO_NETOVIZ_MODEL_DIR}
     volumes:
       - ./repos/netomox-exp/model_defs:/netomox-exp/model_defs # for development
       - ./repos/netomox-exp/exe:/netomox-exp/exe # for development
+      - ./repos/netomox-exp/Rakefile:/netomox-exp/Rakefile # for development
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
       - ${SHARED_NETOVIZ_MODEL_DIR}:${MDDO_NETOVIZ_MODEL_DIR}
-    command: bash -c "bundle exec rake"
     depends_on:
       - batfish-wrapper
-  netoviz:
-    image: netoviz/allinone:mddo-trial
-    ports:
-      - "3000:3000"
-    environment:
-      MDDO_NETOVIZ_MODEL_DIR: /home/netoviz/static/model
-    volumes:
-      - ${SHARED_NETOVIZ_MODEL_DIR}:/home/netoviz/static/model
   batfish-wrapper:
-    image: ghcr.io/ool-mddo/batfish-wrapper:main
+    image: ${BATFISH_WRAPPER_IMAGE}:${BATFISH_WRAPPER_IMAGE_TAG}
     environment:
       BATFISH_HOST: batfish
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_MODELS_DIR: ${MDDO_MODELS_DIR}
+      PYTHONUNBUFFERED: 1
     ports:
-      - "5000:5000"
+      - ${BATFISH_WRAPPER_PORT}:5000
     volumes:
       - ./repos/batfish-wrapper:/batfish-wrapper # for development
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
     depends_on:
       - batfish
-  proxy:
-    image: nginx
-    volumes:
-      - ./repos/fish-tracer/proxy/default.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "15000:80"
-    depends_on:
-      - fish-tracer
-      - batfish-wrapper
-  fish-tracer:
-    image: ghcr.io/ool-mddo/fish-tracer:main
-    environment:
-      BASE_URL: ${FISH_TRACER_BASE_URL}
-    volumes:
-      - ./repos/fish-tracer/components:/fish-tracer/components
-      - ./repos/fish-tracer/layouts:/fish-tracer/layouts
-      - ./repos/fish-tracer/nuxt.config.js:/fish-tracer/nuxt.config.js
-      - ./repos/fish-tracer/pages:/fish-tracer/pages
-      - ./repos/fish-tracer/static:/fish-tracer/static
-      - ./repos/fish-tracer/store:/fish-tracer/store
-    depends_on:
-      - batfish-wrapper
