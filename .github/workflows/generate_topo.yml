@@ -1,0 +1,38 @@
+on:
+  push:
+    paths:
+    - "pushed_flag/**"
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  generate-topo:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: git submodule update --init --recursive
+      run: git submodule update --init --recursive
+
+    - name: git checkout pushed_configs
+      run: |
+          cd configs/pushed_configs
+          git checkout -b `ls -1 ../../pushed_flag/` origin/`ls -1 ../../pushed_flag/`
+
+    - name: prepare netomox
+      run: docker-compose up -d
+      env:
+        FISH_TRACER_BASE_URL: http://172.17.0.1:15000
+
+    - name: bundle exec rake
+      run: docker-compose run netomox-exp bundle exec rake 
+
+    - name: commit files
+      run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit --allow-empty -m "finished generate netoviz_model"
+          git push
