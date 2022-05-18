@@ -22,12 +22,12 @@ jobs:
           git checkout -b `ls -1 ../../pushed_flag/` origin/`ls -1 ../../pushed_flag/`
 
     - name: prepare netomox
-      run: docker-compose up -d
+      run: docker-compose up -f docker-compose.yml -d
       env:
         FISH_TRACER_BASE_URL: http://172.17.0.1:15000
 
     - name: bundle exec rake
-      run: docker-compose run netomox-exp bundle exec rake 
+      run: docker-compose exec netomox-exp bundle exec rake 
 
     - name: commit files
       run: |
