@@ -24,6 +24,9 @@ jobs:
     - name: prepare netomox
       run: docker-compose -f docker-compose.yml  up -d
 
+    - name: check container status
+      run: docker ps -a
+
     - name: bundle exec rake
       run: docker-compose run netomox-exp bundle exec rake 
 
