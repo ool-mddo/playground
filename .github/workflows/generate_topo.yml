@@ -25,7 +25,7 @@ jobs:
       run: docker-compose -f docker-compose.yml  up -d
 
     - name: bundle exec rake
-      run: docker-compose exec netomox-exp bundle exec rake 
+      run: docker-compose run netomox-exp bundle exec rake 
 
     - name: commit files
       run: |
