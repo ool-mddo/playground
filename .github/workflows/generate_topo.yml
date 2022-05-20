@@ -27,6 +27,9 @@ jobs:
     - name: check container status
       run: docker ps -a
 
+    - name: check container status
+      run: sleep 30
+
     - name: bundle exec rake
       run: docker-compose run netomox-exp bundle exec rake 
 
