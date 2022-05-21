@@ -164,21 +164,19 @@ class DockerStatsLog
         line.chomp!
 
         # header line
-        match = line.match(/\[(?<epoch>[\d.]+)\] CONTAINER ID.*$/)
-        if match
-          start_time = @time_stats_list.empty? ? match[:epoch] : @time_stats_list[0].epoch
-          time_stats = TimeDockerStats.new(start_time, match[:epoch])
+        if /\[(?<epoch>[\d.]+)\] CONTAINER ID.*$/ =~ line
+          start_time = @time_stats_list.empty? ? epoch : @time_stats_list[0].epoch
+          time_stats = TimeDockerStats.new(start_time, epoch)
           @time_stats_list.push(time_stats)
-          @time_stats_index[match[:epoch]] = time_stats
+          @time_stats_index[epoch] = time_stats
           next
         end
 
         # data line
-        match = line.match(/\[(?<epoch>[\d.]+)\] (?<line>.+)$/)
-        if match && @time_stats_index.key?(match[:epoch])
-          @time_stats_index[match[:epoch]].stats.push(DockerStat.new(match[:line])) unless @time_stats_list.empty?
+        if /\[(?<epoch>[\d.]+)\] (?<data_line>.+)$/ =~ line && @time_stats_index.key?(epoch)
+          @time_stats_index[epoch].stats.push(DockerStat.new(data_line)) unless @time_stats_list.empty?
         else
-          warn "Error: Epoch #{match[:epoch]} not found in stats data"
+          warn "Error: Epoch #{epoch} not found in stats data"
         end
       end
     end

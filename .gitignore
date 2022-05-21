@@ -8,4 +8,4 @@ docker_stats_*/
 *.dat
 *.png
 *.zip
-
+*.log
