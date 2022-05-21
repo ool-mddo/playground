@@ -63,7 +63,8 @@ if ARGV.length == 0
   exit 1
 end
 
-stats_execs = ARGV.map { |stats_dir| StatsExec.new(stats_dir) }
+# search stats_dir in same directory that has this script
+stats_execs = ARGV.map { |stats_dir| StatsExec.new(File.join(__dir__, stats_dir)) }
 header = %w[total model_dirs simulation_pattern snapshot_to_model netoviz_index netoviz_model netoviz_layout netomox_diff]
 
 puts '# ' + %i[branch region link bf_max_mem_usage].concat(header).map(&:to_s).join(', ')

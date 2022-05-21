@@ -1,15 +1,18 @@
 reset
-
-data_file='unit_query_summary.log'
+data_dir = ARG1
+print("# data directory = %s", data_dir)
+data_file = sprintf("%s/unit_query_summary.log", data_dir)
 
 set term pngcairo size 800, 600
-set output "unit_query_summary.png"
+set output sprintf("%s/unit_query_summary.png", data_dir)
 
 set title font "Monospace Regular,14"
 set tics font "Monospace Regular,12"
 set xlabel font "Monospace Regular,12"
 set ylabel font "Monospace Regular,12"
 set key font "Monospace Regular,14"
+
+set key noenhanced
 
 set xrange [0:]
 set yrange [0:]

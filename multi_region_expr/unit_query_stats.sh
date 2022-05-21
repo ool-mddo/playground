@@ -1,5 +1,10 @@
 #!/usr/bin/bash
 
+SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
+# work in playground directory (parent of the script directory)
+cd "${SCRIPT_DIR}/.." || exit
+echo "# working directory: $(pwd)"
+
 TIME=/usr/bin/time # use GNU-time instead of bash-built-in-time
 TIME_FMT="real %e, user %U, sys %S"
 

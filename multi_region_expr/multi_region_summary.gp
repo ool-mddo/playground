@@ -1,9 +1,10 @@
 reset
-
-data_file='multi_region_summary.dat'
+data_dir = ARG1
+print("# data directory = %s", data_dir)
+data_file = sprintf("%s/multi_region_summary.dat", data_dir)
 
 set term pngcairo size 1200, 400
-set output "multi_region_summary.png"
+set output sprintf("%s/multi_region_summary.png", data_dir)
 
 set title font "Monospace Regular,14"
 set tics font "Monospace Regular,12"

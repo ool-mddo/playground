@@ -1,7 +1,7 @@
 # call "docker_stats.gp" <data_dir>
 
 reset
-data_dir=ARG1
+data_dir = ARG1
 print("# data directory = %s", data_dir)
 
 set term pngcairo size 2500, 1000
@@ -17,7 +17,7 @@ set xrange [0:]
 set yrange [0:]
 set xlabel 'Elapsed-Time [sec]'
 
-set multiplot layout 2, 4
+set multiplot layout 2, 4 title data_dir font "Monospace Regular,14" noenhanced
 
 data_files = system(sprintf("ls %s/*.dat", data_dir))
 do for [data_file in data_files] {
@@ -27,7 +27,8 @@ do for [data_file in data_files] {
     set ylabel "Byte [B]"
   }
 
-  set title data_file noenhanced
+  title_str = sprintf("%s", system("basename ".data_file))
+  set title title_str noenhanced
   plot \
     data_file using 1:2 with linespoints title 'netomox-exp', \
     data_file using 1:3 with linespoints title 'batfish-wrapper', \
