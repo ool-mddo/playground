@@ -20,8 +20,7 @@ set xlabel 'Regions'
 set ylabel 'Time (real) [sec]'
 
 plot \
-  data_file using 2:3 with linespoints title 'load_snapshot', \
-  data_file using 2:4 with linespoints title 'check_loaded_snapshot', \
-  data_file using 2:5 with linespoints title 'single_snapshot_queries', \
-  data_file using 2:6 with linespoints title 'tracert_neighbor_region', \
-  data_file using 2:7 with linespoints title 'tracert_facing_region'
+  data_file using 2:3 with linespoints title 'topology_generate', \
+  data_file using 2:4 with linespoints title 'single_snapshot_queries', \
+  data_file using 2:5 with linespoints title 'tracert_neighbor_region', \
+  data_file using 2:6 with linespoints title 'tracert_facing_region'

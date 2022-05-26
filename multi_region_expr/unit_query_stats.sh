@@ -25,13 +25,17 @@ function exec_reach_test () {
   pattern_file=$1
   # for time command arguments expansion: without variable quoting
   # shellcheck disable=SC2086
-  $TIME -f "$TIME_FMT" $NETOMOX_EXEC_REACHTEST $pattern_file -n pushed_configs -s "${SNAPSHOT}$" -r
+  $TIME -f "$TIME_FMT" $NETOMOX_EXEC_REACHTEST $pattern_file -n "${NETWORK}" -s "${SNAPSHOT}$" -r
+  echo "--- data check"
+  $NETOMOX_EXEC cat "${NETWORK}.test_summary.csv"
+  echo "---"
 }
 
 ##########
 # main
 
 # read env vars
+# shellcheck disable=SC1091
 source .env
 
 TARGET_CONFIGS_BRANCH=$1
@@ -53,11 +57,17 @@ if [ "$current_configs_branch" != "$TARGET_CONFIGS_BRANCH" ]; then
 fi
 popd || exit 1
 
-echo "## cmd: load_snapshot"
-exec_cmd bundle exec rake simulation_pattern
+# echo "## cmd: load_snapshot"
+# exec_cmd bundle exec rake simulation_pattern
 
-echo "## cmd: check_loaded_snapshot"
-exec_cmd curl "http://${BATFISH_WRAPPER_HOST}/api/networks/${NETWORK}/snapshots"
+# echo "## cmd: check_loaded_snapshot"
+# exec_cmd curl "http://${BATFISH_WRAPPER_HOST}/api/networks/${NETWORK}/snapshots"
+
+echo "## cmd: topology_generate"
+exec_cmd bundle exec rake NETWORK="${NETWORK}" PHY_SS_ONLY=1
+echo "--- data check"
+$NETOMOX_EXEC cat "/mddo/netoviz_model/${NETWORK}_${SNAPSHOT}.json" | jq '."ietf-network:networks".network[] | select(."network-id" == "layer3") | .node[] | select(."node-id" | test("^Seg.*\\+$")) | ."node-id"'
+echo "---"
 
 echo "## cmd: single_snapshot_queries"
 exec_cmd curl -X POST -H "Content-Type: application/json" -d '{}' "http://${BATFISH_WRAPPER_HOST}/api/networks/${NETWORK}/snapshots/${SNAPSHOT}/queries"

@@ -35,8 +35,9 @@ end
 # for debug
 # puts JSON.dump(data)
 
-value_keys = %w[load_snapshot check_loaded_snapshot single_snapshot_queries tracert_neighbor_region
-                tracert_facing_region]
+# value_keys = %w[load_snapshot check_loaded_snapshot single_snapshot_queries tracert_neighbor_region
+#                 tracert_facing_region]
+value_keys = %w[topology_generate single_snapshot_queries tracert_neighbor_region tracert_facing_region]
 header = %w[branch region] + value_keys
 puts "# #{header.join(', ')}"
 data.each do |datum|
