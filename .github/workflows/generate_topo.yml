@@ -24,7 +24,7 @@ jobs:
     - name: git checkout netomox-exp
       run: |
           cd repos/netomox-exp
-          git checkout develop
+          git checkout v0.2.0
 
     - name: prepare netomox
       run: docker-compose -f docker-compose.yml  up -d
