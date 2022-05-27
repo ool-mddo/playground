@@ -21,10 +21,19 @@ jobs:
           cd configs/pushed_configs
           git checkout -b `ls -1 ../../pushed_flag/` origin/`ls -1 ../../pushed_flag/`
 
+    - name: git checkout netomox-exp
+      run: |
+          cd repos/netomox-exp
+          git checkout v0.2.0
+
     - name: prepare netomox
-      run: docker-compose up -d
-      env:
-        FISH_TRACER_BASE_URL: http://172.17.0.1:15000
+      run: docker-compose -f docker-compose.yml  up -d
+
+    - name: check container status
+      run: docker ps -a
+
+    - name: sleep 30
+      run: sleep 30
 
     - name: bundle exec rake
       run: docker-compose run netomox-exp bundle exec rake 
