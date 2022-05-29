@@ -72,24 +72,27 @@ echo "---"
 echo "## cmd: single_snapshot_queries"
 exec_cmd curl -X POST -H "Content-Type: application/json" -d '{}' "http://${BATFISH_WRAPPER_HOST}/api/networks/${NETWORK}/snapshots/${SNAPSHOT}/queries"
 
+# traceroute pattern defs dir
+PATTERN_DIR="${MDDO_MULTI_REGION_EXPR_DIR}/unit_tracert"
+
 echo "## cmd: tracert_neighbor_region"
-exec_reach_test exe/neighbor_region.yaml
+exec_reach_test "${PATTERN_DIR}/neighbor_region.yaml"
 
 echo "## cmd: tracert_facing_region"
 case "$TARGET_CONFIGS_BRANCH" in
   "5regiondemo")
-    exec_reach_test exe/facing_region_5.yaml
+    exec_reach_test "${PATTERN_DIR}/facing_region_5.yaml"
     ;;
   "10regiondemo")
-    exec_reach_test exe/facing_region_10.yaml
+    exec_reach_test "${PATTERN_DIR}/facing_region_10.yaml"
     ;;
   "20regiondemo")
-    exec_reach_test exe/facing_region_20.yaml
+    exec_reach_test "${PATTERN_DIR}/facing_region_20.yaml"
     ;;
   "40regiondemo")
-    exec_reach_test exe/facing_region_40.yaml
+    exec_reach_test "${PATTERN_DIR}/facing_region_40.yaml"
     ;;
   *)
-    exec_reach_test exe/facing_region_2.yaml
+    exec_reach_test "${PATTERN_DIR}/facing_region_2.yaml"
     ;;
 esac

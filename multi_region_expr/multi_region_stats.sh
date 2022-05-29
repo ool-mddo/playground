@@ -19,7 +19,6 @@ EXEC_NETOMOX="docker-compose -f docker-compose.yml exec netomox-exp"
 TIME_FMT="real %e, user %U, sys %S"
 BE_RAKE="bundle exec rake"
 RAKE_TASKS="model_dirs simulation_pattern snapshot_to_model netoviz_index netoviz_model netoviz_layout netomox_diff"
-# RAKE_TASKS="model_dirs"
 LOGGING_DELAY=5 # sec
 
 function epoch () {
@@ -36,7 +35,7 @@ function exec_rake_task () {
   exec_log "BEGIN TASK: $task, $(epoch)"
   # for time command arguments expansion: without variable quoting
   # shellcheck disable=SC2086
-  task_time=$( { $TIME -f "$TIME_FMT" $EXEC_NETOMOX $BE_RAKE $task NETWORK=$NETWORK > /dev/null; } 2>&1 )
+  task_time=$( { $TIME -f "$TIME_FMT" $EXEC_NETOMOX $BE_RAKE $task NETWORK=$NETWORK MDDO_USE_PARALLEL=1 > /dev/null; } 2>&1 )
   exec_log "END TASK: $task, $(epoch), $task_time"
 }
 
