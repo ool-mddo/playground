@@ -24,10 +24,10 @@ jobs:
     - name: git checkout netomox-exp
       run: |
           cd repos/netomox-exp
-          git checkout v0.2.0
+          git checkout v0.3.0
 
     - name: prepare netomox
-      run: docker-compose -f docker-compose.yml  up -d
+      run: docker-compose -f docker-compose.yml up -d
 
     - name: check container status
       run: docker ps -a
@@ -36,7 +36,7 @@ jobs:
       run: sleep 30
 
     - name: bundle exec rake
-      run: docker-compose run netomox-exp bundle exec rake 
+      run: docker-compose run netomox-exp bundle exec rake
 
     - name: commit files
       run: |
