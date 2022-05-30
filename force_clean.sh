@@ -9,3 +9,4 @@ echo "find ${SHARED_CONFIGS_DIR} -name "snapshot_patterns.json" -exec rm {} \;"
 echo rm -rf ${SHARED_MODELS_DIR}/*
 echo rm -f ${SHARED_NETOVIZ_MODEL_DIR}/*drawoff.json
 echo rm -f ${SHARED_NETOVIZ_MODEL_DIR}/*linkdown*.json
+echo rm -f ${SHARED_NETOVIZ_MODEL_DIR}/pushed_configs_mddo_network.json
