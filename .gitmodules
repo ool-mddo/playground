@@ -13,3 +13,6 @@
 [submodule "repos/fish-tracer"]
 	path = repos/fish-tracer
 	url = https://github.com/ool-mddo/fish-tracer.git
+[submodule "configs/mddo-ospf"]
+	path = configs/mddo-ospf
+	url = https://github.com/ool-mddo/mddo-ospf.git
