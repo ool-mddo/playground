@@ -5,9 +5,17 @@ services:
     ports:
       - ${NETOVIZ_PORT}:3000
     environment:
-      MDDO_NETOVIZ_MODEL_DIR: /home/netoviz/static/model
+      MDDO_NETOVIZ_MODEL_DIR: /netoviz/static/model
     volumes:
-      - ${SHARED_NETOVIZ_MODEL_DIR}:/home/netoviz/static/model
+      - ${SHARED_NETOVIZ_MODEL_DIR}:/netoviz/static/model
+      - ./repos/netoviz/components:/netoviz/components
+      - ./repos/netoviz/layouts:/netoviz/layouts
+      - ./repos/netoviz/nuxt.config.js:/netoviz/nuxt.config.js
+      - ./repos/netoviz/lib:/netoviz/lib
+      - ./repos/netoviz/pages:/netoviz/pages
+      - ./repos/netoviz/server:/netoviz/server
+      - ./repos/netoviz/static:/netoviz/stataic
+      - ./repos/netoviz/store:/netoviz/store
   proxy:
     image: ${PROXY_IMAGE}:${PROXY_IMAGE_TAG}
     volumes:
