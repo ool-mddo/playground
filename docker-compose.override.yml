@@ -14,7 +14,7 @@ services:
       - ./repos/netoviz/lib:/netoviz/lib
       - ./repos/netoviz/pages:/netoviz/pages
       - ./repos/netoviz/server:/netoviz/server
-      - ./repos/netoviz/static:/netoviz/stataic
+      - ./repos/netoviz/static:/netoviz/static
       - ./repos/netoviz/store:/netoviz/store
   proxy:
     image: ${PROXY_IMAGE}:${PROXY_IMAGE_TAG}
