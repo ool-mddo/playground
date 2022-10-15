@@ -2,6 +2,9 @@ version: "3"
 services:
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
+    ports:
+      - 9996:9996
+      - 9997:9997
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
     tty: true
@@ -17,6 +20,7 @@ services:
       - ./repos/netomox-exp/model_defs:/netomox-exp/model_defs # for development
       - ./repos/netomox-exp/exe:/netomox-exp/exe # for development
       - ./repos/netomox-exp/Rakefile:/netomox-exp/Rakefile # for development
+      - ./repos/netomox-exp/model_info.json:/netomox-exp/model_info.json # for development
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
       - ${SHARED_NETOVIZ_MODEL_DIR}:${MDDO_NETOVIZ_MODEL_DIR}
