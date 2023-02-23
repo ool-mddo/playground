@@ -7,7 +7,9 @@ services:
       - 9997:9997
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
-    tty: true
+    tty: true # for rerun (requires console input)
+    ports:
+      - ${NETOMOX_EXP_PORT}:9292
     environment:
       BATFISH_WRAPPER_HOST: batfish-wrapper:${BATFISH_WRAPPER_PORT}
       NETOMOX_LOG_LEVEL: ${NETOMOX_LOG_LEVEL}
@@ -17,10 +19,13 @@ services:
       MDDO_NETOVIZ_MODEL_DIR: ${MDDO_NETOVIZ_MODEL_DIR}
       MDDO_MULTI_REGION_EXPR_DIR: ${MDDO_MULTI_REGION_EXPR_DIR}
     volumes:
-      - ./repos/netomox-exp/model_defs:/netomox-exp/model_defs # for development
-      - ./repos/netomox-exp/exe:/netomox-exp/exe # for development
-      - ./repos/netomox-exp/Rakefile:/netomox-exp/Rakefile # for development
-      - ./repos/netomox-exp/model_info.json:/netomox-exp/model_info.json # for development
+      # for development
+      - ./repos/netomox-exp/model_defs:/netomox-exp/model_defs
+      - ./repos/netomox-exp/exe:/netomox-exp/exe
+      - ./repos/netomox-exp/Rakefile:/netomox-exp/Rakefile
+      - ./repos/netomox-exp/model_info.json:/netomox-exp/model_info.json
+      - ./repos/netomox-exp/app.rb:/netomox-exp/app.rb
+      # data dirs
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
       - ${SHARED_NETOVIZ_MODEL_DIR}:${MDDO_NETOVIZ_MODEL_DIR}
