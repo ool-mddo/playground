@@ -1,0 +1,14 @@
+[
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2/sample1",
+    "type": "fixed",
+    "label": "Test network"
+  },
+  {
+    "network": "pushed_configs",
+    "snapshot": "mddo_network",
+    "type": "simulation_target",
+    "label": "OOL-MDDO PJ network"
+  }
+]
