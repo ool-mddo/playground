@@ -2,9 +2,6 @@ version: "3"
 services:
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
-    ports:
-      - 9996:9996
-      - 9997:9997
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
     tty: true # for rerun (requires console input)
@@ -15,8 +12,8 @@ services:
       NETOMOX_LOG_LEVEL: ${NETOMOX_LOG_LEVEL}
       TOPOLOGY_BUILDER_LOG_LEVEL: ${TOPOLOGY_BUILDER_LOG_LEVEL}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
-      MDDO_MODELS_DIR: ${MDDO_MODELS_DIR}
-      MDDO_NETOVIZ_MODEL_DIR: ${MDDO_NETOVIZ_MODEL_DIR}
+      MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
+      MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
       MDDO_MULTI_REGION_EXPR_DIR: ${MDDO_MULTI_REGION_EXPR_DIR}
     volumes:
       # for development
@@ -27,8 +24,8 @@ services:
       - ./repos/netomox-exp/app.rb:/netomox-exp/app.rb
       # data dirs
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
-      - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
-      - ${SHARED_NETOVIZ_MODEL_DIR}:${MDDO_NETOVIZ_MODEL_DIR}
+      - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
+      - ${SHARED_TOPOLOGIES_DIR}:${MDDO_TOPOLOGIES_DIR}
       - ${SHARED_MULTI_REGION_EXPR_DIR}:${MDDO_MULTI_REGION_EXPR_DIR} # for multi-region-experiments
     depends_on:
       - batfish-wrapper
@@ -37,13 +34,20 @@ services:
     environment:
       BATFISH_HOST: batfish
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
-      MDDO_MODELS_DIR: ${MDDO_MODELS_DIR}
+      MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
       PYTHONUNBUFFERED: 1
-    ports:
-      - ${BATFISH_WRAPPER_PORT}:5000
     volumes:
       - ./repos/batfish-wrapper:/batfish-wrapper # for development
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
-      - ${SHARED_MODELS_DIR}:${MDDO_MODELS_DIR}
+      - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
     depends_on:
       - batfish
+  api-proxy:
+    image: ${API_PROXY_IMAGE}:${API_PROXY_IMAGE_TAG}
+    volumes:
+      - ./api-proxy.default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - ${API_PROXY_PORT}:80
+    depends_on:
+      - batfish-wrapper
+      - netomox-exp

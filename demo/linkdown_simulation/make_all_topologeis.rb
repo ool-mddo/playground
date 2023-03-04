@@ -9,10 +9,8 @@ require 'parallel'
 # HTTP Client
 HTTP_CLIENT = HTTPClient.new
 HTTP_CLIENT.receive_timeout = 60 * 60 * 4 # 60sec * 60min * 4h
-# Batfish-wrapper
-BATFISH_WRAPPER_HOST = ENV.fetch('BATFISH_WRAPPER_HOST', 'localhost:5000')
-# netomox-exp
-NETOMOX_EXP_HOST = ENV.fetch('NETOMOX_EXP_HOST', 'localhost:9292')
+# REST API proxy
+API_HOST = ENV.fetch('MDDO_API_HOST', 'localhost:15000')
 
 # http-client wrapper functions
 
@@ -21,14 +19,15 @@ def error_response?(response)
   response.status % 100 == 2
 end
 
-# @param [String] url URL string (http://host/path)
+# @param [String] api_path PATH of REST API
 # @param [Hash] data Data to post
 # @return [HTTP::Message,nil] Reply
-def post_to_host(url, data = {})
+def mddo_post(api_path, data = {})
   header = { 'Content-Type' => 'application/json' }
   body = JSON.generate(data)
   str_limit = 80
   data_str = data.to_s.length < str_limit ? data.to_s : "#{data.to_s[0, str_limit - 3]}..."
+  url = "http://#{API_HOST}/#{api_path}"
   puts "# - POST: #{url}, data=#{data_str}"
   response = HTTP_CLIENT.post(url, body:, header:)
   warn "# [ERROR] #{response.status} < POST #{url}, data=#{data_str}" if error_response?(response)
@@ -36,25 +35,9 @@ def post_to_host(url, data = {})
 end
 
 # @param [String] api_path PATH of REST API
-# @param [Hash] data Data to post
 # @return [HTTP::Message,nil] Reply
-def post_batfish_wrapper(api_path, data = {})
-  url = "http://#{BATFISH_WRAPPER_HOST}/#{api_path}"
-  post_to_host(url, data)
-end
-
-# @param [String] api_path PATH of REST API
-# @param [Hash] data Data to post
-# @return [HTTP::Message,nil] Reply
-def post_netomox_exp(api_path, data = {})
-  url = "http://#{NETOMOX_EXP_HOST}/#{api_path}"
-  post_to_host(url, data)
-end
-
-# @param [String] api_path PATH of REST API
-# @return [HTTP::Message,nil] Reply
-def get_netomox_exp(api_path)
-  url = "http://#{NETOMOX_EXP_HOST}/#{api_path}"
+def mddo_get(api_path)
+  url = "http://#{API_HOST}/#{api_path}"
   puts "# - GET: #{url}"
   response = HTTP_CLIENT.get(url)
   warn "# [ERROR] #{response.status} < GET #{url}" if error_response?(response)
@@ -79,21 +62,21 @@ def process_snapshot_data(network, snapshot_data)
   target_key = "#{network}/#{snapshot}"
 
   puts "# [#{target_key}] Query configurations each snapshot and save it to file"
-  url = "api/networks/#{network}/snapshots/#{snapshot}/queries"
-  post_batfish_wrapper(url)
+  url = "/queries/#{network}/#{snapshot}"
+  mddo_post(url)
 
   puts "# [#{target_key}] Generate topology file from query results"
   write_url = "/topologies/#{network}/#{snapshot}"
-  post_netomox_exp(write_url)
+  mddo_post(write_url)
 
   return unless logical_snapshot?(snapshot_data)
 
   puts "# [#{target_key}] Generate diff data and write back"
   src_snapshot = snapshot_data[:orig_snapshot_name]
   diff_url = "/topologies/#{network}/snapshot_diff/#{src_snapshot}/#{snapshot}"
-  diff_response = get_netomox_exp(diff_url)
+  diff_response = mddo_get(diff_url)
   diff_topology_data = JSON.parse(diff_response.body, { symbolize_names: true })
-  post_netomox_exp(write_url, { topology_data: diff_topology_data[:topology_data] })
+  mddo_post(write_url, { topology_data: diff_topology_data[:topology_data] })
 end
 # rubocop:enable Metrics/MethodLength
 
@@ -119,9 +102,8 @@ parser.parse!(ARGV)
 # check
 
 puts '# ---'
-puts "# batfish-wrapper: #{BATFISH_WRAPPER_HOST}"
-puts "# netomox-exp    : #{NETOMOX_EXP_HOST}"
-puts "# option         : #{opt}"
+puts "# api host: #{API_HOST}"
+puts "# option  : #{opt}"
 puts '# ---'
 
 # scenario
@@ -147,9 +129,9 @@ model_info_list.each do |model_info|
   snapshot = model_info[:snapshot]
   puts "# [#{network}/#{snapshot}] Generate logical snapshot"
   # TODO: if physical_ss_only=True, removed in configs/network/snapshot/snapshot_info.json
-  url = "api/networks/#{network}/snapshots/#{snapshot}/patterns"
+  url = "/configs/#{network}/#{snapshot}/patterns"
   # response: snapshot-patterns
-  response = post_batfish_wrapper(url)
+  response = mddo_post(url)
 
   # snapshot_dict = {
   #   <network name> => {
@@ -189,4 +171,4 @@ end
 puts '# Push (register) netoviz index'
 warn "# [DEBUG] netoviz_index_data: #{netoviz_index_data}" if opt[:debug]
 url = '/topologies/index'
-post_netomox_exp(url, { index_data: netoviz_index_data })
+mddo_post(url, { index_data: netoviz_index_data })

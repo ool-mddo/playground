@@ -1,6 +1,6 @@
 configs/nttcom-trial-*/
-models
-netoviz_model
+queries
+topologies
 .idea
 .vscode
 

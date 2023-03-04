@@ -5,9 +5,9 @@ services:
     ports:
       - ${NETOVIZ_PORT}:3000
     environment:
-      MDDO_NETOVIZ_MODEL_DIR: /netoviz/static/model
+      MDDO_TOPOLOGIES_DIR: /netoviz/static/model
     volumes:
-      - ${SHARED_NETOVIZ_MODEL_DIR}:/netoviz/static/model
+      - ${SHARED_TOPOLOGIES_DIR}:/netoviz/static/model
       - ./repos/netoviz/components:/netoviz/components
       - ./repos/netoviz/layouts:/netoviz/layouts
       - ./repos/netoviz/nuxt.config.js:/netoviz/nuxt.config.js
@@ -16,19 +16,10 @@ services:
       - ./repos/netoviz/server:/netoviz/server
       - ./repos/netoviz/static:/netoviz/static
       - ./repos/netoviz/store:/netoviz/store
-  proxy:
-    image: ${PROXY_IMAGE}:${PROXY_IMAGE_TAG}
-    volumes:
-      - ./repos/fish-tracer/proxy/default.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - ${PROXY_PORT}:80
-    depends_on:
-      - fish-tracer
-      - batfish-wrapper
   fish-tracer:
     image: ${FISH_TRACER_IMAGE}:${FISH_TRACER_IMAGE_TAG}
     environment:
-      BASE_URL: http://${FISH_TRACER_BASE_HOST}:${PROXY_PORT}
+      BASE_URL: http://${FISH_TRACER_BASE_HOST}:${API_PROXY_PORT}
     volumes:
       - ./repos/fish-tracer/components:/fish-tracer/components
       - ./repos/fish-tracer/layouts:/fish-tracer/layouts
