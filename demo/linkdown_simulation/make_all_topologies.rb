@@ -95,7 +95,7 @@ opt = {}
 parser = OptionParser.new
 parser.on('-n', '--network NETWORK', 'Network name') { |v| opt[:network] = v }
 parser.on('-s', '--snapshot SNAPSHOT', 'Snapshot name') { |v| opt[:snapshot] = v }
-parser.on('--physical_ss_only', 'Physical snapshot only') { |v| opt[:physical_ss_only] = v }
+parser.on('-p', '--physical_ss_only', 'Physical snapshot only') { |v| opt[:physical_ss_only] = v }
 parser.on('--debug', 'Enable debug output') { |v| opt[:debug] = v }
 parser.parse!(ARGV)
 
@@ -112,42 +112,49 @@ puts '# Generate logical snapshots: link-down patterns'
 model_info_list = JSON.parse(File.read('./model_info.json'), { symbolize_names: true })
 snapshot_dict = {}
 model_info_list.each do |model_info|
+  network = model_info[:network]
+  snapshot = model_info[:snapshot]
+
   warn "# [DEBUG] model_info: #{model_info}" if opt[:debug]
-  if opt.key?(:network) && opt[:network] != model_info[:network]
+
+  if opt[:network] != network
     warn '# [DEBUG] skip: model_info does not match network option' if opt[:debug]
     next
   end
 
-  # check off "fixed" model for link-down simulation (FORCE physical snapshot ONLY)
-  if model_info[:type] == 'fixed' || opt[:physical_ss_only]
-    snapshot_dict[model_info[:network]] = { physical: model_info, logical: [] }
-    warn '# [DEBUG] skip: network type of the model_info is fixed or enable physical snapshot only' if opt[:debug]
+  # if -s (--snapshot) have logical snapshot name,
+  # then snapshot_dict must has physical snapshot that correspond the logical one
+  if opt.key?(:snapshot) && !opt[:snapshot].start_with?(snapshot)
+    warn '# [DEBUG] skip: model_info does not match snapshot option' if opt[:debug]
     next
   end
 
-  network = model_info[:network]
-  snapshot = model_info[:snapshot]
+  snapshot_dict[network] = { physical: [], logical: [] } unless snapshot_dict.keys.include?(network)
+  # set physical snapshot info of the network
+  snapshot_dict[network][:physical].push(model_info)
+
+  if opt[:physical_ss_only]
+    warn '# [DEBUG] skip: enable physical snapshot only' if opt[:debug]
+    next
+  end
+
   puts "# [#{network}/#{snapshot}] Generate logical snapshot"
   # TODO: if physical_ss_only=True, removed in configs/network/snapshot/snapshot_info.json
-  url = "/configs/#{network}/#{snapshot}/patterns"
-  # response: snapshot-patterns
+  url = "/configs/#{network}/#{snapshot}/snapshot_patterns"
+  # response: snapshot_patterns
   response = mddo_post(url)
 
   # snapshot_dict = {
   #   <network name> => {
-  #     physical: (model_info),
-  #     logical: [
-  #       (snapshot_pattern)
-  #     ]
+  #     physical: [ (model_info),... ],
+  #     logical: [ (snapshot_pattern),... ]
   #   }
   # }
   snapshot_patterns = JSON.parse(response.body, { symbolize_names: true })
-  # for debug, for single snapshot
+  # for debug, target single snapshot
   snapshot_patterns.filter! { |sp| sp[:target_snapshot_name] == opt[:snapshot] } if opt.key?(:snapshot)
-  snapshot_dict[model_info[:network]] = {
-    physical: model_info,
-    logical: snapshot_patterns
-  }
+  # set logical snapshot info of the network
+  snapshot_dict[network][:logical] = snapshot_patterns
 end
 
 warn "# [DEBUG] snapshot_dict: #{snapshot_dict}" if opt[:debug]
@@ -155,10 +162,11 @@ warn "# [DEBUG] snapshot_dict: #{snapshot_dict}" if opt[:debug]
 netoviz_index_data = []
 snapshot_dict.each_pair do |network, snapshot_info|
   # physical snapshot
-  model_info = snapshot_info[:physical]
-  process_snapshot_data(network, model_info)
-  datum = netoviz_index_datum(network, model_info[:snapshot], model_info[:label])
-  netoviz_index_data.push(datum)
+  snapshot_info[:physical].each do |model_info|
+    process_snapshot_data(network, model_info)
+    datum = netoviz_index_datum(network, model_info[:snapshot], model_info[:label])
+    netoviz_index_data.push(datum)
+  end
 
   # logical snapshots (link-down snapshots)
   snapshot_info[:logical].each do |snapshot_pattern|
