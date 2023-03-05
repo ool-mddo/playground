@@ -1,86 +1,16 @@
 # frozen_string_literal: true
 
-require 'fileutils'
-require 'httpclient'
-require 'json'
-require 'optparse'
-require 'thor'
+require_relative 'scenario_base'
 
 module LinkdownSimulation
-  # rubocop:disable Metrics/ClassLength
-
   # generate topology
-  class GenerateTopologyRunner < Thor
-    # HTTP Client
-    HTTP_CLIENT = HTTPClient.new
-    HTTP_CLIENT.receive_timeout = 60 * 60 * 4 # 60sec * 60min * 4h
-    # REST API proxy
-    API_HOST = ENV.fetch('MDDO_API_HOST', 'localhost:15000')
-
-    desc 'generate_topology [options] model_info', 'Generate topology from config'
-    method_option :model_info, aliases: :m, type: :string, default: 'model_info.json', desc: 'Model info (json)'
-    method_option :network, aliases: :n, type: :string, desc: 'Network name'
-    method_option :snapshot, aliases: :s, type: :string, desc: 'Snapshot name'
-    method_option :phy_ss_only, aliases: :p, type: :boolean, desc: 'Physical snapshot only'
-    method_option :debug, type: :boolean, desc: 'Enable debug output'
-    def generate_topology
-      # check
-      puts '# ---'
-      puts "# api host   : #{API_HOST}"
-      puts "# option     : #{options}"
-      puts "# model_info : #{options[:model_info]}"
-      puts '# ---'
-
-      # scenario
-      snapshot_dict = generate_snapshot_dict(options[:model_info])
-      netoviz_index_data = convert_query_to_topology(snapshot_dict)
-      save_netoviz_index(netoviz_index_data)
-    end
-
+  class TopologyGenerator < ScenarioBase
     private
-
-    # @param [String] message Print message
-    # @return [void]
-    def debug_print(message)
-      warn "# [DEBUG] #{message}" if options[:debug]
-    end
-
-    # @param [HTTP::Message] response HTTP response
-    # @return [Boolean]
-    def error_response?(response)
-      # Error when status code is not 2xx
-      response.status % 100 == 2
-    end
 
     # @param [Hash] snapshot_data Snapshot metadata (model_info or snapshot_pattern elements)
     # @return [Boolean] True if the snapshot is logical one
     def logical_snapshot?(snapshot_data)
       snapshot_data.key?(:lost_edges)
-    end
-
-    # @param [String] api_path PATH of REST API
-    # @param [Hash] data Data to post
-    # @return [HTTP::Message,nil] Reply
-    def mddo_post(api_path, data = {})
-      header = { 'Content-Type' => 'application/json' }
-      body = JSON.generate(data)
-      str_limit = 80
-      data_str = data.to_s.length < str_limit ? data.to_s : "#{data.to_s[0, str_limit - 3]}..."
-      url = "http://#{API_HOST}/#{api_path}"
-      puts "# - POST: #{url}, data=#{data_str}"
-      response = HTTP_CLIENT.post(url, body:, header:)
-      warn "# [ERROR] #{response.status} < POST #{url}, data=#{data_str}" if error_response?(response)
-      response
-    end
-
-    # @param [String] api_path PATH of REST API
-    # @return [HTTP::Message,nil] Reply
-    def mddo_get(api_path)
-      url = "http://#{API_HOST}/#{api_path}"
-      puts "# - GET: #{url}"
-      response = HTTP_CLIENT.get(url)
-      warn "# [ERROR] #{response.status} < GET #{url}" if error_response?(response)
-      response
     end
 
     # @param [String] network Network name
@@ -99,7 +29,7 @@ module LinkdownSimulation
       # response: snapshot_patterns
       response = mddo_post(url)
 
-      snapshot_patterns = JSON.parse(response.body, { symbolize_names: true })
+      snapshot_patterns = parse_json_str(response.body)
       # when a target snapshot specified
       snapshot_patterns.filter! { |sp| sp[:target_snapshot_name] == options[:snapshot] } if options.key?(:snapshot)
       snapshot_patterns
@@ -110,7 +40,7 @@ module LinkdownSimulation
     # @param [String] model_info_file Model info file (json, default: ./model_info.json)
     # @return [Array<Hash>] List of model info
     def read_model_info_list(model_info_file)
-      model_info_list = JSON.parse(File.read(model_info_file), { symbolize_names: true })
+      model_info_list = read_json_file(model_info_file)
       model_info_list.filter! { |info| info[:network] == options[:network] } if options.key?(:network)
       model_info_list
     end
@@ -179,7 +109,7 @@ module LinkdownSimulation
       src_snapshot = snapshot_data[:orig_snapshot_name]
       diff_url = "/topologies/#{network}/snapshot_diff/#{src_snapshot}/#{snapshot}"
       diff_response = mddo_get(diff_url)
-      diff_topology_data = JSON.parse(diff_response.body, { symbolize_names: true })
+      diff_topology_data = parse_json_str(diff_response.body)
       mddo_post(write_url, { topology_data: diff_topology_data[:topology_data] })
     end
     # rubocop:enable Metrics/MethodLength
@@ -218,8 +148,4 @@ module LinkdownSimulation
       mddo_post(url, { index_data: netoviz_index_data })
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
-
-# start CLI tool
-LinkdownSimulation::GenerateTopologyRunner.start(ARGV)

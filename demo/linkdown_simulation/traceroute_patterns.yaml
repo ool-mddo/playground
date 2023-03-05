@@ -1,0 +1,59 @@
+environment:
+  network: pushed_configs
+  snapshot: mddo_network
+groups:
+  reg.a_VL10_hosts:
+    - regiona-svr01__enp1s4
+    - regiona-svr02__enp1s4
+  reg.a_VL110_hosts:
+    - regiona-svr01__enp1s5
+    - regiona-svr02__enp1s5
+  reg.a_VL20_hosts: []
+  reg.a_VL120_hosts: []
+  reg.a_VL10_gws:
+    - regiona-ce01__Vlan10
+    - regiona-ce02__Vlan10
+  reg.a_VL20_gws:
+    - regiona-ce01__Vlan20
+    - regiona-ce02__Vlan20
+  reg.a_VL110_gws:
+    - regiona-ce01__Vlan110
+    - regiona-ce02__Vlan110
+  reg.a_VL120_gws:
+    - regiona-ce01__Vlan120
+    - regiona-ce02__Vlan120
+  reg.b_VL1010_hosts:
+    - regionb-svr01__enp1s4
+  reg.b_VL1110_hosts:
+    - regionb-svr01__enp1s5
+  reg.b_VL1020_hosts:
+    - regionb-svr02__enp1s4
+  reg.b_VL1120_hosts:
+    - regionb-svr02__enp1s5
+  reg.b_VL1010_gws:
+    - regionb-ce01__ae1.1010
+    - regionb-ce02__ae1.1010
+  reg.b_VL1020_gws:
+    - regionb-ce01__ae2.1020
+    - regionb-ce02__ae2.1020
+  reg.b_VL1110_gws:
+    - regionb-ce01__ae1.1110
+    - regionb-ce02__ae1.1110
+  reg.b_VL1120_gws:
+    - regionb-ce01__ae2.1120
+    - regionb-ce02__ae2.1120
+patterns:
+#   - [reg.a_VL10_hosts, reg.a_VL10_gws] # ok
+# #  - [reg.a_VL20_hosts, reg.a_VL20_gws] # empty
+#   - [reg.a_VL110_hosts, reg.a_VL110_gws] # ok
+# #  - [reg.a_VL120_hosts, reg.a_VL120_gws] # empty
+#   - [reg.a_VL10_gws, reg.a_VL20_gws] # ok
+#   - [reg.a_VL110_gws, reg.a_VL120_gws] # ok
+#   - [reg.b_VL1010_hosts, reg.b_VL1010_gws] # ok
+# #  - [reg.b_VL1110_hosts, reg.b_VL1110_gws] # NG, bf cannot handle junos vrf l3edges
+#   - [reg.b_VL1020_hosts, reg.b_VL1020_gws] # ok
+# #  - [reg.b_VL1120_hosts, reg.b_VL1120_gws] # NG, bf cannot handle junos vrf l3edges
+#   - [reg.b_VL1010_hosts, reg.b_VL1020_hosts] # ok
+# #  - [reg.b_VL1110_hosts, reg.b_VL1120_hosts] # NG, bf cannot handle junos vrf l3edges
+  - [reg.a_VL10_hosts, reg.b_VL1010_hosts] # ok
+  - [reg.a_VL10_hosts, reg.b_VL1020_hosts] # ok
