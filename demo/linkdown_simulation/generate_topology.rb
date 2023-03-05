@@ -4,7 +4,7 @@ require 'fileutils'
 require 'httpclient'
 require 'json'
 require 'optparse'
-require 'parallel'
+require 'thor'
 
 # HTTP Client
 HTTP_CLIENT = HTTPClient.new
