@@ -10,44 +10,68 @@ module LinkdownSimulation
   class Simulator < TopologyGenerator
     desc 'generate_topology [options]', 'Generate topology from config'
     method_option :model_info, aliases: :m, type: :string, default: 'model_info.json', desc: 'Model info (json)'
-    method_option :network, aliases: :n, type: :string, desc: 'Network name'
+    method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
     method_option :snapshot, aliases: :s, type: :string, desc: 'Snapshot name'
     method_option :phy_ss_only, aliases: :p, type: :boolean, desc: 'Physical snapshot only'
     method_option :debug, type: :boolean, desc: 'Enable debug output'
     def generate_topology
+      change_logger_level(:debug) if options.key?(:debug) && options[:debug]
       # check
-      puts '# ---'
-      puts "# api host   : #{API_HOST}"
-      puts "# option     : #{options}"
-      puts "# model_info : #{options[:model_info]}"
-      puts '# ---'
+      LOGGER.info "api host: #{API_HOST}"
+      LOGGER.info "option: #{options}"
+      LOGGER.info "model_info: #{options[:model_info]}"
 
       # scenario
       snapshot_dict = generate_snapshot_dict(options[:model_info])
+      save_json_file(snapshot_dict, '.snapshot_dict.json')
       netoviz_index_data = convert_query_to_topology(snapshot_dict)
       save_netoviz_index(netoviz_index_data)
     end
 
-    desc 'compare_subsets [options] BEFORE_TOPOLOGY AFTER_TOPOLOGY', 'Compare topology data before linkdown'
+    desc 'compare_subsets [options]', 'Compare topology data before linkdown'
     method_option :min_score, aliases: :m, default: 0, type: :numeric, desc: 'Minimum score to print'
     method_option :format, aliases: :f, default: 'yaml', type: :string, enum: %w[yaml json], desc: 'Output format'
-    # @param [String] orig_file Original topology file path
-    # @param [Array<String>] target_files Target topology file path
+    method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
+    method_option :snapshot, aliases: :s, type: :string, required: true, desc: 'Source (physical) snapshot name'
+    method_option :snapshot_dict, type: :string, default: '.snapshot_dict.json', desc: 'Snapshot data'
     # @return [void]
-    def compare_subsets(orig_file, *target_files)
-      network_sets_diffs = target_files.sort.map do |target_file|
-        NetworkSetsDiff.new(orig_file, target_file)
+    def compare_subsets
+      network = options[:network].intern # read json with symbolize_names: true
+      snapshot = options[:snapshot] # source (physical) snapshot
+
+      snapshot_dict = read_json_file(options[:snapshot_dict])
+      unless snapshot_dict.key?(network)
+        LOGGER.error "Network: #{network} is not found in snapshot_dict"
+        exit(1)
+      end
+
+      source_model_info = snapshot_dict[network][:physical].find { |mi| mi[:snapshot] == snapshot }
+      if source_model_info.nil?
+        LOGGER.error "snapshot: #{snapshot} is not found of #{network} in snapshot_dict"
+        exit(1)
+      end
+
+      snapshot_patterns = snapshot_dict[network][:logical]
+      network_sets_diffs = snapshot_patterns.map do |snapshot_pattern|
+        source_snapshot = snapshot_pattern[:source_snapshot_name]
+        source_topology = get_topology(network, source_snapshot)
+        target_snapshot = snapshot_pattern[:target_snapshot_name]
+        target_topology = get_topology(network, target_snapshot)
+        NetworkSetsDiff.new("#{network}/#{source_snapshot}", source_topology,
+                            "#{network}/#{target_snapshot}", target_topology)
       end
       data = network_sets_diffs.map(&:to_data).reject { |d| d[:score] < options[:min_score] }
       print_data(data)
     end
 
-    desc 'get_subsets [options] TOPOLOGY', 'Get subsets for each network in the topology'
+    desc 'extract_subsets [options]', 'Extract subsets for each layer in the topology'
+    method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
+    method_option :snapshot, aliases: :s, type: :string, required: true, desc: 'Snapshot name'
     method_option :format, aliases: :f, default: 'yaml', type: :string, enum: %w[yaml json], desc: 'Output format'
-    # @param [String] file Topology file path
     # @return [void]
-    def get_subsets(file)
-      nws = TopologyGenerator.read_topology_data(file)
+    def extract_subsets
+      topology_data = get_topology(options[:network], options[:snapshot])
+      nws = Netomox::Topology::DisconnectedVerifiableNetworks.new(topology_data)
       print_data(nws.find_all_network_sets.to_array)
     end
 

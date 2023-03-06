@@ -10,9 +10,9 @@ module Netomox
   module Topology
     # Networks with DisconnectedVerifiableNetwork
     class DisconnectedVerifiableNetworks < Networks
-      # @return [TopologyOperator::NetworkSets] Found network sets
+      # @return [LinkdownSimulation::NetworkSets] Found network sets
       def find_all_network_sets
-        TopologyOperator::NetworkSets.new(@networks)
+        LinkdownSimulation::NetworkSets.new(@networks)
       end
 
       private
@@ -32,22 +32,22 @@ module Netomox
       # Explore connected network elements (subsets)
       #   subset = connected node and term-point paths list (set)
       #   return several subsets when the network have disconnected networks.
-      # @return [TopologyOperator::NetworkSet] Network-set (set of network-subsets, in a network(layer))
+      # @return [LinkdownSimulation::NetworkSet] Network-set (set of network-subsets, in a network(layer))
       def find_all_subsets
         remove_deleted_state_elements!
-        network_set = TopologyOperator::NetworkSet.new(@name)
+        network_set = LinkdownSimulation::NetworkSet.new(@name)
 
         # select entry point for recursive-network-search
         @nodes.each do |node|
           # if the node doesn't have any interface,
           # it assumes that a standalone node is a single subset.
           if node.termination_points.empty?
-            network_set.subsets.push(TopologyOperator::NetworkSubset.new(node.path))
+            network_set.subsets.push(LinkdownSimulation::NetworkSubset.new(node.path))
             next
           end
 
           # if the node has link(s), search connected element recursively
-          network_subset = TopologyOperator::NetworkSubset.new
+          network_subset = LinkdownSimulation::NetworkSubset.new
           node.termination_points.each do |tp|
             # explore origin selection:
             # if exists a subset includes the (source) term-point,
@@ -65,8 +65,8 @@ module Netomox
       private
 
       # @note For layer3 network
-      # @param [TopologyOperator::NetworkSet] network_set
-      # @return [TopologyOperator::NetworkSet]
+      # @param [LinkdownSimulation::NetworkSet] network_set
+      # @return [LinkdownSimulation::NetworkSet]
       def l3_additional_policy_check(network_set)
         network_set.subsets.each do |subset|
           mp_seg_nodes = subset.find_all_multiple_prefix_seg_nodes
@@ -80,7 +80,7 @@ module Netomox
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
 
       # @note For layer3 or ospf-area network
-      # @param [TopologyOperator::NetworkSubset] subset
+      # @param [LinkdownSimulation::NetworkSubset] subset
       # @return [Hash] segment connected term-points in the subnet
       def find_segment_connected_tps(subset)
         seg_table = {}
@@ -116,7 +116,7 @@ module Netomox
       end
 
       # @note For ospf-area network
-      # @param [TopologyOperator::NetworkSubset] subset
+      # @param [LinkdownSimulation::NetworkSubset] subset
       # @param [String] seg_name
       # @param [Array<Netomox::Topology::TermPoint>] tps
       # @return [void]
@@ -133,7 +133,7 @@ module Netomox
       end
 
       # @note For ospf-area network
-      # @param [TopologyOperator::NetworkSubset] subset
+      # @param [LinkdownSimulation::NetworkSubset] subset
       # @param [String] seg_name
       # @param [Array<Netomox::Topology::TermPoint>] tps
       # @return [void]
@@ -149,8 +149,8 @@ module Netomox
       end
 
       # @note For ospf-area network
-      # @param [TopologyOperator::NetworkSet] network_set
-      # @return [TopologyOperator::NetworkSet]
+      # @param [LinkdownSimulation::NetworkSet] network_set
+      # @return [LinkdownSimulation::NetworkSet]
       def ospf_additional_policy_check(network_set)
         network_set.subsets.each do |subset|
           subset_seg_table = find_segment_connected_tps(subset)
@@ -164,8 +164,8 @@ module Netomox
       end
 
       # @note For layer3 or ospf-area network
-      # @param [TopologyOperator::NetworkSet] network_set
-      # @return [TopologyOperator::NetworkSet]
+      # @param [LinkdownSimulation::NetworkSet] network_set
+      # @return [LinkdownSimulation::NetworkSet]
       def other_policy_check(network_set)
         case network_set.network_name
         when /layer3$/i

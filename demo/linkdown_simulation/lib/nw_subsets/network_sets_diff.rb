@@ -7,27 +7,19 @@ require_relative './disconnected_verifiable_networks'
 
 # 4fc8345 based topology operations
 module LinkdownSimulation
-  # @param [String] file_path Topology file path
-  # @return [Netomox::Topology::DisconnectedVerifiableNetworks]
-  def read_topology_data(file_path)
-    raw_topology_data = JSON.parse(File.read(file_path))
-    Netomox::Topology::DisconnectedVerifiableNetworks.new(raw_topology_data)
-  end
-  module_function :read_topology_data
-
   # handle subtract (diff) information of NetworkSets
   class NetworkSetsDiff
-    # @!attribute [r] orig_file
+    # @!attribute [r] orig_ss_path
     #   @return [String]
     # @!attribute [r] orig_sets
     #   @return [NetworkSet]
-    # @!attribute [r] target_file
+    # @!attribute [r] target_ss_path
     #   @return [String]
     # @!attribute [r] target_sets
     #   @return [NetworkSet]
     # @!attribute [r] compared
     #   @return [Hash]
-    attr_reader :orig_file, :orig_sets, :target_file, :target_sets, :compared
+    attr_reader :orig_ss_path, :orig_sets, :target_ss_path, :target_sets, :compared
 
     # Weights to calculate score
     SCORE_WEIGHT = {
@@ -41,13 +33,17 @@ module LinkdownSimulation
     #   @see Hash#[]
     def_delegators :@compared, :[]
 
-    # @param [String] orig_file Original topology file path
-    # @param [String] target_file Target topology file path
-    def initialize(orig_file, target_file)
-      @orig_file = orig_file
-      @orig_sets = disconnected_check(orig_file)
-      @target_file = target_file
-      @target_sets = disconnected_check(target_file)
+    # @param [String] orig_ss_path Path of origin snapshot ("network/snapshot")
+    # @param [Hash] orig_topology Topology data of origin snapshot
+    # @param [String] target_ss_path Path of target snapshot ("network/snapshot")
+    # @param [Hash] target_topology Topology data of target snapshot
+    def initialize(orig_ss_path, orig_topology, target_ss_path, target_topology)
+      @orig_ss_path = orig_ss_path
+      @orig_topology = orig_topology
+      @orig_sets = disconnected_check(orig_topology)
+      @target_ss_path = target_ss_path
+      @target_topology = target_topology
+      @target_sets = disconnected_check(target_topology)
       # Hash, { network_name: { subsets_count_diff: Integer, elements_diff: Array<String> }}
       # @see NetworkSets#-, NetworkSets#subtract_result
       @compared = orig_sets.diff(target_sets)
@@ -56,8 +52,8 @@ module LinkdownSimulation
     # @return [Hash]
     def to_data
       print_datum1 = {
-        original_file: @orig_file,
-        target_file: @target_file,
+        original_snapshot: @orig_ss_path,
+        target_snapshot: @target_ss_path,
         score: calculate_score
       }
       print_datum2 = @compared.each_key.to_h do |nw_name|
@@ -68,10 +64,10 @@ module LinkdownSimulation
 
     private
 
-    # @param [String] file_path Topology file path
+    # @param [Hash] topology_data Topology data
     # @return [NetworkSets] Network sets
-    def disconnected_check(file_path)
-      nws = TopologyGenerator.read_topology_data(file_path)
+    def disconnected_check(topology_data)
+      nws = Netomox::Topology::DisconnectedVerifiableNetworks.new(topology_data)
       nws.find_all_network_sets
     end
 

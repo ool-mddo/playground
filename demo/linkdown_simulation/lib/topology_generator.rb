@@ -23,7 +23,7 @@ module LinkdownSimulation
     end
 
     def generate_snapshot_patterns(network, snapshot)
-      puts "# [#{network}/#{snapshot}] Generate logical snapshot"
+      LOGGER.info "[#{network}/#{snapshot}] Generate logical snapshot"
       # TODO: if physical_ss_only=True, removed in configs/network/snapshot/snapshot_info.json
       url = "/configs/#{network}/#{snapshot}/snapshot_patterns"
       # response: snapshot_patterns
@@ -54,7 +54,7 @@ module LinkdownSimulation
     #   }
     # }
     def generate_snapshot_dict(model_info_file)
-      puts '# Generate logical snapshots: link-down patterns'
+      LOGGER.info 'Generate logical snapshots: link-down patterns'
       snapshot_dict = {}
 
       # model_info: physical snapshot info...origination points
@@ -62,26 +62,26 @@ module LinkdownSimulation
       read_model_info_list(model_info_file).each do |model_info|
         network = model_info[:network]
         snapshot = model_info[:snapshot]
-        debug_print "Target: #{network}/#{snapshot}"
+        LOGGER.debug "Target: #{network}/#{snapshot}"
 
         # if -s (--snapshot) have logical snapshot name,
         # then snapshot_dict must has physical snapshot that correspond the logical one
         next if options.key?(:snapshot) && !options[:snapshot].start_with?(snapshot)
 
-        debug_print "Add physical snapshot info of #{snapshot} to #{network}"
+        LOGGER.debug "Add physical snapshot info of #{snapshot} to #{network}"
         snapshot_dict[network] = { physical: [], logical: [] } unless snapshot_dict.keys.include?(network)
         # set physical snapshot info of the network
         snapshot_dict[network][:physical].push(model_info)
 
         next if options.key?(:phy_ss_only) && options[:phy_ss_only]
 
-        debug_print "Add logical snapshot info of #{snapshot} to #{network}"
+        LOGGER.debug "Add logical snapshot info of #{snapshot} to #{network}"
         snapshot_patterns = generate_snapshot_patterns(network, snapshot)
         # set logical snapshot info of the network
         snapshot_dict[network][:logical] = snapshot_patterns
       end
 
-      debug_print "snapshot_dict: #{snapshot_dict}"
+      LOGGER.debug "snapshot_dict: #{snapshot_dict}"
       snapshot_dict
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -95,17 +95,17 @@ module LinkdownSimulation
       snapshot = snapshot_data[logical_snapshot?(snapshot_data) ? :target_snapshot_name : :snapshot]
       target_key = "#{network}/#{snapshot}"
 
-      puts "# [#{target_key}] Query configurations each snapshot and save it to file"
+      LOGGER.info "[#{target_key}] Query configurations each snapshot and save it to file"
       url = "/queries/#{network}/#{snapshot}"
       mddo_post(url)
 
-      puts "# [#{target_key}] Generate topology file from query results"
+      LOGGER.info "[#{target_key}] Generate topology file from query results"
       write_url = "/topologies/#{network}/#{snapshot}"
       mddo_post(write_url)
 
       return unless logical_snapshot?(snapshot_data)
 
-      puts "# [#{target_key}] Generate diff data and write back"
+      LOGGER.info "[#{target_key}] Generate diff data and write back"
       src_snapshot = snapshot_data[:orig_snapshot_name]
       diff_url = "/topologies/#{network}/snapshot_diff/#{src_snapshot}/#{snapshot}"
       diff_response = mddo_get(diff_url)
@@ -142,8 +142,8 @@ module LinkdownSimulation
     # @param [Array<Hash>] netoviz_index_data Netoviz index data
     # @return [void]
     def save_netoviz_index(netoviz_index_data)
-      puts '# Push (register) netoviz index'
-      debug_print "netoviz_index_data: #{netoviz_index_data}"
+      LOGGER.info 'Push (register) netoviz index'
+      LOGGER.debug "netoviz_index_data: #{netoviz_index_data}"
       url = '/topologies/index'
       mddo_post(url, { index_data: netoviz_index_data })
     end
