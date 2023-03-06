@@ -2,11 +2,10 @@
 
 require_relative 'reach_pattern_handler'
 require_relative 'bf_trace_results'
-require_relative 'bf_wrapper_query_base'
 
 module LinkdownSimulation
   # Reachability tester
-  class ReachTester < BFWrapperQueryBase
+  class ReachTester
     # @param [String] pattern_file Test pattern file name (json)
     def initialize(pattern_file)
       super()
@@ -20,7 +19,8 @@ module LinkdownSimulation
     # @param [String] snapshot_re Snapshot name regexp
     # @return [Array<Hash>]
     def exec_all_traceroute_tests(network, snapshot_re)
-      snapshots = fetch_snapshots(network, true)
+      snapshots = LinkdownSimulation.fetch_snapshots(network, true)
+      LinkdownSimulation.logger.debug "[exec_all_traceroute_tests] snapshots=#{snapshots}"
       return [] if snapshots.nil?
 
       snapshots.grep(Regexp.new(snapshot_re)).map do |snapshot|
@@ -45,7 +45,7 @@ module LinkdownSimulation
     # @param [String] snapshot Snapshot name in bf_network
     # @return [String] Description of the snapshot
     def fetch_snapshot_description(network, snapshot)
-      snapshot_pattern = fetch_snapshot_pattern(network, snapshot)
+      snapshot_pattern = LinkdownSimulation.fetch_snapshot_patterns(network, snapshot)
       return 'Origin snapshot?' if snapshot_pattern.nil?
       # Origin (physical) snapshot: returns all logical snapshot patterns
       return 'Origin snapshot' if snapshot_pattern.is_a?(Array)
@@ -65,9 +65,10 @@ module LinkdownSimulation
     # @param [String] snapshot Snapshot name in bf_network
     # @return [Hash]
     def exec_traceroute_test(test_case, network, snapshot)
-      warn "- traceroute: #{network}/#{snapshot} #{test_case_to_str(test_case)}"
+      LinkdownSimulation.logger.info "traceroute: #{network}/#{snapshot} #{test_case_to_str(test_case)}"
       src = test_case[:src]
-      traceroute_result = fetch_traceroute(network, snapshot, src[:node], src[:intf], test_case[:dst][:intf_ip])
+      traceroute_result = LinkdownSimulation.fetch_traceroute(network, snapshot, src[:node], src[:intf],
+                                                              test_case[:dst][:intf_ip])
       { case: test_case, traceroute: BFTracerouteResults.new(traceroute_result).to_data }
     end
   end

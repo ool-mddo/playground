@@ -33,17 +33,16 @@ module LinkdownSimulation
     #   @see Hash#[]
     def_delegators :@compared, :[]
 
-    # @param [String] orig_ss_path Path of origin snapshot ("network/snapshot")
-    # @param [Hash] orig_topology Topology data of origin snapshot
-    # @param [String] target_ss_path Path of target snapshot ("network/snapshot")
-    # @param [Hash] target_topology Topology data of target snapshot
-    def initialize(orig_ss_path, orig_topology, target_ss_path, target_topology)
-      @orig_ss_path = orig_ss_path
-      @orig_topology = orig_topology
-      @orig_sets = disconnected_check(orig_topology)
-      @target_ss_path = target_ss_path
-      @target_topology = target_topology
-      @target_sets = disconnected_check(target_topology)
+    # @param [String] network Network name
+    # @param [String] orig_snapshot Origin snapshot name
+    # @param [String] target_snapshot Target snapshot name
+    def initialize(network, orig_snapshot, target_snapshot)
+      @orig_ss_path = "#{network}/#{orig_snapshot}"
+      @orig_topology = LinkdownSimulation.fetch_topology_data(network, orig_snapshot)
+      @orig_sets = disconnected_check(@orig_topology)
+      @target_ss_path = "#{network}/#{target_snapshot}"
+      @target_topology = LinkdownSimulation.fetch_topology_data(network, target_snapshot)
+      @target_sets = disconnected_check(@target_topology)
       # Hash, { network_name: { subsets_count_diff: Integer, elements_diff: Array<String> }}
       # @see NetworkSets#-, NetworkSets#subtract_result
       @compared = orig_sets.diff(target_sets)

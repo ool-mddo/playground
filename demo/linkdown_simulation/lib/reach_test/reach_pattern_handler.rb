@@ -1,20 +1,18 @@
 # frozen_string_literal: true
 
-require 'yaml'
-require_relative 'bf_wrapper_query_base'
-
 module LinkdownSimulation
   # Reachability-test pattern handler
-  class ReachPatternHandler < BFWrapperQueryBase
+  class ReachPatternHandler
     # @param [String] pattern_file Test pattern file name (yaml)
     def initialize(pattern_file)
       super()
       data = YAML.load_file(pattern_file)
       @env_table = data['environment']
+      LinkdownSimulation.logger.debug "Pattern env: #{@env_table}"
       @group_table = data['groups']
       @patterns = data['patterns']
       validate_environment
-      @intf_list = fetch_all_interface_list(@env_table['network'], @env_table['snapshot'])
+      @intf_list = LinkdownSimulation.fetch_all_interface_list(@env_table['network'], @env_table['snapshot'])
       validate_keys_in_patterns
       validate_node_intf_in_groups
     end
@@ -31,20 +29,26 @@ module LinkdownSimulation
 
     private
 
+    # rubocop:disable Metrics/MethodLength
+
     # @return [void]
     def validate_environment
-      networks = fetch_networks
-      if networks.nil? || networks.include?(@env_table[:network])
-        warn "Error: network:#{@env_table[:network]} is not found in batfish"
+      networks = LinkdownSimulation.fetch_networks
+      network = @env_table['network']
+      snapshot = @env_table['snapshot']
+
+      if networks.nil? || !networks.include?(network)
+        LinkdownSimulation.logger.error "Network:#{network} is not found in batfish (#{networks})"
         exit 1
       end
 
-      snapshots = fetch_snapshots(@env_table[:network], true)
-      return if snapshots.nil? || snapshots.include?(@env_table[:snapshot])
+      snapshots = LinkdownSimulation.fetch_snapshots(network, true)
+      return if !snapshots.nil? && snapshots.include?(snapshot)
 
-      warn "Error: snapshot:#{@env_table[:snapshot]} is not found in network #{@env_table[:network]}"
+      LinkdownSimulation.logger.error "Snapshot:#{snapshot} is not found in network:#{network}"
       exit 1
     end
+    # rubocop:enable Metrics/MethodLength
 
     # @param [String] intf_path "node__interface" format string (interface path)
     # @return [Hash]
@@ -93,7 +97,7 @@ module LinkdownSimulation
         pair.each do |group_key|
           next if @group_table.key?(group_key)
 
-          warn "Key:#{group_key} is not found in groups"
+          LinkdownSimulation.logger.warn "Key:#{group_key} is not found in groups"
           found_error = true
         end
       end
@@ -113,7 +117,7 @@ module LinkdownSimulation
       find_all_intfs_of_node(node).find { |intf_item| intf_item[:interface] == intf }
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 
     # return [void]
     def validate_node_intf_in_groups
@@ -122,26 +126,26 @@ module LinkdownSimulation
         intf_paths.each do |intf_path|
           names = intf_path_to_names(intf_path)
           if names.empty?
-            warn "Error: intf:#{intf_path} in #{grp_key} is incorrect format"
+            LinkdownSimulation.logger.error "intf:#{intf_path} in #{grp_key} is incorrect format"
             found_error = true
             next
           end
 
           node, intf = names
           unless find_all_intfs_of_node(node)
-            warn "Error: node:#{node} is not found in #{grp_key}"
+            LinkdownSimulation.logger.error "node:#{node} is not found in #{grp_key}"
             found_error = true
             next
           end
           next if find_intf_in_node(node, intf)
 
-          warn "Error: intf:#{node}[#{intf}] is not found in #{grp_key}"
+          LinkdownSimulation.logger.error "Error: intf:#{node}[#{intf}] is not found in #{grp_key}"
           found_error = true
           next
         end
       end
       exit 1 if found_error
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
 end

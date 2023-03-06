@@ -8,13 +8,11 @@ services:
     ports:
       - ${NETOMOX_EXP_PORT}:9292
     environment:
-      BATFISH_WRAPPER_HOST: batfish-wrapper:${BATFISH_WRAPPER_PORT}
       NETOMOX_LOG_LEVEL: ${NETOMOX_LOG_LEVEL}
       TOPOLOGY_BUILDER_LOG_LEVEL: ${TOPOLOGY_BUILDER_LOG_LEVEL}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
       MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
-      MDDO_MULTI_REGION_EXPR_DIR: ${MDDO_MULTI_REGION_EXPR_DIR}
     volumes:
       # for development
       - ./repos/netomox-exp/model_defs:/netomox-exp/model_defs
@@ -26,7 +24,6 @@ services:
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
       - ${SHARED_TOPOLOGIES_DIR}:${MDDO_TOPOLOGIES_DIR}
-      - ${SHARED_MULTI_REGION_EXPR_DIR}:${MDDO_MULTI_REGION_EXPR_DIR} # for multi-region-experiments
     depends_on:
       - batfish-wrapper
   batfish-wrapper:

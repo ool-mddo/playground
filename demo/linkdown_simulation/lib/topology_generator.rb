@@ -23,11 +23,11 @@ module LinkdownSimulation
     end
 
     def generate_snapshot_patterns(network, snapshot)
-      LOGGER.info "[#{network}/#{snapshot}] Generate logical snapshot"
+      LinkdownSimulation.logger.info "[#{network}/#{snapshot}] Generate logical snapshot"
       # TODO: if physical_ss_only=True, removed in configs/network/snapshot/snapshot_info.json
       url = "/configs/#{network}/#{snapshot}/snapshot_patterns"
       # response: snapshot_patterns
-      response = mddo_post(url)
+      response = LinkdownSimulation.mddo_post(url)
 
       snapshot_patterns = parse_json_str(response.body)
       # when a target snapshot specified
@@ -54,7 +54,7 @@ module LinkdownSimulation
     #   }
     # }
     def generate_snapshot_dict(model_info_file)
-      LOGGER.info 'Generate logical snapshots: link-down patterns'
+      LinkdownSimulation.logger.info 'Generate logical snapshots: link-down patterns'
       snapshot_dict = {}
 
       # model_info: physical snapshot info...origination points
@@ -62,26 +62,26 @@ module LinkdownSimulation
       read_model_info_list(model_info_file).each do |model_info|
         network = model_info[:network]
         snapshot = model_info[:snapshot]
-        LOGGER.debug "Target: #{network}/#{snapshot}"
+        LinkdownSimulation.logger.debug "Target: #{network}/#{snapshot}"
 
         # if -s (--snapshot) have logical snapshot name,
         # then snapshot_dict must has physical snapshot that correspond the logical one
         next if options.key?(:snapshot) && !options[:snapshot].start_with?(snapshot)
 
-        LOGGER.debug "Add physical snapshot info of #{snapshot} to #{network}"
+        LinkdownSimulation.logger.debug "Add physical snapshot info of #{snapshot} to #{network}"
         snapshot_dict[network] = { physical: [], logical: [] } unless snapshot_dict.keys.include?(network)
         # set physical snapshot info of the network
         snapshot_dict[network][:physical].push(model_info)
 
         next if options.key?(:phy_ss_only) && options[:phy_ss_only]
 
-        LOGGER.debug "Add logical snapshot info of #{snapshot} to #{network}"
+        LinkdownSimulation.logger.debug "Add logical snapshot info of #{snapshot} to #{network}"
         snapshot_patterns = generate_snapshot_patterns(network, snapshot)
         # set logical snapshot info of the network
         snapshot_dict[network][:logical] = snapshot_patterns
       end
 
-      LOGGER.debug "snapshot_dict: #{snapshot_dict}"
+      LinkdownSimulation.logger.debug "snapshot_dict: #{snapshot_dict}"
       snapshot_dict
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -95,22 +95,22 @@ module LinkdownSimulation
       snapshot = snapshot_data[logical_snapshot?(snapshot_data) ? :target_snapshot_name : :snapshot]
       target_key = "#{network}/#{snapshot}"
 
-      LOGGER.info "[#{target_key}] Query configurations each snapshot and save it to file"
+      LinkdownSimulation.logger.info "[#{target_key}] Query configurations each snapshot and save it to file"
       url = "/queries/#{network}/#{snapshot}"
-      mddo_post(url)
+      LinkdownSimulation.mddo_post(url)
 
-      LOGGER.info "[#{target_key}] Generate topology file from query results"
+      LinkdownSimulation.logger.info "[#{target_key}] Generate topology file from query results"
       write_url = "/topologies/#{network}/#{snapshot}"
-      mddo_post(write_url)
+      LinkdownSimulation.mddo_post(write_url)
 
       return unless logical_snapshot?(snapshot_data)
 
-      LOGGER.info "[#{target_key}] Generate diff data and write back"
+      LinkdownSimulation.logger.info "[#{target_key}] Generate diff data and write back"
       src_snapshot = snapshot_data[:orig_snapshot_name]
       diff_url = "/topologies/#{network}/snapshot_diff/#{src_snapshot}/#{snapshot}"
-      diff_response = mddo_get(diff_url)
+      diff_response = LinkdownSimulation.mddo_get(diff_url)
       diff_topology_data = parse_json_str(diff_response.body)
-      mddo_post(write_url, { topology_data: diff_topology_data[:topology_data] })
+      LinkdownSimulation.mddo_post(write_url, { topology_data: diff_topology_data[:topology_data] })
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -142,10 +142,10 @@ module LinkdownSimulation
     # @param [Array<Hash>] netoviz_index_data Netoviz index data
     # @return [void]
     def save_netoviz_index(netoviz_index_data)
-      LOGGER.info 'Push (register) netoviz index'
-      LOGGER.debug "netoviz_index_data: #{netoviz_index_data}"
+      LinkdownSimulation.logger.info 'Push (register) netoviz index'
+      LinkdownSimulation.logger.debug "netoviz_index_data: #{netoviz_index_data}"
       url = '/topologies/index'
-      mddo_post(url, { index_data: netoviz_index_data })
+      LinkdownSimulation.mddo_post(url, { index_data: netoviz_index_data })
     end
   end
 end
