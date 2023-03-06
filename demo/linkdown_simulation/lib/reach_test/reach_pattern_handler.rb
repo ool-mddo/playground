@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 module LinkdownSimulation
+  # rubocop:disable Metrics/ClassLength
+
   # Reachability-test pattern handler
   class ReachPatternHandler
+    # rubocop:disable Metrics/MethodLength
+
     # @param [String] pattern_file Test pattern file name (yaml)
     def initialize(pattern_file)
       super()
@@ -13,13 +17,14 @@ module LinkdownSimulation
       @env_table = data['environment']
       @group_table = data['groups']
       @patterns = data['patterns']
-      logger.debug "Pattern env: #{@env_table}"
+      @logger.debug "Pattern env: #{@env_table}"
 
       validate_environment
       @intf_list = @rest_api.fetch_all_interface_list(@env_table['network'], @env_table['snapshot'])
       validate_keys_in_patterns
       validate_node_intf_in_groups
     end
+    # rubocop:enable Metrics/MethodLength
 
     # @return [Array<Hash>]
     def expand_patterns
@@ -121,7 +126,7 @@ module LinkdownSimulation
       find_all_intfs_of_node(node).find { |intf_item| intf_item[:interface] == intf }
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
 
     # return [void]
     def validate_node_intf_in_groups
@@ -150,6 +155,7 @@ module LinkdownSimulation
       end
       exit 1 if found_error
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
   end
+  # rubocop:enable Metrics/ClassLength
 end

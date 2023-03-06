@@ -8,8 +8,6 @@ require_relative 'lib/reach_test/reach_result_converter'
 module LinkdownSimulation
   # topology data operator
   class Simulator < TopologyGenerator
-    # rubocop:disable Metrics/AbcSize
-
     desc 'generate_topology [options]', 'Generate topology from config'
     method_option :model_info, aliases: :m, type: :string, default: 'model_info.json', desc: 'Model info (json)'
     method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
@@ -20,8 +18,8 @@ module LinkdownSimulation
     def generate_topology
       LinkdownSimulation.change_log_level(options[:log_level]) if options.key?(:log_level)
       # check
-      LinkdownSimulation.logger.info "option: #{options}"
-      LinkdownSimulation.logger.info "model_info: #{options[:model_info]}"
+      @logger.info "option: #{options}"
+      @logger.info "model_info: #{options[:model_info]}"
 
       # scenario
       snapshot_dict = generate_snapshot_dict(options[:model_info])
@@ -29,8 +27,6 @@ module LinkdownSimulation
       save_netoviz_index(netoviz_index_data)
       print_data(snapshot_dict)
     end
-    # rubocop:enable Metrics/AbcSize
-
     # rubocop:disable Metrics/AbcSize
 
     desc 'compare_subsets [options]', 'Compare topology data before linkdown'
@@ -43,7 +39,7 @@ module LinkdownSimulation
       network = options[:network].intern # read json with symbolize_names: true
       snapshot = options[:snapshot] # source (physical) snapshot
 
-      snapshot_patterns = LinkdownSimulation.fetch_snapshot_patterns(network, snapshot)
+      snapshot_patterns = @rest_api.fetch_snapshot_patterns(network, snapshot)
       network_sets_diffs = snapshot_patterns.map do |snapshot_pattern|
         source_snapshot = snapshot_pattern[:source_snapshot_name]
         target_snapshot = snapshot_pattern[:target_snapshot_name]
@@ -60,7 +56,7 @@ module LinkdownSimulation
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
     # @return [void]
     def extract_subsets
-      topology_data = LinkdownSimulation.fetch_topology_data(options[:network], options[:snapshot])
+      topology_data = @rest_api.fetch_topology_data(options[:network], options[:snapshot])
       nws = Netomox::Topology::DisconnectedVerifiableNetworks.new(topology_data)
       print_data(nws.find_all_network_sets.to_array)
     end

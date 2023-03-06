@@ -9,6 +9,11 @@ require_relative 'linkdown_simulation'
 module LinkdownSimulation
   # scenario base class
   class ScenarioBase < Thor
+    def initialize(*args)
+      super
+      @logger = LinkdownSimulation.logger
+      @rest_api = LinkdownSimulation.rest_api
+    end
 
     private
 
