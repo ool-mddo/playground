@@ -6,13 +6,17 @@ module LinkdownSimulation
     # @param [String] pattern_file Test pattern file name (yaml)
     def initialize(pattern_file)
       super()
+      @logger = LinkdownSimulation.logger
+      @rest_api = LinkdownSimulation.rest_api
+
       data = YAML.load_file(pattern_file)
       @env_table = data['environment']
-      LinkdownSimulation.logger.debug "Pattern env: #{@env_table}"
       @group_table = data['groups']
       @patterns = data['patterns']
+      logger.debug "Pattern env: #{@env_table}"
+
       validate_environment
-      @intf_list = LinkdownSimulation.fetch_all_interface_list(@env_table['network'], @env_table['snapshot'])
+      @intf_list = @rest_api.fetch_all_interface_list(@env_table['network'], @env_table['snapshot'])
       validate_keys_in_patterns
       validate_node_intf_in_groups
     end
@@ -33,19 +37,19 @@ module LinkdownSimulation
 
     # @return [void]
     def validate_environment
-      networks = LinkdownSimulation.fetch_networks
+      networks = @rest_api.fetch_networks
       network = @env_table['network']
       snapshot = @env_table['snapshot']
 
       if networks.nil? || !networks.include?(network)
-        LinkdownSimulation.logger.error "Network:#{network} is not found in batfish (#{networks})"
+        @logger.error "Network:#{network} is not found in batfish (#{networks})"
         exit 1
       end
 
-      snapshots = LinkdownSimulation.fetch_snapshots(network, true)
+      snapshots = @rest_api.fetch_snapshots(network, true)
       return if !snapshots.nil? && snapshots.include?(snapshot)
 
-      LinkdownSimulation.logger.error "Snapshot:#{snapshot} is not found in network:#{network}"
+      @logger.error "Snapshot:#{snapshot} is not found in network:#{network}"
       exit 1
     end
     # rubocop:enable Metrics/MethodLength
@@ -97,7 +101,7 @@ module LinkdownSimulation
         pair.each do |group_key|
           next if @group_table.key?(group_key)
 
-          LinkdownSimulation.logger.warn "Key:#{group_key} is not found in groups"
+          @logger.warn "Key:#{group_key} is not found in groups"
           found_error = true
         end
       end
@@ -126,20 +130,20 @@ module LinkdownSimulation
         intf_paths.each do |intf_path|
           names = intf_path_to_names(intf_path)
           if names.empty?
-            LinkdownSimulation.logger.error "intf:#{intf_path} in #{grp_key} is incorrect format"
+            @logger.error "intf:#{intf_path} in #{grp_key} is incorrect format"
             found_error = true
             next
           end
 
           node, intf = names
           unless find_all_intfs_of_node(node)
-            LinkdownSimulation.logger.error "node:#{node} is not found in #{grp_key}"
+            @logger.error "node:#{node} is not found in #{grp_key}"
             found_error = true
             next
           end
           next if find_intf_in_node(node, intf)
 
-          LinkdownSimulation.logger.error "Error: intf:#{node}[#{intf}] is not found in #{grp_key}"
+          @logger.error "Error: intf:#{node}[#{intf}] is not found in #{grp_key}"
           found_error = true
           next
         end

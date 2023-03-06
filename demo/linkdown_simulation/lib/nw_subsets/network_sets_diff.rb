@@ -37,11 +37,13 @@ module LinkdownSimulation
     # @param [String] orig_snapshot Origin snapshot name
     # @param [String] target_snapshot Target snapshot name
     def initialize(network, orig_snapshot, target_snapshot)
+      rest_api = LinkdownSimulation.rest_api
+
       @orig_ss_path = "#{network}/#{orig_snapshot}"
-      @orig_topology = LinkdownSimulation.fetch_topology_data(network, orig_snapshot)
+      @orig_topology = rest_api.fetch_topology_data(network, orig_snapshot)
       @orig_sets = disconnected_check(@orig_topology)
       @target_ss_path = "#{network}/#{target_snapshot}"
-      @target_topology = LinkdownSimulation.fetch_topology_data(network, target_snapshot)
+      @target_topology = rest_api.fetch_topology_data(network, target_snapshot)
       @target_sets = disconnected_check(@target_topology)
       # Hash, { network_name: { subsets_count_diff: Integer, elements_diff: Array<String> }}
       # @see NetworkSets#-, NetworkSets#subtract_result

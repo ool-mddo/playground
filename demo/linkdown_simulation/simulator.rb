@@ -20,7 +20,6 @@ module LinkdownSimulation
     def generate_topology
       LinkdownSimulation.change_log_level(options[:log_level]) if options.key?(:log_level)
       # check
-      LinkdownSimulation.logger.info "api host: #{API_HOST}"
       LinkdownSimulation.logger.info "option: #{options}"
       LinkdownSimulation.logger.info "model_info: #{options[:model_info]}"
 

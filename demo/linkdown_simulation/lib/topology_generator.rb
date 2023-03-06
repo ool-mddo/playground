@@ -27,7 +27,7 @@ module LinkdownSimulation
       # TODO: if physical_ss_only=True, removed in configs/network/snapshot/snapshot_info.json
       url = "/configs/#{network}/#{snapshot}/snapshot_patterns"
       # response: snapshot_patterns
-      response = LinkdownSimulation.mddo_post(url)
+      response = LinkdownSimulation.rest_api.post(url)
 
       snapshot_patterns = parse_json_str(response.body)
       # when a target snapshot specified
@@ -97,20 +97,20 @@ module LinkdownSimulation
 
       LinkdownSimulation.logger.info "[#{target_key}] Query configurations each snapshot and save it to file"
       url = "/queries/#{network}/#{snapshot}"
-      LinkdownSimulation.mddo_post(url)
+      LinkdownSimulation.rest_api.post(url)
 
       LinkdownSimulation.logger.info "[#{target_key}] Generate topology file from query results"
       write_url = "/topologies/#{network}/#{snapshot}"
-      LinkdownSimulation.mddo_post(write_url)
+      LinkdownSimulation.rest_api.post(write_url)
 
       return unless logical_snapshot?(snapshot_data)
 
       LinkdownSimulation.logger.info "[#{target_key}] Generate diff data and write back"
       src_snapshot = snapshot_data[:orig_snapshot_name]
       diff_url = "/topologies/#{network}/snapshot_diff/#{src_snapshot}/#{snapshot}"
-      diff_response = LinkdownSimulation.mddo_get(diff_url)
+      diff_response = LinkdownSimulation.rest_api.fetch(diff_url)
       diff_topology_data = parse_json_str(diff_response.body)
-      LinkdownSimulation.mddo_post(write_url, { topology_data: diff_topology_data[:topology_data] })
+      LinkdownSimulation.rest_api.post(write_url, { topology_data: diff_topology_data[:topology_data] })
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -145,7 +145,7 @@ module LinkdownSimulation
       LinkdownSimulation.logger.info 'Push (register) netoviz index'
       LinkdownSimulation.logger.debug "netoviz_index_data: #{netoviz_index_data}"
       url = '/topologies/index'
-      LinkdownSimulation.mddo_post(url, { index_data: netoviz_index_data })
+      LinkdownSimulation.rest_api.post(url, { index_data: netoviz_index_data })
     end
   end
 end
