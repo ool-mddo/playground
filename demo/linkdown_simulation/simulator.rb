@@ -15,7 +15,7 @@ module LinkdownSimulation
     desc 'generate_topology [options]', 'Generate topology from config'
     method_option :model_info, aliases: :m, type: :string, default: 'model_info.json', desc: 'Model info (json)'
     method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
-    method_option :snapshot, aliases: :s, type: :string, desc: 'Snapshot name'
+    method_option :snapshot, aliases: :s, type: :string, desc: 'Snapshot name (physical)'
     method_option :phy_ss_only, aliases: :p, type: :boolean, desc: 'Physical snapshot only'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
     method_option :log_level, type: :string, enum: %w[fatal error warn debug info], default: 'info', desc: 'Log level'
@@ -32,8 +32,10 @@ module LinkdownSimulation
       # option
       api_opts = { model_info: read_json_file(options[:model_info]) }
       if options.key?(:network)
-        api_opts[:network] = options[:network]
-        api_opts[:snapshot] = options[:snapshot] if options.key?(:snapshot)
+        api_opts[:model_info].filter! { |model_info| model_info[:network] == options[:network] }
+        if options.key?(:snapshot)
+          api_opts[:model_info].filter! { |model_info| model_info[:snapshot] == options[:snapshot] }
+        end
       end
       api_opts[:phy_ss_only] = options[:phy_ss_only] if options.key?(:phy_ss_only)
       if options.key?(:off_node)
