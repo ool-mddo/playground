@@ -19,6 +19,8 @@ module LinkdownSimulation
     method_option :phy_ss_only, aliases: :p, type: :boolean, desc: 'Physical snapshot only'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
     method_option :log_level, type: :string, enum: %w[fatal error warn debug info], default: 'info', desc: 'Log level'
+    method_option :off_node, type: :string, desc: 'Node name to down'
+    method_option :off_intf_re, type: :string, desc: 'Interface name to down (regexp)'
     # @return [void]
     def generate_topology
       change_log_level(options[:log_level]) if options.key?(:log_level)
@@ -34,6 +36,11 @@ module LinkdownSimulation
         api_opts[:snapshot] = options[:snapshot] if options.key?(:snapshot)
       end
       api_opts[:phy_ss_only] = options[:phy_ss_only] if options.key?(:phy_ss_only)
+      if options.key?(:off_node)
+        api_opts[:off_node] = options[:off_node]
+        api_opts[:off_intf_re] = options[:off_intf_re] if options.key?(:off_intf_re)
+      end
+
       # send request
       url = '/model-conductor/generate-topology'
       response = @rest_api.post(url, api_opts)
