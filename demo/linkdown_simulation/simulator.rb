@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
-require_relative 'lib/topology_generator'
+require_relative 'lib/scenario_base'
 require_relative 'lib/nw_subsets/network_sets_diff'
 require_relative 'lib/reach_test/reach_tester'
 require_relative 'lib/reach_test/reach_result_converter'
 
 module LinkdownSimulation
   # topology data operator
-  class Simulator < TopologyGenerator
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+
+  # Linkdown simulation commands
+  class Simulator < ScenarioBase
     desc 'generate_topology [options]', 'Generate topology from config'
     method_option :model_info, aliases: :m, type: :string, default: 'model_info.json', desc: 'Model info (json)'
     method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
@@ -15,18 +19,28 @@ module LinkdownSimulation
     method_option :phy_ss_only, aliases: :p, type: :boolean, desc: 'Physical snapshot only'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
     method_option :log_level, type: :string, enum: %w[fatal error warn debug info], default: 'info', desc: 'Log level'
+    # @return [void]
     def generate_topology
-      LinkdownSimulation.change_log_level(options[:log_level]) if options.key?(:log_level)
+      change_log_level(options[:log_level]) if options.key?(:log_level)
+
       # check
       @logger.info "option: #{options}"
       @logger.info "model_info: #{options[:model_info]}"
 
-      # scenario
-      snapshot_dict = generate_snapshot_dict(options[:model_info])
-      netoviz_index_data = convert_query_to_topology(snapshot_dict)
-      save_netoviz_index(netoviz_index_data)
-      print_data(snapshot_dict)
+      # option
+      api_opts = { model_info: read_json_file(options[:model_info]) }
+      if options.key?(:network)
+        api_opts[:network] = options[:network]
+        api_opts[:snapshot] = options[:snapshot] if options.key?(:snapshot)
+      end
+      api_opts[:phy_ss_only] = options[:phy_ss_only] if options.key?(:phy_ss_only)
+      # send request
+      url = '/model-conductor/generate-topology'
+      response = @rest_api.post(url, api_opts)
+      print_data(parse_json_str(response.body))
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
     # rubocop:disable Metrics/AbcSize
 
     desc 'compare_subsets [options]', 'Compare topology data before linkdown'
@@ -74,7 +88,7 @@ module LinkdownSimulation
     method_option :log_level, type: :string, enum: %w[fatal error warn debug info], default: 'info', desc: 'Log level'
     # @return [void]
     def test_reachability
-      LinkdownSimulation.change_log_level(options[:log_level]) if options.key?(:log_level)
+      change_log_level(options[:log_level]) if options.key?(:log_level)
 
       tester = ReachTester.new(options[:test_pattern])
       reach_results = tester.exec_all_traceroute_tests(options[:network], options[:snapshot_re])

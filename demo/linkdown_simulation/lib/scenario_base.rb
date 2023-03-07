@@ -17,6 +17,13 @@ module LinkdownSimulation
 
     private
 
+    # @param [String] severity Log level
+    # @return @void
+    def change_log_level(severity)
+      # alias of the module function
+      LinkdownSimulation.change_log_level(severity)
+    end
+
     # @param [String] file_path File path
     # @return [Object] data
     def read_json_file(file_path)

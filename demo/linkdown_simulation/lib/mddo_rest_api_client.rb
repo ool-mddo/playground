@@ -15,19 +15,6 @@ module LinkdownSimulation
       @http_client.receive_timeout = 60 * 60 * 4 # 60sec * 60min * 4h
     end
 
-    # @param [HTTP::Message] response HTTP response
-    # @return [Boolean]
-    def error_response?(response)
-      # Error when status code is not 2xx
-      response.status % 100 == 2
-    end
-
-    # @param [HTTP::Message] response HTTP response
-    # @return [Object, nil]
-    def fetch_response(response)
-      error_response?(response) ? nil : JSON.parse(response.body, { symbolize_names: true })
-    end
-
     # @param [String] api_path PATH of REST API
     # @param [Hash] data Data to post
     # @return [HTTP::Message,nil] Reply
@@ -123,6 +110,21 @@ module LinkdownSimulation
       #   - ...
       response = fetch(url, param)
       fetch_response(response)
+    end
+
+    private
+
+    # @param [HTTP::Message] response HTTP response
+    # @return [Boolean]
+    def error_response?(response)
+      # Error when status code is not 2xx
+      response.status % 100 == 2
+    end
+
+    # @param [HTTP::Message] response HTTP response
+    # @return [Object, nil]
+    def fetch_response(response)
+      error_response?(response) ? nil : JSON.parse(response.body, { symbolize_names: true })
     end
   end
 end
