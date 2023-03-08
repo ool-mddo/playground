@@ -32,8 +32,10 @@ services:
       BATFISH_HOST: batfish
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
+      MDDO_GIT_ALLOWED_CONFIGS_REPOSITORY: ${MDDO_CONFIGS_DIR}/pushed_configs
       PYTHONUNBUFFERED: 1
     volumes:
+      - ./.git:${MDDO_DIR}/.git # git dir of under CONFIGS_DIR submodules
       - ./repos/batfish-wrapper:/batfish-wrapper # for development
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}

@@ -8,10 +8,45 @@ require_relative 'lib/reach_test/reach_result_converter'
 module LinkdownSimulation
   # topology data operator
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
 
   # Linkdown simulation commands
   class Simulator < ScenarioBase
+    desc 'change_branch [options]', 'Change branch of configs/network repository'
+    method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
+    method_option :branch, aliases: :b, type: :string, required: true, desc: 'Branch name'
+    def change_branch
+      api_opts = { name: options[:branch] }
+      url = "/configs/#{options[:network]}/branch"
+      response = @rest_api.post(url, api_opts)
+      print_data(parse_json_str(response.body))
+    end
+
+    desc 'fetch_branch [options]', 'Print current branch of configs/network repository'
+    method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
+    def fetch_branch
+      url = "/configs/#{options[:network]}/branch"
+      response = @rest_api.fetch(url)
+      print_data(parse_json_str(response.body))
+    end
+
+    desc 'load_snapshot [options]', 'Load configs into batfish as a snapshot'
+    method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
+    method_option :snapshot, aliases: :s, type: :string, required: true, desc: 'Snapshot name'
+    def load_snapshot
+      url = "/batfish/#{options[:network]}/#{options[:snapshot]}/register"
+      response = @rest_api.post(url)
+      print_data(parse_json_str(response.body))
+    end
+
+    desc 'fetch_snapshots [options]', 'Print snapshots in network on batfish'
+    method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
+    def fetch_snapshots
+      url = "/batfish/#{options[:network]}/snapshots"
+      response = @rest_api.fetch(url)
+      print_data(parse_json_str(response.body))
+    end
+
     desc 'generate_topology [options]', 'Generate topology from config'
     method_option :model_info, aliases: :m, type: :string, default: 'model_info.json', desc: 'Model info (json)'
     method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
@@ -118,7 +153,7 @@ module LinkdownSimulation
       save_json_file(reach_results_summary, '.test_detail.json')
       exec("bundle exec ruby #{__dir__}/lib/reach_test/test_traceroute_result.rb -v silent")
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize
   end
 end
 
