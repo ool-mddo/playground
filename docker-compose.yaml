@@ -5,8 +5,6 @@ services:
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
     tty: true # for rerun (requires console input)
-    ports:
-      - ${NETOMOX_EXP_PORT}:9292
     environment:
       NETOMOX_LOG_LEVEL: ${NETOMOX_LOG_LEVEL}
       TOPOLOGY_BUILDER_LOG_LEVEL: ${TOPOLOGY_BUILDER_LOG_LEVEL}
