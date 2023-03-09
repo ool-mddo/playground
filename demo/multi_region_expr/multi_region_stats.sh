@@ -1,9 +1,10 @@
 #!/usr/bin/bash
+# set -x # for debug
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 echo "# script directory: $SCRIPT_DIR}"
 # work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/.." || exit
+cd "${SCRIPT_DIR}/../../" || exit
 echo "# working directory: $(pwd)"
 
 TARGET_CONFIGS_BRANCH=$1
@@ -15,10 +16,10 @@ EXEC_LOG_FILE="${STATS_LOG_DIR}/exec.log"
 
 TIME=/usr/bin/time # use GNU-time instead of bash-built-in-time
 NETWORK="pushed_configs"
-EXEC_NETOMOX="docker-compose -f docker-compose.yml exec netomox-exp"
 TIME_FMT="real %e, user %U, sys %S"
-BE_RAKE="bundle exec rake"
-RAKE_TASKS="model_dirs simulation_pattern snapshot_to_model netoviz_index netoviz_model netoviz_layout netomox_diff"
+REST_HEADER="Content-Type: application/json"
+TOPO_GEN_URL="http://localhost:15000/model-conductor/generate-topology"
+MODEL_INFO="{$SCRIPT_DIR}/model_info.json"
 LOGGING_DELAY=5 # sec
 
 function epoch () {
@@ -30,12 +31,12 @@ function exec_log () {
   echo "$message" | tee -a "$EXEC_LOG_FILE"
 }
 
-function exec_rake_task () {
+function exec_generate_topology () {
   task=$1
   exec_log "BEGIN TASK: $task, $(epoch)"
   # for time command arguments expansion: without variable quoting
   # shellcheck disable=SC2086
-  task_time=$( { $TIME -f "$TIME_FMT" $EXEC_NETOMOX $BE_RAKE $task NETWORK=$NETWORK MDDO_USE_PARALLEL=1 > /dev/null; } 2>&1 )
+  task_time=$( { $TIME -f "$TIME_FMT" curl -s -X POST -H "$REST_HEADER" -d @$MODEL_INFO $TOPO_GEN_URL > /dev/null; } 2>&1 )
   exec_log "END TASK: $task, $(epoch), $task_time"
 }
 
@@ -71,9 +72,7 @@ sleep $LOGGING_DELAY
 
 # start tasks
 exec_log "BEGIN CONFIGS: $TARGET_CONFIGS_BRANCH, $(epoch) "
-for rake_task in $RAKE_TASKS; do
-  exec_rake_task "$rake_task"
-done
+exec_generate_topology "generate_topology"
 exec_log "END CONFIGS: $TARGET_CONFIGS_BRANCH, $(epoch)"
 
 # stop docker stats log
@@ -82,9 +81,9 @@ kill $pid
 exec_log "END LOGGING: $STATS_LOG_FILE, $(epoch)"
 
 # backup generated topology files
-tar czf models.tar.gz "$SHARED_MODELS_DIR"
-mv models.tar.gz "$STATS_LOG_DIR"
-tar czf topologies.tar.gz "$SHARED_NETOVIZ_MODEL_DIR"
+tar czf queries.tar.gz "$SHARED_QUERIES_DIR"
+mv queries.tar.gz "$STATS_LOG_DIR"
+tar czf topologies.tar.gz "$SHARED_TOPOLOGIES_DIR"
 mv topologies.tar.gz "$STATS_LOG_DIR"
 
 # parse stats log

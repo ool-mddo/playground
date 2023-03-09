@@ -3,8 +3,3 @@ queries
 topologies
 .idea
 .vscode
-
-docker_stats_*/
-*.dat
-*.zip
-*.log

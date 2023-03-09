@@ -130,8 +130,8 @@ class TimeDockerStats
   #   ]
   def select(names, cols)
     # Notice: KEEP order of (container-)names
-    stats = names.map { |name| @stats.find { |stat| stat.value(:name) == name } }
-                 .map { |stat| stat.select(cols) }
+    stat_values = names.map { |name| @stats.find { |stat| stat.value(:name) == name } }
+    stats = stat_values.map { |stat| stat.select(cols) }
     [@elapsed_time] + stats
   end
 end

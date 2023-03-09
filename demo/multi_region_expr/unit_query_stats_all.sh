@@ -2,10 +2,10 @@
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 # work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/.." || exit
+cd "${SCRIPT_DIR}/../../" || exit
 echo "# working directory: $(pwd)"
 
-DOCKER_COMPOSE="docker-compose -f docker-compose.yml"
+DOCKER_COMPOSE="docker compose -f docker-compose.min.yaml"
 COMPOSE_UP="$DOCKER_COMPOSE up -d"
 COMPOSE_DOWN="$DOCKER_COMPOSE down"
 STATS_LOG_FILE="${SCRIPT_DIR}/unit_query_stats.log"

@@ -37,7 +37,9 @@ end
 
 if opts['datafile']
   # convert stats log to per-stats-column data
-  container_names = %w[playground_netomox-exp_1 playground_batfish-wrapper_1 playground_batfish_1]
+  container_names = %w[
+    playground-model-conductor-1 playground-netomox-exp-1 playground-batfish-wrapper-1 playground-batfish-1
+  ]
   cols = %i[cpu_percent mem_usage mem_percent net_in net_out block_in block_out]
 
   cols.each do |col|

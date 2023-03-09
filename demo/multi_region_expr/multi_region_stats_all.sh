@@ -1,12 +1,13 @@
 #!/usr/bin/bash
+# set -x # for debug
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 echo "# script directory: $SCRIPT_DIR}"
 # work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/.." || exit
+cd "${SCRIPT_DIR}/../../" || exit
 echo "# working directory: $(pwd)"
 
-DOCKER_COMPOSE="docker-compose -f docker-compose.yml"
+DOCKER_COMPOSE="docker compose -f docker-compose.min.yaml"
 COMPOSE_UP="$DOCKER_COMPOSE up -d"
 COMPOSE_DOWN="$DOCKER_COMPOSE down"
 
@@ -24,6 +25,7 @@ function wait_sec () {
 # main
 
 branches=("202202demo" "5regiondemo" "10regiondemo" "20regiondemo" "40regiondemo")
+
 branch_length="${#branches[@]}"
 index=1
 

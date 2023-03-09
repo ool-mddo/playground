@@ -22,7 +22,7 @@ class StatsExec
 
   def bf_max_mem_usage
     stats_log = DockerStatsLog.new(@log_dir)
-    stats_log.pick_column_of('playground_batfish_1', :mem_usage).max
+    stats_log.pick_column_of('playground-batfish-1', :mem_usage).max
   end
 
   private
@@ -57,7 +57,7 @@ end
 ##########
 # main
 
-if ARGV.length == 0
+if ARGV.empty?
   warn 'Error: Target log directory is not specified'
   warn "  Usage: #{$PROGRAM_NAME} --dir docker_stats_dir [dir ...]"
   exit 1
@@ -65,12 +65,12 @@ end
 
 # search stats_dir in same directory that has this script
 stats_execs = ARGV.map { |stats_dir| StatsExec.new(File.join(__dir__, stats_dir)) }
-header = %w[total model_dirs simulation_pattern snapshot_to_model netoviz_index netoviz_model netoviz_layout netomox_diff]
+header = %w[total generate_topology]
 
-puts '# ' + %i[branch region link bf_max_mem_usage].concat(header).map(&:to_s).join(', ')
+puts "# #{%i[branch region link bf_max_mem_usage].concat(header).map(&:to_s).join(', ')}"
 stats_execs.each do |stats_exec|
-  diff_values = header.map {|hk| stats_exec.values(%W[#{hk}_begin #{hk}_end].map(&:intern))}
-                      .map {|time_pair| (time_pair[1] - time_pair[0]).round(2) }
+  diff_values = header.map { |hk| stats_exec.values(%W[#{hk}_begin #{hk}_end].map(&:intern)) }
+                      .map { |time_pair| (time_pair[1] - time_pair[0]).round(2) }
   values = [stats_exec.branch, stats_exec.region, stats_exec.link, stats_exec.bf_max_mem_usage]
   puts values.concat(diff_values).join(', ')
 end
