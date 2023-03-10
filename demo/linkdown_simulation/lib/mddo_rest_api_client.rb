@@ -47,7 +47,7 @@ module LinkdownSimulation
     # @return [Boolean]
     def error_response?(response)
       # Error when status code is not 2xx
-      response.status % 100 == 2
+      response.status / 100 != 2
     end
   end
 end
