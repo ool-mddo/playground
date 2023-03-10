@@ -2,6 +2,8 @@ version: "3"
 services:
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
+    volumes:
+      - ./assets/batfish/log4j2.yaml:/log4j2.yaml
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
     tty: true # for rerun (requires console input)
@@ -42,7 +44,7 @@ services:
   api-proxy:
     image: ${API_PROXY_IMAGE}:${API_PROXY_IMAGE_TAG}
     volumes:
-      - ./api-proxy.default.conf:/etc/nginx/conf.d/default.conf
+      - ./assets/api-proxy/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - ${API_PROXY_PORT}:80
     depends_on:
