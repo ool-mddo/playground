@@ -111,8 +111,7 @@ module LinkdownSimulation
 
     desc 'test_reachability PATTERN_FILE', 'Test L3 reachability with pattern file'
     method_option :snapshot_re, aliases: :s, type: :string, default: '.*', desc: 'snapshot name (regexp)'
-    method_option :test_pattern, aliases: :t, type: :string, default: 'traceroute_patterns.yaml',
-                                 desc: 'test pattern file'
+    method_option :test_pattern, aliases: :t, type: :string, require: true, desc: 'test pattern file'
     method_option :run_test, aliases: :r, type: :boolean, default: false, desc: 'Save result to files and run test'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json csv],
                            desc: 'Output format (to stdout, ignored with --run_test)'
@@ -135,7 +134,7 @@ module LinkdownSimulation
         exit 0
       end
 
-      file_base = options[:network]
+      file_base = reach_results[0][:network] || 'unknown-network'
       # save test result (detail/summary)
       save_json_file(reach_results, "#{file_base}.test_detail.json")
       save_json_file(reach_results_summary, "#{file_base}.test_summary.json")
