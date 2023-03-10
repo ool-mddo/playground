@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'lib/scenario_base'
-require_relative 'lib/nw_subsets/network_sets_diff'
 require_relative 'lib/reach_test/reach_tester'
 require_relative 'lib/reach_test/reach_result_converter'
 
@@ -85,8 +84,6 @@ module LinkdownSimulation
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-    # rubocop:disable Metrics/AbcSize
-
     desc 'compare_subsets [options]', 'Compare topology data before linkdown'
     method_option :min_score, aliases: :m, default: 0, type: :numeric, desc: 'Minimum score to print'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
@@ -94,29 +91,22 @@ module LinkdownSimulation
     method_option :snapshot, aliases: :s, type: :string, required: true, desc: 'Source (physical) snapshot name'
     # @return [void]
     def compare_subsets
-      network = options[:network].intern # read json with symbolize_names: true
-      snapshot = options[:snapshot] # source (physical) snapshot
-
-      snapshot_patterns = @rest_api.fetch_snapshot_patterns(network, snapshot)
-      network_sets_diffs = snapshot_patterns.map do |snapshot_pattern|
-        source_snapshot = snapshot_pattern[:source_snapshot_name]
-        target_snapshot = snapshot_pattern[:target_snapshot_name]
-        NetworkSetsDiff.new(network, source_snapshot, target_snapshot)
-      end
-      data = network_sets_diffs.map(&:to_data).reject { |d| d[:score] < options[:min_score] }
-      print_data(data)
+      url = "/model-conductor/subsets/#{options[:network]}/#{options[:snapshot]}/compare"
+      response = @rest_api.fetch(url, { min_score: options[:min_score] })
+      compare_data = parse_json_str(response.body)[:network_sets_diffs]
+      print_data(compare_data)
     end
-    # rubocop:enable Metrics/AbcSize
 
     desc 'extract_subsets [options]', 'Extract subsets for each layer in the topology'
     method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
     method_option :snapshot, aliases: :s, type: :string, required: true, desc: 'Snapshot name'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
     # @return [void]
-    def extract_subsets
-      topology_data = @rest_api.fetch_topology_data(options[:network], options[:snapshot])
-      nws = Netomox::Topology::DisconnectedVerifiableNetworks.new(topology_data)
-      print_data(nws.find_all_network_sets.to_array)
+    def fetch_subsets
+      url = "/model-conductor/subsets/#{options[:network]}/#{options[:snapshot]}"
+      response = @rest_api.fetch(url)
+      subsets = parse_json_str(response.body)[:subsets]
+      print_data(subsets)
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
