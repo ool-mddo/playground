@@ -4,6 +4,7 @@ require 'csv'
 require 'fileutils'
 require 'json'
 require 'thor'
+require 'yaml'
 require_relative 'linkdown_simulation'
 
 module LinkdownSimulation
@@ -28,6 +29,12 @@ module LinkdownSimulation
     # @return [Object] data
     def read_json_file(file_path)
       parse_json_str(File.read(file_path))
+    end
+
+    # @param [String] file_path File path
+    # @return [Object] data
+    def read_yaml_file(file_path)
+      YAML.load_file(file_path)
     end
 
     # @param [Object] data Data to save

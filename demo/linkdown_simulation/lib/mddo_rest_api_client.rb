@@ -41,53 +41,6 @@ module LinkdownSimulation
       response
     end
 
-    # @return [Array<String>,nil] networks
-    def fetch_networks
-      response = fetch('/batfish/networks')
-      fetch_response(response)
-    end
-
-    # @param [String] network Network name
-    # @param [Boolean] simulated Enable to get all simulated snapshots
-    # @return [Array<String>,nil] snapshots
-    def fetch_snapshots(network, simulated = false)
-      url = "/batfish/#{network}/snapshots"
-      response = simulated ? fetch(url, { 'simulated' => true }) : fetch(url)
-      fetch_response(response)
-    end
-
-    # @param [String] network Network name
-    # @param [String] snapshot Snapshot name
-    # @return [String,nil] json string
-    def fetch_all_interface_list(network, snapshot)
-      # - node: str
-      #   interface: str
-      #   addresses: []
-      # - ...
-      response = fetch("/batfish/#{network}/#{snapshot}/interfaces")
-      fetch_response(response)
-    end
-
-    # @param [String] network Network name in batfish
-    # @param [String] snapshot Snapshot name in network
-    # @param [String] src_node Source-node name
-    # @param [String] src_intf Source-interface name
-    # @param [String] dst_ip Destination IP address
-    # @return [Hash,nil]
-    def fetch_traceroute(network, snapshot, src_node, src_intf, dst_ip)
-      url = "/batfish/#{network}/#{snapshot}/#{src_node}/traceroute"
-      param = { 'interface' => src_intf, 'destination' => dst_ip }
-
-      # network: str
-      # snapshot: str
-      # result:
-      #   - Flow: {}
-      #     Traces: []
-      #   - ...
-      response = fetch(url, param)
-      fetch_response(response)
-    end
-
     private
 
     # @param [HTTP::Message] response HTTP response
@@ -95,12 +48,6 @@ module LinkdownSimulation
     def error_response?(response)
       # Error when status code is not 2xx
       response.status % 100 == 2
-    end
-
-    # @param [HTTP::Message] response HTTP response
-    # @return [Object, nil]
-    def fetch_response(response)
-      error_response?(response) ? nil : JSON.parse(response.body, { symbolize_names: true })
     end
   end
 end

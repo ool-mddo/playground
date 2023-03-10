@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'lib/scenario_base'
-require_relative 'lib/reach_test/reach_tester'
-require_relative 'lib/reach_test/reach_result_converter'
 
 module LinkdownSimulation
   # topology data operator
@@ -112,25 +110,28 @@ module LinkdownSimulation
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 
     desc 'test_reachability PATTERN_FILE', 'Test L3 reachability with pattern file'
-    method_option :network, aliases: :n, required: true, type: :string, desc: 'network name in batfish'
     method_option :snapshot_re, aliases: :s, type: :string, default: '.*', desc: 'snapshot name (regexp)'
-    method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json csv],
-                           desc: 'Output format (to stdout, ignored with --run_test)'
     method_option :test_pattern, aliases: :t, type: :string, default: 'traceroute_patterns.yaml',
                                  desc: 'test pattern file'
     method_option :run_test, aliases: :r, type: :boolean, default: false, desc: 'Save result to files and run test'
+    method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json csv],
+                           desc: 'Output format (to stdout, ignored with --run_test)'
     method_option :log_level, type: :string, enum: %w[fatal error warn debug info], default: 'info', desc: 'Log level'
     # @return [void]
     def test_reachability
       change_log_level(options[:log_level]) if options.key?(:log_level)
 
-      tester = ReachTester.new(options[:test_pattern])
-      reach_results = tester.exec_all_traceroute_tests(options[:network], options[:snapshot_re])
-      converter = ReachResultConverter.new(reach_results)
-      reach_results_summary = converter.summary
+      url = '/model-conductor/reach_test'
+      api_opts = { snapshot_re: options[:snapshot_re], test_pattern: read_yaml_file(options[:test_pattern]) }
+      response = @rest_api.post(url, api_opts)
+      response_data = parse_json_str(response.body)
+      reach_results = response_data[:reach_results]
+      reach_results_summary = response_data[:reach_results_summary]
+      reach_results_summary_table = response_data[:reach_results_summary_table]
+
       # for debug: without -r option, print data and exit
       unless options[:run_test]
-        options[:format] == 'csv' ? print_csv(converter.full_table) : print_data(reach_results_summary)
+        options[:format] == 'csv' ? print_csv(reach_results_summary_table) : print_data(reach_results_summary)
         exit 0
       end
 
@@ -138,10 +139,10 @@ module LinkdownSimulation
       # save test result (detail/summary)
       save_json_file(reach_results, "#{file_base}.test_detail.json")
       save_json_file(reach_results_summary, "#{file_base}.test_summary.json")
-      save_csv_file(converter.full_table, "#{file_base}.test_summary.csv")
+      save_csv_file(reach_results_summary_table, "#{file_base}.test_summary.csv")
       # test_traceroute_result.rb reads fixed file name
       save_json_file(reach_results_summary, '.test_detail.json')
-      exec("bundle exec ruby #{__dir__}/lib/reach_test/test_traceroute_result.rb -v silent")
+      exec("bundle exec ruby #{__dir__}/lib/test_traceroute_result.rb -v silent")
     end
     # rubocop:enable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize
   end
