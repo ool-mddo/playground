@@ -53,6 +53,7 @@ module LinkdownSimulation
     method_option :log_level, type: :string, enum: %w[fatal error warn debug info], default: 'info', desc: 'Log level'
     method_option :off_node, type: :string, desc: 'Node name to down'
     method_option :off_intf_re, type: :string, desc: 'Interface name to down (regexp)'
+    method_option :use_parallel, type: :boolean, desc: 'Use parallel'
     # @return [void]
     def generate_topology
       change_log_level(options[:log_level]) if options.key?(:log_level)
@@ -69,11 +70,12 @@ module LinkdownSimulation
           api_opts[:model_info].filter! { |model_info| model_info[:snapshot] == options[:snapshot] }
         end
       end
-      api_opts[:phy_ss_only] = options[:phy_ss_only] if options.key?(:phy_ss_only)
       if options.key?(:off_node)
         api_opts[:off_node] = options[:off_node]
         api_opts[:off_intf_re] = options[:off_intf_re] if options.key?(:off_intf_re)
       end
+      api_opts[:phy_ss_only] = options[:phy_ss_only] if options.key?(:phy_ss_only)
+      api_opts[:use_parallel] = options[:use_parallel] if options.key?(:use_parallel)
 
       # send request
       url = '/model-conductor/generate-topology'
