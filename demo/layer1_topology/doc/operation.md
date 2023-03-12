@@ -215,8 +215,10 @@ local     netbox-docker_netbox-redis-data
 
 - “Mountpoint” がコンテナホスト側のファイル実体です
 
+```text
+docker volume inspect netbox-docker_netbox-media-files
+```
 ```json
-playground/demo/layer1_topology/netbox-docker$ docker volume inspect netbox-docker_netbox-media-files
 [
     {
         "CreatedAt": "2022-08-25T11:18:29+09:00",
