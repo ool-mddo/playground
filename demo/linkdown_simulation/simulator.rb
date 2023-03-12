@@ -3,8 +3,6 @@
 require_relative 'lib/scenario_base'
 
 module LinkdownSimulation
-  # topology data operator
-
   # rubocop:disable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
 
   # Linkdown simulation commands

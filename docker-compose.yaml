@@ -52,6 +52,10 @@ services:
       - fish-tracer
   model-conductor:
     image: ${MODEL_CONDUCTOR_IMAGE}:${MODEL_CONDUCTOR_IMAGE_TAG}
+    environment:
+      BATFISH_WRAPPER_HOST: batfish-wrapper:5000
+      NETOMOX_EXP_HOST: netomox-exp:9292
+      MODEL_CONDUCTOR_LOG_LEVEL: ${MODEL_CONDUCTOR_LOG_LEVEL}
     tty: true # for rerun (requires console input)
     volumes:
       - ./repos/model-conductor/app.rb:/model-conductor/app.rb # for development
