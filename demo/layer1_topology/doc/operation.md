@@ -23,15 +23,15 @@
 
 ## 構成
 
-対象にするスナップショット pushed_configs/mddo_network のパスを確認しておきます
+対象にするスナップショット pushed_configs/mddo_network のパスを確認しておきます。
 
 ```
 playground/
   + configs/
-    + pushed_configs/ : ネットワークディレクトリ
-      + mddo_network/ : スナップショットディレクトリ (コンフィグを持つ)
+    + pushed_configs/  : ネットワークディレクトリ
+      + mddo_network/  : スナップショットディレクトリ (コンフィグを持つ)
   + demo/
-    + layer1_topology/
+    + layer1_topology/ : 作業ディレクトリ
 ```
 
 ## 初期セットアップ
@@ -52,7 +52,7 @@ python3, docker がインストールされていない場合はインストー�
 スクリプトを動かすための python パッケージをインストールします。
 
 ```
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 ### コンフィグの準備
@@ -60,6 +60,7 @@ pip install -r requirements
 コンフィグリポジトリのダウンロード、スクリプトで使用する python package をインストールします。
 
 - デモデータ(コンフィグ)を含むブランチ : デモ①②で使用したものを選択してください
+  (参照: [リンクダウンシミュレーション](../../linkdown_simulation/README.md))
 
 ```bash
 # in playground dir
@@ -117,16 +118,15 @@ docker compose up -d
 
 netbox の起動確認(起動するまで待機)
 
-- `waiting Netbox init` が出ている間は起動が終わっていません。スクリプトが終了すればOK
+`waiting Netbox init` が出ている間は起動が終わっていません。スクリプトが終了すれば起動しています。
+(ブラウザで接続: `http://localhost:8000`, user/pass = `admin`/ `admin`)
 
 ```bash
 # in demo/layer1_topology dir
 bash wait_service.sh
 ```
 
-`wait_service.sh` が終了していれば netbox が起動しています (ブラウザで接続→`http://localhost:8000`, user/pass = `admin`/ `admin`)
-
-- この時点ではなにもデータが入っていないことを確認してください
+この時点ではなにもデータが入っていないことを確認してください
 
 ![Initial screen of netbox](netbox_initial.png)
 
@@ -148,7 +148,7 @@ docker compose up -d
 
 コンフィグ(スナップショット)を batfish でパースして interface description 情報を抽出します。
 
-- スクリプト (description2netbox.py) は、いったんNW機器コンフィグを batfish に読ませて、インタフェース情報を抽出しています。取り出したインタフェース情報(ホスト・インタフェース名・デスクリプション)をもとにnetboxにデータを登録します。Cable情報は interface description (`to_<host>_<interface>`フォーマットの文字列)をもとに生成しています。
+- スクリプト (description2netbox.py) は、いったんネットワーク機器コンフィグを batfish に読ませて、インタフェース情報を抽出しています。取り出したインタフェース情報(ホスト・インタフェース名・デスクリプション)をもとにnetboxにデータを登録します。Cable情報は interface description (`to_<host>_<interface>`フォーマットの文字列)をもとに生成しています。
 - 冗長に思えるステップかもしれませんが、実環境ではそのほかの自動化処理(各デバイスのスクリプトに対するコンフィグや状態の自動収集等)を動かすためのインベントリとして netbox を使うことを想定しており、インベントリ情報のマスターとして netbox を挟む形になっています。
 
 ```bash
