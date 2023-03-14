@@ -7,6 +7,7 @@
     - [WebUI へのアクセス](#webui-%E3%81%B8%E3%81%AE%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9)
     - [ファイルのインポート・エクスポート](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%88%E3%83%BB%E3%82%A8%E3%82%AF%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%88)
     - [トポロジの追加](#%E3%83%88%E3%83%9D%E3%83%AD%E3%82%B8%E3%81%AE%E8%BF%BD%E5%8A%A0)
+  - [リンクの削除](#%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AE%E5%89%8A%E9%99%A4)
 
 <!-- /TOC -->
 
@@ -16,7 +17,7 @@
 
 ## 概要
 
-[Topology-designer](https://github.com/ool-mddo/topology-designer) はスタンドアロンで動く物理トポロジデータ編集ツールです。WebUI でグラフィカルにトポロジ医データを編集することができます。
+[Topology-designer](https://github.com/ool-mddo/topology-designer) はスタンドアロンで動く物理トポロジデータ編集ツールです。WebUI でグラフィカルに L1 トポロジデータを編集することができます。
 
 ## コンテナの起動
 
@@ -34,12 +35,12 @@ cd topology-designer
 docker compose up
 ```
 
-ビルド済みのコンテナイメージを使う場合は以下のようにしてください。ビルド済みイメージは開発用で、いくつかのファイルを同梱していないので、クローンしたリポジトリでそれらのファイル等をマウントして起動します。
+ビルド済みのコンテナイメージを使う場合は以下のようにしてください。ビルド済みイメージは開発用で、コードを同梱していないので、クローンしたリポジトリでそれらのファイル等をマウントして起動します。
 
 ```bash
 # in topology-designer dir
 docker pull ghcr.io/ool-mddo/topology-designer:v0.1.0
-docker run --rm  --name topology-designer -p 3000:3000 -v ./tsconfig.json:/app/tsconfig.json -v ./public:/app/public -v ./src:/app/src ghcr.io/ool-mddo/topology-designer:v0.1.0
+docker run --rm --name topology-designer -p 3000:3000 -v ./tsconfig.json:/app/tsconfig.json -v ./public:/app/public -v ./src:/app/src ghcr.io/ool-mddo/topology-designer:v0.1.0
 ```
 
 ## 操作
@@ -66,7 +67,7 @@ docker run --rm  --name topology-designer -p 3000:3000 -v ./tsconfig.json:/app/t
 
 ![edit-node](./topo_designer_edit_node.png)
 
-ダイアログにインタフェース名湯を入力して追加
+ダイアログにインタフェース名等を入力して追加
 
 ![add-interface](./topo_designer_add_interface.png)
 
@@ -80,6 +81,6 @@ docker run --rm  --name topology-designer -p 3000:3000 -v ./tsconfig.json:/app/t
 
 ## リンクの削除
 
-リンクの上で右クリックします。LAG 担っている場合は表示がまとめられているので、どのリンクを削除するかを選択します。
+リンクの上で右クリックします。LAG になっている場合は表示がまとめられているので、どのリンクを削除するかを選択します。
 
 ![delete-link](./topo_designer_delete_link.png)
