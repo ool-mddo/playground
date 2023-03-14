@@ -23,9 +23,7 @@ set xlabel 'Regions'
 set ylabel 'Elapsed-Time [sec]'
 plot \
   data_file using 2:5 with linespoints title 'total', \
-  data_file using 2:8 with linespoints title 'snapshot_to_model', \
-  data_file using 2:10 with linespoints title 'netoviz_model', \
-  data_file using 2:12 with linespoints title 'netomox_diff'
+  data_file using 2:6 with linespoints title 'generate_topology'
 
 set ylabel 'Batfish max mem usage [B]'
 plot data_file using 2:4 with linespoints title 'max mem usage'

@@ -3,7 +3,7 @@
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 # work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/../../" || exit
+cd "${SCRIPT_DIR}/../../../" || exit
 echo "# working directory: $(pwd)"
 
 TIME=/usr/bin/time # use GNU-time instead of bash-built-in-time
@@ -72,23 +72,23 @@ exec_cmd curl -s -X POST -H "$REST_HEADER" -d '{}' "${REST_QUERIES}/${NETWORK}/$
 PATTERN_DIR="${SCRIPT_DIR}/unit_tracert"
 
 echo "## cmd: tracert_neighbor_region"
-exec_reach_test "${PATTERN_DIR}/neighbor_region.yaml"
+exec_reach_test "${PATTERN_DIR}/neighbor_region.json"
 
 echo "## cmd: tracert_facing_region"
 case "$TARGET_CONFIGS_BRANCH" in
   "5regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_5.yaml"
+    exec_reach_test "${PATTERN_DIR}/facing_region_5.json"
     ;;
   "10regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_10.yaml"
+    exec_reach_test "${PATTERN_DIR}/facing_region_10.json"
     ;;
   "20regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_20.yaml"
+    exec_reach_test "${PATTERN_DIR}/facing_region_20.json"
     ;;
   "40regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_40.yaml"
+    exec_reach_test "${PATTERN_DIR}/facing_region_40.json"
     ;;
   *)
-    exec_reach_test "${PATTERN_DIR}/facing_region_2.yaml"
+    exec_reach_test "${PATTERN_DIR}/facing_region_2.json"
     ;;
 esac

@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 # work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/../../" || exit
+cd "${SCRIPT_DIR}/../../../" || exit
 echo "# working directory: $(pwd)"
 
 DOCKER_COMPOSE="docker compose -f docker-compose.min.yaml"

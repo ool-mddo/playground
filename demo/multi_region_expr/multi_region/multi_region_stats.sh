@@ -4,7 +4,7 @@
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 echo "# script directory: $SCRIPT_DIR}"
 # work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/../../" || exit
+cd "${SCRIPT_DIR}/../../../" || exit
 echo "# working directory: $(pwd)"
 
 TARGET_CONFIGS_BRANCH=$1
@@ -19,7 +19,7 @@ NETWORK="pushed_configs"
 TIME_FMT="real %e, user %U, sys %S"
 REST_HEADER="Content-Type: application/json"
 TOPO_GEN_URL="http://localhost:15000/model-conductor/generate-topology"
-MODEL_INFO="{$SCRIPT_DIR}/model_info.json"
+MODEL_INFO="${SCRIPT_DIR}/model_info.json"
 LOGGING_DELAY=5 # sec
 
 function epoch () {
@@ -88,6 +88,9 @@ mv topologies.tar.gz "$STATS_LOG_DIR"
 
 # parse stats log
 ruby "${SCRIPT_DIR}/docker_stats.rb" --dir "$STATS_LOG_DIR" --datafile
+
+# docker logs
+docker compose -f docker-compose.min.yaml logs > "${STATS_LOG_DIR}/docker.log"
 
 # check stats graph
 gnuplot -c "${SCRIPT_DIR}/docker_stats.gp" "$STATS_LOG_DIR"
