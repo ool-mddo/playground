@@ -1,5 +1,6 @@
 docker_stats_*/
 *.dat
-*.png
+multi_region/*.png
+unit_query/*.png
 *.zip
 *.log

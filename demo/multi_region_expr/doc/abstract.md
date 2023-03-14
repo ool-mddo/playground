@@ -1,6 +1,9 @@
 <!-- TOC -->
 
 - [概要](#%E6%A6%82%E8%A6%81)
+- [Test pattern](#test-pattern)
+- [性能調査](#%E6%80%A7%E8%83%BD%E8%AA%BF%E6%9F%BB)
+- [Results](#results)
 
 <!-- /TOC -->
 
