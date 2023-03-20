@@ -20,30 +20,15 @@
 [Topology-designer](https://github.com/ool-mddo/topology-designer) はスタンドアロンで動く物理トポロジデータ編集ツールです。WebUI でグラフィカルに L1 トポロジデータを編集することができます。
 
 ## コンテナの起動
-
-コードのダウンロード
-
-```bash
-git clone https://github.com/ool-mddo/topology-designer.git
-cd topology-designer
-```
-
-同梱されている docker-compose.yaml はコンテナイメージをビルドして起動するようになっています。初回起動時はコンテナイメージのビルドが行われます。
+:warning: [2023-03-20] `v0.1.0` は開発用で、コード類をコンテナ内に含んでいないため単体では起動しません(ボリュームマウントを設定してコード等をマウントする必要があります)。単独で使用したい場合は `main` を利用してください。
 
 ```bash
-# in topology-designer dir
-docker compose up
-```
-
-ビルド済みのコンテナイメージを使う場合は以下のようにしてください。ビルド済みイメージは開発用で、コードを同梱していないので、クローンしたリポジトリでそれらのファイル等をマウントして起動します。
-
-```bash
-# in topology-designer dir
-docker pull ghcr.io/ool-mddo/topology-designer:v0.1.0
-docker run --rm --name topology-designer -p 3000:3000 -v ./tsconfig.json:/app/tsconfig.json -v ./public:/app/public -v ./src:/app/src ghcr.io/ool-mddo/topology-designer:v0.1.0
+docker pull ghcr.io/ool-mddo/topology-designer:main
+docker run --rm --name topology-designer -p 3000:3000 ghcr.io/ool-mddo/topology-designer:main
 ```
 
 ## 操作
+
 ### WebUI へのアクセス
 
 デフォルトでは `http://localhost:3000` で起動しています。ブラウザでアクセスすると以下のような画面になります。
