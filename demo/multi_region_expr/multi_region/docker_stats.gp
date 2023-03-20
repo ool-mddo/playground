@@ -30,9 +30,10 @@ do for [data_file in data_files] {
   title_str = sprintf("%s", system("basename ".data_file))
   set title title_str noenhanced
   plot \
-    data_file using 1:2 with linespoints title 'netomox-exp', \
-    data_file using 1:3 with linespoints title 'batfish-wrapper', \
-    data_file using 1:4 with linespoints title 'batfish'
+    data_file using 1:2 with linespoints title 'model-conductor', \
+    data_file using 1:3 with linespoints title 'netomox-exp', \
+    data_file using 1:4 with linespoints title 'batfish-wrapper', \
+    data_file using 1:5 with linespoints title 'batfish'
 }
 
 unset multiplot
