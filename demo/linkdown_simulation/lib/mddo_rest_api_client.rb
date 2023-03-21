@@ -41,6 +41,14 @@ module LinkdownSimulation
       response
     end
 
+    def delete(api_path)
+      url = "http://#{API_HOST}/#{api_path}"
+      @logger.info "DELETE: #{url}"
+      response = @http_client.delete(url)
+      warn "# [ERROR] #{response.status} < DELETE #{url}" if error_response?(response)
+      response
+    end
+
     private
 
     # @param [HTTP::Message] response HTTP response
