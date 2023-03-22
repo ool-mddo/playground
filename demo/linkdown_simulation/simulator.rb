@@ -129,9 +129,13 @@ module LinkdownSimulation
     # @return [void]
     def test_reachability
       change_log_level(options[:log_level]) if options.key?(:log_level)
-
-      url = '/model-conductor/reach_test'
-      api_opts = { snapshot_re: options[:snapshot_re], test_pattern: read_yaml_file(options[:test_pattern]) }
+      test_pattern = read_yaml_file(options[:test_pattern])
+      network = test_pattern['environment']['network'] # read yaml is not symbolized
+      url = "/model-conductor/reachability/#{network}"
+      api_opts = {
+        snapshots: select_snapshots(network, options[:snapshot_re]),
+        test_pattern:
+      }
       response = @rest_api.post(url, api_opts)
       response_data = parse_json_str(response.body)
       reach_results = response_data[:reach_results]
@@ -156,6 +160,15 @@ module LinkdownSimulation
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
+
+    # @param [String] network Network name
+    # @param [String] snapshot_re Regexp string to select target snapshot
+    # @return [Array<String>] List of snapshots (matched snapshot_re)
+    def select_snapshots(network, snapshot_re)
+      response = @rest_api.fetch("/batfish/#{network}/snapshots", { simulated: true })
+      snapshots = JSON.parse(response.body)
+      snapshots.grep(Regexp.new(snapshot_re))
+    end
 
     # @param [Array<Hash>] model_info_list List of model-info (target physical snapshot)
     # @return [void]
