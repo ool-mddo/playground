@@ -1,5 +1,5 @@
 {
-  "snapshot_re": "mddo_network",
+  "snapshots": [ "mddo_network" ],
   "test_pattern": {
     "environment": {
       "network": "pushed_configs",

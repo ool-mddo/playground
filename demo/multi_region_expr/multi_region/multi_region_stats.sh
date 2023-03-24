@@ -16,10 +16,11 @@ EXEC_LOG_FILE="${STATS_LOG_DIR}/exec.log"
 
 TIME=/usr/bin/time # use GNU-time instead of bash-built-in-time
 NETWORK="pushed_configs"
+SNAPSHOT="mddo_network"
+POST_OPT='{ "label": "OOL-MDDO PJ network" }'
 TIME_FMT="real %e, user %U, sys %S"
 REST_HEADER="Content-Type: application/json"
-TOPO_GEN_URL="http://localhost:15000/model-conductor/generate-topology"
-MODEL_INFO="${SCRIPT_DIR}/model_info.json"
+CONDUCT_TOPO_URL="http://localhost:15000/conduct/${NETWORK}/${SNAPSHOT}/topology"
 LOGGING_DELAY=5 # sec
 
 function epoch () {
@@ -36,7 +37,7 @@ function exec_generate_topology () {
   exec_log "BEGIN TASK: $task, $(epoch)"
   # for time command arguments expansion: without variable quoting
   # shellcheck disable=SC2086
-  task_time=$( { $TIME -f "$TIME_FMT" curl -s -X POST -H "$REST_HEADER" -d @$MODEL_INFO $TOPO_GEN_URL > /dev/null; } 2>&1 )
+  task_time=$( { $TIME -f "$TIME_FMT" curl -s -X POST -H "$REST_HEADER" -d "$POST_OPT" $CONDUCT_TOPO_URL > /dev/null; } 2>&1 )
   exec_log "END TASK: $task, $(epoch), $task_time"
 }
 

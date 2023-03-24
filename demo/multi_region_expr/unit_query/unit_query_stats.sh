@@ -12,10 +12,12 @@ TIME_FMT="real %e, user %U, sys %S"
 NETWORK="pushed_configs"
 SNAPSHOT="mddo_network"
 REST_HEADER="Content-Type: application/json"
-REST_MODEL_CONDUCTOR="http://localhost:15000/model-conductor"
-REST_QUERIES="http://localhost:15000/queries"
-REST_TOPOLOGIES="http://localhost:15000/topologies"
-MODEL_INFO="${SCRIPT_DIR}/model_info_phy.json"
+API_PROXY_URL="http://localhost:15000"
+CONDUCT_TOPO_URL="${API_PROXY_URL}/conduct/${NETWORK}/${SNAPSHOT}/topology"
+CONDUCT_REACH_URL="${API_PROXY_URL}/conduct/${NETWORK}/reachability"
+QUERIES_URL="${API_PROXY_URL}/queries/${NETWORK}/${SNAPSHOT}"
+TOPOLOGIES_URL="${API_PROXY_URL}/topologies/${NETWORK}/${SNAPSHOT}/topology"
+POST_OPTS="${SCRIPT_DIR}/post_opts.json"
 
 function exec_cmd () {
   # for time command arguments expansion: without variable quoting
@@ -27,8 +29,7 @@ function exec_reach_test () {
   pattern_file=$1
   # for time command arguments expansion: without variable quoting
   # shellcheck disable=SC2086
-  $TIME -f "$TIME_FMT" curl -s -X POST -H "$REST_HEADER" -d @"$pattern_file" \
-    "${REST_MODEL_CONDUCTOR}/reach_test" > /dev/null
+  $TIME -f "$TIME_FMT" curl -s -X POST -H "$REST_HEADER" -d @"$pattern_file" "$CONDUCT_REACH_URL" > /dev/null
 }
 
 ##########
@@ -58,15 +59,15 @@ fi
 popd || exit 1
 
 echo "## cmd: topology_generate"
-exec_cmd curl -s -X POST -H "$REST_HEADER" -d @"$MODEL_INFO" "${REST_MODEL_CONDUCTOR}/generate-topology" > /dev/null
+exec_cmd curl -s -X POST -H "$REST_HEADER" -d @"$POST_OPTS" "$CONDUCT_TOPO_URL" > /dev/null
 echo "--- data check"
-curl -s "${REST_TOPOLOGIES}/${NETWORK}/${SNAPSHOT}/topology" | \
+curl -s "$TOPOLOGIES_URL" | \
   jq '."topology_data"' | \
   jq '."ietf-network:networks".network[] | select(."network-id" == "layer3") | .node[] | select(."node-id" | test("^Seg.*\\+$")) | ."node-id"'
 echo "---"
 
 echo "## cmd: single_snapshot_queries"
-exec_cmd curl -s -X POST -H "$REST_HEADER" -d '{}' "${REST_QUERIES}/${NETWORK}/${SNAPSHOT}" > /dev/null
+exec_cmd curl -s -X POST -H "$REST_HEADER" -d '{}' "$QUERIES_URL" > /dev/null
 
 # traceroute pattern defs dir
 PATTERN_DIR="${SCRIPT_DIR}/unit_tracert"

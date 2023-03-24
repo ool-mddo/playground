@@ -77,7 +77,7 @@ module LinkdownSimulation
       # send request
       snapshot_dict_list = []
       model_info_list.each do |model_info|
-        url = "/model-conductor/topology/#{model_info[:network]}/#{model_info[:snapshot]}"
+        url = "/conduct/#{model_info[:network]}/#{model_info[:snapshot]}/topology"
         opt_data[:label] = model_info[:label]
         response = @rest_api.post(url, opt_data)
         snapshot_dict_list.push(parse_json_str(response.body)[:snapshot_dict])
@@ -93,26 +93,27 @@ module LinkdownSimulation
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-    desc 'compare_subsets [options]', 'Compare topology data before linkdown'
+    desc 'compare_subsets [options]',
+         'Fetch subsets diff for all physical/logical snapshot topology to compare before/after linkdown'
     method_option :min_score, aliases: :m, default: 0, type: :numeric, desc: 'Minimum score to print'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
     method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
     method_option :snapshot, aliases: :s, type: :string, required: true, desc: 'Source (physical) snapshot name'
     # @return [void]
     def compare_subsets
-      url = "/model-conductor/subsets/#{options[:network]}/#{options[:snapshot]}/compare"
+      url = "/conduct/#{options[:network]}/#{options[:snapshot]}/subsets_diff"
       response = @rest_api.fetch(url, { min_score: options[:min_score] })
       compare_data = parse_json_str(response.body)[:network_sets_diffs]
       print_data(compare_data)
     end
 
-    desc 'extract_subsets [options]', 'Extract subsets for each layer in the topology'
+    desc 'fetch_subsets [options]', 'Fetch subsets for each layer in a snapshot topology'
     method_option :network, aliases: :n, type: :string, required: true, desc: 'Network name'
     method_option :snapshot, aliases: :s, type: :string, required: true, desc: 'Snapshot name'
     method_option :format, aliases: :f, default: 'json', type: :string, enum: %w[yaml json], desc: 'Output format'
     # @return [void]
     def fetch_subsets
-      url = "/model-conductor/subsets/#{options[:network]}/#{options[:snapshot]}"
+      url = "/conduct/#{options[:network]}/#{options[:snapshot]}/subsets"
       response = @rest_api.fetch(url)
       subsets = parse_json_str(response.body)[:subsets]
       print_data(subsets)
@@ -131,7 +132,7 @@ module LinkdownSimulation
       change_log_level(options[:log_level]) if options.key?(:log_level)
       test_pattern = read_yaml_file(options[:test_pattern])
       network = test_pattern['environment']['network'] # read yaml is not symbolized
-      url = "/model-conductor/reachability/#{network}"
+      url = "/conduct/#{network}/reachability"
       api_opts = {
         snapshots: select_snapshots(network, options[:snapshot_re]),
         test_pattern:
@@ -182,7 +183,7 @@ module LinkdownSimulation
 
     # rubocop:disable Metrics/AbcSize
 
-    # @return [Hash] post request options (/model-conductor/generate-topology)
+    # @return [Hash] post request options (/conduct/network/snapshot/topology)
     def opts_of_generate_topology
       # NOTICE: options is made by thor (CLI options)
       opt_data = {}
