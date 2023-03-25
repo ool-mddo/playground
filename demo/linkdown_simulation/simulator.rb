@@ -80,7 +80,7 @@ module LinkdownSimulation
         url = "/conduct/#{model_info[:network]}/#{model_info[:snapshot]}/topology"
         opt_data[:label] = model_info[:label]
         response = @rest_api.post(url, opt_data)
-        snapshot_dict_list.push(parse_json_str(response.body)[:snapshot_dict])
+        snapshot_dict_list.push(parse_json_str(response.body))
       end
 
       # merge snapshot_dict
@@ -103,7 +103,7 @@ module LinkdownSimulation
     def compare_subsets
       url = "/conduct/#{options[:network]}/#{options[:snapshot]}/subsets_diff"
       response = @rest_api.fetch(url, { min_score: options[:min_score] })
-      compare_data = parse_json_str(response.body)[:network_sets_diffs]
+      compare_data = parse_json_str(response.body)
       print_data(compare_data)
     end
 
@@ -115,7 +115,7 @@ module LinkdownSimulation
     def fetch_subsets
       url = "/conduct/#{options[:network]}/#{options[:snapshot]}/subsets"
       response = @rest_api.fetch(url)
-      subsets = parse_json_str(response.body)[:subsets]
+      subsets = parse_json_str(response.body)
       print_data(subsets)
     end
 
