@@ -21,6 +21,7 @@ services:
       - ./repos/netomox-exp/Rakefile:/netomox-exp/Rakefile
       - ./repos/netomox-exp/model_info.json:/netomox-exp/model_info.json
       - ./repos/netomox-exp/app.rb:/netomox-exp/app.rb
+      - ./repos/netomox-exp/config.ru:/netomox-exp/config.ru
       # data dirs
       - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
@@ -31,6 +32,8 @@ services:
     image: ${BATFISH_WRAPPER_IMAGE}:${BATFISH_WRAPPER_IMAGE_TAG}
     environment:
       BATFISH_HOST: batfish
+      BATFISH_WRAPPER_PYBATFISH_LOG_LEVEL: ${BATFISH_WRAPPER_PYBATFISH_LOG_LEVEL}
+      BATFISH_WRAPPER_LOG_LEVEL: ${BATFISH_WRAPPER_LOG_LEVEL}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
       MDDO_GIT_ALLOWED_CONFIGS_REPOSITORY: ${MDDO_CONFIGS_DIR}/pushed_configs
@@ -58,9 +61,10 @@ services:
       MODEL_CONDUCTOR_LOG_LEVEL: ${MODEL_CONDUCTOR_LOG_LEVEL}
     tty: true # for rerun (requires console input)
     volumes:
-      - ./repos/model-conductor/app.rb:/model-conductor/app.rb # for development
-      - ./repos/model-conductor/config.ru:/model-conductor/config.ru # for development
-      - ./repos/model-conductor/lib:/model-conductor/lib # for development
+      # for developoment
+      - ./repos/model-conductor/app.rb:/model-conductor/app.rb
+      - ./repos/model-conductor/config.ru:/model-conductor/config.ru
+      - ./repos/model-conductor/lib:/model-conductor/lib
     depends_on:
       - batfish-wrapper
       - netomox-exp
