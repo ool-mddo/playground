@@ -175,10 +175,7 @@ module LinkdownSimulation
     # @return [void]
     def clean_all_data(model_info_list)
       networks = model_info_list.map { |model_info| model_info[:network] }
-      networks.uniq.each do |network|
-        @rest_api.delete("/queries/#{network}")
-        @rest_api.delete("/topologies/#{network}")
-      end
+      networks.uniq.each { |network| @rest_api.delete("/conduct/#{network}") }
     end
 
     # rubocop:disable Metrics/AbcSize
