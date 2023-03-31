@@ -18,8 +18,6 @@ services:
       - ./repos/netomox-exp/model_defs:/netomox-exp/model_defs
       - ./repos/netomox-exp/lib:/netomox-exp/lib
       - ./repos/netomox-exp/exe:/netomox-exp/exe
-      - ./repos/netomox-exp/Rakefile:/netomox-exp/Rakefile
-      - ./repos/netomox-exp/model_info.json:/netomox-exp/model_info.json
       - ./repos/netomox-exp/app.rb:/netomox-exp/app.rb
       - ./repos/netomox-exp/config.ru:/netomox-exp/config.ru
       # data dirs
