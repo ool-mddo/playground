@@ -5,15 +5,17 @@
 * [Okinawa Open Labratory](https://www.okinawaopenlabs.org/)
   * [Model-Driven Network DevOps Project](https://www.okinawaopenlabs.org/mdnd)
 
+## Documents
+
+* [このプロジェクトの位置づけ](./doc/project_positioning.md)
+* [システムアーキテクチャ](./doc/system_architecture.md)
+
 ## Demonstration
 
 * [物理トポロジデータの生成と編集](./demo/layer1_topology/README.md)
 * [リンクダウンシミュレーション](./demo/linkdown_simulation/README.md)
 * [大規模ネットワークのシミュレーション性能調査](./demo/multi_region_expr/README.md) : (IEICE ICM 2022/07)
-
-## Documents
-
-* [システムアーキテクチャ](./doc/system_architecture.md)
+* [実環境をコンテナベースの検証環境にコピーして検証可能にする](./demo/copy_to_emulated_env/README.md)
 
 ## Reference
 

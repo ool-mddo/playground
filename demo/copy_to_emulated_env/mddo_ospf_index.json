@@ -1,0 +1,26 @@
+[
+  {
+    "label": "OSPF model (original_asis)",
+    "network": "mddo-ospf",
+    "snapshot": "original_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "OSPF model (emulated_asis)",
+    "network": "mddo-ospf",
+    "snapshot": "emulated_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "OSPF model (emulated_tobe)",
+    "network": "mddo-ospf",
+    "snapshot": "emulated_tobe",
+    "file": "topology.json"
+  },
+  {
+    "label": "OSPF model (original_tobe)",
+    "network": "mddo-ospf",
+    "snapshot": "original_tobe",
+    "file": "topology.json"
+  }
+]
