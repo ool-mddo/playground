@@ -2,27 +2,29 @@
 
 ## Project
 
-* [Okinawa Open Labratory](https://www.okinawaopenlabs.org/)
+* [Okinawa Open Laboratory](https://www.okinawaopenlabs.org/)
   * [Model-Driven Network DevOps Project](https://www.okinawaopenlabs.org/mdnd)
+
+## Documents
+
+* [このプロジェクトの位置づけ](./doc/project_positioning.md)
+* [システムアーキテクチャ](./doc/system_architecture.md)
 
 ## Demonstration
 
 * [物理トポロジデータの生成と編集](./demo/layer1_topology/README.md)
 * [リンクダウンシミュレーション](./demo/linkdown_simulation/README.md)
-* [大規模ネットワークのシミュレーション性能調査](./demo/multi_region_expr/README.md) : (IEICE ICM 2022/07)
-
-## Documents
-
-* [システムアーキテクチャ](./doc/system_architecture.md)
+  * [大規模ネットワークのシミュレーション性能調査](./demo/multi_region_expr/README.md)
+* [実環境をコンテナベースの検証環境にコピーして検証可能にする](./demo/copy_to_emulated_env/README.md)
 
 ## Reference
 
 ### FY2021
 
 * Blog report
-  * 2022/03/30, [モデルベースなネットワーク自動化への挑戦～検証環境の構築と装置のコンフィグ自動取得 - BIGLOBE Style](https://style.biglobe.co.jp/entry/2022/03/30/090000)
-  * 2022/03/31, [ネットワークをモデルとして抽象化しオペレーションを高度化するチャレンジ - NTT Communications Engineers' Blog](https://engineers.ntt.com/entry/2022/03/31/090000)
-  * 2022/04/15, [ネットワークのモデルベース検査と障害シミュレーションによる運用高度化への挑戦 | ナレッジ／事例 TISプラットフォームサービス](https://www.tis.jp/special/platform_knowledge/nw02/)
+  * [モデルベースなネットワーク自動化への挑戦～検証環境の構築と装置のコンフィグ自動取得 - BIGLOBE Style](https://style.biglobe.co.jp/entry/2022/03/30/090000) (2022/03/30)
+  * [ネットワークをモデルとして抽象化しオペレーションを高度化するチャレンジ - NTT Communications Engineers' Blog](https://engineers.ntt.com/entry/2022/03/31/090000) (2022/03/31)
+  * [ネットワークのモデルベース検査と障害シミュレーションによる運用高度化への挑戦 | ナレッジ／事例 TISプラットフォームサービス](https://www.tis.jp/special/platform_knowledge/nw02/) (2022/04/15)
 * NTT Tech Conference 2022 (2022/03/23)
   * [ネットワーク運用におけるモデル定義と Reconciliation Loop への挑戦](https://speakerdeck.com/tjmtrhs/nwyun-yong-niokerumoderuding-yi-toreconciliation-loophefalsetiao-zhan)
 * リンクダウンシミュレーション デモ動画 (2022/06/24)
@@ -44,3 +46,5 @@
   * [もし本番ネットワークをまるごと仮想環境に”コピー”できたらうれしいですか? - JANOG51 Meeting](https://www.janog.gr.jp/meeting/janog51/copy/)
   * [もし本番ネットワークをまるごと仮想環境に”コピー”できたらうれしいですか? / janog51 - Speaker Deck](https://speakerdeck.com/corestate55/janog51)
   * [デモ動画_janog51(Model Driven NW DevOps PJ) - YouTube](https://youtu.be/xRxpsly1kls)
+* NTT Tech Conference 2023 (2023/03/24)
+  * [ネットワーク設定の抽象化とコンテナルータを用いた検証環境の立ち上げ支援](https://speakerdeck.com/tjmtrhs/ntt-tech-conf-2023)
