@@ -6,6 +6,7 @@
 * [環境準備](./doc/provision.md)
 * [デモ①](./doc/demo1.md)
 * [デモ②](./doc/demo2.md)
+* [開発用テストネットワークの分析](./doc/test_network.md)
 
 ## Related info
 
