@@ -1,0 +1,3213 @@
+[0;34mansible-playbook [core 2.12.5.post0][0m
+[0;34m  config file = None[0m
+[0;34m  configured module search path = ['/home/runner/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules'][0m
+[0;34m  ansible python module location = /usr/local/lib/python3.8/site-packages/ansible[0m
+[0;34m  ansible collection location = /home/runner/.ansible/collections:/usr/share/ansible/collections[0m
+[0;34m  executable location = /usr/local/bin/ansible-playbook[0m
+[0;34m  python version = 3.8.13 (default, Jun 24 2022, 15:27:57) [GCC 8.5.0 20210514 (Red Hat 8.5.0-13)][0m
+[0;34m  jinja version = 2.11.3[0m
+[0;34m  libyaml = True[0m
+[0;34mNo config file found; using defaults[0m
+SSH password: 
+BECOME password[defaults to SSH password]: 
+[0;34msetting up inventory plugins[0m
+[0;34mhost_list declined parsing /runner/inventory/hosts as it did not pass its verify_file() method[0m
+[0;34mauto declined parsing /runner/inventory/hosts as it did not pass its verify_file() method[0m
+[0;34mSet default localhost to localhost[0m
+[0;34mNot replacing invalid character(s) "{'-'}" in group name (docker-host)[0m
+[1;35m[WARNING]: Invalid characters were found in group names but not replaced, use[0m
+[1;35m-vvvv to see details[0m
+[0;34mParsed /runner/inventory/hosts inventory source with yaml plugin[0m
+[1;35m[WARNING]: Found both group and host with same name: netbox[0m
+[1;35m[WARNING]: Found both group and host with same name: localhost[0m
+[1;35m[WARNING]: Found both group and host with same name: docker-host[0m
+[0;34mLoading callback plugin default of type stdout, v2.0 from /usr/local/lib/python3.8/site-packages/ansible/plugins/callback/default.py[0m
+[0;34mLoading callback plugin awx_display of type stdout, v2.0 from /runner/artifacts/ee4fccd6-5f59-4ed5-9f44-7722e5c8490e/callback/awx_display.py[0m
+[0;34mSkipping callback 'awx_display', as we already have a stdout callback.[0m
+[0;34mSkipping callback 'default', as we already have a stdout callback.[0m
+[0;34mSkipping callback 'minimal', as we already have a stdout callback.[0m
+[0;34mSkipping callback 'oneline', as we already have a stdout callback.[0m
+
+PLAYBOOK: step02.yml ***********************************************************
+[0;34mPositional arguments: /data/project/playbooks/step02.yml[0m
+[0;34mverbosity: 4[0m
+[0;34mconnection: smart[0m
+[0;34mtimeout: 10[0m
+[0;34mask_pass: True[0m
+[0;34mbecome_method: sudo[0m
+[0;34mbecome_ask_pass: True[0m
+[0;34mtags: ('all',)[0m
+[0;34minventory: ('/runner/inventory/hosts',)[0m
+[0;34mextra_vars: ('ansible_runner_dir=/home/mddo/playground_20230407/demo/copy_to_emulated_env', 'playground_dir=/home/mddo/playground_20230407', 'model_merge_dir=/home/mddo/Desktop/OOL/model-merge', 'nodered_url=http://172.22.0.8:1880', 'labname=demo202301', 'login_user=mddo', 'netoviz_url=http://172.17.0.1:3000', 'network_name=mddo-ospf', 'demo_dir=/home/mddo/playground_20230407/configs/mddo-ospf')[0m
+[0;34mforks: 5[0m
+[0;34m2 plays in /data/project/playbooks/step02.yml[0m
+
+PLAY [localhost] ***************************************************************
+[0;34mMETA: ran handlers[0m
+
+TASK [get convert table] *******************************************************
+[1;30mtask path: /data/project/playbooks/step02.yml:43[0m
+[0;34m<127.0.0.1> ESTABLISH LOCAL CONNECTION FOR USER: runner[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855532.0484555-31-178585316751798 `" && echo ansible-tmp-1680855532.0484555-31-178585316751798="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855532.0484555-31-178585316751798 `" ) && sleep 0'[0m
+[0;34m<localhost> Attempting python interpreter discovery[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo PLATFORM; uname; echo FOUND; command -v '"'"'python3.10'"'"'; command -v '"'"'python3.9'"'"'; command -v '"'"'python3.8'"'"'; command -v '"'"'python3.7'"'"'; command -v '"'"'python3.6'"'"'; command -v '"'"'python3.5'"'"'; command -v '"'"'/usr/bin/python3'"'"'; command -v '"'"'/usr/libexec/platform-python'"'"'; command -v '"'"'python2.7'"'"'; command -v '"'"'python2.6'"'"'; command -v '"'"'/usr/bin/python'"'"'; command -v '"'"'python'"'"'; echo ENDFOUND && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/bin/python3.9 && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/uri.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpat_w72mr TO /home/runner/.ansible/tmp/ansible-tmp-1680855532.0484555-31-178585316751798/AnsiballZ_uri.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855532.0484555-31-178585316751798/ /home/runner/.ansible/tmp/ansible-tmp-1680855532.0484555-31-178585316751798/AnsiballZ_uri.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855532.0484555-31-178585316751798/AnsiballZ_uri.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855532.0484555-31-178585316751798/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "discovered_interpreter_python": "/usr/libexec/platform-python"[0m
+[0;32m    },[0m
+[0;32m    "changed": false,[0m
+[0;32m    "connection": "close",[0m
+[0;32m    "content_length": "6754",[0m
+[0;32m    "content_type": "application/json",[0m
+[0;32m    "cookies": {},[0m
+[0;32m    "cookies_string": "",[0m
+[0;32m    "date": "Fri, 07 Apr 2023 08:18:52 GMT",[0m
+[0;32m    "elapsed": 0,[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "body": null,[0m
+[0;32m            "body_format": "json",[0m
+[0;32m            "ca_path": null,[0m
+[0;32m            "client_cert": null,[0m
+[0;32m            "client_key": null,[0m
+[0;32m            "creates": null,[0m
+[0;32m            "dest": null,[0m
+[0;32m            "follow_redirects": "safe",[0m
+[0;32m            "force": false,[0m
+[0;32m            "force_basic_auth": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "headers": {[0m
+[0;32m                "Content-Type": "application/json"[0m
+[0;32m            },[0m
+[0;32m            "http_agent": "ansible-httpget",[0m
+[0;32m            "method": "GET",[0m
+[0;32m            "mode": null,[0m
+[0;32m            "owner": null,[0m
+[0;32m            "remote_src": false,[0m
+[0;32m            "removes": null,[0m
+[0;32m            "return_content": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "status_code": [[0m
+[0;32m                200[0m
+[0;32m            ],[0m
+[0;32m            "timeout": 30,[0m
+[0;32m            "unix_socket": null,[0m
+[0;32m            "unredirected_headers": [],[0m
+[0;32m            "unsafe_writes": false,[0m
+[0;32m            "url": "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params",[0m
+[0;32m            "url_password": null,[0m
+[0;32m            "url_username": null,[0m
+[0;32m            "use_gssapi": false,[0m
+[0;32m            "use_proxy": true,[0m
+[0;32m            "validate_certs": true[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "json": [[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-192.168.0.0-30",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regiona-rt1_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regiona-rt1_eth1.0",[0m
+[0;32m                    "original_if": "regiona-rt1_ge-0/0/0.0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regiona-rt2_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regiona-rt2_eth1.0",[0m
+[0;32m                    "original_if": "regiona-rt2_ge-0/0/0.0"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_192.168.0.0/30",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regiona-rt1",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-192.168.0.0-30_Ethernet1",[0m
+[0;32m                    "ipv4": "192.168.0.1/30",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "ge-0/0/0.0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth2.0",[0m
+[0;32m                    "description": "to_Seg-172.16.0.0-30_Ethernet1",[0m
+[0;32m                    "ipv4": "172.16.0.1/30",[0m
+[0;32m                    "name": "eth2.0",[0m
+[0;32m                    "original_if": "ge-0/0/1.0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth3.0",[0m
+[0;32m                    "description": "to_Seg-172.16.1.0-30_Ethernet1",[0m
+[0;32m                    "ipv4": "172.16.1.1/30",[0m
+[0;32m                    "name": "eth3.0",[0m
+[0;32m                    "original_if": "ge-0/0/2.0"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regiona-rt1",[0m
+[0;32m            "type": "node"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regiona-rt2",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-192.168.0.0-30_Ethernet2",[0m
+[0;32m                    "ipv4": "192.168.0.2/30",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "ge-0/0/0.0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth2.0",[0m
+[0;32m                    "description": "to_Seg-192.168.100.0-24_Ethernet1",[0m
+[0;32m                    "ipv4": "192.168.100.1/24",[0m
+[0;32m                    "name": "eth2.0",[0m
+[0;32m                    "original_if": "ge-0/0/1.0"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regiona-rt2",[0m
+[0;32m            "type": "node"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-172.16.0.0-30",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regiona-rt1_eth2.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regiona-rt1_eth2.0",[0m
+[0;32m                    "original_if": "regiona-rt1_ge-0/0/1.0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regionb-rt1_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionb-rt1_eth1.0",[0m
+[0;32m                    "original_if": "regionb-rt1_Ethernet2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_172.16.0.0/30",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regionb-rt1",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-172.16.0.0-30_Ethernet2",[0m
+[0;32m                    "ipv4": "172.16.0.2/30",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "Ethernet2"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth2.0",[0m
+[0;32m                    "description": "to_Seg-172.16.2.0-30_Ethernet2",[0m
+[0;32m                    "ipv4": "172.16.2.1/30",[0m
+[0;32m                    "name": "eth2.0",[0m
+[0;32m                    "original_if": "Ethernet3"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth3.0",[0m
+[0;32m                    "description": "to_Seg-192.168.1.0-30_Ethernet1",[0m
+[0;32m                    "ipv4": "192.168.1.1/30",[0m
+[0;32m                    "name": "eth3.0",[0m
+[0;32m                    "original_if": "Ethernet1"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regionb-rt1",[0m
+[0;32m            "type": "node"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-172.16.1.0-30",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regiona-rt1_eth3.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regiona-rt1_eth3.0",[0m
+[0;32m                    "original_if": "regiona-rt1_ge-0/0/2.0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regionc-rt1_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionc-rt1_eth1.0",[0m
+[0;32m                    "original_if": "regionc-rt1_GigabitEthernet0/0/0/1"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_172.16.1.0/30",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regionc-rt1",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-172.16.1.0-30_Ethernet2",[0m
+[0;32m                    "ipv4": "172.16.1.2/30",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "GigabitEthernet0/0/0/1"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth2.0",[0m
+[0;32m                    "description": "to_Seg-192.168.2.0-30_Ethernet1",[0m
+[0;32m                    "ipv4": "192.168.2.1/30",[0m
+[0;32m                    "name": "eth2.0",[0m
+[0;32m                    "original_if": "GigabitEthernet0/0/0/0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth3.0",[0m
+[0;32m                    "description": "to_Seg-172.16.2.0-30_Ethernet1",[0m
+[0;32m                    "ipv4": "172.16.2.2/30",[0m
+[0;32m                    "name": "eth3.0",[0m
+[0;32m                    "original_if": "GigabitEthernet0/0/0/2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regionc-rt1",[0m
+[0;32m            "type": "node"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-192.168.2.0-30",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regionc-rt1_eth2.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionc-rt1_eth2.0",[0m
+[0;32m                    "original_if": "regionc-rt1_GigabitEthernet0/0/0/0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regionc-rt2_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionc-rt2_eth1.0",[0m
+[0;32m                    "original_if": "regionc-rt2_GigabitEthernet0/0/0/0"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_192.168.2.0/30",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regionc-rt2",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-192.168.2.0-30_Ethernet2",[0m
+[0;32m                    "ipv4": "192.168.2.2/30",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "GigabitEthernet0/0/0/0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth2.0",[0m
+[0;32m                    "description": "to_Seg-192.168.100.0-25_Ethernet1",[0m
+[0;32m                    "ipv4": "192.168.100.1/25",[0m
+[0;32m                    "name": "eth2.0",[0m
+[0;32m                    "original_if": "GigabitEthernet0/0/0/1"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regionc-rt2",[0m
+[0;32m            "type": "node"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-172.16.2.0-30",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regionc-rt1_eth3.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionc-rt1_eth3.0",[0m
+[0;32m                    "original_if": "regionc-rt1_GigabitEthernet0/0/0/2"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regionb-rt1_eth2.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionb-rt1_eth2.0",[0m
+[0;32m                    "original_if": "regionb-rt1_Ethernet3"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_172.16.2.0/30",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-192.168.100.0-25",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regionc-rt2_eth2.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionc-rt2_eth2.0",[0m
+[0;32m                    "original_if": "regionc-rt2_GigabitEthernet0/0/0/1"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regionc-svr01_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionc-svr01_eth1.0",[0m
+[0;32m                    "original_if": "regionc-svr01_ens2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_192.168.100.0/25",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regionc-svr01",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-192.168.100.0-25_Ethernet2",[0m
+[0;32m                    "ipv4": "192.168.100.10/25",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "ens2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regionc-svr01",[0m
+[0;32m            "type": "endpoint"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-192.168.1.0-30",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regionb-rt1_eth3.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionb-rt1_eth3.0",[0m
+[0;32m                    "original_if": "regionb-rt1_Ethernet1"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regionb-rt2_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionb-rt2_eth1.0",[0m
+[0;32m                    "original_if": "regionb-rt2_Ethernet1"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_192.168.1.0/30",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regionb-rt2",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-192.168.1.0-30_Ethernet2",[0m
+[0;32m                    "ipv4": "192.168.1.2/30",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "Ethernet1"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth2.0",[0m
+[0;32m                    "description": "to_Seg-192.168.254.0-24_Ethernet1",[0m
+[0;32m                    "ipv4": "192.168.254.1/24",[0m
+[0;32m                    "name": "eth2.0",[0m
+[0;32m                    "original_if": "Ethernet2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regionb-rt2",[0m
+[0;32m            "type": "node"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-192.168.254.0-24",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regionb-rt2_eth2.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionb-rt2_eth2.0",[0m
+[0;32m                    "original_if": "regionb-rt2_Ethernet2"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regionb-svr01_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regionb-svr01_eth1.0",[0m
+[0;32m                    "original_if": "regionb-svr01_ens2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_192.168.254.0/24",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regionb-svr01",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-192.168.254.0-24_Ethernet2",[0m
+[0;32m                    "ipv4": "192.168.254.10/24",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "ens2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regionb-svr01",[0m
+[0;32m            "type": "endpoint"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "Seg-192.168.100.0-24",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet1",[0m
+[0;32m                    "description": "to_regiona-rt2_eth2.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regiona-rt2_eth2.0",[0m
+[0;32m                    "original_if": "regiona-rt2_ge-0/0/1.0"[0m
+[0;32m                },[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "Ethernet2",[0m
+[0;32m                    "description": "to_regiona-svr02_eth1.0",[0m
+[0;32m                    "ipv4": null,[0m
+[0;32m                    "name": "regiona-svr02_eth1.0",[0m
+[0;32m                    "original_if": "regiona-svr02_ens2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "Seg_192.168.100.0/24",[0m
+[0;32m            "type": "segment"[0m
+[0;32m        },[0m
+[0;32m        {[0m
+[0;32m            "agent_name": "regiona-svr02",[0m
+[0;32m            "if_list": [[0m
+[0;32m                {[0m
+[0;32m                    "agent_name": "eth1.0",[0m
+[0;32m                    "description": "to_Seg-192.168.100.0-24_Ethernet2",[0m
+[0;32m                    "ipv4": "192.168.100.210/24",[0m
+[0;32m                    "name": "eth1.0",[0m
+[0;32m                    "original_if": "ens2"[0m
+[0;32m                }[0m
+[0;32m            ],[0m
+[0;32m            "name": "regiona-svr02",[0m
+[0;32m            "type": "endpoint"[0m
+[0;32m        }[0m
+[0;32m    ],[0m
+[0;32m    "msg": "OK (6754 bytes)",[0m
+[0;32m    "redirected": false,[0m
+[0;32m    "server": "nginx/1.21.6",[0m
+[0;32m    "status": 200,[0m
+[0;32m    "url": "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params"[0m
+[0;32m}[0m
+
+TASK [generate config] *********************************************************
+[1;30mtask path: /data/project/playbooks/step02.yml:50[0m
+[0;34m<127.0.0.1> ESTABLISH LOCAL CONNECTION FOR USER: runner[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_192.168.0.0/30', 'agent_name': 'Seg-192.168.0.0-30', 'type': 'segment', 'if_list': [{'name': 'regiona-rt1_eth1.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt1_eth1.0', 'original_if': 'regiona-rt1_ge-0/0/0.0'}, {'name': 'regiona-rt2_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regiona-rt2_eth1.0', 'original_if': 'regiona-rt2_ge-0/0/0.0'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-192.168.0.0-30",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regiona-rt1_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regiona-rt1_eth1.0",[0m
+[0;36m                "original_if": "regiona-rt1_ge-0/0/0.0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regiona-rt2_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regiona-rt2_eth1.0",[0m
+[0;36m                "original_if": "regiona-rt2_ge-0/0/0.0"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_192.168.0.0/30",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924 `" && echo ansible-tmp-1680855532.8089476-53-161808388363924="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpqx8sb2qj TO /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/ /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpj6t53nh_ TO /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/ /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855532.8089476-53-161808388363924/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regiona-rt1', 'agent_name': 'regiona-rt1', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.0.1/30', 'description': 'to_Seg-192.168.0.0-30_Ethernet1', 'original_if': 'ge-0/0/0.0'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '172.16.0.1/30', 'description': 'to_Seg-172.16.0.0-30_Ethernet1', 'original_if': 'ge-0/0/1.0'}, {'name': 'eth3.0', 'agent_name': 'eth3.0', 'ipv4': '172.16.1.1/30', 'description': 'to_Seg-172.16.1.0-30_Ethernet1', 'original_if': 'ge-0/0/2.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "cabea10858385d27ce4624de1f2b0df7c9db23d7",[0m
+[0;32m    "dest": "configs/regiona-rt1.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regiona-rt1.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regiona-rt1.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regiona-rt1.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regiona-rt1.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regiona-rt1",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-192.168.0.0-30_Ethernet1",[0m
+[0;32m                "ipv4": "192.168.0.1/30",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "ge-0/0/0.0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth2.0",[0m
+[0;32m                "description": "to_Seg-172.16.0.0-30_Ethernet1",[0m
+[0;32m                "ipv4": "172.16.0.1/30",[0m
+[0;32m                "name": "eth2.0",[0m
+[0;32m                "original_if": "ge-0/0/1.0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth3.0",[0m
+[0;32m                "description": "to_Seg-172.16.1.0-30_Ethernet1",[0m
+[0;32m                "ipv4": "172.16.1.1/30",[0m
+[0;32m                "name": "eth3.0",[0m
+[0;32m                "original_if": "ge-0/0/2.0"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regiona-rt1",[0m
+[0;32m        "type": "node"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regiona-rt1.conf",[0m
+[0;32m    "size": 1636,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851 `" && echo ansible-tmp-1680855533.738362-53-109881479097851="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp8x24riqd TO /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/ /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp75xxdo_f TO /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/ /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855533.738362-53-109881479097851/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regiona-rt2', 'agent_name': 'regiona-rt2', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.0.2/30', 'description': 'to_Seg-192.168.0.0-30_Ethernet2', 'original_if': 'ge-0/0/0.0'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.100.1/24', 'description': 'to_Seg-192.168.100.0-24_Ethernet1', 'original_if': 'ge-0/0/1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "d839cfbcb99f7b8fe2e3a1f5f21df313d0561e81",[0m
+[0;32m    "dest": "configs/regiona-rt2.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regiona-rt2.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regiona-rt2.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regiona-rt2.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regiona-rt2.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regiona-rt2",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-192.168.0.0-30_Ethernet2",[0m
+[0;32m                "ipv4": "192.168.0.2/30",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "ge-0/0/0.0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth2.0",[0m
+[0;32m                "description": "to_Seg-192.168.100.0-24_Ethernet1",[0m
+[0;32m                "ipv4": "192.168.100.1/24",[0m
+[0;32m                "name": "eth2.0",[0m
+[0;32m                "original_if": "ge-0/0/1.0"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regiona-rt2",[0m
+[0;32m        "type": "node"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regiona-rt2.conf",[0m
+[0;32m    "size": 1447,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_172.16.0.0/30', 'agent_name': 'Seg-172.16.0.0-30', 'type': 'segment', 'if_list': [{'name': 'regiona-rt1_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt1_eth2.0', 'original_if': 'regiona-rt1_ge-0/0/1.0'}, {'name': 'regionb-rt1_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-rt1_eth1.0', 'original_if': 'regionb-rt1_Ethernet2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-172.16.0.0-30",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regiona-rt1_eth2.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regiona-rt1_eth2.0",[0m
+[0;36m                "original_if": "regiona-rt1_ge-0/0/1.0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regionb-rt1_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionb-rt1_eth1.0",[0m
+[0;36m                "original_if": "regionb-rt1_Ethernet2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_172.16.0.0/30",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467 `" && echo ansible-tmp-1680855534.19653-53-119660782505467="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmppy9cffsf TO /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/ /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmphfqa9z4z TO /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/ /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855534.19653-53-119660782505467/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regionb-rt1', 'agent_name': 'regionb-rt1', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '172.16.0.2/30', 'description': 'to_Seg-172.16.0.0-30_Ethernet2', 'original_if': 'Ethernet2'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '172.16.2.1/30', 'description': 'to_Seg-172.16.2.0-30_Ethernet2', 'original_if': 'Ethernet3'}, {'name': 'eth3.0', 'agent_name': 'eth3.0', 'ipv4': '192.168.1.1/30', 'description': 'to_Seg-192.168.1.0-30_Ethernet1', 'original_if': 'Ethernet1'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "ed21367b269db6f0bb925659acc7a1b2017b28b9",[0m
+[0;32m    "dest": "configs/regionb-rt1.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regionb-rt1.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regionb-rt1.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regionb-rt1.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regionb-rt1.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regionb-rt1",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-172.16.0.0-30_Ethernet2",[0m
+[0;32m                "ipv4": "172.16.0.2/30",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "Ethernet2"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth2.0",[0m
+[0;32m                "description": "to_Seg-172.16.2.0-30_Ethernet2",[0m
+[0;32m                "ipv4": "172.16.2.1/30",[0m
+[0;32m                "name": "eth2.0",[0m
+[0;32m                "original_if": "Ethernet3"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth3.0",[0m
+[0;32m                "description": "to_Seg-192.168.1.0-30_Ethernet1",[0m
+[0;32m                "ipv4": "192.168.1.1/30",[0m
+[0;32m                "name": "eth3.0",[0m
+[0;32m                "original_if": "Ethernet1"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regionb-rt1",[0m
+[0;32m        "type": "node"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regionb-rt1.conf",[0m
+[0;32m    "size": 1633,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_172.16.1.0/30', 'agent_name': 'Seg-172.16.1.0-30', 'type': 'segment', 'if_list': [{'name': 'regiona-rt1_eth3.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt1_eth3.0', 'original_if': 'regiona-rt1_ge-0/0/2.0'}, {'name': 'regionc-rt1_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionc-rt1_eth1.0', 'original_if': 'regionc-rt1_GigabitEthernet0/0/0/1'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-172.16.1.0-30",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regiona-rt1_eth3.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regiona-rt1_eth3.0",[0m
+[0;36m                "original_if": "regiona-rt1_ge-0/0/2.0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regionc-rt1_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionc-rt1_eth1.0",[0m
+[0;36m                "original_if": "regionc-rt1_GigabitEthernet0/0/0/1"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_172.16.1.0/30",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030 `" && echo ansible-tmp-1680855534.7420113-53-179514223863030="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmplvvrtk03 TO /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/ /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp02lzxxlb TO /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/ /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855534.7420113-53-179514223863030/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regionc-rt1', 'agent_name': 'regionc-rt1', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '172.16.1.2/30', 'description': 'to_Seg-172.16.1.0-30_Ethernet2', 'original_if': 'GigabitEthernet0/0/0/1'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.2.1/30', 'description': 'to_Seg-192.168.2.0-30_Ethernet1', 'original_if': 'GigabitEthernet0/0/0/0'}, {'name': 'eth3.0', 'agent_name': 'eth3.0', 'ipv4': '172.16.2.2/30', 'description': 'to_Seg-172.16.2.0-30_Ethernet1', 'original_if': 'GigabitEthernet0/0/0/2'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "39b417d88c37d62b709d1202b16614ab348a0bcc",[0m
+[0;32m    "dest": "configs/regionc-rt1.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regionc-rt1.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regionc-rt1.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regionc-rt1.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regionc-rt1.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regionc-rt1",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-172.16.1.0-30_Ethernet2",[0m
+[0;32m                "ipv4": "172.16.1.2/30",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "GigabitEthernet0/0/0/1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth2.0",[0m
+[0;32m                "description": "to_Seg-192.168.2.0-30_Ethernet1",[0m
+[0;32m                "ipv4": "192.168.2.1/30",[0m
+[0;32m                "name": "eth2.0",[0m
+[0;32m                "original_if": "GigabitEthernet0/0/0/0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth3.0",[0m
+[0;32m                "description": "to_Seg-172.16.2.0-30_Ethernet1",[0m
+[0;32m                "ipv4": "172.16.2.2/30",[0m
+[0;32m                "name": "eth3.0",[0m
+[0;32m                "original_if": "GigabitEthernet0/0/0/2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regionc-rt1",[0m
+[0;32m        "type": "node"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regionc-rt1.conf",[0m
+[0;32m    "size": 1672,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_192.168.2.0/30', 'agent_name': 'Seg-192.168.2.0-30', 'type': 'segment', 'if_list': [{'name': 'regionc-rt1_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionc-rt1_eth2.0', 'original_if': 'regionc-rt1_GigabitEthernet0/0/0/0'}, {'name': 'regionc-rt2_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionc-rt2_eth1.0', 'original_if': 'regionc-rt2_GigabitEthernet0/0/0/0'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-192.168.2.0-30",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regionc-rt1_eth2.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionc-rt1_eth2.0",[0m
+[0;36m                "original_if": "regionc-rt1_GigabitEthernet0/0/0/0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regionc-rt2_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionc-rt2_eth1.0",[0m
+[0;36m                "original_if": "regionc-rt2_GigabitEthernet0/0/0/0"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_192.168.2.0/30",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595 `" && echo ansible-tmp-1680855535.2109015-53-126471388947595="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpqsbxvlr6 TO /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/ /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmplbae61pr TO /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/ /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855535.2109015-53-126471388947595/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regionc-rt2', 'agent_name': 'regionc-rt2', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.2.2/30', 'description': 'to_Seg-192.168.2.0-30_Ethernet2', 'original_if': 'GigabitEthernet0/0/0/0'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.100.1/25', 'description': 'to_Seg-192.168.100.0-25_Ethernet1', 'original_if': 'GigabitEthernet0/0/0/1'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "15514b4ff0ffa515be14fda2b7d13a8990319d1b",[0m
+[0;32m    "dest": "configs/regionc-rt2.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regionc-rt2.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regionc-rt2.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regionc-rt2.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regionc-rt2.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regionc-rt2",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-192.168.2.0-30_Ethernet2",[0m
+[0;32m                "ipv4": "192.168.2.2/30",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "GigabitEthernet0/0/0/0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth2.0",[0m
+[0;32m                "description": "to_Seg-192.168.100.0-25_Ethernet1",[0m
+[0;32m                "ipv4": "192.168.100.1/25",[0m
+[0;32m                "name": "eth2.0",[0m
+[0;32m                "original_if": "GigabitEthernet0/0/0/1"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regionc-rt2",[0m
+[0;32m        "type": "node"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regionc-rt2.conf",[0m
+[0;32m    "size": 1471,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_172.16.2.0/30', 'agent_name': 'Seg-172.16.2.0-30', 'type': 'segment', 'if_list': [{'name': 'regionc-rt1_eth3.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionc-rt1_eth3.0', 'original_if': 'regionc-rt1_GigabitEthernet0/0/0/2'}, {'name': 'regionb-rt1_eth2.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-rt1_eth2.0', 'original_if': 'regionb-rt1_Ethernet3'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-172.16.2.0-30",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regionc-rt1_eth3.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionc-rt1_eth3.0",[0m
+[0;36m                "original_if": "regionc-rt1_GigabitEthernet0/0/0/2"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regionb-rt1_eth2.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionb-rt1_eth2.0",[0m
+[0;36m                "original_if": "regionb-rt1_Ethernet3"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_172.16.2.0/30",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_192.168.100.0/25', 'agent_name': 'Seg-192.168.100.0-25', 'type': 'segment', 'if_list': [{'name': 'regionc-rt2_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionc-rt2_eth2.0', 'original_if': 'regionc-rt2_GigabitEthernet0/0/0/1'}, {'name': 'regionc-svr01_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionc-svr01_eth1.0', 'original_if': 'regionc-svr01_ens2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-192.168.100.0-25",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regionc-rt2_eth2.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionc-rt2_eth2.0",[0m
+[0;36m                "original_if": "regionc-rt2_GigabitEthernet0/0/0/1"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regionc-svr01_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionc-svr01_eth1.0",[0m
+[0;36m                "original_if": "regionc-svr01_ens2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_192.168.100.0/25",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681 `" && echo ansible-tmp-1680855535.7634487-53-188410245307681="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpyba55f98 TO /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/ /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmplbyq8u4h TO /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/ /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855535.7634487-53-188410245307681/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regionc-svr01', 'agent_name': 'regionc-svr01', 'type': 'endpoint', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.100.10/25', 'description': 'to_Seg-192.168.100.0-25_Ethernet2', 'original_if': 'ens2'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "fe64b6eaff7381f40e496148c23adaeccfc4b114",[0m
+[0;32m    "dest": "configs/regionc-svr01.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regionc-svr01.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regionc-svr01.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regionc-svr01.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regionc-svr01.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regionc-svr01",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-192.168.100.0-25_Ethernet2",[0m
+[0;32m                "ipv4": "192.168.100.10/25",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "ens2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regionc-svr01",[0m
+[0;32m        "type": "endpoint"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regionc-svr01.conf",[0m
+[0;32m    "size": 1247,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_192.168.1.0/30', 'agent_name': 'Seg-192.168.1.0-30', 'type': 'segment', 'if_list': [{'name': 'regionb-rt1_eth3.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionb-rt1_eth3.0', 'original_if': 'regionb-rt1_Ethernet1'}, {'name': 'regionb-rt2_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-rt2_eth1.0', 'original_if': 'regionb-rt2_Ethernet1'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-192.168.1.0-30",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regionb-rt1_eth3.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionb-rt1_eth3.0",[0m
+[0;36m                "original_if": "regionb-rt1_Ethernet1"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regionb-rt2_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionb-rt2_eth1.0",[0m
+[0;36m                "original_if": "regionb-rt2_Ethernet1"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_192.168.1.0/30",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624 `" && echo ansible-tmp-1680855536.3546274-53-225823151610624="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpagg3lf_3 TO /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/ /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpoo8pg5qk TO /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/ /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855536.3546274-53-225823151610624/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regionb-rt2', 'agent_name': 'regionb-rt2', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.1.2/30', 'description': 'to_Seg-192.168.1.0-30_Ethernet2', 'original_if': 'Ethernet1'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.254.1/24', 'description': 'to_Seg-192.168.254.0-24_Ethernet1', 'original_if': 'Ethernet2'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "20ae564f3f91421fa51970ac7068754cf63afb11",[0m
+[0;32m    "dest": "configs/regionb-rt2.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regionb-rt2.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regionb-rt2.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regionb-rt2.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regionb-rt2.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regionb-rt2",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-192.168.1.0-30_Ethernet2",[0m
+[0;32m                "ipv4": "192.168.1.2/30",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth2.0",[0m
+[0;32m                "description": "to_Seg-192.168.254.0-24_Ethernet1",[0m
+[0;32m                "ipv4": "192.168.254.1/24",[0m
+[0;32m                "name": "eth2.0",[0m
+[0;32m                "original_if": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regionb-rt2",[0m
+[0;32m        "type": "node"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regionb-rt2.conf",[0m
+[0;32m    "size": 1445,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_192.168.254.0/24', 'agent_name': 'Seg-192.168.254.0-24', 'type': 'segment', 'if_list': [{'name': 'regionb-rt2_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionb-rt2_eth2.0', 'original_if': 'regionb-rt2_Ethernet2'}, {'name': 'regionb-svr01_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-svr01_eth1.0', 'original_if': 'regionb-svr01_ens2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-192.168.254.0-24",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regionb-rt2_eth2.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionb-rt2_eth2.0",[0m
+[0;36m                "original_if": "regionb-rt2_Ethernet2"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regionb-svr01_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regionb-svr01_eth1.0",[0m
+[0;36m                "original_if": "regionb-svr01_ens2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_192.168.254.0/24",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157 `" && echo ansible-tmp-1680855536.8241768-53-190742972908157="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpbwes9o97 TO /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/ /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpbo8yb330 TO /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/ /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855536.8241768-53-190742972908157/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regionb-svr01', 'agent_name': 'regionb-svr01', 'type': 'endpoint', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.254.10/24', 'description': 'to_Seg-192.168.254.0-24_Ethernet2', 'original_if': 'ens2'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "86fd771ca72d145d6e32044ba0652afbeaa22cd8",[0m
+[0;32m    "dest": "configs/regionb-svr01.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regionb-svr01.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regionb-svr01.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regionb-svr01.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regionb-svr01.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regionb-svr01",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-192.168.254.0-24_Ethernet2",[0m
+[0;32m                "ipv4": "192.168.254.10/24",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "ens2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regionb-svr01",[0m
+[0;32m        "type": "endpoint"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regionb-svr01.conf",[0m
+[0;32m    "size": 1247,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;36mskipping: [localhost] => (item={'name': 'Seg_192.168.100.0/24', 'agent_name': 'Seg-192.168.100.0-24', 'type': 'segment', 'if_list': [{'name': 'regiona-rt2_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt2_eth2.0', 'original_if': 'regiona-rt2_ge-0/0/1.0'}, {'name': 'regiona-svr02_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regiona-svr02_eth1.0', 'original_if': 'regiona-svr02_ens2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "Seg-192.168.100.0-24",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet1",[0m
+[0;36m                "description": "to_regiona-rt2_eth2.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regiona-rt2_eth2.0",[0m
+[0;36m                "original_if": "regiona-rt2_ge-0/0/1.0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "Ethernet2",[0m
+[0;36m                "description": "to_regiona-svr02_eth1.0",[0m
+[0;36m                "ipv4": null,[0m
+[0;36m                "name": "regiona-svr02_eth1.0",[0m
+[0;36m                "original_if": "regiona-svr02_ens2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "Seg_192.168.100.0/24",[0m
+[0;36m        "type": "segment"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246 `" && echo ansible-tmp-1680855537.4006007-53-270316686962246="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpa95mt6mh TO /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/ /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp6prhp6f1 TO /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/ /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855537.4006007-53-270316686962246/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'regiona-svr02', 'agent_name': 'regiona-svr02', 'type': 'endpoint', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.100.210/24', 'description': 'to_Seg-192.168.100.0-24_Ethernet2', 'original_if': 'ens2'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "4fb0334598af0a511ab7b1b8fa718479f39f733a",[0m
+[0;32m    "dest": "configs/regiona-svr02.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/regiona-svr02.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/regiona-svr02.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "crpd.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/regiona-svr02.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/regiona-svr02.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "regiona-svr02",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "eth1.0",[0m
+[0;32m                "description": "to_Seg-192.168.100.0-24_Ethernet2",[0m
+[0;32m                "ipv4": "192.168.100.210/24",[0m
+[0;32m                "name": "eth1.0",[0m
+[0;32m                "original_if": "ens2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "regiona-svr02",[0m
+[0;32m        "type": "endpoint"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/regiona-svr02.conf",[0m
+[0;32m    "size": 1248,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+
+TASK [generate bridge data] ****************************************************
+[1;30mtask path: /data/project/playbooks/step02.yml:57[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_192.168.0.0/30', 'agent_name': 'Seg-192.168.0.0-30', 'type': 'segment', 'if_list': [{'name': 'regiona-rt1_eth1.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt1_eth1.0', 'original_if': 'regiona-rt1_ge-0/0/0.0'}, {'name': 'regiona-rt2_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regiona-rt2_eth1.0', 'original_if': 'regiona-rt2_ge-0/0/0.0'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-192.168.0.0-30",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regiona-rt1_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regiona-rt1_eth1.0",[0m
+[0;32m                "original_if": "regiona-rt1_ge-0/0/0.0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regiona-rt2_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regiona-rt2_eth1.0",[0m
+[0;32m                "original_if": "regiona-rt2_ge-0/0/0.0"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_192.168.0.0/30",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regiona-rt1', 'agent_name': 'regiona-rt1', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.0.1/30', 'description': 'to_Seg-192.168.0.0-30_Ethernet1', 'original_if': 'ge-0/0/0.0'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '172.16.0.1/30', 'description': 'to_Seg-172.16.0.0-30_Ethernet1', 'original_if': 'ge-0/0/1.0'}, {'name': 'eth3.0', 'agent_name': 'eth3.0', 'ipv4': '172.16.1.1/30', 'description': 'to_Seg-172.16.1.0-30_Ethernet1', 'original_if': 'ge-0/0/2.0'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regiona-rt1",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-192.168.0.0-30_Ethernet1",[0m
+[0;36m                "ipv4": "192.168.0.1/30",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "ge-0/0/0.0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth2.0",[0m
+[0;36m                "description": "to_Seg-172.16.0.0-30_Ethernet1",[0m
+[0;36m                "ipv4": "172.16.0.1/30",[0m
+[0;36m                "name": "eth2.0",[0m
+[0;36m                "original_if": "ge-0/0/1.0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth3.0",[0m
+[0;36m                "description": "to_Seg-172.16.1.0-30_Ethernet1",[0m
+[0;36m                "ipv4": "172.16.1.1/30",[0m
+[0;36m                "name": "eth3.0",[0m
+[0;36m                "original_if": "ge-0/0/2.0"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regiona-rt1",[0m
+[0;36m        "type": "node"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regiona-rt2', 'agent_name': 'regiona-rt2', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.0.2/30', 'description': 'to_Seg-192.168.0.0-30_Ethernet2', 'original_if': 'ge-0/0/0.0'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.100.1/24', 'description': 'to_Seg-192.168.100.0-24_Ethernet1', 'original_if': 'ge-0/0/1.0'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regiona-rt2",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-192.168.0.0-30_Ethernet2",[0m
+[0;36m                "ipv4": "192.168.0.2/30",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "ge-0/0/0.0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth2.0",[0m
+[0;36m                "description": "to_Seg-192.168.100.0-24_Ethernet1",[0m
+[0;36m                "ipv4": "192.168.100.1/24",[0m
+[0;36m                "name": "eth2.0",[0m
+[0;36m                "original_if": "ge-0/0/1.0"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regiona-rt2",[0m
+[0;36m        "type": "node"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_172.16.0.0/30', 'agent_name': 'Seg-172.16.0.0-30', 'type': 'segment', 'if_list': [{'name': 'regiona-rt1_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt1_eth2.0', 'original_if': 'regiona-rt1_ge-0/0/1.0'}, {'name': 'regionb-rt1_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-rt1_eth1.0', 'original_if': 'regionb-rt1_Ethernet2'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-172.16.0.0-30",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regiona-rt1_eth2.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regiona-rt1_eth2.0",[0m
+[0;32m                "original_if": "regiona-rt1_ge-0/0/1.0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regionb-rt1_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionb-rt1_eth1.0",[0m
+[0;32m                "original_if": "regionb-rt1_Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_172.16.0.0/30",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regionb-rt1', 'agent_name': 'regionb-rt1', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '172.16.0.2/30', 'description': 'to_Seg-172.16.0.0-30_Ethernet2', 'original_if': 'Ethernet2'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '172.16.2.1/30', 'description': 'to_Seg-172.16.2.0-30_Ethernet2', 'original_if': 'Ethernet3'}, {'name': 'eth3.0', 'agent_name': 'eth3.0', 'ipv4': '192.168.1.1/30', 'description': 'to_Seg-192.168.1.0-30_Ethernet1', 'original_if': 'Ethernet1'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regionb-rt1",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-172.16.0.0-30_Ethernet2",[0m
+[0;36m                "ipv4": "172.16.0.2/30",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "Ethernet2"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth2.0",[0m
+[0;36m                "description": "to_Seg-172.16.2.0-30_Ethernet2",[0m
+[0;36m                "ipv4": "172.16.2.1/30",[0m
+[0;36m                "name": "eth2.0",[0m
+[0;36m                "original_if": "Ethernet3"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth3.0",[0m
+[0;36m                "description": "to_Seg-192.168.1.0-30_Ethernet1",[0m
+[0;36m                "ipv4": "192.168.1.1/30",[0m
+[0;36m                "name": "eth3.0",[0m
+[0;36m                "original_if": "Ethernet1"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regionb-rt1",[0m
+[0;36m        "type": "node"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_172.16.1.0/30', 'agent_name': 'Seg-172.16.1.0-30', 'type': 'segment', 'if_list': [{'name': 'regiona-rt1_eth3.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt1_eth3.0', 'original_if': 'regiona-rt1_ge-0/0/2.0'}, {'name': 'regionc-rt1_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionc-rt1_eth1.0', 'original_if': 'regionc-rt1_GigabitEthernet0/0/0/1'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.1.0-30"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-172.16.1.0-30",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regiona-rt1_eth3.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regiona-rt1_eth3.0",[0m
+[0;32m                "original_if": "regiona-rt1_ge-0/0/2.0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regionc-rt1_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionc-rt1_eth1.0",[0m
+[0;32m                "original_if": "regionc-rt1_GigabitEthernet0/0/0/1"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_172.16.1.0/30",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regionc-rt1', 'agent_name': 'regionc-rt1', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '172.16.1.2/30', 'description': 'to_Seg-172.16.1.0-30_Ethernet2', 'original_if': 'GigabitEthernet0/0/0/1'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.2.1/30', 'description': 'to_Seg-192.168.2.0-30_Ethernet1', 'original_if': 'GigabitEthernet0/0/0/0'}, {'name': 'eth3.0', 'agent_name': 'eth3.0', 'ipv4': '172.16.2.2/30', 'description': 'to_Seg-172.16.2.0-30_Ethernet1', 'original_if': 'GigabitEthernet0/0/0/2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regionc-rt1",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-172.16.1.0-30_Ethernet2",[0m
+[0;36m                "ipv4": "172.16.1.2/30",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "GigabitEthernet0/0/0/1"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth2.0",[0m
+[0;36m                "description": "to_Seg-192.168.2.0-30_Ethernet1",[0m
+[0;36m                "ipv4": "192.168.2.1/30",[0m
+[0;36m                "name": "eth2.0",[0m
+[0;36m                "original_if": "GigabitEthernet0/0/0/0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth3.0",[0m
+[0;36m                "description": "to_Seg-172.16.2.0-30_Ethernet1",[0m
+[0;36m                "ipv4": "172.16.2.2/30",[0m
+[0;36m                "name": "eth3.0",[0m
+[0;36m                "original_if": "GigabitEthernet0/0/0/2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regionc-rt1",[0m
+[0;36m        "type": "node"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_192.168.2.0/30', 'agent_name': 'Seg-192.168.2.0-30', 'type': 'segment', 'if_list': [{'name': 'regionc-rt1_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionc-rt1_eth2.0', 'original_if': 'regionc-rt1_GigabitEthernet0/0/0/0'}, {'name': 'regionc-rt2_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionc-rt2_eth1.0', 'original_if': 'regionc-rt2_GigabitEthernet0/0/0/0'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.2.0-30"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-192.168.2.0-30",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regionc-rt1_eth2.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionc-rt1_eth2.0",[0m
+[0;32m                "original_if": "regionc-rt1_GigabitEthernet0/0/0/0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regionc-rt2_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionc-rt2_eth1.0",[0m
+[0;32m                "original_if": "regionc-rt2_GigabitEthernet0/0/0/0"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_192.168.2.0/30",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regionc-rt2', 'agent_name': 'regionc-rt2', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.2.2/30', 'description': 'to_Seg-192.168.2.0-30_Ethernet2', 'original_if': 'GigabitEthernet0/0/0/0'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.100.1/25', 'description': 'to_Seg-192.168.100.0-25_Ethernet1', 'original_if': 'GigabitEthernet0/0/0/1'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regionc-rt2",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-192.168.2.0-30_Ethernet2",[0m
+[0;36m                "ipv4": "192.168.2.2/30",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "GigabitEthernet0/0/0/0"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth2.0",[0m
+[0;36m                "description": "to_Seg-192.168.100.0-25_Ethernet1",[0m
+[0;36m                "ipv4": "192.168.100.1/25",[0m
+[0;36m                "name": "eth2.0",[0m
+[0;36m                "original_if": "GigabitEthernet0/0/0/1"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regionc-rt2",[0m
+[0;36m        "type": "node"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_172.16.2.0/30', 'agent_name': 'Seg-172.16.2.0-30', 'type': 'segment', 'if_list': [{'name': 'regionc-rt1_eth3.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionc-rt1_eth3.0', 'original_if': 'regionc-rt1_GigabitEthernet0/0/0/2'}, {'name': 'regionb-rt1_eth2.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-rt1_eth2.0', 'original_if': 'regionb-rt1_Ethernet3'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.2.0-30"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-172.16.2.0-30",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regionc-rt1_eth3.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionc-rt1_eth3.0",[0m
+[0;32m                "original_if": "regionc-rt1_GigabitEthernet0/0/0/2"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regionb-rt1_eth2.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionb-rt1_eth2.0",[0m
+[0;32m                "original_if": "regionb-rt1_Ethernet3"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_172.16.2.0/30",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_192.168.100.0/25', 'agent_name': 'Seg-192.168.100.0-25', 'type': 'segment', 'if_list': [{'name': 'regionc-rt2_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionc-rt2_eth2.0', 'original_if': 'regionc-rt2_GigabitEthernet0/0/0/1'}, {'name': 'regionc-svr01_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionc-svr01_eth1.0', 'original_if': 'regionc-svr01_ens2'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-svr01_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.100.0-25"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-192.168.100.0-25",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regionc-rt2_eth2.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionc-rt2_eth2.0",[0m
+[0;32m                "original_if": "regionc-rt2_GigabitEthernet0/0/0/1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regionc-svr01_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionc-svr01_eth1.0",[0m
+[0;32m                "original_if": "regionc-svr01_ens2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_192.168.100.0/25",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regionc-svr01', 'agent_name': 'regionc-svr01', 'type': 'endpoint', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.100.10/25', 'description': 'to_Seg-192.168.100.0-25_Ethernet2', 'original_if': 'ens2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regionc-svr01",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-192.168.100.0-25_Ethernet2",[0m
+[0;36m                "ipv4": "192.168.100.10/25",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "ens2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regionc-svr01",[0m
+[0;36m        "type": "endpoint"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_192.168.1.0/30', 'agent_name': 'Seg-192.168.1.0-30', 'type': 'segment', 'if_list': [{'name': 'regionb-rt1_eth3.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionb-rt1_eth3.0', 'original_if': 'regionb-rt1_Ethernet1'}, {'name': 'regionb-rt2_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-rt2_eth1.0', 'original_if': 'regionb-rt2_Ethernet1'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-svr01_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.100.0-25"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.1.0-30"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-192.168.1.0-30",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regionb-rt1_eth3.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionb-rt1_eth3.0",[0m
+[0;32m                "original_if": "regionb-rt1_Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regionb-rt2_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionb-rt2_eth1.0",[0m
+[0;32m                "original_if": "regionb-rt2_Ethernet1"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_192.168.1.0/30",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regionb-rt2', 'agent_name': 'regionb-rt2', 'type': 'node', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.1.2/30', 'description': 'to_Seg-192.168.1.0-30_Ethernet2', 'original_if': 'Ethernet1'}, {'name': 'eth2.0', 'agent_name': 'eth2.0', 'ipv4': '192.168.254.1/24', 'description': 'to_Seg-192.168.254.0-24_Ethernet1', 'original_if': 'Ethernet2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regionb-rt2",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-192.168.1.0-30_Ethernet2",[0m
+[0;36m                "ipv4": "192.168.1.2/30",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "Ethernet1"[0m
+[0;36m            },[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth2.0",[0m
+[0;36m                "description": "to_Seg-192.168.254.0-24_Ethernet1",[0m
+[0;36m                "ipv4": "192.168.254.1/24",[0m
+[0;36m                "name": "eth2.0",[0m
+[0;36m                "original_if": "Ethernet2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regionb-rt2",[0m
+[0;36m        "type": "node"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_192.168.254.0/24', 'agent_name': 'Seg-192.168.254.0-24', 'type': 'segment', 'if_list': [{'name': 'regionb-rt2_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regionb-rt2_eth2.0', 'original_if': 'regionb-rt2_Ethernet2'}, {'name': 'regionb-svr01_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regionb-svr01_eth1.0', 'original_if': 'regionb-svr01_ens2'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-svr01_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.100.0-25"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt2_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-svr01_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.254.0-24"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-192.168.254.0-24",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regionb-rt2_eth2.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionb-rt2_eth2.0",[0m
+[0;32m                "original_if": "regionb-rt2_Ethernet2"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regionb-svr01_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regionb-svr01_eth1.0",[0m
+[0;32m                "original_if": "regionb-svr01_ens2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_192.168.254.0/24",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regionb-svr01', 'agent_name': 'regionb-svr01', 'type': 'endpoint', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.254.10/24', 'description': 'to_Seg-192.168.254.0-24_Ethernet2', 'original_if': 'ens2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regionb-svr01",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-192.168.254.0-24_Ethernet2",[0m
+[0;36m                "ipv4": "192.168.254.10/24",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "ens2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regionb-svr01",[0m
+[0;36m        "type": "endpoint"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+[0;32mok: [localhost] => (item={'name': 'Seg_192.168.100.0/24', 'agent_name': 'Seg-192.168.100.0-24', 'type': 'segment', 'if_list': [{'name': 'regiona-rt2_eth2.0', 'agent_name': 'Ethernet1', 'ipv4': None, 'description': 'to_regiona-rt2_eth2.0', 'original_if': 'regiona-rt2_ge-0/0/1.0'}, {'name': 'regiona-svr02_eth1.0', 'agent_name': 'Ethernet2', 'ipv4': None, 'description': 'to_regiona-svr02_eth1.0', 'original_if': 'regiona-svr02_ens2'}]}) => {[0m
+[0;32m    "ansible_facts": {[0m
+[0;32m        "bridgedata": [[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.0.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth2.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-172.16.2.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-rt2_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionc-svr01_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.100.0-25"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt1_eth3.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt2_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.1.0-30"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-rt2_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regionb-svr01_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.254.0-24"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "if_list": [[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-rt2_eth2.0",[0m
+[0;32m                        "name": "Ethernet1"[0m
+[0;32m                    },[0m
+[0;32m                    {[0m
+[0;32m                        "description": "to_to_regiona-svr02_eth1.0",[0m
+[0;32m                        "name": "Ethernet2"[0m
+[0;32m                    }[0m
+[0;32m                ],[0m
+[0;32m                "name": "Seg-192.168.100.0-24"[0m
+[0;32m            }[0m
+[0;32m        ][0m
+[0;32m    },[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "item": {[0m
+[0;32m        "agent_name": "Seg-192.168.100.0-24",[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet1",[0m
+[0;32m                "description": "to_regiona-rt2_eth2.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regiona-rt2_eth2.0",[0m
+[0;32m                "original_if": "regiona-rt2_ge-0/0/1.0"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "agent_name": "Ethernet2",[0m
+[0;32m                "description": "to_regiona-svr02_eth1.0",[0m
+[0;32m                "ipv4": null,[0m
+[0;32m                "name": "regiona-svr02_eth1.0",[0m
+[0;32m                "original_if": "regiona-svr02_ens2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg_192.168.100.0/24",[0m
+[0;32m        "type": "segment"[0m
+[0;32m    }[0m
+[0;32m}[0m
+[0;36mskipping: [localhost] => (item={'name': 'regiona-svr02', 'agent_name': 'regiona-svr02', 'type': 'endpoint', 'if_list': [{'name': 'eth1.0', 'agent_name': 'eth1.0', 'ipv4': '192.168.100.210/24', 'description': 'to_Seg-192.168.100.0-24_Ethernet2', 'original_if': 'ens2'}]})  => {[0m
+[0;36m    "ansible_loop_var": "item",[0m
+[0;36m    "changed": false,[0m
+[0;36m    "item": {[0m
+[0;36m        "agent_name": "regiona-svr02",[0m
+[0;36m        "if_list": [[0m
+[0;36m            {[0m
+[0;36m                "agent_name": "eth1.0",[0m
+[0;36m                "description": "to_Seg-192.168.100.0-24_Ethernet2",[0m
+[0;36m                "ipv4": "192.168.100.210/24",[0m
+[0;36m                "name": "eth1.0",[0m
+[0;36m                "original_if": "ens2"[0m
+[0;36m            }[0m
+[0;36m        ],[0m
+[0;36m        "name": "regiona-svr02",[0m
+[0;36m        "type": "endpoint"[0m
+[0;36m    },[0m
+[0;36m    "skip_reason": "Conditional result was False"[0m
+[0;36m}[0m
+
+TASK [generate config] *********************************************************
+[1;30mtask path: /data/project/playbooks/step02.yml:75[0m
+[0;34m<127.0.0.1> ESTABLISH LOCAL CONNECTION FOR USER: runner[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734 `" && echo ansible-tmp-1680855538.1822863-237-120501401674734="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpn1noa770 TO /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/ /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpzeos3u53 TO /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/ /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855538.1822863-237-120501401674734/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-192.168.0.0-30', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regiona-rt1_eth1.0'}, {'name': 'Ethernet2', 'description': 'to_to_regiona-rt2_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "271c6647d6c16abb1d812cf2492ad9e9f9cee1ac",[0m
+[0;32m    "dest": "configs/Seg-192.168.0.0-30.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-192.168.0.0-30.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-192.168.0.0-30.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-192.168.0.0-30.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-192.168.0.0-30.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regiona-rt1_eth1.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regiona-rt2_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-192.168.0.0-30"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-192.168.0.0-30.conf",[0m
+[0;32m    "size": 791,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586 `" && echo ansible-tmp-1680855538.6804225-237-280403069833586="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpcennov1k TO /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/ /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp8usepw63 TO /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/ /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855538.6804225-237-280403069833586/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-172.16.0.0-30', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regiona-rt1_eth2.0'}, {'name': 'Ethernet2', 'description': 'to_to_regionb-rt1_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "dc7c458075fed81c812e3b1647c2e029bcfbfb7a",[0m
+[0;32m    "dest": "configs/Seg-172.16.0.0-30.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-172.16.0.0-30.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-172.16.0.0-30.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-172.16.0.0-30.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-172.16.0.0-30.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regiona-rt1_eth2.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionb-rt1_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-172.16.0.0-30"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-172.16.0.0-30.conf",[0m
+[0;32m    "size": 790,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923 `" && echo ansible-tmp-1680855539.190715-237-113863545012923="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpj5bhgn7s TO /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/ /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp5a933y33 TO /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/ /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855539.190715-237-113863545012923/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-172.16.1.0-30', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regiona-rt1_eth3.0'}, {'name': 'Ethernet2', 'description': 'to_to_regionc-rt1_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "444b05c28de11e60debac0283093295930e29801",[0m
+[0;32m    "dest": "configs/Seg-172.16.1.0-30.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-172.16.1.0-30.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-172.16.1.0-30.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-172.16.1.0-30.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-172.16.1.0-30.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regiona-rt1_eth3.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionc-rt1_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-172.16.1.0-30"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-172.16.1.0-30.conf",[0m
+[0;32m    "size": 790,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264 `" && echo ansible-tmp-1680855539.698162-237-125247899199264="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpufdedi45 TO /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/ /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpsamhp2ec TO /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/ /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855539.698162-237-125247899199264/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-192.168.2.0-30', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regionc-rt1_eth2.0'}, {'name': 'Ethernet2', 'description': 'to_to_regionc-rt2_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "e101310483606a82e47f6bc8a78df5ce2c032859",[0m
+[0;32m    "dest": "configs/Seg-192.168.2.0-30.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-192.168.2.0-30.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-192.168.2.0-30.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-192.168.2.0-30.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-192.168.2.0-30.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionc-rt1_eth2.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionc-rt2_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-192.168.2.0-30"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-192.168.2.0-30.conf",[0m
+[0;32m    "size": 791,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682 `" && echo ansible-tmp-1680855540.2090328-237-221957704026682="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpzwf579ql TO /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/ /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpcgnao08k TO /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/ /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855540.2090328-237-221957704026682/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-172.16.2.0-30', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regionc-rt1_eth3.0'}, {'name': 'Ethernet2', 'description': 'to_to_regionb-rt1_eth2.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "319fc3a6a9a359e2256b2b107b2ef41b124b70e1",[0m
+[0;32m    "dest": "configs/Seg-172.16.2.0-30.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-172.16.2.0-30.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-172.16.2.0-30.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-172.16.2.0-30.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-172.16.2.0-30.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionc-rt1_eth3.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionb-rt1_eth2.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-172.16.2.0-30"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-172.16.2.0-30.conf",[0m
+[0;32m    "size": 790,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711 `" && echo ansible-tmp-1680855540.7011344-237-7804424974711="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpubbkyrk_ TO /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/ /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp5z8j41pt TO /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/ /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855540.7011344-237-7804424974711/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-192.168.100.0-25', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regionc-rt2_eth2.0'}, {'name': 'Ethernet2', 'description': 'to_to_regionc-svr01_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "cac7b6a3d73aa9173cde1a1d24a85b5e60fb837c",[0m
+[0;32m    "dest": "configs/Seg-192.168.100.0-25.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-192.168.100.0-25.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-192.168.100.0-25.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-192.168.100.0-25.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-192.168.100.0-25.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionc-rt2_eth2.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionc-svr01_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-192.168.100.0-25"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-192.168.100.0-25.conf",[0m
+[0;32m    "size": 795,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079 `" && echo ansible-tmp-1680855541.1999424-237-150206084941079="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpl5dv0eu7 TO /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/ /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpfczov1yv TO /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/ /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855541.1999424-237-150206084941079/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-192.168.1.0-30', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regionb-rt1_eth3.0'}, {'name': 'Ethernet2', 'description': 'to_to_regionb-rt2_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "6ca4c146c83cf78a0c55a28d03191922a297370c",[0m
+[0;32m    "dest": "configs/Seg-192.168.1.0-30.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-192.168.1.0-30.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-192.168.1.0-30.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-192.168.1.0-30.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-192.168.1.0-30.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionb-rt1_eth3.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionb-rt2_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-192.168.1.0-30"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-192.168.1.0-30.conf",[0m
+[0;32m    "size": 791,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118 `" && echo ansible-tmp-1680855541.7058911-237-67011458357118="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmpsaem3oc_ TO /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/ /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp4vsowph5 TO /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/ /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855541.7058911-237-67011458357118/ > /dev/null 2>&1 && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-192.168.254.0-24', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regionb-rt2_eth2.0'}, {'name': 'Ethernet2', 'description': 'to_to_regionb-svr01_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "233c3375e6edafc59b1b0144c4184cdc664019bb",[0m
+[0;32m    "dest": "configs/Seg-192.168.254.0-24.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-192.168.254.0-24.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-192.168.254.0-24.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-192.168.254.0-24.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-192.168.254.0-24.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionb-rt2_eth2.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regionb-svr01_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-192.168.254.0-24"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-192.168.254.0-24.conf",[0m
+[0;32m    "size": 795,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906 `" && echo ansible-tmp-1680855542.276119-237-58919471375906="` echo /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906 `" ) && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/stat.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmp3afybivw TO /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/AnsiballZ_stat.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/ /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/AnsiballZ_stat.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/AnsiballZ_stat.py && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/file.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25hlmy84d3/tmptjipcry8 TO /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/AnsiballZ_file.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/ /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/AnsiballZ_file.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1680855542.276119-237-58919471375906/ > /dev/null 2>&1 && sleep 0'[0m
+[0;32mok: [localhost] => (item={'name': 'Seg-192.168.100.0-24', 'if_list': [{'name': 'Ethernet1', 'description': 'to_to_regiona-rt2_eth2.0'}, {'name': 'Ethernet2', 'description': 'to_to_regiona-svr02_eth1.0'}]}) => {[0m
+[0;32m    "ansible_loop_var": "item",[0m
+[0;32m    "changed": false,[0m
+[0;32m    "checksum": "38ae3f09d0b1b3b3d4a5c5ff5f9b33f4636fd30e",[0m
+[0;32m    "dest": "configs/Seg-192.168.100.0-24.conf",[0m
+[0;32m    "diff": {[0m
+[0;32m        "after": {[0m
+[0;32m            "path": "configs/Seg-192.168.100.0-24.conf"[0m
+[0;32m        },[0m
+[0;32m        "before": {[0m
+[0;32m            "path": "configs/Seg-192.168.100.0-24.conf"[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "gid": 0,[0m
+[0;32m    "group": "root",[0m
+[0;32m    "invocation": {[0m
+[0;32m        "module_args": {[0m
+[0;32m            "_diff_peek": null,[0m
+[0;32m            "_original_basename": "ceos.j2",[0m
+[0;32m            "access_time": null,[0m
+[0;32m            "access_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "attributes": null,[0m
+[0;32m            "dest": "configs/Seg-192.168.100.0-24.conf",[0m
+[0;32m            "follow": true,[0m
+[0;32m            "force": false,[0m
+[0;32m            "group": null,[0m
+[0;32m            "mode": null,[0m
+[0;32m            "modification_time": null,[0m
+[0;32m            "modification_time_format": "%Y%m%d%H%M.%S",[0m
+[0;32m            "owner": null,[0m
+[0;32m            "path": "configs/Seg-192.168.100.0-24.conf",[0m
+[0;32m            "recurse": false,[0m
+[0;32m            "selevel": null,[0m
+[0;32m            "serole": null,[0m
+[0;32m            "setype": null,[0m
+[0;32m            "seuser": null,[0m
+[0;32m            "src": null,[0m
+[0;32m            "state": "file",[0m
+[0;32m            "unsafe_writes": false[0m
+[0;32m        }[0m
+[0;32m    },[0m
+[0;32m    "item": {[0m
+[0;32m        "if_list": [[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regiona-rt2_eth2.0",[0m
+[0;32m                "name": "Ethernet1"[0m
+[0;32m            },[0m
+[0;32m            {[0m
+[0;32m                "description": "to_to_regiona-svr02_eth1.0",[0m
+[0;32m                "name": "Ethernet2"[0m
+[0;32m            }[0m
+[0;32m        ],[0m
+[0;32m        "name": "Seg-192.168.100.0-24"[0m
+[0;32m    },[0m
+[0;32m    "mode": "0644",[0m
+[0;32m    "owner": "runner",[0m
+[0;32m    "path": "configs/Seg-192.168.100.0-24.conf",[0m
+[0;32m    "size": 795,[0m
+[0;32m    "state": "file",[0m
+[0;32m    "uid": 1001[0m
+[0;32m}[0m
+[0;34mMETA: ran handlers[0m
+[0;34mMETA: ran handlers[0m
+
+PLAY [docker-host] *************************************************************
+[0;34mMETA: ran handlers[0m
+
+TASK [copy] ********************************************************************
+[1;30mtask path: /data/project/playbooks/step02.yml:93[0m
+[0;31mfatal: [docker-host]: FAILED! => {[0m
+[0;31m    "msg": "'node_list' is undefined"[0m
+[0;31m}[0m
+[0;36m...ignoring[0m
+[0;34mMETA: ran handlers[0m
+[0;34mMETA: ran handlers[0m
+
+PLAY RECAP *********************************************************************
+[0;32mdocker-host[0m                : [0;32mok=1   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    [1;35mignored=1   [0m
+[0;32mlocalhost[0m                  : [0;32mok=4   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   

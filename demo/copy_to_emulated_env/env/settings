@@ -1,0 +1,3 @@
+container_image: "ghcr.io/ool-mddo/mddo_ansible_runner:demo202211"  
+process_isolation_executable: docker
+process_isolation: true

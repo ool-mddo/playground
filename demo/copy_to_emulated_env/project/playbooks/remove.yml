@@ -1,0 +1,25 @@
+---
+- hosts: docker-host
+  gather_facts: false
+  become: yes
+  vars:
+    mddo_model_file: "/data/project/playbooks/pushed_configs_mddo_network.json"
+    nodered_url: "http://192.168.80.2:1880"
+    network_name: "mddo-ospf"
+    netoviz_url: "http://localhost:3000"
+    labname: "mddo-lab"
+    containerlab_host: "172.17.0.1"
+    ansible_user: "{{ login_user}}"
+    mddo_containerlab_file: "configs/clab-topo.yml"
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_runner_dir: ""
+    operation: delete
+
+  tasks:
+    - include_tasks: 
+        file: "/data/project/playbooks/sub_mddo_containerlab.yml"
+
+    - name: "run remove_clab.sh"
+      shell: "sudo bash remove_clab.sh"
+      args:
+        chdir: "{{ ansible_runner_dir }}/project"

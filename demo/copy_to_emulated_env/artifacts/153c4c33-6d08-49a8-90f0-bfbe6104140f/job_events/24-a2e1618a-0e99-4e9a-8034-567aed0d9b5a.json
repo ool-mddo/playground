@@ -1,0 +1,1 @@
+{"event": "verbose", "uuid": "a2e1618a-0e99-4e9a-8034-567aed0d9b5a", "counter": 24, "stdout": "\u001b[0;34mLoading callback plugin default of type stdout, v2.0 from /usr/local/lib/python3.8/site-packages/ansible/plugins/callback/default.py\u001b[0m", "start_line": 23, "end_line": 24, "runner_ident": "153c4c33-6d08-49a8-90f0-bfbe6104140f", "created": "2023-04-07T07:56:38.952639"}

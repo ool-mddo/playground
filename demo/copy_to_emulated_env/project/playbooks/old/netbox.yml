@@ -1,0 +1,34 @@
+- hosts: all
+  gather_facts: false
+  connection: local
+  collections:
+    - netbox.netbox
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    netbox_url: http://192.168.23.31:8000
+    netbox_token: 0123456789abcdef0123456789abcdef01234567
+
+  tasks:
+    - name: get netbox interface param
+      set_fact:
+        nw_param: "{{ query('netbox.netbox.nb_lookup','interfaces', api_endpoint=netbox_url, token=netbox_token) }}"
+
+    - name: create layer1_topology step1
+      set_fact:
+        edges: "{{edges| default([])}} +  [{'node1': {'interfaceName': '{{item.value.name}}','hostname': '{{item.value.device.name}}' }
+, 'node2': {'hostname': '{{item.value.connected_endpoint.device.name}}', 'interfaceName': '{{item.value.connected_endpoint.name}}' } }]"
+      with_flattened: "{{nw_param}}"
+      when: "{{ item['value']['connected_endpoint'] }}"
+
+    - name: create layer1_topology step2
+      set_fact:
+        layer1_topology:
+          edges: "{{edges}}"
+
+    - name: nice json
+      copy:
+        content: "{{ layer1_topology | to_nice_json }} "
+        dest: ./layer1_topology.json
+
+

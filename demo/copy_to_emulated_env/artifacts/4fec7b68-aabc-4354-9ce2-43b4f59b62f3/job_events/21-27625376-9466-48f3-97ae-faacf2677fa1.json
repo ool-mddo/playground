@@ -1,0 +1,1 @@
+{"event": "verbose", "uuid": "27625376-9466-48f3-97ae-faacf2677fa1", "counter": 21, "stdout": "\u001b[1;35m[WARNING]: Found both group and host with same name: netbox\u001b[0m", "start_line": 20, "end_line": 21, "runner_ident": "4fec7b68-aabc-4354-9ce2-43b4f59b62f3", "created": "2023-04-07T08:07:55.655508"}

@@ -1,0 +1,75 @@
+---
+- hosts: localhost
+  gather_facts: false
+  become: yes
+  vars:
+    labname: "mddo-lab"
+    mddo_model_file: "./pushed_configs_mddo_network.json"
+    nodes: {}
+    containerlab: []
+    convertif: []
+    nodered_url: "http://192.168.80.2:1880"
+    bridge_image:
+      kind: arista_ceos
+      image: ceos-lab:4.27.2F
+      #image: ceos:4.27.3F  
+      #kind: linux
+      #image: ghcr.io/ool-mddo/clab-ovs:latest
+    cnf_image:
+      kind: 'juniper_crpd'
+      #kind: 'crpd'
+      image: 'crpd:22.1R1.10'
+  tasks:
+    - name: "lookup {{ mddo_model_file }}"
+      set_fact: 
+        topology: "{{lookup('file', mddo_model_file) }}"
+ 
+    - name: "get nodered convert link"
+      uri:
+        url: "{{ nodered_url }}/convertlink"
+        #url: "{{ nodered_url }}/convertlink/batfish"
+        method: "POST"
+        #method: "GET"
+        body: "{{ topology }}"
+        body_format: json
+      register: result_link     
+
+    - name: "get nodered convert data"
+      uri:
+        url: "{{ nodered_url }}/convertif/eth"
+        #url: "{{ nodered_url }}/convertif/batfish/eth"
+        method: "POST"
+        #method: "GET"
+        body: "{{ topology }}"
+        body_format: json
+      register: result_node
+
+    - set_fact:
+        nodes: '{{ nodes | combine( { convert_nodes : tmp_cnf_image } ) }}'
+      vars:
+        convert_nodes: "{{ item.node.clab }}"
+        tmp_cnf_image: "{{ cnf_image | combine( {'startup-config': config_file } ) }}"
+        config_file: "{{ item.node.clab }}.conf"
+      when: '"Seg" not in item.node.clab'
+      loop: "{{ result_node.json }}"
+
+    - set_fact:
+        nodes: '{{ nodes | combine( { convert_nodes : tmp_bridge_image } ) }}'
+      vars:
+        convert_nodes: "{{ item.node.clab }}"
+        tmp_bridge_image: "{{ bridge_image | combine( {'startup-config': config_file } ) }}"
+        config_file: "{{ item.node.clab }}.conf"
+      when: '"Seg" in item.node.clab'
+      loop: "{{ result_node.json }}"
+
+    - set_fact:
+        containerlab:
+          name: "{{ labname }}"
+          topology:
+            links: "{{ result_link.json }}"
+            nodes: "{{ nodes }}"
+    - name:
+      copy:
+        dest: "./clab-topo.yml"
+        content: "{{ containerlab | to_nice_yaml }}"
+

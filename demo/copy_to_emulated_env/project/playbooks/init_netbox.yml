@@ -1,0 +1,181 @@
+---
+- hosts: netbox
+  gather_facts: false
+  connection: local
+  collections:
+    - netbox.netbox
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    netbox_url: http://192.168.23.31:8000
+    netbox_token: 0123456789abcdef0123456789abcdef01234567
+
+    machines:
+      - site: RegionA
+        manufacture: Juniper
+        role: RT
+        ansible_network_os: junos
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionA-RT1
+        rack: RegionA-CoreRack
+        rack_position: 40
+        rack_face: Front
+        device_type: MX
+      - site: RegionA
+        manufacture: Juniper
+        role: RT
+        ansible_network_os: junos
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionA-RT2
+        rack: RegionA-CoreRack
+        rack_position: 39
+        rack_face: Front
+        device_type: MX
+      - site: RegionA
+        manufacture: Ubuntu
+        role: Server
+        ansible_network_os: server
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionA-Svr02
+        rack:  RegionA-Rack1
+        rack_position: 38
+        rack_face: Front
+        device_type: Ubuntu
+      - site: RegionB
+        manufacture: Arista
+        role: RT
+        ansible_network_os: eos
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionB-RT1
+        rack: RegionB-CoreRack
+        rack_position: 40
+        rack_face: Front
+        device_type: EOS
+      - site: RegionB
+        manufacture: Arista
+        role: RT
+        ansible_network_os: eos
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionB-RT2
+        rack: RegionB-CoreRack
+        rack_position: 39
+        rack_face: Front
+        device_type: EOS
+      - site: RegionB
+        manufacture: Ubuntu
+        role: Server
+        ansible_network_os: server
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionB-Svr01
+        rack:  RegionB-Rack1
+        rack_position: 38
+        rack_face: Front
+        device_type: Ubuntu
+      - site: RegionC
+        manufacture: IOSXR
+        role: RT
+        ansible_network_os: iosxr
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionC-RT1
+        rack:  RegionC-Rack1
+        rack_position: 40
+        rack_face: Front
+        device_type: IOSXR
+      - site: RegionC
+        manufacture: IOSXR
+        role: RT
+        ansible_network_os: iosxr
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionC-RT2
+        rack:  RegionC-Rack1
+        rack_position: 39
+        rack_face: Front
+        device_type: IOSXR
+      - site: RegionC
+        manufacture: Ubuntu
+        role: Server
+        ansible_network_os: server
+        ansible_user: vrnetlab
+        ansible_password: VR-netlab9
+        target: RegionC-Svr01
+        rack:  RegionC-Rack1
+        rack_position: 38
+        rack_face: Front
+        device_type: Ubuntu
+
+  tasks:
+    - name: site
+      netbox_site:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "{{ item.site }}"
+        state: present
+      loop: "{{ machines }}"
+
+    - name: rack
+      netbox_rack:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "{{ item.rack }}"
+          site: "{{ item.site }}"
+        state: present
+      loop: "{{ machines }}"
+
+    - name: add manufacturers
+      netbox_manufacturer:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "{{ item.manufacture }}"
+        state: present
+      loop: "{{ machines }}"
+
+    - netbox_device_role:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "{{ item.role }}"
+          slug: "{{ item.role }}"
+          color: FFFFFF
+        state: present
+      loop: "{{ machines }}"
+
+    - netbox_device_type:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          slug: "{{ item.device_type }}"
+          model: "{{ item.device_type }}"
+          manufacturer: "{{ item.manufacture }}"
+        state: present
+      loop: "{{ machines }}"
+
+    - name: add devices
+      netbox_device:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "{{ item.target }}"
+          device_type: "{{ item.device_type }}"
+          device_role: "{{ item.role }}"
+          rack: "{{ item.rack }}"
+          position: "{{ item.rack_position }}"
+          face: "{{ item.rack_face }}"
+          local_context_data:
+            ansible_host: "{{ item.target }}"
+            ansible_persistent_log_messages: True
+            ansible_network_os: "{{ item.ansible_network_os }}"
+            ansible_user: "{{ item.ansible_user }}"
+            ansible_password: "{{ item.ansible_password }}"
+          site: "{{ item.site }}"
+      loop: "{{ machines }}"

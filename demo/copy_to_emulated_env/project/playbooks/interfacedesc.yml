@@ -1,0 +1,73 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - netbox.netbox
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    netbox_url: http://192.168.23.31:8000
+    netbox_token: 0123456789abcdef0123456789abcdef01234567
+
+  tasks:
+    - name: add host values
+      add_host:
+        groups: "network"
+        name: "{{ item.value.name }}"
+        ansible_host: "{{ item.value.name }}"
+        ansible_network_os: "{{ item.value.local_context_data.ansible_network_os }}"
+        ansible_user: "{{ item.value.local_context_data.ansible_user }}"
+        ansible_password: "{{ item.value.local_context_data.ansible_password }}"
+      loop: "{{ query('netbox.netbox.nb_lookup','devices', api_endpoint=netbox_url, token=netbox_token) }}"
+
+
+- hosts: network
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+
+  tasks:
+    - name: Read users from CSV file and return a list
+      read_csv:
+        path: interfacedesc.csv 
+      register: interface
+      delegate_to: localhost
+
+    - name: interface description setting
+      ansible.netcommon.cli_config:
+        config: "set interfaces {{ item.Source_Interface }} description {{ item.Source_Interface_Description }}"
+      when: ansible_network_os == 'junos' and inventory_hostname == '{{ item.Source_Node }}'
+      register: command_junos_result
+      loop: '{{ interface.list }}'
+
+
+    - name: interface description setting
+      ansible.netcommon.cli_config:
+        config: "interface {{ item.Source_Interface }} description {{ item.Source_Interface_Description }}"
+      when: ansible_network_os == 'iosxr'  and inventory_hostname == '{{ item.Source_Node }}'
+      register: command_ios_result
+      loop: '{{ interface.list }}'
+
+    - name: change enable mode
+      ansible.netcommon.cli_command:
+        command: enable
+      when: ansible_network_os == 'eos'  and inventory_hostname == '{{ item.Source_Node }}'
+      loop: '{{ interface.list }}'
+
+
+    - name: interface description setting
+      arista.eos.eos_config:
+        lines:
+          "description {{ item.Source_Interface_Description }}"
+        parents:
+          "interface {{ item.Source_Interface }}"
+      when: ansible_network_os == 'eos'  and inventory_hostname == '{{ item.Source_Node }}'
+      register: command_eos_result
+      loop: '{{ interface.list }}'
+
+
+#    - debug:
+#        msg: '{{ interface }}'
+
+
+

@@ -1,0 +1,70 @@
+---
+- hosts: localhost
+  vars:
+    node_list: []
+    node_dict: {}
+    convert_file: "./convert-if.yml"
+    interface_ipv4_file: "./interface-ipv4.yml"
+
+  tasks:
+  - name: Include users.json
+    include_vars:
+      file: ./pushed_configs_mddo_network.json
+      name: tmp_json
+    
+  - name: extract nodes list data
+    set_fact:
+      node_dicts:
+        node : "[{{ nodes }}]"
+    vars:
+      query: '*.network[1].node[*]'
+      nodes: >-
+        {%- for node in item -%}
+        {%- set if_list= [] -%}
+        {%- set tp_list= node['ietf-network-topology:termination-point'] -%}
+        {%- for tp in tp_list -%}
+        {%- if 'mddo-topology:l3-termination-point-attributes' in tp -%}
+        {%- set if_list =  if_list.append( { 'name': tp['tp-id'], 'ipv4': tp['mddo-topology:l3-termination-point-attributes']['ip-address'][0]  } ) %}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- set trashdata =  node_dict.update( { 'name': node['node-id'] , 'iflist': if_list } ) %}
+        {%- if if_list -%}
+        {{ node_dict }},
+        {%- endif -%}
+        {%- endfor -%}
+    loop: "{{ tmp_json | json_query(query) }}"
+
+  - name: "lookup {{ convert_file }}"
+    set_fact: 
+      convertif: "{{lookup('file', convert_file) | from_yaml }}"
+        
+  - name: merge inout_info & convert-if
+    set_fact:
+      node_list: "{{ node_list + [ data ] }}"
+    vars:
+      data:    
+        name: "{{ item.name }}"
+        iflist: >-
+          {%- for tmpdict in convertif -%}
+          {%-   if item.name == tmpdict['node'] -%}
+          {%-     for iflist in item.iflist -%}
+          {%-       for v in tmpdict.iflist -%}
+          {%-         if iflist.name in v.keys() -%}
+          { 'name': '{{ v[iflist.name] }}', 'ipv4': '{{ iflist.ipv4 }}' },
+          {%-         endif -%}
+          {%-       endfor -%}
+          {%-     endfor -%}
+          {%-   endif -%}
+          {%- endfor -%}
+    loop: "{{ node_dicts.node[0] }}"
+
+  - name: generate convert-if file
+    copy:
+      dest: "{{ interface_ipv4_file }}"
+      content: "{{ node_list | to_nice_yaml }}"
+
+  - name: generate config
+    template:
+      src: crpd.j2
+      dest: "{{ item.name }}.conf"
+    loop: "{{ node_list }}"

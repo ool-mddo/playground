@@ -1,0 +1,75 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    nodes: {}
+    containerlab: []
+    convertif: []
+    bridge_image:
+      kind: ovs-bridge
+    cnf_image:
+      kind: 'juniper_crpd'
+      image: 'crpd:22.1R1.10'
+    mddo_model_file: "/data/project/playbooks/pushed_configs_mddo_network.json"
+    nodered_url: "http://192.168.80.2:1880"
+    node_list: []
+    node: {}
+    node_dicts: {}
+    node_dict: {}
+    network_name: "mddo-ospf"
+    netoviz_url: "http://localhost:3000"
+    labname: "mddo-lab"
+    containerlab_host: "172.17.0.1"
+    demo_dir: ""
+    mddo_containerlab_file: "configs/clab-topo.yml"
+
+  tasks:
+#  - name: node_list
+#    debug:
+#      msg: '{{ node_list  }}'
+### Data Sample
+#node_list:
+#  - name: "regiona-rt1"
+#    iflist:
+#      - name: "eth1.0"
+#        ipv4: "192.168.0.1/30"
+#        originalif: "ge-0/0/0.0"
+#        description: "to_Seg-192.168.0.0-30_Ethernet1"  <= without loopback IF
+
+  - name: load test data
+    set_fact:
+      node_list : "{{ lookup('file', 'test.json') | from_json }}"
+
+  - name: generate config
+    template:
+      src: crpd.j2
+      dest: "configs/{{ item.name }}.conf"
+    when: '"Seg" not in item.name'
+    loop: "{{ node_list }}"
+
+  - name: generate bridge data
+    set_fact:
+      bridgedata: "{{ bridgedata | default([])  + [ data ] }}"
+    vars:
+      data:
+       name: "{{ item.agent_name }}"
+       iflist: >-
+         {%- for dict in item.iflist -%}
+         {%-  if 'description' in dict -%}
+         { 'name': '{{ dict.agent_name }}', 'description': 'to_{{ dict.name }}'},
+         {%- else -%}
+         { 'name': '{{ dict.agent_name }}' },
+         {%- endif -%}
+         {%- endfor -%}
+    when: '"Seg" in item.agent_name'
+    loop: "{{ node_list }}"
+         
+
+  - name: generate config
+    template:
+      src: ceos.j2
+      dest: "configs/{{ item.name }}.conf"
+    when: '"Seg" in item.name'
+    loop: "{{ bridgedata }}"
+

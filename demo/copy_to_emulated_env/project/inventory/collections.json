@@ -1,0 +1,1 @@
+{"/usr/share/ansible/collections/ansible_collections": {"ansible.utils": {"version": "2.7.0"}, "ansible.netcommon": {"version": "4.1.0"}, "junipernetworks.junos": {"version": "4.0.0"}, "arista.eos": {"version": "6.0.0"}, "community.general": {"version": "6.0.0"}, "cisco.iosxr": {"version": "4.0.2"}, "netbox.netbox": {"version": "3.9.0"}}}

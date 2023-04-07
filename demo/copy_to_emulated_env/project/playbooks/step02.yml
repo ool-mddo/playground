@@ -1,0 +1,127 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    nodes: {}
+    containerlab: []
+    convertif: []
+    bridge_image:
+      kind: ovs-bridge
+    cnf_image:
+      kind: 'juniper_crpd'
+      image: 'crpd:22.1R1.10'
+    mddo_model_file: "/data/project/playbooks/pushed_configs_mddo_network.json"
+    nodered_url: "http://192.168.80.2:1880"
+    node_list: []
+    node: {}
+    node_dicts: {}
+    node_dict: {}
+    network_name: "mddo-ospf"
+    netoviz_url: "http://localhost:3000"
+    labname: "mddo-lab"
+    containerlab_host: "172.17.0.1"
+    demo_dir: ""
+    mddo_containerlab_file: "configs/clab-topo.yml"
+
+  tasks:
+#  - name: node_list
+#    debug:
+#      msg: '{{ node_list  }}'
+### Data Sample
+#node_list:
+#  - name: "regiona-rt1"
+#    iflist:
+#      - name: "eth1.0"
+#        ipv4: "192.168.0.1/30"
+#        originalif: "ge-0/0/0.0"
+#        description: "to_Seg-192.168.0.0-30_Ethernet1"  <= without loopback IF
+
+#  - name: load test data
+#    set_fact:
+#      node_list : "{{ lookup('file', 'test.json') | from_json }}"
+  - name: "get convert table"
+    uri:
+      url: "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params"
+      method: "GET"
+      body_format: json
+    register: tmp_node_list
+
+  - name: set node_list
+    set_fact: 
+      node_list: "{{ tmp_node_list }}"
+
+  - name: generate config
+    template:
+      src: crpd.j2
+      dest: "configs/{{ item.name }}.conf"
+    when: '"segment" not in item.type'
+    loop: "{{ node_list.json }}"
+
+  - name: generate bridge data
+    set_fact:
+      bridgedata: "{{ bridgedata | default([])  + [ data ] }}"
+    vars:
+      data:
+       name: "{{ item.agent_name }}"
+       if_list: >-
+         {%- for dict in item.if_list -%}
+         {%-  if 'description' in dict -%}
+         { 'name': '{{ dict.agent_name }}', 'description': 'to_{{ dict.description }}'},
+         {%- else -%}
+         { 'name': '{{ dict.agent_name }}' },
+         {%- endif -%}
+         {%- endfor -%}
+    when: '"segment" in item.type'
+    loop: "{{ node_list.json }}"
+         
+
+  - name: generate config
+    template:
+      src: ceos.j2
+      dest: "configs/{{ item.name }}.conf"
+    #when: '"segment" in item.type'
+    loop: "{{ bridgedata }}"
+
+
+- hosts: docker-host
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_user: "{{ login_user}}"
+    mddo_containerlab_file: "configs/clab-topo.yml"
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: "get convert table"
+      uri:
+        url: "http://localhost:15000/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params"
+        method: "GET"
+        body_format: json
+      register: node_list
+
+    - copy:
+        src: "configs/{{ item.agent_name }}.conf"
+        dest: "/tmp/{{ item.agent_name }}.conf"
+      loop: "{{ node_list.json }}"
+      ignore_errors: True
+
+    - name: "get clab topo yaml"
+      uri:
+        url: "http://localhost:15000/topologies/mddo-ospf/emulated_asis/topology/layer3/containerlab_topology"
+        method: "GET"
+        body_format: json
+      register: containerlab
+
+#    - name:
+#      set_fact:
+#        containerlab: "{{lookup('file', mddo_containerlab_file)  | from_yaml }}"
+
+    - name: Creating clab-topo.yml 
+      copy:
+        dest: "/tmp/clab-topo.yml"
+        content: "{{ containerlab.json | to_yaml }}"
+
+    - name: deploy containerlab
+      command:
+        cmd: "containerlab deploy --topo /tmp/clab-topo.yml"

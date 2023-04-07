@@ -1,0 +1,60 @@
+---
+- hosts: docker-host
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_user: "{{ login_user}}"
+    #ansible_password: "{{ login_pass }}"
+    #ansible_sudo_pass: "{{ sudo_pass }}"
+    labname: "demo"
+    mddo_containerlab_file: "configs/clab-topo.yml"
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_runner_dir: "/tmp"
+  tasks:
+    - name:
+      set_fact:
+        containerlab: "{{lookup('file', mddo_containerlab_file)  | from_yaml }}"
+
+    - copy:
+        src: "configs/{{ item.key }}.conf"
+        dest: "/tmp/{{ item.key }}.conf"
+      loop: "{{ containerlab.topology.nodes | dict2items }}"
+
+
+    - name: Creating clab-topo.yml 
+      copy:
+        dest: "/tmp/clab-topo.yml"
+        content: "{{ containerlab | to_yaml }}"
+
+    - name: cli show ospf neighbor | display json
+      command:
+        cmd: "containerlab exec --topo /tmp/clab-topo.yml  --label clab-node-kind\\=juniper_crpd --cmd 'cli show ospf neighbor | display json'  -f json"
+      register: result
+
+    - name: "mkdir -p showospfneigh"
+      shell: "mkdir -p {{ ansible_runner_dir }}/project/status/showospfneigh"
+
+    - name: create show command result files
+      copy: 
+        dest: "{{ ansible_runner_dir }}/project/status/showospfneigh/{{ hostname }}_show_ospf_neigh.txt"
+        content: "{{ item.value['cli show ospf neighbor | display json']['stdout'] }}"
+      vars:
+        hostname: "{{ item.key | regex_replace('clab-' + labname + '-' , '')  }}"
+      loop: "{{ result.stdout | from_json | dict2items }}"
+
+    - name: cli show route | display json
+      command:
+        cmd: "containerlab exec --topo /tmp/clab-topo.yml  --label clab-node-kind\\=juniper_crpd --cmd 'cli show route | display json'  -f json"
+      register: result
+
+    - name: "mkdir -p showroute"
+      shell: "mkdir -p {{ ansible_runner_dir }}/project/status/showroute"
+
+    - name: create show command result files
+      copy:
+        dest: "{{ ansible_runner_dir }}/project/status/showroute/{{ hostname }}_show_route.txt"
+        content: "{{ item.value['cli show route | display json']['stdout'] }}"
+      vars:
+        hostname: "{{ item.key | regex_replace('clab-' + labname + '-' , '')  }}"
+      loop: "{{ result.stdout | from_json | dict2items }}"
+

@@ -1,0 +1,79 @@
+---
+    - set_fact:
+       topology: "{{ emulated_asis.json }}" 
+
+    - name: "get nodered convert link"
+      uri:
+        url: "{{ nodered_url }}/convertlink"
+        method: "POST"
+        body: "{{ topology }}"
+        body_format: json
+      register: result_link     
+
+    - name: "get nodered convert data"
+      uri:
+        url: "{{ nodered_url }}/convertif/eth"
+        method: "POST"
+        body: "{{ topology }}"
+        body_format: json
+      register: result_node
+
+    - set_fact:
+        nodes: '{{ nodes | combine( { convert_nodes : tmp_cnf_image } ) }}'
+      vars:
+        convert_nodes: "{{ item.node.clab }}"
+        tmp_cnf_image: "{{ cnf_image | combine( {'startup-config': config_file } ) }}"
+        config_file: "{{ item.node.clab }}.conf"
+      when: '"Seg" not in item.node.clab'
+      loop: "{{ result_node.json }}"
+
+    - set_fact:
+        nodes: "{{ nodes | combine( { convert_nodes : tmp_bridge_image } )  }}"
+      vars:
+        convert_nodes: "{{ item.node.clab }}"
+        tmp_bridge_image: "{{ bridge_image  }}"
+      when: '"Seg" in item.node.clab'
+      loop: "{{ result_node.json }}"
+
+    - set_fact: 
+        convertendpoints: []
+
+    - set_fact:
+        convertendpoints: "{{ convertendpoints  + [ endpoints ] }}"
+      vars:
+        endpoints:
+          endpoints:
+            - "{{ item.1.endpoints.0 }}"
+            - "{{ tmpif }}"
+        tmpif: "{{ item.1.endpoints.1 | regex_replace('eth', convertif ) }}"
+        convertif: "{{ item.0.node.clab  }}_eth"
+      when: '"Seg" in item.0.node.clab and item.0.node.clab in item.1.endpoints.1 ' 
+      loop: "{{ result_node.json | product(result_link.json) | list }}"
+
+    - set_fact:
+        containerlab:
+          name: "{{ labname }}"
+          topology:
+            links: "{{ convertendpoints }}"
+            nodes: "{{ nodes }}"
+    - name:
+      copy:
+        dest: "{{ mddo_containerlab_file }}"
+        content: "{{ containerlab | to_nice_yaml }}"
+
+
+    - set_fact:
+        convert_seg: "{{ convert_seg | default([]) + [ { 'name': item.node.clab, 'crc32': tmp_convert } ]  }}"
+      vars:
+        tmp_convert: "{{ item.node.clab | community.general.crc32 }}"
+      when: '"Seg" in item.node.clab'
+      loop: "{{ result_node.json }}"
+
+        
+    - replace:
+        path: "{{ mddo_containerlab_file }}"
+        regexp: "{{ item.name }}"
+        replace: "{{ item.crc32}}"
+      loop: "{{ convert_seg  }}"      
+
+

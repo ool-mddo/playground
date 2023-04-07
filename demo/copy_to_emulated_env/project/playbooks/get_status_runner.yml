@@ -1,0 +1,36 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - netbox.netbox
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    netbox_url: http://192.168.23.31:8000
+    netbox_token: 0123456789abcdef0123456789abcdef01234567
+
+
+  tasks:
+    - name: add host values
+      add_host:
+        groups: "network"
+        name: "{{ item.value.name }}"
+        ansible_host: "{{ item.value.local_context_data.ansible_host }}"
+        ansible_network_os: "{{ item.value.local_context_data.ansible_network_os }}"
+        ansible_user: "{{ item.value.local_context_data.ansible_user }}"
+        ansible_password: "{{ item.value.local_context_data.ansible_password }}"
+      loop: "{{ query('netbox.netbox.nb_lookup','devices', api_endpoint=netbox_url, token=netbox_token) }}"
+
+
+- hosts: network
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  vars:
+      status_dir: "/data/status"
+  roles:
+    - showinterfaces
+    - showlldp
+    - showroute
+    - showospfneigh
+

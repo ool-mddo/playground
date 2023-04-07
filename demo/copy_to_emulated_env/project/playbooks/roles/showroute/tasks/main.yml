@@ -1,0 +1,54 @@
+---
+    - name: "mkdir -p {{ status_dir }}"
+      shell: "mkdir -p {{ status_dir }}"
+      delegate_to: 127.0.0.1
+
+
+    - name: "mkdir -p {{ role_name }}"
+      shell: "mkdir -p {{ status_dir }}/{{ role_name }}"
+      delegate_to: 127.0.0.1
+
+    - name: show route
+      ansible.netcommon.cli_command:
+        command: show route | display json
+      when: ansible_network_os == 'junos'
+      register: command_junos_result
+
+    - name: save status files
+      copy:
+        content: "{{ command_junos_result.stdout }}"
+        dest: "{{ status_dir }}/{{ role_name }}/{{ inventory_hostname }}_show_route.txt"
+      when: ansible_network_os == 'junos'
+      changed_when: False
+
+    - name: show ip route
+      ansible.netcommon.cli_command:
+        command: show ip route
+      when: ansible_network_os == 'iosxr'
+      register: command_ios_result
+
+    - name: save status files
+      copy:
+        content: "{{ command_ios_result.stdout }}"
+        dest: "{{ status_dir }}/{{ role_name }}/{{ inventory_hostname }}_show_route.txt"
+      when: ansible_network_os == 'iosxr'
+      changed_when: False
+
+    - name: change enable mode 
+      ansible.netcommon.cli_command:
+        command: enable 
+      when: ansible_network_os == 'eos'
+
+    - name: show ip route
+      ansible.netcommon.cli_command:
+        command: show ip route
+      when: ansible_network_os == 'eos'
+      register: command_eos_result
+    
+    - name: save status files
+      copy:
+        content: "{{ command_eos_result.stdout }}"
+        dest: "{{ status_dir }}/{{ role_name }}/{{ inventory_hostname }}_show_route.txt"
+      when: ansible_network_os == 'eos'
+      changed_when: False
+

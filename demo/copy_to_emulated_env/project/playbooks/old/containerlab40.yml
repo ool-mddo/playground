@@ -1,0 +1,193 @@
+---
+- hosts: docker-host
+  gather_facts: false
+  become: yes
+  vars:
+    multihost_bridge: "multihost-network"
+    ansible_user: "{{ login_user}}"
+    ansible_password: "{{ login_pass }}"
+    ansible_sudo_pass: "{{ sudo_pass }}"
+    ansible_python_interpreter: /usr/bin/python3
+    containerlab_basedir: /home/test/
+    L1_topo_file: /home/test/pushed_configs/L1_topo/layer1_topology.sample.json
+    clab_topo:
+      name: testCEOS
+      mgmt:
+        network: "{{ multihost_bridge }}"
+      topology:
+        nodes:
+          ceos1:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos2:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos3:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos4:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos5:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos6:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos7:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos8:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos9:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos10:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos11:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos12:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos13:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos14:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos15:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos16:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos17:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos18:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos19:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos20:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos21:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos22:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos23:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos24:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos25:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos26:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos27:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos28:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos29:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos30:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos31:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos32:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos33:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos34:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos35:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos36:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos37:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos38:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos39:
+            kind: ceos
+            image: ceos:4.27.3F
+          ceos40:
+            kind: ceos
+            image: ceos:4.27.3F
+        links:
+          - endpoints: ["ceos1:eth1","ceos2:eth1"]
+          - endpoints: ["ceos3:eth1","ceos4:eth1"]
+          - endpoints: ["ceos5:eth1","ceos6:eth1"]
+          - endpoints: ["ceos7:eth1","ceos8:eth1"]
+          - endpoints: ["ceos9:eth1","ceos10:eth1"]
+          - endpoints: ["ceos11:eth1","ceos12:eth1"]
+          - endpoints: ["ceos13:eth1","ceos14:eth1"]
+          - endpoints: ["ceos15:eth1","ceos16:eth1"]
+          - endpoints: ["ceos17:eth1","ceos18:eth1"]
+          - endpoints: ["ceos19:eth1","ceos20:eth1"]
+          - endpoints: ["ceos21:eth1","ceos22:eth1"]
+          - endpoints: ["ceos23:eth1","ceos24:eth1"]
+          - endpoints: ["ceos25:eth1","ceos26:eth1"]
+          - endpoints: ["ceos27:eth1","ceos28:eth1"]
+          - endpoints: ["ceos29:eth1","ceos30:eth1"]
+          - endpoints: ["ceos31:eth1","ceos32:eth1"]
+          - endpoints: ["ceos33:eth1","ceos34:eth1"]
+          - endpoints: ["ceos35:eth1","ceos36:eth1"]
+          - endpoints: ["ceos37:eth1","ceos38:eth1"]
+          - endpoints: ["ceos39:eth1","ceos40:eth1"]
+
+    #multihost_bridge: "my-multihost-network"
+
+
+  tasks:
+    - name: "check {{ multihost_bridge }} network "
+      command:
+        cmd: "docker network inspect {{ multihost_bridge }}"
+      register: docker_network
+      failed_when: false
+
+    - name: "check swarm manager node"
+      command:
+        cmd: "docker node ls"
+      register: docker_node
+      failed_when: false
+
+    - name: "create {{ multihost_bridge }} for Manager node"
+      command:
+        cmd: "docker network create -d overlay {{ multihost_bridge }} --attachable"
+      when: docker_network.rc != 0 and docker_node.rc == 0
+
+    - name: "create {{ multihost_bridge }} for worker node"
+      shell: "docker run --name temp_alpine -itd alpine:latest /bin/sh; docker network connect {{ multihost_bridge }} temp_alpine"
+      when: docker_network.rc != 0 and docker_node.rc != 0
+
+    - name: Creating a file with content
+      copy:
+        dest: "/tmp/clab-topo.yml"
+        content: "{{ clab_topo | to_yaml }}"
+
+    - name: deploy containerlab
+      command:
+        cmd: "containerlab deploy --topo /tmp/clab-topo.yml --reconfigure"

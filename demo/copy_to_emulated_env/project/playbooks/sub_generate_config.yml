@@ -1,0 +1,167 @@
+---
+  - name: collection list
+    shell: ansible-galaxy collection list
+
+  - set_fact:
+      topology: "{{ emulated_asis.json }}"
+
+  - set_fact:
+      origin_topology: "{{ original_asis.json }}"
+
+  - set_fact:
+      layer3index: "{{ l3_index }}"
+    when: item['network-id'] == "layer3"
+    loop: "{{ topology | json_query('*.network[]') }}"
+    loop_control:
+      index_var: l3_index
+
+  - name: extract nodes list data 0
+    set_fact:
+      config_node_dicts:
+        node : "[{{ tmpnodes }}]"
+    vars:
+      query: '*.network[{{ layer3index }}].node[*]'
+      tmpnodes: >-
+        {%- for node in item -%}
+        {%- set if_list= [] -%}
+        {%- set tp_list= node['ietf-network-topology:termination-point'] -%}
+        {%- for tp in tp_list -%}
+        {%- if 'mddo-topology:l3-termination-point-attributes' in tp -%}
+        {%- set if_list =  if_list.append( { 'name': tp['tp-id'], 'ipv4': tp['mddo-topology:l3-termination-point-attributes']['ip-address'][0]  } ) %}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- set trashdata =  node_dict.update( { 'name': node['node-id'] , 'iflist': if_list  } ) %}
+        {%- if if_list -%}
+        {{ node_dict }},
+        {%- endif -%}
+        {%- endfor -%}
+    loop: "{{ topology | json_query(query) }}"
+
+#  - name: config_node_dicts
+#    debug:
+#      msg: '{{ config_node_dicts  }}'
+### Data Sample
+#config_node_dicts:
+#  node:
+#    - name: regiona-rt1
+#      iflist:
+#        - ipv4: "192.168.0.1/30"
+#          name: "eth1.0" 
+#        - ipv4: "172.16.0.1/30"
+#          name: "eth2.0" 
+
+
+  - name: "get nodered convert data"
+    uri:
+      url: "{{ nodered_url }}/description/batfish"
+      method: "POST"
+      body: "{{ origin_topology }}"
+      body_format: json        
+      #method: "GET"
+    register: result_node
+        
+  - name: "get nodered convert data"
+    uri:
+      url: "{{ nodered_url }}/ospf/convertif/batfish"
+      method: "POST"
+      #method: "GET"
+      body: "{{ topology }}"
+      body_format: json        
+    register: result_ospf
+        
+  - name: merge inout_info & convert-if
+    set_fact:
+      node_list: "{{ node_list + [ data ] }}"
+    vars:
+      data:    
+        name: "{{ item.name }}"
+        iflist: >-
+          {%- for tmpdict in result_node.json -%}
+          {%-   if ( item.name == tmpdict['node']['clab'] ) -%}
+          {%-     for iflist in item.iflist -%}
+          {%-       for dict in tmpdict.iflist -%}
+          {%-         if iflist.name in dict.clab and 'ifDescr' in dict -%}
+          { 'name': '{{ dict.clab }}', 'originif': '{{ dict.original }}', 'ipv4': '{{ iflist.ipv4 }}' , 'description': '{{ dict.ifDescr }}'},
+          {%-         elif iflist.name in dict.clab -%}
+          { 'name': '{{ dict.clab }}', 'originif': '{{ dict.original }}', 'ipv4': '{{ iflist.ipv4 }}' },
+          {%-         endif -%}
+          {%-       endfor -%}
+          {%-     endfor -%}
+          {%-   endif -%}
+          {%- endfor -%}               
+    loop: "{{ config_node_dicts.node[0] }}"
+
+#  - name: node_list
+#    debug:
+#      msg: '{{ node_list  }}'
+### Data Sample
+#node_list:
+#  - name: "regiona-rt1"
+#    iflist:
+#      - name: "eth1.0"
+#        ipv4: "192.168.0.1/30"
+#        originalif: "ge-0/0/0.0"
+#        description: "to_Seg-192.168.0.0-30_Ethernet1"  <= without loopback IF
+
+  - name: generate config
+    template:
+      src: crpd.j2
+      dest: "configs/{{ item.name }}.conf"
+    when: '"Seg" not in item.name'
+    loop: "{{ node_list }}"
+
+
+  - name: generate static-route config
+    template:
+      src: crpd_static.j2
+      dest: "configs/{{ item['node-id'] }}_routing-options.conf"
+    vars:
+      query: '*.network[{{ layer3index }}].node[*]'
+    when: '"Seg" not in item["node-id"]'
+    loop: "{{ topology | json_query(query) | flatten }}"
+
+  - name: generate ospf config
+    template:
+      src: crpd_ospf.j2
+      dest: "configs/{{ item.node }}_ospf.conf"
+    when: '"Seg" not in item.node'
+    loop: "{{ result_ospf.json }}"
+
+  - name: merge static-route config
+    shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf " 
+    vars:
+      query: '*.network[{{ layer3index }}].node[*]'
+    when: '"Seg" not in item["node-id"]'
+    #when: 'item["mddo-topology:l3-node-attributes"]["static-route"] | length > 0'
+    loop: "{{ topology | json_query(query) | flatten }}"
+ 
+  - name: merge ospf config
+    shell: "cat configs/{{ item.node }}_ospf.conf >> configs/{{ item.node }}.conf " 
+    loop: "{{ result_ospf.json }}"
+
+
+  - name: generate bridge data
+    set_fact:
+      bridgedata: "{{ bridgedata | default([])  + [ data ] }}"
+    vars:
+      data:
+       name: "{{ item.node.clab }}"
+       iflist: >-
+         {%- for dict in item.iflist -%}
+         {%-  if 'ifDescr' in dict -%}
+         { 'name': '{{ dict.clab }}', 'description': '{{ dict.ifDescr }}'},
+         {%- else -%}
+         { 'name': '{{ dict.clab }}' },
+         {%- endif -%}
+         {%- endfor -%}
+    when: '"Seg" in item.node.clab'
+    loop: "{{ result_node.json }}"
+         
+
+  - name: generate config
+    template:
+      src: ceos.j2
+      dest: "configs/{{ item.name }}.conf"
+    when: '"Seg" in item.name'
+    loop: "{{ bridgedata }}"
+

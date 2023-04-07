@@ -1,0 +1,105 @@
+all:
+  children:
+    netbox:
+      hosts:
+        netbox:
+          ansible_host: netbox-docker_netbox_1 
+    Junos:
+      hosts:
+        RegionB-PE01:
+          ansible_host: RegionB-PE01
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-PE02:
+          ansible_host: RegionB-PE02
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-CE01:
+          ansible_host: RegionB-CE01
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-CE02:
+          ansible_host: RegionB-CE02
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+    Iosxr:
+      hosts:
+        RegionA-PE01:
+          ansible_host: RegionA-PE01
+          ansible_network_os: iosxr
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+          ansible_ssh_common_arg: "-o HostKeyAlgorithms=ssh-rsa -o KexAlgorithms=diffie-hellman-group1-sha1 -o Ciphers=aes256-cbc,3des-cbc -o MACs=hmac-md5,hmac-sha2-512"
+        RegionA-PE02:
+          ansible_host: RegionA-PE02
+          ansible_network_os: iosxr
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+          ansible_ssh_common_arg: "-o HostKeyAlgorithms=ssh-rsa -o KexAlgorithms=diffie-hellman-group1-sha1 -o Ciphers=aes256-cbc,3des-cbc -o MACs=hmac-md5,hmac-sha2-512"
+    Eos:
+      hosts:
+        RegionA-CE01:
+          ansible_host: RegionA-CE01
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionA-CE02:
+          ansible_host: RegionA-CE02
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionA-Acc01:
+          ansible_host: RegionA-Acc01
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-Acc01:
+          ansible_host: RegionB-Acc01
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-Acc02:
+          ansible_host: RegionB-Acc02
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionA-Svr01:
+          ansible_host: RegionA-Svr01
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-Svr02:
+          ansible_host: RegionB-Svr02
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-Svr01:
+          ansible_host: RegionB-Svr01
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionA-Svr02:
+          ansible_host: RegionA-Svr02
+          ansible_network_os: eos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+

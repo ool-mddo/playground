@@ -1,0 +1,380 @@
+[
+  {
+    "name": "Seg_192.168.0.0/30",
+    "agent_name": "Seg-192.168.0.0-30",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regiona-rt1_eth1.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regiona-rt1_ge-0/0/0.0"
+      },
+      {
+        "name": "regiona-rt2_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regiona-rt2_ge-0/0/0.0"
+      }
+    ]
+  },
+  {
+    "name": "regiona-rt1",
+    "agent_name": "regiona-rt1",
+    "type": "node",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "192.168.0.1/30",
+        "description": "to_Seg-192.168.0.0-30_Ethernet1",
+        "originif": "ge-0/0/0.0"
+      },
+      {
+        "name": "eth2.0",
+        "agent_name": "eth2.0",
+        "ipv4": "172.16.0.1/30",
+        "description": "to_Seg-172.16.0.0-30_Ethernet1",
+        "originif": "ge-0/0/1.0"
+      },
+      {
+        "name": "eth3.0",
+        "agent_name": "eth3.0",
+        "ipv4": "172.16.1.1/30",
+        "description": "to_Seg-172.16.1.0-30_Ethernet1",
+        "originif": "ge-0/0/2.0"
+      }
+    ]
+  },
+  {
+    "name": "regiona-rt2",
+    "agent_name": "regiona-rt2",
+    "type": "node",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "192.168.0.2/30",
+        "description": "to_Seg-192.168.0.0-30_Ethernet2",
+        "originif": "ge-0/0/0.0"
+      },
+      {
+        "name": "eth2.0",
+        "agent_name": "eth2.0",
+        "ipv4": "192.168.100.1/24",
+        "description": "to_Seg-192.168.100.0-24_Ethernet1",
+        "originif": "ge-0/0/1.0"
+      }
+    ]
+  },
+  {
+    "name": "Seg_172.16.0.0/30",
+    "agent_name": "Seg-172.16.0.0-30",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regiona-rt1_eth2.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regiona-rt1_ge-0/0/1.0"
+      },
+      {
+        "name": "regionb-rt1_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionb-rt1_Ethernet2"
+      }
+    ]
+  },
+  {
+    "name": "regionb-rt1",
+    "agent_name": "regionb-rt1",
+    "type": "node",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "172.16.0.2/30",
+        "description": "to_Seg-172.16.0.0-30_Ethernet2",
+        "originif": "Ethernet2"
+      },
+      {
+        "name": "eth2.0",
+        "agent_name": "eth2.0",
+        "ipv4": "172.16.2.1/30",
+        "description": "to_Seg-172.16.2.0-30_Ethernet2",
+        "originif": "Ethernet3"
+      },
+      {
+        "name": "eth3.0",
+        "agent_name": "eth3.0",
+        "ipv4": "192.168.1.1/30",
+        "description": "to_Seg-192.168.1.0-30_Ethernet1",
+        "originif": "Ethernet1"
+      }
+    ]
+  },
+  {
+    "name": "Seg_172.16.1.0/30",
+    "agent_name": "Seg-172.16.1.0-30",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regiona-rt1_eth3.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regiona-rt1_ge-0/0/2.0"
+      },
+      {
+        "name": "regionc-rt1_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionc-rt1_GigabitEthernet0/0/0/1"
+      }
+    ]
+  },
+  {
+    "name": "regionc-rt1",
+    "agent_name": "regionc-rt1",
+    "type": "node",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "172.16.1.2/30",
+        "description": "to_Seg-172.16.1.0-30_Ethernet2",
+        "originif": "GigabitEthernet0/0/0/1"
+      },
+      {
+        "name": "eth2.0",
+        "agent_name": "eth2.0",
+        "ipv4": "192.168.2.1/30",
+        "description": "to_Seg-192.168.2.0-30_Ethernet1",
+        "originif": "GigabitEthernet0/0/0/0"
+      },
+      {
+        "name": "eth3.0",
+        "agent_name": "eth3.0",
+        "ipv4": "172.16.2.2/30",
+        "description": "to_Seg-172.16.2.0-30_Ethernet1",
+        "originif": "GigabitEthernet0/0/0/2"
+      }
+    ]
+  },
+  {
+    "name": "Seg_192.168.2.0/30",
+    "agent_name": "Seg-192.168.2.0-30",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regionc-rt1_eth2.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionc-rt1_GigabitEthernet0/0/0/0"
+      },
+      {
+        "name": "regionc-rt2_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionc-rt2_GigabitEthernet0/0/0/0"
+      }
+    ]
+  },
+  {
+    "name": "regionc-rt2",
+    "agent_name": "regionc-rt2",
+    "type": "node",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "192.168.2.2/30",
+        "description": "to_Seg-192.168.2.0-30_Ethernet2",
+        "originif": "GigabitEthernet0/0/0/0"
+      },
+      {
+        "name": "eth2.0",
+        "agent_name": "eth2.0",
+        "ipv4": "192.168.100.1/25",
+        "description": "to_Seg-192.168.100.0-25_Ethernet1",
+        "originif": "GigabitEthernet0/0/0/1"
+      }
+    ]
+  },
+  {
+    "name": "Seg_172.16.2.0/30",
+    "agent_name": "Seg-172.16.2.0-30",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regionc-rt1_eth3.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionc-rt1_GigabitEthernet0/0/0/2"
+      },
+      {
+        "name": "regionb-rt1_eth2.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionb-rt1_Ethernet3"
+      }
+    ]
+  },
+  {
+    "name": "Seg_192.168.100.0/25",
+    "agent_name": "Seg-192.168.100.0-25",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regionc-rt2_eth2.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionc-rt2_GigabitEthernet0/0/0/1"
+      },
+      {
+        "name": "regionc-svr01_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionc-svr01_ens2"
+      }
+    ]
+  },
+  {
+    "name": "regionc-svr01",
+    "agent_name": "regionc-svr01",
+    "type": "endpoint",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "192.168.100.10/25",
+        "description": "to_Seg-192.168.100.0-25_Ethernet2",
+        "originif": "ens2"
+      }
+    ]
+  },
+  {
+    "name": "Seg_192.168.1.0/30",
+    "agent_name": "Seg-192.168.1.0-30",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regionb-rt1_eth3.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionb-rt1_Ethernet1"
+      },
+      {
+        "name": "regionb-rt2_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionb-rt2_Ethernet1"
+      }
+    ]
+  },
+  {
+    "name": "regionb-rt2",
+    "agent_name": "regionb-rt2",
+    "type": "node",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "192.168.1.2/30",
+        "description": "to_Seg-192.168.1.0-30_Ethernet2",
+        "originif": "Ethernet1"
+      },
+      {
+        "name": "eth2.0",
+        "agent_name": "eth2.0",
+        "ipv4": "192.168.254.1/24",
+        "description": "to_Seg-192.168.254.0-24_Ethernet1",
+        "originif": "Ethernet2"
+      }
+    ]
+  },
+  {
+    "name": "Seg_192.168.254.0/24",
+    "agent_name": "Seg-192.168.254.0-24",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regionb-rt2_eth2.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionb-rt2_Ethernet2"
+      },
+      {
+        "name": "regionb-svr01_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regionb-svr01_ens2"
+      }
+    ]
+  },
+  {
+    "name": "regionb-svr01",
+    "agent_name": "regionb-svr01",
+    "type": "endpoint",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "192.168.254.10/24",
+        "description": "to_Seg-192.168.254.0-24_Ethernet2",
+        "originif": "ens2"
+      }
+    ]
+  },
+  {
+    "name": "Seg_192.168.100.0/24",
+    "agent_name": "Seg-192.168.100.0-24",
+    "type": "segment",
+    "iflist": [
+      {
+        "name": "regiona-rt2_eth2.0",
+        "agent_name": "Ethernet1",
+        "ipv4": null,
+        "description": null,
+        "originif": "regiona-rt2_ge-0/0/1.0"
+      },
+      {
+        "name": "regiona-svr02_eth1.0",
+        "agent_name": "Ethernet2",
+        "ipv4": null,
+        "description": null,
+        "originif": "regiona-svr02_ens2"
+      }
+    ]
+  },
+  {
+    "name": "regiona-svr02",
+    "agent_name": "regiona-svr02",
+    "type": "endpoint",
+    "iflist": [
+      {
+        "name": "eth1.0",
+        "agent_name": "eth1.0",
+        "ipv4": "192.168.100.210/24",
+        "description": "to_Seg-192.168.100.0-24_Ethernet2",
+        "originif": "ens2"
+      }
+    ]
+  }
+]

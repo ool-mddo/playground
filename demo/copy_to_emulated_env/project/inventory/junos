@@ -1,0 +1,29 @@
+all:
+  children:
+    Junos:
+      hosts:
+        RegionB-PE01:
+          ansible_host: RegionB-PE01
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-PE02:
+          ansible_host: RegionB-PE02
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-CE01:
+          ansible_host: RegionB-CE01
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+        RegionB-CE02:
+          ansible_host: RegionB-CE02
+          ansible_network_os: junos
+          ansible_connection: ansible.netcommon.network_cli
+          ansible_user: vrnetlab
+          ansible_password: VR-netlab9
+
