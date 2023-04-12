@@ -1,0 +1,1 @@
+{"event": "verbose", "uuid": "ceb83c04-bba8-45e5-aec2-9602a34a5372", "counter": 21, "stdout": "\u001b[1;35m[WARNING]: Found both group and host with same name: docker-host\u001b[0m", "start_line": 20, "end_line": 21, "runner_ident": "02a82c77-5468-4490-a498-7617d7fe07ce", "created": "2023-04-12T10:56:26.455211"}

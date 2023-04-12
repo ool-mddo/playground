@@ -1,0 +1,118 @@
+[0;34mansible-playbook [core 2.12.5.post0][0m
+[0;34m  config file = None[0m
+[0;34m  configured module search path = ['/home/runner/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules'][0m
+[0;34m  ansible python module location = /usr/local/lib/python3.8/site-packages/ansible[0m
+[0;34m  ansible collection location = /home/runner/.ansible/collections:/usr/share/ansible/collections[0m
+[0;34m  executable location = /usr/local/bin/ansible-playbook[0m
+[0;34m  python version = 3.8.13 (default, Jun 24 2022, 15:27:57) [GCC 8.5.0 20210514 (Red Hat 8.5.0-13)][0m
+[0;34m  jinja version = 2.11.3[0m
+[0;34m  libyaml = True[0m
+[0;34mNo config file found; using defaults[0m
+SSH password: 
+BECOME password[defaults to SSH password]: 
+[0;34msetting up inventory plugins[0m
+[0;34mhost_list declined parsing /runner/inventory/hosts as it did not pass its verify_file() method[0m
+[0;34mauto declined parsing /runner/inventory/hosts as it did not pass its verify_file() method[0m
+[0;34mSet default localhost to localhost[0m
+[0;34mNot replacing invalid character(s) "{'-'}" in group name (docker-host)[0m
+[1;35m[WARNING]: Invalid characters were found in group names but not replaced, use[0m
+[1;35m-vvvv to see details[0m
+[0;34mParsed /runner/inventory/hosts inventory source with yaml plugin[0m
+[1;35m[WARNING]: Found both group and host with same name: netbox[0m
+[1;35m[WARNING]: Found both group and host with same name: docker-host[0m
+[1;35m[WARNING]: Found both group and host with same name: localhost[0m
+[0;34mLoading callback plugin default of type stdout, v2.0 from /usr/local/lib/python3.8/site-packages/ansible/plugins/callback/default.py[0m
+[0;34mLoading callback plugin awx_display of type stdout, v2.0 from /runner/artifacts/82749893-75de-4649-ab7e-b871cd328535/callback/awx_display.py[0m
+[0;34mSkipping callback 'awx_display', as we already have a stdout callback.[0m
+[0;34mSkipping callback 'default', as we already have a stdout callback.[0m
+[0;34mSkipping callback 'minimal', as we already have a stdout callback.[0m
+[0;34mSkipping callback 'oneline', as we already have a stdout callback.[0m
+
+PLAYBOOK: step02.yml ***********************************************************
+[0;34mPositional arguments: /data/project/playbooks/step02.yml[0m
+[0;34mverbosity: 4[0m
+[0;34mconnection: smart[0m
+[0;34mtimeout: 10[0m
+[0;34mask_pass: True[0m
+[0;34mbecome_method: sudo[0m
+[0;34mbecome_ask_pass: True[0m
+[0;34mtags: ('all',)[0m
+[0;34minventory: ('/runner/inventory/hosts',)[0m
+[0;34mextra_vars: ('ansible_runner_dir=/home/mddo/playground_20230407/demo/copy_to_emulated_env', 'playground_dir=/home/mddo/playground_20230407', 'model_merge_dir=/home/mddo/Desktop/OOL/model-merge', 'nodered_url=http://172.22.0.8:1880', 'labname=demo202301', 'login_user=mddo', 'netoviz_url=http://172.17.0.1:3000', 'network_name=mddo-ospf', 'demo_dir=/home/mddo/playground_20230407/configs/mddo-ospf')[0m
+[0;34mforks: 5[0m
+[0;34m2 plays in /data/project/playbooks/step02.yml[0m
+
+PLAY [localhost] ***************************************************************
+[0;34mMETA: ran handlers[0m
+
+TASK [get convert table] *******************************************************
+[1;30mtask path: /data/project/playbooks/step02.yml:43[0m
+[0;34m<127.0.0.1> ESTABLISH LOCAL CONNECTION FOR USER: runner[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo ~runner && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /home/runner/.ansible/tmp `"&& mkdir "` echo /home/runner/.ansible/tmp/ansible-tmp-1681228936.9331791-31-217624728242944 `" && echo ansible-tmp-1681228936.9331791-31-217624728242944="` echo /home/runner/.ansible/tmp/ansible-tmp-1681228936.9331791-31-217624728242944 `" ) && sleep 0'[0m
+[0;34m<localhost> Attempting python interpreter discovery[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'echo PLATFORM; uname; echo FOUND; command -v '"'"'python3.10'"'"'; command -v '"'"'python3.9'"'"'; command -v '"'"'python3.8'"'"'; command -v '"'"'python3.7'"'"'; command -v '"'"'python3.6'"'"'; command -v '"'"'python3.5'"'"'; command -v '"'"'/usr/bin/python3'"'"'; command -v '"'"'/usr/libexec/platform-python'"'"'; command -v '"'"'python2.7'"'"'; command -v '"'"'python2.6'"'"'; command -v '"'"'/usr/bin/python'"'"'; command -v '"'"'python'"'"'; echo ENDFOUND && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/bin/python3.9 && sleep 0'[0m
+[0;34mUsing module file /usr/local/lib/python3.8/site-packages/ansible/modules/uri.py[0m
+[0;34m<127.0.0.1> PUT /home/runner/.ansible/tmp/ansible-local-25uipto6um/tmpdwngipsm TO /home/runner/.ansible/tmp/ansible-tmp-1681228936.9331791-31-217624728242944/AnsiballZ_uri.py[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'chmod u+x /home/runner/.ansible/tmp/ansible-tmp-1681228936.9331791-31-217624728242944/ /home/runner/.ansible/tmp/ansible-tmp-1681228936.9331791-31-217624728242944/AnsiballZ_uri.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c '/usr/libexec/platform-python /home/runner/.ansible/tmp/ansible-tmp-1681228936.9331791-31-217624728242944/AnsiballZ_uri.py && sleep 0'[0m
+[0;34m<127.0.0.1> EXEC /bin/sh -c 'rm -f -r /home/runner/.ansible/tmp/ansible-tmp-1681228936.9331791-31-217624728242944/ > /dev/null 2>&1 && sleep 0'[0m
+[0;31mfatal: [localhost]: FAILED! => {[0m
+[0;31m    "ansible_facts": {[0m
+[0;31m        "discovered_interpreter_python": "/usr/libexec/platform-python"[0m
+[0;31m    },[0m
+[0;31m    "changed": false,[0m
+[0;31m    "elapsed": 0,[0m
+[0;31m    "invocation": {[0m
+[0;31m        "module_args": {[0m
+[0;31m            "attributes": null,[0m
+[0;31m            "body": null,[0m
+[0;31m            "body_format": "json",[0m
+[0;31m            "ca_path": null,[0m
+[0;31m            "client_cert": null,[0m
+[0;31m            "client_key": null,[0m
+[0;31m            "creates": null,[0m
+[0;31m            "dest": null,[0m
+[0;31m            "follow_redirects": "safe",[0m
+[0;31m            "force": false,[0m
+[0;31m            "force_basic_auth": false,[0m
+[0;31m            "group": null,[0m
+[0;31m            "headers": {[0m
+[0;31m                "Content-Type": "application/json"[0m
+[0;31m            },[0m
+[0;31m            "http_agent": "ansible-httpget",[0m
+[0;31m            "method": "GET",[0m
+[0;31m            "mode": null,[0m
+[0;31m            "owner": null,[0m
+[0;31m            "remote_src": false,[0m
+[0;31m            "removes": null,[0m
+[0;31m            "return_content": false,[0m
+[0;31m            "selevel": null,[0m
+[0;31m            "serole": null,[0m
+[0;31m            "setype": null,[0m
+[0;31m            "seuser": null,[0m
+[0;31m            "src": null,[0m
+[0;31m            "status_code": [[0m
+[0;31m                200[0m
+[0;31m            ],[0m
+[0;31m            "timeout": 30,[0m
+[0;31m            "unix_socket": null,[0m
+[0;31m            "unredirected_headers": [],[0m
+[0;31m            "unsafe_writes": false,[0m
+[0;31m            "url": "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params",[0m
+[0;31m            "url_password": null,[0m
+[0;31m            "url_username": null,[0m
+[0;31m            "use_gssapi": false,[0m
+[0;31m            "use_proxy": true,[0m
+[0;31m            "validate_certs": true[0m
+[0;31m        }[0m
+[0;31m    },[0m
+[0;31m    "msg": "Status code was -1 and not [200]: Request failed: <urlopen error [Errno -2] Name or service not known>",[0m
+[0;31m    "redirected": false,[0m
+[0;31m    "status": -1,[0m
+[0;31m    "url": "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params"[0m
+[0;31m}[0m
+
+PLAY RECAP *********************************************************************
+[0;31mlocalhost[0m                  : ok=0    changed=0    unreachable=0    [0;31mfailed=1   [0m skipped=0    rescued=0    ignored=0   
