@@ -1,1 +1,0 @@
-{"event": "verbose", "uuid": "8ba39a78-93a2-48e2-b895-2b0e4a62ad5a", "counter": 14, "stdout": "\u001b[0;34mhost_list declined parsing /runner/inventory/hosts as it did not pass its verify_file() method\u001b[0m", "start_line": 13, "end_line": 14, "runner_ident": "d9c9aadd-16fb-4b51-aafa-b85a9f243dec", "created": "2023-04-07T08:26:16.925696"}

@@ -1,1 +1,0 @@
-{"event": "verbose", "uuid": "b1209626-05ad-4b0f-b833-4201072756d9", "counter": 22, "stdout": "\u001b[1;35m[WARNING]: Found both group and host with same name: localhost\u001b[0m", "start_line": 21, "end_line": 22, "runner_ident": "d9c9aadd-16fb-4b51-aafa-b85a9f243dec", "created": "2023-04-07T08:26:16.935142"}

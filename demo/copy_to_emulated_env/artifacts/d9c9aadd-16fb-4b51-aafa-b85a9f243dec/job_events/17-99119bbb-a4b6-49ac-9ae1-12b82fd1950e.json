@@ -1,1 +1,0 @@
-{"event": "verbose", "uuid": "99119bbb-a4b6-49ac-9ae1-12b82fd1950e", "counter": 17, "stdout": "\u001b[0;34mNot replacing invalid character(s) \"{'-'}\" in group name (docker-host)\u001b[0m", "start_line": 16, "end_line": 17, "runner_ident": "d9c9aadd-16fb-4b51-aafa-b85a9f243dec", "created": "2023-04-07T08:26:16.932833"}
