@@ -4,3 +4,4 @@ topologies
 .idea
 .vscode
 passwords
+artifacts/**
