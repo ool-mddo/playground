@@ -45,15 +45,28 @@
       when: '"node" == item.type'
       loop: "{{ node_list.json }}"
 
-    - name: upload config
+    - name: upload router config
       uri:
-        url: http://localhost:15000/configs/mddo-ospf/emulated_asis/
+        url: http://localhost:15000/configs/mddo-ospf/emulated_tobe/
         method: POST
         return_content: no
         body_format: json
         headers:
           Content-Type: "application/json"
-        body: [{"filename": "{{ item.name }}", "text": "{{ lookup('file', \"/tmp/{{ item.name }}.conf\") }}"}]
+        body: [{"filename": "{{ item.name }}.conf", "text": "{{ lookup('file', \"/tmp/{{ item.name }}.conf\") }}"}]
       when: '"node" == item.type'
       loop: "{{ node_list.json }}"
-          
+
+
+    - name: upload switch config
+      uri:
+        url: http://localhost:15000/configs/mddo-ospf/emulated_tobe/
+        method: POST
+        return_content: no
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body: [{"filename": "{{ item.agent_name }}.conf", "text": "{{ lookup('file', \"configs/{{ item.agent_name }}.conf\") }}"}]
+      when: '"segment" == item.type'
+      loop: "{{ node_list.json }}"
+

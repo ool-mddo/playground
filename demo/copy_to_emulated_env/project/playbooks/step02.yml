@@ -118,5 +118,5 @@
 
     - name: deploy containerlab
       command:
-        cmd: "containerlab deploy --topo /tmp/clab-topo.yml"
+        cmd: "containerlab deploy --topo /tmp/clab-topo.yml --reconfigure"
         
