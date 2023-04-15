@@ -43,6 +43,56 @@
     when: '"segment" not in item.type'
     loop: "{{ node_list.json }}"
 
+
+  - name: "get ospf table"
+    uri:
+      url: "http://playground_20230407_api-proxy_1/topologies/mddo-ospf/emulated_asis/topology/ospf_area0/interfaces?node_type=ospf_proc"
+      method: "GET"
+      body_format: json
+    register: ospf_list
+
+
+  - name: generate config
+    template:
+      src: crpd_ospf.j2
+      dest: "configs/{{ item.node }}_ospf.conf"
+    loop: "{{ ospf_list.json }}"
+
+  - name: "get ospf table"
+    uri:
+      url: "http://playground_20230407_api-proxy_1/topologies/mddo-ospf/emulated_asis/topology"
+      method: "GET"
+      body_format: json
+    register: topology
+
+  - set_fact:
+      layer3index: "{{ l3_index }}"
+    when: item['network-id'] == "layer3"
+    loop: "{{ topology.json | json_query('*.network[]') }}"
+    loop_control:
+      index_var: l3_index
+
+  - name: generate static-route config
+    template:
+      src: crpd_static.j2
+      dest: "configs/{{ item['node-id'] }}_routing-options.conf"
+    vars:
+      query: '*.network[{{ layer3index }}].node[*]'
+    when: '"Seg" not in item["node-id"]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: merge static-route config
+    shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf "
+    vars:
+      query: '*.network[{{ layer3index }}].node[*]'
+    when: '"Seg" not in item["node-id"]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: merge ospf config
+    shell: "cat configs/{{ item.node }}_ospf.conf >> configs/{{ item.node }}.conf "
+    loop: "{{ ospf_list.json }}"
+
+
   - name: generate bridge data
     set_fact:
       bridgedata: "{{ bridgedata | default([])  + [ data ] }}"
@@ -52,7 +102,7 @@
        if_list: >-
          {%- for dict in item.if_list -%}
          {%-  if 'description' in dict -%}
-         { 'name': '{{ dict.agent_name }}', 'description': 'to_{{ dict.description }}'},
+         { 'name': '{{ dict.agent_name }}', 'description': '{{ dict.description }}'},
          {%- else -%}
          { 'name': '{{ dict.agent_name }}' },
          {%- endif -%}
@@ -60,12 +110,10 @@
     when: '"segment" in item.type'
     loop: "{{ node_list.json }}"
          
-
   - name: generate config
     template:
       src: ceos.j2
       dest: "configs/{{ item.name }}.conf"
-    #when: '"segment" in item.type'
     loop: "{{ bridgedata }}"
 
 
@@ -118,5 +166,5 @@
 
     - name: deploy containerlab
       command:
-        cmd: "containerlab deploy --topo /tmp/clab-topo.yml --reconfigure"
+        cmd: "containerlab deploy --reconfigure  --topo /tmp/clab-topo.yml --reconfigure"
         

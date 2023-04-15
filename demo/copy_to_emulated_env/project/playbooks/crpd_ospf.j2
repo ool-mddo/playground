@@ -1,40 +1,34 @@
 protocols {
     ospf {
         area 0.0.0.0 {
-{% for interface in item.iflist %}
-{% if "lo" in interface %}
-            interface {{ interface }} {
-{% else %}
-            interface {{ interface | regex_replace('\.0', '') }} {
-{% endif %}
-{% if "metric" in item["if_attribute"][loop.index0] %}
-                metric {{ item["if_attribute"][loop.index0]["metric"] }};
-{% endif %}
-{% if item["if_attribute"][loop.index0]["passive"] %}
+{% for interface in item.interfaces %}
+            interface {{ interface.alias.l1_principal }} {
+                metric {{ interface.attribute.metric }};
+{% if interface.attribute.passive %}
                 passive;
 {% endif %}
-{% if "POINT_TO_POINT" in item["if_attribute"][loop.index0]["network-type"] %}
+{% if "POINT_TO_POINT" in interface.attribute["network-type"] %}
                 interface-type p2p;
 {% endif %}
-{% if "priority" in item["if_attribute"][loop.index0] %}
-                priority {{ item["if_attribute"][loop.index0]["priority"] }};
-{% endif %}
-                hello-interval {{ item["if_attribute"][loop.index0]["timer"]["hello-interval"] }};
-                dead-interval {{ item["if_attribute"][loop.index0]["timer"]["dead-interval"] }};
+                priority {{ interface.attribute.priority }};
+                hello-interval {{ interface.attribute.timer["hello-interval"] }};
+                dead-interval {{ interface.attribute.timer["dead-interval"] }};
             }
 {% endfor  %}
         }
-{% if  item.attributes.redistribute | json_query('[*].protocol') | length != 0 %}
+{% if  item.attribute.redistribute | length != 0 %}
         export ospf-redistribute;
 {% endif %}
     }
 }
-{% if  item.attributes.redistribute | json_query('[*].protocol') | length != 0 %}
+{% if  item.attribute.redistribute | length != 0 %}
 policy-options {
     policy-statement ospf-redistribute {
-        from protocol [ {{ item.attributes.redistribute | json_query('[*].protocol') | join(' ') | regex_replace('connected', 'direct') }} ];
+        from protocol [ {{ item.attribute.redistribute | json_query('[*].protocol') | join(' ') | regex_replace('connected', 'direct') }} ];
         then accept;
     }
 }
 {% endif %}
-
+{#
+        from protocol [ {{ item.attributes.redistribute | json_query('[*].protocol') | join(' ') | regex_replace('connected', 'direct') }} ];
+#}
