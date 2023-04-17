@@ -12,3 +12,10 @@ ansible-runner run . -p /data/project/playbooks/step03.yml --container-option="-
 	--process-isolation --process-isolation-executable docker --cmdline \
 	"-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e playground_dir=${PLAYGROUND_DIR} -e model_merge_dir=${MODEL_MERGE_DIR} -e nodered_url=${NODERED_URL} -e labname=${LABNAME} -e login_user=${LOCALSERVER_USER} -e netoviz_url=${NETOVIZ_URL} -e network_name=${NETWORK_NAME} -e demo_dir=${DEMO_DIR} -k -K " -vvvv
 
+# curl -s -X POST -H 'Content-Type: application/json' \
+#  -d '{ "label": "OSPF model (emulated_tobe)", "phy_ss_only": true }' \
+#  http://localhost:15000/conduct/mddo-ospf/emulated_tobe/topology
+#
+#curl -s -X POST -H 'Content-Type: application/json' \
+#  -d '{ "upper_layer3": true }' \
+#  http://localhost:15000/conduct/mddo-ospf/snapshot_diff/emulated_asis/emulated_tobe
