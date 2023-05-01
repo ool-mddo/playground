@@ -1,1 +1,0 @@
-{"ospf-neighbor-information": [{"attributes": {"xmlns": "http://xml.juniper.net/junos/22.1R0/junos-routing"}, "ospf-neighbor": [{"activity-timer": [{"data": "34"}], "interface-name": [{"data": "eth1"}], "neighbor-address": [{"data": "192.168.1.1"}], "neighbor-id": [{"data": "1.1.1.1"}], "neighbor-priority": [{"data": "10"}], "ospf-neighbor-state": [{"data": "Full"}]}]}]}
