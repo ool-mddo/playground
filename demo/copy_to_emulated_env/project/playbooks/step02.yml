@@ -3,31 +3,31 @@
   connection: local
   gather_facts: no
   vars:
-    nodes: {}
+    #nodes: {}
     containerlab: []
     convertif: []
-    bridge_image:
-      kind: ovs-bridge
-    cnf_image:
-      kind: 'juniper_crpd'
-      image: 'crpd:22.1R1.10'
-    mddo_model_file: "/data/project/playbooks/pushed_configs_mddo_network.json"
-    nodered_url: "http://192.168.80.2:1880"
+    #bridge_image:
+    #  kind: ovs-bridge
+    #cnf_image:
+    #  kind: 'juniper_crpd'
+    #  image: 'crpd:22.1R1.10'
+    #mddo_model_file: "/data/project/playbooks/pushed_configs_mddo_network.json"
+    #    nodered_url: "http://192.168.80.2:1880"
     node_list: []
     node: {}
     node_dicts: {}
     node_dict: {}
-    network_name: "mddo-ospf"
-    netoviz_url: "http://localhost:3000"
-    labname: "mddo-lab"
-    containerlab_host: "172.17.0.1"
-    demo_dir: ""
-    mddo_containerlab_file: "configs/clab-topo.yml"
+    #network_name: "mddo-ospf"
+    #    netoviz_url: "http://localhost:3000"
+    #labname: "mddo-lab"
+    #containerlab_host: "172.17.0.1"
+    #demo_dir: ""
+    #mddo_containerlab_file: "configs/clab-topo.yml"
 
   tasks:
   - name: "get convert table"
     uri:
-      url: "http://playground_20230407_api-proxy_1/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params"
+      url: "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params"
       method: "GET"
       body_format: json
     register: tmp_node_list
@@ -46,7 +46,7 @@
 
   - name: "get ospf table"
     uri:
-      url: "http://playground_20230407_api-proxy_1/topologies/mddo-ospf/emulated_asis/topology/ospf_area0/interfaces?node_type=ospf_proc"
+      url: "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology/ospf_area0/interfaces?node_type=ospf_proc"
       method: "GET"
       body_format: json
     register: ospf_list
@@ -60,7 +60,7 @@
 
   - name: "get ospf table"
     uri:
-      url: "http://playground_20230407_api-proxy_1/topologies/mddo-ospf/emulated_asis/topology"
+      url: "http://playground_20230407-api-proxy-1/topologies/mddo-ospf/emulated_asis/topology"
       method: "GET"
       body_format: json
     register: topology

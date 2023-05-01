@@ -7,7 +7,6 @@
 
 source ./demo_vars
 
-
 # original as-is Create topology data
 curl -s -X DELETE http://localhost:15000/conduct/mddo-ospf
 curl -s -X POST -H 'Content-Type: application/json' \
