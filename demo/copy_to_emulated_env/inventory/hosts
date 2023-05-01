@@ -4,10 +4,6 @@ all:
       hosts:
        localhost:
          ansible_host: 127.0.0.1
-    netbox:
-      hosts:
-        netbox:
-          ansible_host: netbox-docker_netbox_1 
     docker-host:
       hosts:
         docker-host:
