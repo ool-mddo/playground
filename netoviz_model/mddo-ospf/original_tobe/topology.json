@@ -1,8 +1,0 @@
-/usr/local/bundle/gems/rerun-0.14.0/lib/rerun/options.rb:138:in `parse': [1minvalid option: -t ([1;4mOptionParser::InvalidOption[m[1m)[m
-	from /usr/local/bundle/gems/rerun-0.14.0/bin/rerun:10:in `<top (required)>'
-	from /usr/local/bundle/bin/rerun:25:in `load'
-	from /usr/local/bundle/bin/rerun:25:in `<main>'
-/usr/local/bundle/gems/rerun-0.14.0/lib/rerun/options.rb:138:in `parse': [1minvalid option: t ([1;4mOptionParser::InvalidOption[m[1m)[m
-	from /usr/local/bundle/gems/rerun-0.14.0/bin/rerun:10:in `<top (required)>'
-	from /usr/local/bundle/bin/rerun:25:in `load'
-	from /usr/local/bundle/bin/rerun:25:in `<main>'
