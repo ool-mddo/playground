@@ -27,7 +27,7 @@
   {
     "network": "batfish-test-topology",
     "snapshot": "l3_sample1b",
-    "label": "Test network: layer3/sample1a"
+    "label": "Test network: layer3/sample1b"
   },
   {
     "network": "batfish-test-topology",

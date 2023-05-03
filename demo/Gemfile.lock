@@ -1,0 +1,27 @@
+GIT
+  remote: https://github.com/ool-mddo/mddo-toolbox-cli
+  revision: 19ec05f62fe78fa589e50d5ee8595deedbb45db9
+  branch: init
+  specs:
+    mddo-toolbox-cli (0.1.0)
+      httpclient (>= 2.8.3)
+      test-unit (>= 3.5.3)
+      thor (~> 1.2.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    httpclient (2.8.3)
+    power_assert (2.0.3)
+    test-unit (3.5.7)
+      power_assert
+    thor (1.2.1)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  mddo-toolbox-cli!
+
+BUNDLED WITH
+   2.4.12
