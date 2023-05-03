@@ -23,7 +23,7 @@
 
 ```bash
 # in playground dir
-docker compose -f docker-compose.min.yml up
+docker compose -f docker-compose.min.yaml up
 ```
 
 データ取得開始
@@ -33,7 +33,7 @@ docker compose -f docker-compose.min.yml up
 
 ```bash
 # in playground/demo/multi_region_expr/multi_region dir
-./multi_region_status.sh 202202demo2
+./multi_region_stats.sh 202202demo2
 ```
 
 実行すると、 `docker_stats_<branch>_<epoch>` ディレクトリが作成され、その中にデータが配置されます。

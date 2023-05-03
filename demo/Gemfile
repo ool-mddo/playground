@@ -4,5 +4,4 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
-gem 'mddo-toolbox-cli', github: 'ool-mddo/mddo-toolbox-cli', branch: 'init'
-
+gem 'mddo-toolbox-cli', github: 'ool-mddo/mddo-toolbox-cli', branch: 'main'

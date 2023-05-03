@@ -2,8 +2,6 @@
 # set -x # for debug
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
-# work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/../../../" || exit
 echo "# working directory: $(pwd)"
 
 TIME=/usr/bin/time # use GNU-time instead of bash-built-in-time
@@ -11,33 +9,42 @@ TIME_FMT="real %e, user %U, sys %S"
 
 NETWORK="pushed_configs"
 SNAPSHOT="mddo_network"
-REST_HEADER="Content-Type: application/json"
-API_PROXY_URL="http://localhost:15000"
-CONDUCT_TOPO_URL="${API_PROXY_URL}/conduct/${NETWORK}/${SNAPSHOT}/topology"
-CONDUCT_REACH_URL="${API_PROXY_URL}/conduct/${NETWORK}/reachability"
-QUERIES_URL="${API_PROXY_URL}/queries/${NETWORK}/${SNAPSHOT}"
-TOPOLOGIES_URL="${API_PROXY_URL}/topologies/${NETWORK}/${SNAPSHOT}/topology"
-POST_OPTS="${SCRIPT_DIR}/post_opts.json"
 
-function exec_cmd () {
-  # for time command arguments expansion: without variable quoting
-  # shellcheck disable=SC2086
-  $TIME -f "$TIME_FMT" "$@"
+function exec_toolbox () {
+  bundle exec mddo-toolbox "$@" 2> /dev/null
 }
 
-function exec_reach_test () {
+function exec_toolbox_silent () {
+  { $TIME -f "$TIME_FMT" bundle exec mddo-toolbox "$@" > /dev/null; } 2>&1 | tail -n1
+}
+
+function toolbox_change_branch () {
+  branch=$1
+  exec_toolbox change_branch -n "$NETWORK" -b "$branch"
+}
+
+function toolbox_generate_topology () {
+  exec_toolbox_silent generate_topology -p -n "$NETWORK" -s "$SNAPSHOT"
+}
+
+function toolbox_single_snapshot_queries () {
+  exec_toolbox_silent query_snapshot -n "$NETWORK" -s "$SNAPSHOT"
+}
+
+function toolbox_fetch_topology () {
+  exec_toolbox fetch_topology -n "$NETWORK" -s "$SNAPSHOT"
+}
+
+function toolbox_reach_test () {
   pattern_file=$1
+
   # for time command arguments expansion: without variable quoting
   # shellcheck disable=SC2086
-  $TIME -f "$TIME_FMT" curl -s -X POST -H "$REST_HEADER" -d @"$pattern_file" "$CONDUCT_REACH_URL" > /dev/null
+  exec_toolbox_silent test_reachability -s "$SNAPSHOT" -t "$pattern_file"
 }
 
 ##########
 # main
-
-# read env vars
-# shellcheck disable=SC1091
-source .env
 
 TARGET_CONFIGS_BRANCH=$1
 # arg check
@@ -47,49 +54,39 @@ if [ -z "$TARGET_CONFIGS_BRANCH" ]; then
 fi
 
 echo "# branch $TARGET_CONFIGS_BRANCH"
-# check target config branch
-pushd .
-cd "${SHARED_CONFIGS_DIR}/${NETWORK}" || exit 1
-current_configs_branch=$(git branch --show-current)
-if [ "$current_configs_branch" != "$TARGET_CONFIGS_BRANCH" ]; then
-  pwd
-  echo git switch "$TARGET_CONFIGS_BRANCH"
-  git switch "$TARGET_CONFIGS_BRANCH"
-fi
-popd || exit 1
+toolbox_change_branch "$TARGET_CONFIGS_BRANCH"
 
 echo "## cmd: topology_generate"
-exec_cmd curl -s -X POST -H "$REST_HEADER" -d @"$POST_OPTS" "$CONDUCT_TOPO_URL" > /dev/null
+toolbox_generate_topology
 echo "--- data check"
-curl -s "$TOPOLOGIES_URL" | \
-  jq '."topology_data"' | \
+toolbox_fetch_topology | \
   jq '."ietf-network:networks".network[] | select(."network-id" == "layer3") | .node[] | select(."node-id" | test("^Seg.*\\+$")) | ."node-id"'
 echo "---"
 
 echo "## cmd: single_snapshot_queries"
-exec_cmd curl -s -X POST -H "$REST_HEADER" -d '{}' "$QUERIES_URL" > /dev/null
+toolbox_single_snapshot_queries
 
 # traceroute pattern defs dir
 PATTERN_DIR="${SCRIPT_DIR}/unit_tracert"
 
 echo "## cmd: tracert_neighbor_region"
-exec_reach_test "${PATTERN_DIR}/neighbor_region.json"
+toolbox_reach_test "${PATTERN_DIR}/neighbor_region.yaml"
 
 echo "## cmd: tracert_facing_region"
 case "$TARGET_CONFIGS_BRANCH" in
   "5regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_5.json"
+    toolbox_reach_test "${PATTERN_DIR}/facing_region_5.yaml"
     ;;
   "10regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_10.json"
+    toolbox_reach_test "${PATTERN_DIR}/facing_region_10.yaml"
     ;;
   "20regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_20.json"
+    toolbox_reach_test "${PATTERN_DIR}/facing_region_20.yaml"
     ;;
   "40regiondemo")
-    exec_reach_test "${PATTERN_DIR}/facing_region_40.json"
+    toolbox_reach_test "${PATTERN_DIR}/facing_region_40.yaml"
     ;;
   *)
-    exec_reach_test "${PATTERN_DIR}/facing_region_2.json"
+    toolbox_reach_test "${PATTERN_DIR}/facing_region_2.yaml"
     ;;
 esac

@@ -1,0 +1,14 @@
+environment:
+  network: pushed_configs
+  snapshot: mddo_network
+groups:
+  reg.a_VL10_hosts:
+    - regiona-svr01__enp1s4
+    - regiona-svr02__enp1s4
+  reg.t_VL1010_hosts:
+    - regiont-svr01__enp1s4
+  reg.t_VL1020_hosts:
+    - regiont-svr02__enp1s4
+patterns:
+  - [reg.a_VL10_hosts, reg.t_VL1010_hosts]
+  - [reg.a_VL10_hosts, reg.t_VL1020_hosts]
