@@ -1,17 +1,18 @@
 <!-- TOC -->
 
 - [デモ①: **設定変更時のリンク障害シミュレーション**](#%E3%83%87%E3%83%A2%E2%91%A0-%E8%A8%AD%E5%AE%9A%E5%A4%89%E6%9B%B4%E6%99%82%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF%E9%9A%9C%E5%AE%B3%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
-  - [準備](#%E6%BA%96%E5%82%99)
-  - [入力データNW機器コンフィグの選択](#%E5%85%A5%E5%8A%9B%E3%83%87%E3%83%BC%E3%82%BFnw%E6%A9%9F%E5%99%A8%E3%82%B3%E3%83%B3%E3%83%95%E3%82%A3%E3%82%B0%E3%81%AE%E9%81%B8%E6%8A%9E)
-  - [データ生成](#%E3%83%87%E3%83%BC%E3%82%BF%E7%94%9F%E6%88%90)
-  - [静的検査](#%E9%9D%99%E7%9A%84%E6%A4%9C%E6%9F%BB)
-  - [通信シミュレーション](#%E9%80%9A%E4%BF%A1%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
-  - [Batfish内部の情報を見て詳細確認・問題点の分析](#batfish%E5%86%85%E9%83%A8%E3%81%AE%E6%83%85%E5%A0%B1%E3%82%92%E8%A6%8B%E3%81%A6%E8%A9%B3%E7%B4%B0%E7%A2%BA%E8%AA%8D%E3%83%BB%E5%95%8F%E9%A1%8C%E7%82%B9%E3%81%AE%E5%88%86%E6%9E%90)
-  - [コンフィグの修正](#%E3%82%B3%E3%83%B3%E3%83%95%E3%82%A3%E3%82%B0%E3%81%AE%E4%BF%AE%E6%AD%A3)
-  - [テストの再実行](#%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E5%86%8D%E5%AE%9F%E8%A1%8C)
+    - [準備](#%E6%BA%96%E5%82%99)
+    - [補足: デモ用ツールについて](#%E8%A3%9C%E8%B6%B3-%E3%83%87%E3%83%A2%E7%94%A8%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+    - [入力データNW機器コンフィグの選択](#%E5%85%A5%E5%8A%9B%E3%83%87%E3%83%BC%E3%82%BFnw%E6%A9%9F%E5%99%A8%E3%82%B3%E3%83%B3%E3%83%95%E3%82%A3%E3%82%B0%E3%81%AE%E9%81%B8%E6%8A%9E)
     - [データ生成](#%E3%83%87%E3%83%BC%E3%82%BF%E7%94%9F%E6%88%90)
     - [静的検査](#%E9%9D%99%E7%9A%84%E6%A4%9C%E6%9F%BB)
-    - [障害シミュレーション](#%E9%9A%9C%E5%AE%B3%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+    - [通信シミュレーション](#%E9%80%9A%E4%BF%A1%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+    - [Batfish内部の情報を見て詳細確認・問題点の分析](#batfish%E5%86%85%E9%83%A8%E3%81%AE%E6%83%85%E5%A0%B1%E3%82%92%E8%A6%8B%E3%81%A6%E8%A9%B3%E7%B4%B0%E7%A2%BA%E8%AA%8D%E3%83%BB%E5%95%8F%E9%A1%8C%E7%82%B9%E3%81%AE%E5%88%86%E6%9E%90)
+    - [コンフィグの修正](#%E3%82%B3%E3%83%B3%E3%83%95%E3%82%A3%E3%82%B0%E3%81%AE%E4%BF%AE%E6%AD%A3)
+    - [テストの再実行](#%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E5%86%8D%E5%AE%9F%E8%A1%8C)
+        - [データ生成](#%E3%83%87%E3%83%BC%E3%82%BF%E7%94%9F%E6%88%90)
+        - [静的検査](#%E9%9D%99%E7%9A%84%E6%A4%9C%E6%9F%BB)
+        - [障害シミュレーション](#%E9%9A%9C%E5%AE%B3%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
 
 <!-- /TOC -->
 
@@ -37,22 +38,36 @@ bundle install
 
 以降、原則 `playground/demo/linkdown_simulation` ディレクトリで作業します。
 
+## 補足: デモ用ツールについて
+
+デモでは [mddo-toolbox](https://github.com/ool-mddo/mddo-toolbox-cli) を使用します。これは、デモシステムの REST API に対する wrapper script です。でもで実施する操作は REST API 経由で行いますが、処理が煩雑になるのと、ある程度簡略化したデータを基に一括で処理できるように、APIの隠蔽とデータ処理(前処理・後処理)のためのスクリプトを使用します。
+
+コマンドおよびサブコマンドのオプションは `help` オプションで確認してください。
+
+```bash
+# in demo/linkdown_simulation dir
+# command help
+bundle exec mddo-toolbox help
+# sub-command help: help <sub-command>
+bundle exec mddo-toolbox help generate_topology
+```
+
 ## 入力データ(NW機器コンフィグ)の選択
 
 デモには pushed_configs ネットワーク (`configs/pushed_configs`) を使用します。
 
 `202202demo2` ブランチを選択します。
 
-- コマンド(内部的には batfish-wrapper のAPI)でブランチを切り替えていますが、実態としては batfish-wrapper にボリュームマウントされた `playground/configs/pushed_network` リポジトリのブランチを切り替えています
+- コマンド(内部的には batfish-wrapper のAPI)でブランチを切り替えていますが、実体としては batfish-wrapper にボリュームマウントされた `playground/configs/pushed_network` リポジトリのブランチを切り替えています
 
 ```bash
 # in demo/linkdown_simulation dir
-bundle exec ruby simulator.rb change_branch -n pushed_configs -b 202202demo2
+bundle exec mddo-toolbox change_branch -n pushed_configs -b 202202demo2
 ```
 
 ```
-playground/demo/linkdown_simulation$ bundle exec ruby simulator.rb change_branch -n pushed_configs -b 202202demo2
-I, [2023-03-08T13:37:02.386894 #1488098]  INFO -- simulator: POST: http://localhost:15000//configs/pushed_configs/branch, data={:name=>"202202demo2"}
+playground/demo/linkdown_simulation$ bundle exec mddo-toolbox change_branch -n pushed_configs -b 202202demo2
+I, [2023-03-08T13:37:02.386894 #1488098]  INFO -- mddo-toolbox: POST: http://localhost:15000//configs/pushed_configs/branch, data={:name=>"202202demo2"}
 {
   "current_branch": "202202demo2",
   "message": "Your branch is up to date with 'origin/202202demo2'.",
@@ -65,7 +80,7 @@ I, [2023-03-08T13:37:02.386894 #1488098]  INFO -- simulator: POST: http://localh
 対象とするネットワーク/スナップショットを指定して、トポロジデータを生成します。
 
 ```bash
-bundle exec ruby simulator.rb generate_topology -n pushed_configs -s mddo_network
+bundle exec mddo-toolbox generate_topology -n pushed_configs -s mddo_network
 ```
 
 バックエンド (model-conductor → batfish-wrapper & netomox-exp) では以下の操作が行われています:
@@ -88,7 +103,7 @@ bundle exec ruby simulator.rb generate_topology -n pushed_configs -s mddo_networ
     - スコアが大きいほど、リンクダウンの発生による構成変化が大きいと予想できます。
 
 ```bash
-bundle exec ruby simulator.rb compare_subsets -n pushed_configs -s mddo_network | tee compare_result.json
+bundle exec mddo-toolbox compare_subsets -n pushed_configs -s mddo_network | tee compare_result.json
 cat compare_result.json | jq '.[].score' | sort -n | uniq -c
 cat compare_result.json | jq '.[] | select(.score >= 30)' | grep target_snapshot
 ```
@@ -130,18 +145,18 @@ playground/demo/linkdown_simulation$ cat compare_result.json | jq '.[] | select(
 
 ```bash
 # original snapshot
-bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
+bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
 ```
 
 ```bash
 # all linkdown snapshots
-bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
+bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
 ```
 
 それぞれ実行すると以下のようになります。
 
 ```
-playground/demo/linkdown_simulation$ bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
+playground/demo/linkdown_simulation$ bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
 ...
 
 TestTracerouteResult: 
@@ -160,7 +175,7 @@ Finished in 0.004840821 seconds.
 ```
 
 ```
-playground/demo/linkdown_simulation$ bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
+playground/demo/linkdown_simulation$ bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
 ...
 
 Finished in 0.070293392 seconds.
@@ -210,7 +225,7 @@ No.19 のリンクダウンスナップショットで失敗しているので�
 Linkdown snapshot No.19 を batfish にロードします。
 
 ```bash
-bundle exec ruby simulator.rb load_snapshot -n pushed_configs -s mddo_network_linkdown_19
+bundle exec mddo-toolbox load_snapshot -n pushed_configs -s mddo_network_linkdown_19
 ```
 
 Batfish の操作には python + pybatfish を使用します。これらは batfish-wrapper で使用しているので、一旦このコンテナ内に入って作業を行います。
@@ -218,16 +233,6 @@ Batfish の操作には python + pybatfish を使用します。これらは bat
 ```bash
 docker compose exec batfish-wrapper python -i
 ```
-
-- 補足
-    
-    これは、docker-compose.yaml がある playground ディレクトリに移動して以下のコマンドを実行でも可能です。(同等の処理…composeで行う場合はディレクトリ移動が必要になるので注意)
-    
-    ```python
-    cd ../.. # playground
-    docker compose exec batfish-wrapper python -i
-    ```
-    
 
 python を対話モードで起動して `>>>` プロンプトが出たら以下の操作をします。
 
@@ -305,7 +310,7 @@ Index: []
 問題点がわかったらコンフィグを修正します。実際にはコンフィグを修正した後、リポジトリに push し、 `playground/configs/` 下のリポジトリで pull してくることになります。デモでは修正済みのコンフィグがすでにブランチ `202202demo` として push されているのでこれを使います。
 
 ```bash
-bundle exec ruby simulator.rb change_branch -n pushed_configs -b 202202demo
+bundle exec mddo-toolbox change_branch -n pushed_configs -b 202202demo
 ```
 
 必要に応じて修正点を確認しておきます。
@@ -322,7 +327,7 @@ git diff 202202demo2
 ### データ生成
 
 ```bash
-bundle exec ruby simulator.rb generate_topology -n pushed_configs -s mddo_network
+bundle exec mddo-toolbox generate_topology -n pushed_configs -s mddo_network
 ```
 
 ### 静的検査
@@ -332,7 +337,7 @@ bundle exec ruby simulator.rb generate_topology -n pushed_configs -s mddo_networ
     - その他のリンクダウンスナップショットについてはコンフィグ修正によってOSPFレイヤのトポロジが変化しているものがあります。
 
 ```bash
-bundle exec ruby simulator.rb compare_subsets -n pushed_configs -s mddo_network | tee compare_result.json
+bundle exec mddo-toolbox compare_subsets -n pushed_configs -s mddo_network | tee compare_result.json
 cat compare_result.json | jq '.[].score' | sort -n | uniq -c
 cat compare_result.json | jq '.[] | select(.score >= 30)' | grep target_snapshot
 ```
@@ -354,16 +359,16 @@ playground/demo/linkdown_simulation$ cat compare_result.json | jq '.[] | select(
 
 ```bash
 # original snapshot
-bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
+bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
 ```
 
 ```bash
 # all linkdown snapshots
-bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
+bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
 ```
 
 ```
-playground/demo/linkdown_simulation$ bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
+playground/demo/linkdown_simulation$ bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
 ...
 
 Finished in 0.036411818 seconds.

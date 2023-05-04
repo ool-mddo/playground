@@ -1,16 +1,17 @@
 <!-- TOC -->
 
 - [環境準備](#%E7%92%B0%E5%A2%83%E6%BA%96%E5%82%99)
-  - [docker host のセットアップ](#docker-host-%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
-    - [docker のインストール ubuntu](#docker-%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB-ubuntu)
-    - [パッケージ類のインストールubuntu](#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E9%A1%9E%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%ABubuntu)
-  - [デモ用コード・データの取得とブランチ選択](#%E3%83%87%E3%83%A2%E7%94%A8%E3%82%B3%E3%83%BC%E3%83%89%E3%83%BB%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%8F%96%E5%BE%97%E3%81%A8%E3%83%96%E3%83%A9%E3%83%B3%E3%83%81%E9%81%B8%E6%8A%9E)
-  - [環境変数の設定](#%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E3%81%AE%E8%A8%AD%E5%AE%9A)
-  - [コンテナ操作](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E6%93%8D%E4%BD%9C)
-    - [コンテナイメージのダウンロード](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89)
-    - [コンテナの起動](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E8%B5%B7%E5%8B%95)
-    - [指定コンテナの再起動](#%E6%8C%87%E5%AE%9A%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E5%86%8D%E8%B5%B7%E5%8B%95)
-    - [コンテナシステムの停止](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E5%81%9C%E6%AD%A2)
+    - [docker host のセットアップ](#docker-host-%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
+        - [docker のインストール ubuntu](#docker-%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB-ubuntu)
+        - [パッケージ類のインストールubuntu](#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E9%A1%9E%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%ABubuntu)
+    - [デモ用コード・データの取得とブランチ選択](#%E3%83%87%E3%83%A2%E7%94%A8%E3%82%B3%E3%83%BC%E3%83%89%E3%83%BB%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%8F%96%E5%BE%97%E3%81%A8%E3%83%96%E3%83%A9%E3%83%B3%E3%83%81%E9%81%B8%E6%8A%9E)
+    - [デモ用ツールのインストール](#%E3%83%87%E3%83%A2%E7%94%A8%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+    - [環境変数の設定](#%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E3%81%AE%E8%A8%AD%E5%AE%9A)
+    - [コンテナ操作](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E6%93%8D%E4%BD%9C)
+        - [コンテナイメージのダウンロード](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89)
+        - [コンテナの起動](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E8%B5%B7%E5%8B%95)
+        - [指定コンテナの再起動](#%E6%8C%87%E5%AE%9A%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E5%86%8D%E8%B5%B7%E5%8B%95)
+        - [コンテナシステムの停止](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E5%81%9C%E6%AD%A2)
 
 <!-- /TOC -->
 
@@ -22,7 +23,7 @@
 
 デモ環境には Linux を使用します。(開発は Ubuntu22 で動作確認しています)
 
-デモ用のシステムはでもスクリプト (ool-mddo/playground リポジトリ) とコンテナイメージで提供されています。
+デモ用のシステムはスクリプト (ool-mddo/playground リポジトリ) とコンテナイメージで提供されています。
 
 ### docker のインストール (ubuntu)
 
@@ -34,12 +35,27 @@
 
 ### パッケージ類のインストール(ubuntu)
 
-- デモ用のスクリプトで ruby をつかっているので、ruby および bundler をインストールしてください
-    - 開発では ruby/3.1 で動作確認しています
+デモ用のスクリプトで ruby をつかっているので、ruby および bundler をインストールしてください
+
 - bsdextrautils : `column` コマンドです
 
 ```bash
-sudo apt install curl jq less csvtool bsdextrautils ruby ruby-bundler
+sudo apt install build-essential
+sudo apt install curl jq less csvtool bsdextrautils
+```
+
+開発では ruby/3.1 で動作確認しています。一部のスクリプトは ruby 3.1未満では動かないものがあります。ディストリビューションの ruby version が 3.1 未満の場合は [rbenv](https://github.com/rbenv/rbenv) 等でインストールしてください。
+
+- ディストリビューションのruby packageでrubyをインストールする場合
+
+```bash
+sudo apt install ruby ruby-dev ruby-bundler
+```
+
+- rbenv 等で個別にインストールする場合、rubyビルド用のパッケージが必要になります
+
+```bash
+sudo apt install libyaml-dev libssl-dev zlib1g-dev
 ```
 
 ## デモ用コード・データの取得とブランチ選択
@@ -98,6 +114,17 @@ cd ../model-conductor
 git fetch
 git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
 cd ../.. # playground
+```
+
+## デモ用ツールのインストール
+
+デモ用システムはREST APIで操作しますが、直接REST APIを使用すると煩雑になるため、フロントエンドとして動作するCLIツール : [mddo-toolbox](https://github.com/ool-mddo/mddo-toolbox-cli) を使用します。
+
+```bash
+# in playground dir
+cd ../demo
+bundle install
+de ../ # playground
 ```
 
 ## 環境変数の設定
