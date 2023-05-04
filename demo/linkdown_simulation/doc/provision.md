@@ -118,18 +118,28 @@ cd ../.. # playground
 
 ## デモ用ツールのインストール
 
-デモ用システムはREST APIで操作しますが、直接REST APIを使用すると煩雑になるため、フロントエンドとして動作するCLIツール : [mddo-toolbox](https://github.com/ool-mddo/mddo-toolbox-cli) を使用します。
+デモでは [mddo-toolbox](https://github.com/ool-mddo/mddo-toolbox-cli) を使用します。これは、デモシステムの REST API に対する wrapper script です。デモで実施する操作は REST API 経由で行いますが、処理が煩雑になるのと、ある程度簡略化したデータを基に一括で処理できるように、APIの隠蔽とデータ処理(前処理・後処理)のためのスクリプトを使用します。
 
 ```bash
 # in playground dir
-cd ../demo
+cd demo
 bundle install
-de ../ # playground
+cd ../ # playground
+```
+
+コマンドおよびサブコマンドのオプションは `help` で確認してください。
+
+```bash
+# under demo dir
+# command help
+bundle exec mddo-toolbox help
+# sub-command help: help <sub-command>
+bundle exec mddo-toolbox help generate_topology
 ```
 
 ## 環境変数の設定
 
-システムの環境変数を設定します。原則変更は不要ですが、fish-tracer のホスト名の設定のみ各環境に合わせて設定する必要があります。
+`playground/.env` ファイルにシステムの環境変数を設定します。原則変更は不要ですが、fish-tracer のホスト名の設定のみ各環境に合わせて設定する必要があります。
 
 ⚠️ `localhost` や `127.0.0.1` をではなく docker ホスト側のIPやホスト名を設定してください。
 
@@ -202,6 +212,5 @@ docker compose restart <container>
 ### コンテナ(システム)の停止
 
 ```bash
-# in playground dir
 docker compose down
 ```

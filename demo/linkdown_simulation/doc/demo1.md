@@ -2,7 +2,6 @@
 
 - [デモ①: **設定変更時のリンク障害シミュレーション**](#%E3%83%87%E3%83%A2%E2%91%A0-%E8%A8%AD%E5%AE%9A%E5%A4%89%E6%9B%B4%E6%99%82%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF%E9%9A%9C%E5%AE%B3%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
     - [準備](#%E6%BA%96%E5%82%99)
-    - [補足: デモ用ツールについて](#%E8%A3%9C%E8%B6%B3-%E3%83%87%E3%83%A2%E7%94%A8%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
     - [入力データNW機器コンフィグの選択](#%E5%85%A5%E5%8A%9B%E3%83%87%E3%83%BC%E3%82%BFnw%E6%A9%9F%E5%99%A8%E3%82%B3%E3%83%B3%E3%83%95%E3%82%A3%E3%82%B0%E3%81%AE%E9%81%B8%E6%8A%9E)
     - [データ生成](#%E3%83%87%E3%83%BC%E3%82%BF%E7%94%9F%E6%88%90)
     - [静的検査](#%E9%9D%99%E7%9A%84%E6%A4%9C%E6%9F%BB)
@@ -29,28 +28,7 @@
 cd demo/linkdown_simulation/
 ```
 
-必要な ruby package をインストールします。(初回のみ)
-
-```bash
-# in demo/linkdown_simulation dir
-bundle install
-```
-
 以降、原則 `playground/demo/linkdown_simulation` ディレクトリで作業します。
-
-## 補足: デモ用ツールについて
-
-デモでは [mddo-toolbox](https://github.com/ool-mddo/mddo-toolbox-cli) を使用します。これは、デモシステムの REST API に対する wrapper script です。でもで実施する操作は REST API 経由で行いますが、処理が煩雑になるのと、ある程度簡略化したデータを基に一括で処理できるように、APIの隠蔽とデータ処理(前処理・後処理)のためのスクリプトを使用します。
-
-コマンドおよびサブコマンドのオプションは `help` オプションで確認してください。
-
-```bash
-# in demo/linkdown_simulation dir
-# command help
-bundle exec mddo-toolbox help
-# sub-command help: help <sub-command>
-bundle exec mddo-toolbox help generate_topology
-```
 
 ## 入力データ(NW機器コンフィグ)の選択
 
