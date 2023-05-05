@@ -24,7 +24,7 @@
 - [RFC 8346 - A YANG Data Model for Layer 3 Topologies](https://datatracker.ietf.org/doc/rfc8346/)
 - [RFC 8944 - A YANG Data Model for Layer 2 Network Topologies](https://datatracker.ietf.org/doc/rfc8944/)
 
-![network model](network_model.png)
+![network model](fig/network_model.png)
 
 上図の左側は [draft-medved-i2rs-topology-im-01 - An Information Model for Network Topologies](https://datatracker.ietf.org/doc/draft-medved-i2rs-topology-im/) (RFC8345の元になったI-D) から抜粋してきた図です。 右側はRFCで定義されているデータモデルを実際のネットワークに適用したときにどうなるかのサンプルです。
 
@@ -49,7 +49,7 @@ RFC8345は複数レイヤで構成されるネットワークトポロジをど�
 
 下記の図は [demo1 network](https://github.com/corestate55/batfish-test-topology/tree/develop/l2l3_demo1) のコンフィグを基に実際にトポロジデータを構成し、それを可視化したものです。
 
-![model example](model_example.png)
+![model example](fig/model_example.png)
 
 RFC8345は複数レイヤで構成されるネットワークトポロジをデータ化するためのデータモデル…枠組みだけを提示しているので、それをどのように応用していくかは実装者が決めていく必要があります。L3/L2 については RFC8346/8944 がありますが、このプロジェクトでは必ずしもそれにのっとったデータモデルにはしていません。L3についてはある程度参考にしていますが、実現したいことに対して使う範囲内だけで実装しています。同様にL2についてはいま使う範囲内、必要最低限のアトリビュートだけを持つシンプルなモデルにしています。
 

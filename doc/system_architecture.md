@@ -32,7 +32,7 @@
 
 デモシステムは図のようなコンポーネント(コンテナ)で構成されています
 
-![mddo system architecture](mddo_architecture.drawio.svg)
+![mddo system architecture](fig/mddo_architecture.drawio.svg)
 
 ### ⚠️注意事項
 
@@ -86,7 +86,7 @@ Batfish でネットワーク機器のコンフィグファイルを処理し、
 - 1つの物理スナップショットと、複数の論理スナップショットが対応する。
     - デモでは論理スナップショット = 物理リンクダウン発生時の構成なので、物理スナップショットがもつ物理リンクの数ぶん生成されます。
 
-![batfish architecture](mddo_batfish_architecture.drawio.svg)
+![batfish architecture](fig/mddo_batfish_architecture.drawio.svg)
 
 ### ネーミングの制約
 
@@ -172,7 +172,7 @@ git config --global --add safe.directory /mddo/configs/pushed_configs
 
 スナップショットの管理には、model-info と snapshot-pattern の2種類のデータを使用しています。model-conductor や batfish-wrapper はこれらの物理・論理スナップショット情報を内部で組み合わせ・処理しながらスナップショットやトポロジデータを管理しています。
 
-![snapshot management](snapshot_management.drawio.svg)
+![snapshot management](fig/snapshot_management.drawio.svg)
 
 ## model-info
 
@@ -313,14 +313,14 @@ Draw-off 設定をした場合は、物理 (`orig`) →論理 (`source`: draw-of
 
 検証環境(emulated)では、名前空間を識別するだけでなく、直接検証に影響しない範囲の構成を簡略化して再構築することも行っています。一般的に仮想基盤上でのネットワークはソフトウェアで構成されるため、L1-L2の(冗長化)機能を再現するのは困難です。そのため、このプロジェクトでは検証環境で再現するのはL3以上の構成と考えています。L1-L2の構成はL3の構成を変えないように単純化したものに「意味が変わらないよう読みかえる・翻訳する」作業をしています。(検証環境では、L3 のトポロジを基に、それと同等なL1情報を生成しています。つまり、トポロジ的には L1 = L3 として検証環境を構築しています。)
 
-![namespace convert and translate](convert-and-translate.png)
+![namespace convert and translate](fig/convert-and-translate.png)
 
 そのため、original/emulated, asis/tobe 4象限でトポロジデータが保持しているレイヤの情報は異なります。
 
 - Full : L1-L3+OSPF すべてのレイヤの情報を持っている
 - L3+ : L3+OSPF (L3以上) のレイヤ情報のみ持っている
 
-![topology convert](topology_convert.drawio.svg)
+![topology convert](fig/topology_convert.drawio.svg)
 
 以下の点に留意してください。
 
@@ -359,7 +359,7 @@ Draw-off 設定をした場合は、物理 (`orig`) →論理 (`source`: draw-of
         - OVS設定も代理となるcEOSコンフィグも、同じ original_asis トポロジデータから生成します。
     - コンフィグファイルから生成する emulated_tobe トポロジデータは、L3以上は emulated_asis と同様のロジックで構築されるため、L3以上の情報については「実体」あるいは「代理コンフィグ」とは独立しています。しかし、一部L1の構成に基づいた情報が引き継がれます。そのときはbatfish側で見えている物理構成情報が使用されるため、「代理コンフィグ」の情報を受け継ぐことになります。
 
-![emulated alias](emulated_alias.drawio.svg)
+![emulated alias](fig/emulated_alias.drawio.svg)
 
 
 こうした複雑さは、「実体」命名の制約を解除できるコンテナ型L2ノードで、かつそのコンフィグがBatfishで扱えるものを使用することで回避できます。Arista cEOSがその一例です。しかし、cEOSはリソース消費量が大きく、検証環境として起動できる環境全体のサイズの上限が下がるという課題があるため、いくつかの制約や複雑さを許容した上でOVSを使用しています。
