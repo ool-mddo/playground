@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/ool-mddo/mddo-toolbox-cli
-  revision: 7b158a4e3f8307a3194315032495d3ec2458b2a3
+  revision: 2d88efbd07ff544bd2de72236bce5da3b7f09012
   branch: main
   specs:
     mddo-toolbox-cli (0.1.0)
