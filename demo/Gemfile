@@ -2,10 +2,7 @@
 
 source 'https://rubygems.org'
 
-git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
+source "https://rubygems.pkg.github.com/ool-mddo" do
+  gem "mddo-toolbox-cli", "0.1.0.pre2"
+end
 
-# dependency of termcolor (used in netomox), Doesn't resolve dependency automatically?
-gem 'rexml', '>=3.2.5'
-# Cannot define netomox in mddo-toolbox-cli gemspec because it provide with git
-gem 'netomox', github: 'ool-mddo/netomox', branch: 'main'
-gem 'mddo-toolbox-cli', github: 'ool-mddo/mddo-toolbox-cli', branch: 'main'

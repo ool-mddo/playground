@@ -1,25 +1,3 @@
-GIT
-  remote: https://github.com/ool-mddo/mddo-toolbox-cli
-  revision: 2d88efbd07ff544bd2de72236bce5da3b7f09012
-  branch: main
-  specs:
-    mddo-toolbox-cli (0.1.0)
-      httpclient (>= 2.8.3)
-      test-unit (>= 3.5.3)
-      thor (~> 1.2.1)
-
-GIT
-  remote: https://github.com/ool-mddo/netomox
-  revision: 9cd3cf7bfe1082acfd9c494faaf47d03c02c74cc
-  branch: main
-  specs:
-    netomox (0.1.0)
-      hashdiff (~> 1.0.1)
-      jsonpath (~> 1.1.2)
-      neography (~> 1.8.0)
-      termcolor (~> 1.2.2)
-      thor (~> 1.2.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -49,13 +27,27 @@ GEM
       power_assert
     thor (1.2.1)
 
+GEM
+  remote: https://rubygems.pkg.github.com/ool-mddo/
+  specs:
+    mddo-toolbox-cli (0.1.0.pre2)
+      httpclient (~> 2.8)
+      netomox (= 0.3.0.pre2)
+      test-unit (~> 3.5)
+      thor (~> 1.2)
+    netomox (0.3.0.pre2)
+      hashdiff (~> 1.0.1)
+      jsonpath (~> 1.1.2)
+      neography (~> 1.8.0)
+      rexml (~> 3.2)
+      termcolor (~> 1.2.2)
+      thor (~> 1.2.1)
+
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  mddo-toolbox-cli!
-  netomox!
-  rexml (>= 3.2.5)
+  mddo-toolbox-cli (= 0.1.0.pre2)!
 
 BUNDLED WITH
    2.4.12
