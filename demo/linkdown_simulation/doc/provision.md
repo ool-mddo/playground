@@ -3,6 +3,7 @@
 - [環境準備](#%E7%92%B0%E5%A2%83%E6%BA%96%E5%82%99)
     - [docker host のセットアップ](#docker-host-%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
         - [docker のインストール ubuntu](#docker-%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB-ubuntu)
+        - [docker の設定](#docker-%E3%81%AE%E8%A8%AD%E5%AE%9A)
         - [パッケージ類のインストールubuntu](#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E9%A1%9E%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%ABubuntu)
     - [デモ用コード・データの取得とブランチ選択](#%E3%83%87%E3%83%A2%E7%94%A8%E3%82%B3%E3%83%BC%E3%83%89%E3%83%BB%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%8F%96%E5%BE%97%E3%81%A8%E3%83%96%E3%83%A9%E3%83%B3%E3%83%81%E9%81%B8%E6%8A%9E)
     - [デモ用ツールのインストール](#%E3%83%87%E3%83%A2%E7%94%A8%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
@@ -32,6 +33,12 @@
 - [Docker Compose V2(Version 2) GA のまとめ - Qiita](https://qiita.com/zembutsu/items/d82b2ae1a511ebd6a350#docker-engine-linux-%E3%81%A7-compose-v2-%E3%82%92%E4%BD%BF%E3%81%86%E3%81%AB%E3%81%AF)
 - [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
     - [Ubuntu22.04へDockerとDocker Compose v2 をインストール - Qiita](https://qiita.com/kujiraza/items/a8236f65e2c46735ee91)
+
+### docker の設定
+
+Root 権限で docker 操作をするのは手間がかかるので、一般ユーザでも実行できるようにします。
+
+- [Ubuntuでdockerコマンドを非rootユーザーでも使えるようにする方法 – 株式会社シーポイントラボ ｜ 浜松のシステム・RTK-GNSS開発](https://cpoint-lab.co.jp/article/202104/19587/)
 
 ### パッケージ類のインストール(ubuntu)
 
@@ -118,7 +125,18 @@ cd ../.. # playground
 
 ## デモ用ツールのインストール
 
-デモでは [mddo-toolbox](https://github.com/ool-mddo/mddo-toolbox-cli) を使用します。これは、デモシステムの REST API に対する wrapper script です。デモで実施する操作は REST API 経由で行いますが、処理が煩雑になるのと、ある程度簡略化したデータを基に一括で処理できるように、APIの隠蔽とデータ処理(前処理・後処理)のためのスクリプトを使用します。
+デモでは [mddo-toolbox](https://github.com/ool-mddo/mddo-toolbox-cli) を使用します。これは、デモシステムの REST API に対する wrapper script です。デモで実施する操作は REST API 経由で行いますが、処理が煩雑になるのと、ある程度簡略化したデータを基に一括で処理できるように、APIの隠蔽とデータ処理(前処理・後処理)を実装してあります。
+
+mddo-toolbox は github packages で管理していますが、インストールの際には認証が必要になります。そのため、事前に Personal Access Token (PAT) が必要です。
+
+- [RubyGemsレジストリの利用 - GitHub Docs](https://docs.github.com/ja/packages/working-with-a-github-packages-registry/working-with-the-rubygems-registry)
+    - PATには `read:packages` 以上のスコープが必要です
+    - bundler で認証を行なう場合、　`bundle config` で設定を登録するか、以下のように環境変数で渡す方法があります。
+- [個人用アクセス トークンの作成 - GitHub Docs](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+```bash
+export BUNDLE_RUBYGEMS__PKG__GITHUB__COM="<USERNAME>:<TOKEN(PAT)>"
+```
 
 ```bash
 # in playground dir
