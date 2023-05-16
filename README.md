@@ -10,6 +10,7 @@
 * [このプロジェクトの位置づけ](./doc/project_positioning.md)
 * [システムアーキテクチャ](./doc/system_architecture.md)
 * [ネットワークのモデル](./doc/network_model.md)
+* [デモ環境セットアップ](./doc/provision.md)
 
 ## Demonstration
 
