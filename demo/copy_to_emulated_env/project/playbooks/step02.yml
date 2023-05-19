@@ -2,27 +2,6 @@
 - hosts: localhost
   connection: local
   gather_facts: no
-#  vars:
-#    nodes: {}
-#    containerlab: []
-#    convertif: []
-#    bridge_image:
-#      kind: ovs-bridge
-#    cnf_image:
-#      kind: 'juniper_crpd'
-#      image: 'crpd:22.1R1.10'
-#    mddo_model_file: "/data/project/playbooks/pushed_configs_mddo_network.json"
-#    nodered_url: "http://192.168.80.2:1880"
-#    node_list: []
-#    node: {}
-#    node_dicts: {}
-#    node_dict: {}
-#    network_name: "mddo-ospf"
-#    netoviz_url: "http://localhost:3000"
-#    labname: "mddo-lab"
-#    containerlab_host: "172.17.0.1"
-#    demo_dir: ""
-#    mddo_containerlab_file: "configs/clab-topo.yml"
 
   tasks:
   - name: "get convert table"
@@ -112,6 +91,17 @@
       dest: "configs/{{ item.name }}.conf"
     loop: "{{ bridgedata }}"
 
+  - name: upload generated config
+    uri:
+      url: http://playground_20230407-api-proxy-1/configs/mddo-ospf/emulated_asis/
+      method: POST
+      return_content: no
+      body_format: json
+      headers:
+        Content-Type: "application/json"
+      body: [{"filename": "{{ item.agent_name }}.conf", "text": "{{ lookup('file', \"configs/{{ item.agent_name }}.conf\") }}"}]
+    loop: "{{ node_list.json }}"
+
 - hosts: docker-host
   gather_facts: false
   become: yes
@@ -126,6 +116,7 @@
         method: "GET"
         body_format: json
       register: node_list
+
 
     - copy:
         src: "configs/{{ item.agent_name }}.conf"

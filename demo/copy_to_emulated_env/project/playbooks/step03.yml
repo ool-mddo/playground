@@ -5,25 +5,6 @@
   vars:
     ansible_user: "{{ login_user}}"
     ansible_python_interpreter: /usr/bin/python3
-#    mddo_model_file: "/data/project/playbooks/pushed_configs_mddo_network.json"
-#    nodered_url: "http://192.168.80.2:1880"
-#    network_name: "mddo-ospf"
-#    netoviz_url: "http://localhost:3000"
-#    labname: "mddo-lab"
-#    containerlab_host: "172.17.0.1"
-#    mddo_containerlab_file: "configs/clab-topo.yml"
-#    ansible_runner_dir: ""
-#    playground_dir: ""
-#    model_merge_dir: ""
-#    demo_dir: "{{ playground_dir }}/configs/{{ network_name }}"
-#    operation: save
-#  pre_tasks:
-#    - name: Get ansible_user home directory
-#      shell: 'getent passwd "{{ansible_ssh_user}}" | cut -d: -f6'
-#      register: ansible_home_result
-#
-#    - name: Set the fact for the other scripts to use
-#      set_fact: ansible_home='{{ansible_home_result.stdout}}'
 
   tasks:
     - name: save config from  containerlab
@@ -42,7 +23,6 @@
 
     - name: copy from crpd config & send ansible-runner /tmp directory
       ansible.builtin.fetch:
-        #src: "{{ ansible_home }}/clab-emulated/{{ item.agent_name }}/config/juniper.conf"
         src: "{{ ansible_runner_dir }}/clab/clab-emulated/{{ item.agent_name }}/config/juniper.conf"
         dest: "/tmp/{{ item.agent_name }}.conf"
         flat: yes

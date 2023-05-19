@@ -1,7 +1,9 @@
 # dirs
 project/status
 project/playbooks/configs
+clab
 # files generated in demo scenario
+*.bak
 clab-topo.yaml
 emulated_layer1_topology*.json
 emulated.json
