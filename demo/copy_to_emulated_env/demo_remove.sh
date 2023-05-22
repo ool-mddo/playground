@@ -7,7 +7,13 @@
 
 source ./demo_vars
 
-ansible-runner run . -p /data/project/playbooks/remove.yml --container-option="--net=${NODERED_BRIDGE}" \
-	--container-volume-mount="$PWD:/data" --container-image=${ANSIBLERUNNER_IMAGE} \
-	--process-isolation --process-isolation-executable docker --cmdline \
-	"-e login_user=${LOCALSERVER_USER} -e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -k -K "
+# delete files and containers related to containerlab
+rm -f $ANSIBLE_RUNNER_DIR/project/playbooks/configs/*.conf
+sudo containerlab destroy --topo $ANSIBLE_RUNNER_DIR/clab/clab-topo.yml --cleanup
+sudo rm -f $ANSIBLE_RUNNER_DIR/clab/*.conf
+sudo rm -f $ANSIBLE_RUNNER_DIR/clab/clab-topo.yml
+
+# delete ovs bridges
+curl -s "http://localhost:15000/topologies/mddo-ospf/emulated_asis/topology/layer3/nodes?node_type=segment" \
+     | jq '.[] | .alias.l1_principal' \
+     | xargs -I@ sudo ovs-vsctl del-br @
