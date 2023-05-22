@@ -9,7 +9,7 @@
   tasks:
     - name: save config from  containerlab
       shell:
-        cmd: "containerlab save --topo clab-topo.yml"
+        cmd: "containerlab save --topo clab-topo.yaml"
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
 

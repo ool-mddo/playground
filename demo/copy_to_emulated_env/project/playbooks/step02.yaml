@@ -131,9 +131,9 @@
         body_format: json
       register: containerlab
 
-    - name: Creating clab-topo.yml 
+    - name: Creating clab-topo.yaml 
       copy:
-        dest: "{{ ansible_runner_dir }}/clab/clab-topo.yml"
+        dest: "{{ ansible_runner_dir }}/clab/clab-topo.yaml"
         content: "{{ containerlab.json | to_yaml }}"
 
     - name: "delete ovs-br {{ item.key }}"
@@ -150,7 +150,7 @@
 
     - name: deploy containerlab
       shell:
-        cmd: "containerlab deploy --topo clab-topo.yml --reconfigure"
+        cmd: "containerlab deploy --topo clab-topo.yaml --reconfigure"
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
         

@@ -8,7 +8,7 @@
 source ./demo_vars
 
 # save configs from emulated env containers
-ansible-runner run . -p /data/project/playbooks/step03.yml --container-option="--net=${NODERED_BRIDGE}" \
+ansible-runner run . -p /data/project/playbooks/step03.yaml --container-option="--net=${API_BRIDGE}" \
 	--container-volume-mount="$PWD:/data" --container-image=${ANSIBLERUNNER_IMAGE} \
 	--process-isolation --process-isolation-executable docker \
        	--cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -k -K " -vvvv
