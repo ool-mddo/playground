@@ -1,19 +1,6 @@
 ANSIBLERUNNER_IMAGE="ghcr.io/ool-mddo/mddo_ansible_runner:demo202211"
-NODERED_BRIDGE="playground_20230407_default"
+API_BRIDGE="playground_20230407_default"
 LOCALSERVER_USER=mddo
 PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground_20230407"
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
 
-#NETWORK_NAME="nttcom-trial-2022"
-#NETWORK_NAME="mddo-ospf"
-#NETVIZ=localhost:3000
-#NODERED_URL="http://mddo-nodered_node-red_1:1880"
-#NODERED_URL="http://172.22.0.8:1880"
-#NODERED_BRIDGE="playground_default"
-#LABNAME="demo202301"
-#LABNAME="202211-ospf-demo"
-#LOCALSERVERIP="192.168.23.33"
-#NETOVIZ_URL="http://${LOCALSERVERIP}:3000"
-#LOCALSERVER_HOMEDIR="/home/${LOCALSERVER_USER}"
-#DEMO_DIR="${PLAYGROUND_DIR}/configs/${NETWORK_NAME}"
-#MODEL_MERGE_DIR="/home/${LOCALSERVER_USER}/model-merge"
