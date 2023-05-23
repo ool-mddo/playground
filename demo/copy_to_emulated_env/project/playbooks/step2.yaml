@@ -91,15 +91,23 @@
       dest: "configs/{{ item.name }}.conf"
     loop: "{{ bridgedata }}"
 
+    #  - name: upload generated config
+    #    uri:
+    #      url: "http://api-proxy/configs/mddo-ospf/emulated_asis/"
+    #      method: POST
+    #      return_content: no
+    #      body_format: json
+    #      headers:
+    #        Content-Type: "application/json"
+    #      body: [{"filename": "{{ item.agent_name }}.conf", "text": "{{ lookup('file', \"configs/{{ item.agent_name }}.conf\") }}"}]
+    #    loop: "{{ node_list.json }}"
+
   - name: upload generated config
-    uri:
+    include_role:
+      name: uploadconfig
+    vars:
       url: "http://api-proxy/configs/mddo-ospf/emulated_asis/"
-      method: POST
-      return_content: no
-      body_format: json
-      headers:
-        Content-Type: "application/json"
-      body: [{"filename": "{{ item.agent_name }}.conf", "text": "{{ lookup('file', \"configs/{{ item.agent_name }}.conf\") }}"}]
+      filepath: "configs/{{ item.agent_name }}.conf"
     loop: "{{ node_list.json }}"
 
 - hosts: docker-host
@@ -153,4 +161,4 @@
         cmd: "containerlab deploy --topo clab-topo.yaml --reconfigure"
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
-        
+
