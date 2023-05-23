@@ -91,17 +91,6 @@
       dest: "configs/{{ item.name }}.conf"
     loop: "{{ bridgedata }}"
 
-    #  - name: upload generated config
-    #    uri:
-    #      url: "http://api-proxy/configs/mddo-ospf/emulated_asis/"
-    #      method: POST
-    #      return_content: no
-    #      body_format: json
-    #      headers:
-    #        Content-Type: "application/json"
-    #      body: [{"filename": "{{ item.agent_name }}.conf", "text": "{{ lookup('file', \"configs/{{ item.agent_name }}.conf\") }}"}]
-    #    loop: "{{ node_list.json }}"
-
   - name: upload generated config
     include_role:
       name: uploadconfig

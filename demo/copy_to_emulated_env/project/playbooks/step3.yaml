@@ -29,18 +29,6 @@
       when: '"node" == item.type or "endpoint" == item.type'
       loop: "{{ node_list.json }}"
 
-#    - name: upload router config
-#      uri:
-#        url: http://localhost:15000/configs/mddo-ospf/emulated_tobe/
-#        method: POST
-#        return_content: no
-#        body_format: json
-#        headers:
-#          Content-Type: "application/json"
-#        body: [{"filename": "{{ item.agent_name }}.conf", "text": "{{ lookup('file', \"/tmp/{{ item.agent_name }}.conf\") }}"}]
-#      when: '"node" == item.type or "endpoint" == item.type'
-#      loop: "{{ node_list.json }}"
-
     - name: upload router config
       include_role:
         name: uploadconfig
@@ -49,18 +37,6 @@
         filepath: "/tmp/{{ item.agent_name }}.conf"
       when: '"node" == item.type or "endpoint" == item.type'
       loop: "{{ node_list.json }}"
-
-#    - name: upload switch config
-#      uri:
-#        url: http://localhost:15000/configs/mddo-ospf/emulated_tobe/
-#        method: POST
-#        return_content: no
-#        body_format: json
-#        headers:
-#          Content-Type: "application/json"
-#        body: [{"filename": "{{ item.agent_name }}.conf", "text": "{{ lookup('file', \"configs/{{ item.agent_name }}.conf\") }}"}]
-#      when: '"segment" == item.type'
-#      loop: "{{ node_list.json }}"
 
     - name: upload switch config
       include_role:
