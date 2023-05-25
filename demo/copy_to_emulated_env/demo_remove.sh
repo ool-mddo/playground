@@ -1,19 +1,21 @@
-### containerlab server login & sudo password Setting
-###Example
-###$ cat env/passwords 
-###---
-###"^SSH password:\\s*?$": "login password"
-###"^BECOME password.*:\\s*?$": "login password"
+#!/usr/bin/bash
 
+# check user id
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run as root (sudo)"
+  exit 1
+fi
+
+# shellcheck disable=SC1091
 source ./demo_vars
 
-ansible-runner run . -p /data/project/playbooks/remove.yml --container-option="--net=${NODERED_BRIDGE}" \
-	--container-volume-mount="$PWD:/data" --container-image=${ANSIBLERUNNER_IMAGE} \
-	--process-isolation --process-isolation-executable docker --cmdline \
-	"-e nodered_url=${NODERED_URL} -e labname=${LABNAME} -e login_user=${LOCALSERVER_USER} -e netoviz_url=${NETVIZ_URL} -e network_name=${NETWORK_NAME} -e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -k -K "
+# delete files and containers related to containerlab
+rm -f "$ANSIBLE_RUNNER_DIR/project/playbooks/configs/"*.conf
+sudo containerlab destroy --topo "$ANSIBLE_RUNNER_DIR/clab/clab-topo.yaml" --cleanup
+sudo rm -f "$ANSIBLE_RUNNER_DIR/clab/"*.conf
+sudo rm -f "$ANSIBLE_RUNNER_DIR/clab/clab-topo.yaml"
 
-cd $DEMO_DIR
-git fetch origin $LABNAME
-git reset --hard origin/$LABNAME
-git clean -f
-
+# delete ovs bridges
+curl -s "http://localhost:15000/topologies/mddo-ospf/emulated_asis/topology/layer3/nodes?node_type=segment" \
+  | jq '.[] | .alias.l1_principal' \
+  | xargs -I@ sudo ovs-vsctl del-br @

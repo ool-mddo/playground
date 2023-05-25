@@ -1,0 +1,11 @@
+---
+- name: upload config
+  uri:
+    url: "{{ url }}"
+    method: POST
+    return_content: no
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+    body: [{"filename": "{{ filepath | basename }}", "text": "{{ lookup('file', \"{{ filepath }}\") }}"}]
+

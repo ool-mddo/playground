@@ -1,22 +1,22 @@
-### containerlab server login & sudo password Setting
-###Example
-###$ cat env/passwords 
-###---
-###"^SSH password:\\s*?$": "login password"
-###"^BECOME password.*:\\s*?$": "login password"
+#!/usr/bin/bash
 
+# shellcheck disable=SC1091
 source ./demo_vars
-cd $PLAYGROUND_DIR
-mkdir -p $PLAYGROUND_DIR/netoviz_model/${NETWORK_NAME}/original_tobe
-docker-compose run netomox-exp  bundle exec ./exe/mddo_toolbox.rb convert_namespace \
-	-f json -t /mddo/netoviz_model/${NETWORK_NAME}/original_asis/ns_table.json \
-	/mddo/netoviz_model/${NETWORK_NAME}/emulated_tobe/topology.json \
-	> $PLAYGROUND_DIR/netoviz_model/${NETWORK_NAME}/original_tobe/topology.json
 
+# generate original_tobe from emulated_tobe
+curl -s -X POST -H 'Content-Type: application/json' \
+  -d '{ "table_origin": "original_asis" }' \
+  "http://${API_PROXY}/conduct/mddo-ospf/ns_convert/emulated_tobe/original_tobe"
 
-cd $MODEL_MERGE_DIR/model_merge
-python3.10 config.py \
-	$PLAYGROUND_DIR/netoviz_model/$NETWORK_NAME/original_asis/topology.json \
-	$PLAYGROUND_DIR/netoviz_model/$NETWORK_NAME/original_tobe/topology.json \
-	| jq -r '.[] | [ ."node-id", .config ]' | xargs -ICMD echo -e CMD 
+# update netoviz index
+curl -s -X POST -H 'Content-Type: application/json' \
+  -d @<(jq '{ "index_data": . }' mddo_ospf_index.json ) \
+  "http://${API_PROXY}/topologies/index"
 
+# generate diff
+curl -s -X POST -H 'Content-Type: application/json' \
+  -d '{ "upper_layer3": true }' \
+  "http://${API_PROXY}/conduct/mddo-ospf/snapshot_diff/original_asis/original_tobe"
+
+# get diff
+curl -s "http://${API_PROXY}/conduct/mddo-ospf/model_merge/original_asis/original_tobe" | jq .
