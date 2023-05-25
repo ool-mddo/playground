@@ -3,3 +3,5 @@ queries
 topologies
 .idea
 .vscode
+demo/**/passwords
+demo/**/artifacts/**
