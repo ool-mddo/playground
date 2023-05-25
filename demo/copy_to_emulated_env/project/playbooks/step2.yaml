@@ -13,7 +13,7 @@
 
   - name: generate config
     template:
-      src: crpd.j2
+      src: template/crpd.j2
       dest: "configs/{{ item.name }}.conf"
     when: '"segment" not in item.type'
     loop: "{{ node_list.json }}"
@@ -29,7 +29,7 @@
 
   - name: generate config
     template:
-      src: crpd_ospf.j2
+      src: template/crpd_ospf.j2
       dest: "configs/{{ item.node }}_ospf.conf"
     loop: "{{ ospf_list.json }}"
 
@@ -49,7 +49,7 @@
 
   - name: generate static-route config
     template:
-      src: crpd_static.j2
+      src: template/crpd_static.j2
       dest: "configs/{{ item['node-id'] }}_routing-options.conf"
     vars:
       query: '*.network[{{ layer3index }}].node[*]'
@@ -87,7 +87,7 @@
 
   - name: generate config
     template:
-      src: ceos.j2
+      src: template/ceos.j2
       dest: "configs/{{ item.name }}.conf"
     loop: "{{ bridgedata }}"
 
