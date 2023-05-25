@@ -1,7 +1,3 @@
-# dirs
-project/status
-project/playbooks/configs
-clab
 # files generated in demo scenario
 *.bak
 clab-topo.yaml
