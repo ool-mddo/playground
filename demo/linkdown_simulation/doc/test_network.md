@@ -1,6 +1,6 @@
 <!-- TOC -->
 
-- [開発用テストネットワークの分析](#%E9%96%8B%E7%99%BA%E7%94%A8%E3%83%86%E3%82%B9%E3%83%88%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%AE%E5%88%86%E6%9E%90)
+- [開発用テストネットワークの分析](#開発用テストネットワークの分析)
 
 <!-- /TOC -->
 
@@ -8,19 +8,17 @@
 
 # 開発用テストネットワークの分析
 
-playground には開発用に使用するテストデータ ([batfish-test-topology](https://github.com/corestate55/batfish-test-topology)) のコンフィグが同梱されています。
-
-開発用のデータについては以下のようにトポロジデータを生成することで netoviz で確認可能になります。
+playground には開発用に使用するテストデータ ([batfish-test-topology](https://github.com/corestate55/batfish-test-topology)) のコンフィグが同梱されています。開発用のデータについては以下のようにトポロジデータを生成することで netoviz で確認可能になります。
 
 ```bash
 # in playground/demo/linkdown_simulation dir
-bundle exec simulator.rb generate_topology -n batfish-test-topology -p
+bundle exec mddo-toolbox generate_topology -n batfish-test-topology -p
 ```
 
 ⚠️ 注意事項
 
 - network = batfish-test-topology には複数の物理 snapshot が含まれています。 `-p` (`--phy-ss-only`) をつけないと、各物理スナップショットそれぞれに対してリンクダウンパターンを生成します。
-    - 特定の物理スナップショットを指定する ( `-s` / `--snapshot`) ことで、1つのスナップショットに対してリンクダウンパターンを生成できます。
+- 特定の物理スナップショットを指定する ( `-s` / `--snapshot`) ことで、1つのスナップショットに対してリンクダウンパターンを生成できます。
 
 それぞれの物理スナップショットの目的
 
@@ -42,4 +40,3 @@ bundle exec simulator.rb generate_topology -n batfish-test-topology -p
 | l2l3_sample3err | L2_sample3 + ルータ (異常系: 複数prefix混在セグメント) |  |
 | l2l3_sample3err2 | L2_sample3 + ルータ (異常系: L3 IPアドレス重複) |  |
 | l2l3_sample3err3 | L2_sample3 + ルータ (異常系: L2ループ) |  |
-

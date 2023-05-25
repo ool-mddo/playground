@@ -128,7 +128,7 @@ bash wait_service.sh
 
 この時点ではなにもデータが入っていないことを確認してください
 
-![Initial screen of netbox](netbox_initial.png)
+![Initial screen of netbox](fig/netbox_initial.png)
 
 ## batfish の起動
 
@@ -158,7 +158,7 @@ docker compose exec -T batfish python3 /mnt/description2netbox.py http://host.do
 
 実行すると netboxにデータが入ります。
 
-![Imported screen of netbox](netbox_imported.png)
+![Imported screen of netbox](fig/netbox_imported.png)
 
 netbox からインタフェース情報を取り出して物理トポロジデータに変換します。
 
@@ -183,7 +183,7 @@ python -m http.server 10000
 # access http://localhost:10000/netbox.html with browser
 ```
 
-![inet-henge](inet-henge.png)
+![inet-henge](fig/inet-henge.png)
 
 ## コンテナの停止
 

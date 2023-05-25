@@ -2,9 +2,7 @@
 # set -x # for debug
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
-echo "# script directory: $SCRIPT_DIR}"
-# work in playground directory (parent of the script directory)
-cd "${SCRIPT_DIR}/../../../" || exit
+PLAYGROUND_DIR="$SCRIPT_DIR/../../../"
 echo "# working directory: $(pwd)"
 
 TARGET_CONFIGS_BRANCH=$1
@@ -17,10 +15,7 @@ EXEC_LOG_FILE="${STATS_LOG_DIR}/exec.log"
 TIME=/usr/bin/time # use GNU-time instead of bash-built-in-time
 NETWORK="pushed_configs"
 SNAPSHOT="mddo_network"
-POST_OPT='{ "label": "OOL-MDDO PJ network" }'
 TIME_FMT="real %e, user %U, sys %S"
-REST_HEADER="Content-Type: application/json"
-CONDUCT_TOPO_URL="http://localhost:15000/conduct/${NETWORK}/${SNAPSHOT}/topology"
 LOGGING_DELAY=5 # sec
 
 function epoch () {
@@ -32,13 +27,43 @@ function exec_log () {
   echo "$message" | tee -a "$EXEC_LOG_FILE"
 }
 
-function exec_generate_topology () {
-  task=$1
+function exec_toolbox () {
+  bundle exec mddo-toolbox "$@" 2> /dev/null
+}
+
+function exec_toolbox_silent () {
+  { $TIME -f "$TIME_FMT" bundle exec mddo-toolbox "$@" > /dev/null; } 2>&1 | tail -n1
+}
+
+function toolbox_change_branch () {
+  branch=$1
+  exec_toolbox change_branch -n "$NETWORK" -b "$branch"
+}
+
+function toolbox_generate_topology () {
+  task="generate_topology"
+
   exec_log "BEGIN TASK: $task, $(epoch)"
-  # for time command arguments expansion: without variable quoting
-  # shellcheck disable=SC2086
-  task_time=$( { $TIME -f "$TIME_FMT" curl -s -X POST -H "$REST_HEADER" -d "$POST_OPT" $CONDUCT_TOPO_URL > /dev/null; } 2>&1 )
+  task_time=$( exec_toolbox_silent generate_topology -n "$NETWORK" -s "$SNAPSHOT" )
   exec_log "END TASK: $task, $(epoch), $task_time"
+}
+
+function backup_data () {
+  pushd "$PLAYGROUND_DIR" || exit 1
+  # import SHARED_{QUERIES|TOPOLOGIES}_DIR to backup generated data
+  source .env
+
+  tar czf queries.tar.gz "$SHARED_QUERIES_DIR"
+  mv queries.tar.gz "$STATS_LOG_DIR"
+  tar czf topologies.tar.gz "$SHARED_TOPOLOGIES_DIR"
+  mv topologies.tar.gz "$STATS_LOG_DIR"
+  popd || exit 1
+}
+
+function exec_docker_compose () {
+  pushd "$PLAYGROUND_DIR" || exit 1
+  docker compose -f docker-compose.min.yaml "$@"
+  popd || exit 1
 }
 
 ##########
@@ -50,30 +75,21 @@ if [ -z "$TARGET_CONFIGS_BRANCH" ]; then
   exit 1
 fi
 
-# read env vars
-source .env
-
 # check target config branch
-pushd .
-cd "${SHARED_CONFIGS_DIR}/${NETWORK}" || exit 1
-current_configs_branch=$(git branch --show-current)
-if [ "$current_configs_branch" != "$TARGET_CONFIGS_BRANCH" ]; then
-  git switch "$TARGET_CONFIGS_BRANCH"
-fi
-popd || exit 1
+toolbox_change_branch "$TARGET_CONFIGS_BRANCH"
 
 # prepare log directory
 mkdir -p "$STATS_LOG_DIR"
 
 # start docker stats log (in background)
-"${SCRIPT_DIR}/docker_stats.sh" > "$STATS_LOG_FILE" &
+./docker_stats.sh > "$STATS_LOG_FILE" &
 pid=$!
 exec_log "BEGIN LOGGING: $STATS_LOG_FILE, $(epoch)"
 sleep $LOGGING_DELAY
 
 # start tasks
 exec_log "BEGIN CONFIGS: $TARGET_CONFIGS_BRANCH, $(epoch) "
-exec_generate_topology "generate_topology"
+toolbox_generate_topology
 exec_log "END CONFIGS: $TARGET_CONFIGS_BRANCH, $(epoch)"
 
 # stop docker stats log
@@ -82,17 +98,14 @@ kill $pid
 exec_log "END LOGGING: $STATS_LOG_FILE, $(epoch)"
 
 # backup generated topology files
-tar czf queries.tar.gz "$SHARED_QUERIES_DIR"
-mv queries.tar.gz "$STATS_LOG_DIR"
-tar czf topologies.tar.gz "$SHARED_TOPOLOGIES_DIR"
-mv topologies.tar.gz "$STATS_LOG_DIR"
+backup_data
 
 # parse stats log
-ruby "${SCRIPT_DIR}/docker_stats.rb" --dir "$STATS_LOG_DIR" --datafile
+ruby docker_stats.rb --dir "$STATS_LOG_DIR" --datafile
 
 # docker logs
-docker compose -f docker-compose.min.yaml logs > "${STATS_LOG_DIR}/docker.log"
+exec_docker_compose logs > "${STATS_LOG_DIR}/docker.log"
 
 # check stats graph
-gnuplot -c "${SCRIPT_DIR}/docker_stats.gp" "$STATS_LOG_DIR"
+gnuplot -c docker_stats.gp "$STATS_LOG_DIR"
 xdg-open "${STATS_LOG_DIR}/graph.png"

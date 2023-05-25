@@ -1,16 +1,7 @@
 <!-- TOC -->
 
 - [環境準備](#%E7%92%B0%E5%A2%83%E6%BA%96%E5%82%99)
-  - [docker host のセットアップ](#docker-host-%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
-    - [docker のインストール ubuntu](#docker-%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB-ubuntu)
-    - [パッケージ類のインストールubuntu](#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E9%A1%9E%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%ABubuntu)
-  - [デモ用コード・データの取得とブランチ選択](#%E3%83%87%E3%83%A2%E7%94%A8%E3%82%B3%E3%83%BC%E3%83%89%E3%83%BB%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%8F%96%E5%BE%97%E3%81%A8%E3%83%96%E3%83%A9%E3%83%B3%E3%83%81%E9%81%B8%E6%8A%9E)
-  - [環境変数の設定](#%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E3%81%AE%E8%A8%AD%E5%AE%9A)
-  - [コンテナ操作](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E6%93%8D%E4%BD%9C)
-    - [コンテナイメージのダウンロード](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89)
-    - [コンテナの起動](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E8%B5%B7%E5%8B%95)
-    - [指定コンテナの再起動](#%E6%8C%87%E5%AE%9A%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E5%86%8D%E8%B5%B7%E5%8B%95)
-    - [コンテナシステムの停止](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E5%81%9C%E6%AD%A2)
+    - [デモ用コードの取得](#%E3%83%87%E3%83%A2%E7%94%A8%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E5%8F%96%E5%BE%97)
 
 <!-- /TOC -->
 
@@ -18,163 +9,26 @@
 
 # 環境準備
 
-## docker host のセットアップ
+共通する環境設定については[デモ環境構築](../../../doc/provision.md)を参照してください。
 
-デモ環境には Linux を使用します。(開発は Ubuntu22 で動作確認しています)
+- `playground` リポジトリのブランチは `netomox-exp-rest-api` を選択してください。
+- デモ用システムを起動してください (`docker compose up`)
 
-デモ用のシステムはでもスクリプト (ool-mddo/playground リポジトリ) とコンテナイメージで提供されています。
+## デモ用コードの取得
 
-### docker のインストール (ubuntu)
+linkdown simulation デモでは、ネットワーク = pushed_configs, スナップショット = mddo_network がベースになります。
 
-⚠️[2023-03-09] 時点で、Ubuntuの docker.io パッケージでインストールされる docker は version 20.10.12 です。20.10.13 から docker compose コマンドが使えるようになり、今後 docker-compose コマンドではなくこちら (docker サブコマンド) を利用することが推奨されています。ディストリビューションのリポジトリからではなく、Docker のリポジトリから最新版の docker をインストールしてください。
+- 実際のコンフィグ類: `playground/configs/pushed_network/mddo_network`
+- コンフィグリポジトリ: [ool-mddo/pushed_configs](https://github.com/ool-mddo/pushed_configs)
 
-- [Docker Compose V2(Version 2) GA のまとめ - Qiita](https://qiita.com/zembutsu/items/d82b2ae1a511ebd6a350#docker-engine-linux-%E3%81%A7-compose-v2-%E3%82%92%E4%BD%BF%E3%81%86%E3%81%AB%E3%81%AF)
-- [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
-    - [Ubuntu22.04へDockerとDocker Compose v2 をインストール - Qiita](https://qiita.com/kujiraza/items/a8236f65e2c46735ee91)
-
-### パッケージ類のインストール(ubuntu)
-
-- デモ用のスクリプトで ruby をつかっているので、ruby および bundler をインストールしてください
-    - 開発では ruby/3.1 で動作確認しています
-- bsdextrautils : `column` コマンドです
-
-```bash
-sudo apt install curl jq less csvtool bsdextrautils ruby ruby-bundler
-```
-
-## デモ用コード・データの取得とブランチ選択
-
-デモ用のコードにはデモのためのデータ(コンフィグ類)およびツール類がサブモジュールとして `configs`, `repos` ディレクトリに登録されています。Playground リポジトリ及びそのサブモジュールを clone します。
-
-```bash
-git clone https://github.com/ool-mddo/playground.git
-cd playground
-git submodule update --init --recursive
-```
-
-デモでは、ネットワーク = pushed_configs, スナップショット = mddo_network がベースになります。実際のコンフィグ類は `playground/configs/pushed_network/mddo_network` にあります (元のコンフィグリポジトリはこちら: [ool-mddo/pushed_configs](https://github.com/ool-mddo/pushed_configs))。 `queries`, `topologies` ディレクトリも同様に `network/snapshot` 形式のディレクトリ構成でデータを管理しています。
-
-Playground自体のブランチあるいはタグをチェックアウトします。最初はローカルにブランチ持ってきてないのでリモートブランチ (`origin/…`)からローカルブランチを作ります。(この跡実施するサブモジュール等でも同様。)
-
-(⚠️開発中 : `netomox-exp-rest-api`ブランチの最新コミットを使ってください)
-
-```bash
-# in playground dir
-git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
-```
-
-デモで使用するコンフィグリポジトリのブランチを用意します。
+linkdown simulation デモで使用するコンフィグを用意します。コンフィグはブランチ別に管理されているので、各ブランチをローカルにチェックアウトしておきます。
 
 ```bash
 # in playground dir
 cd configs/pushed_configs
 git fetch
 git checkout -b 202202demo origin/202202demo
-git checkout -b 202202demo1 origin/202202demo
-git checkout -b 202202demo2 origin/202202demo
+git checkout -b 202202demo1 origin/202202demo2
+git checkout -b 202202demo2 origin/202202demo3
 cd ../.. # playground
-```
-
-各コンポーネントのブランチあるいはタグを設定します。
-
-(⚠️開発中 : `netomox-exp-rest-api` ブランチの最新コミットを使ってください)
-
-```bash
-# in playground dir
-cd repos/netomox-exp
-git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
-cd ../batfish-wrapper
-git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
-cd ../netoviz
-git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
-cd ../fish-tracer
-git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
-cd ../model-conductor
-git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
-cd ../.. # playground
-```
-
-## 環境変数の設定
-
-システムの環境変数を設定します。原則変更は不要ですが、fish-tracer のホスト名の設定のみ各環境に合わせて設定する必要があります。
-
-⚠️ `localhost` や `127.0.0.1` をではなく docker ホスト側のIPやホスト名を設定してください。
-
-例:
-
-```diff
-diff --git a/.env b/.env
-index 867df0d..481bc56 100644
---- a/.env
-+++ b/.env
-@@ -30,7 +30,7 @@ TOPOLOGY_BUILDER_LOG_LEVEL=error
- 
- # for fish-tracer (entry point = api-proxy)
- # Specify your docker-host IP or HOSTNAME (other than localhost and 127.0.0.1)
--FISH_TRACER_BASE_HOST=Set-IP-or-FQDN
-+FISH_TRACER_BASE_HOST=10.0.2.43
- 
- # local shared directories
- SHARED_CONFIGS_DIR=./configs
-```
-
-## コンテナ操作
-
-デモ用のシステムはコンテナとして提供されます。コンテナの操作には `docker compose` を使用します。このコマンドは`playground` ディレクトリ (docker-compose.yaml があるディレクトリ) で操作してください。
-
-### コンテナイメージのダウンロード
-
-コンテナイメージのダウンロード
-
-```bash
-docker compose pull
-```
-
-### コンテナの起動
-
-- `-d`オプション(detouch; バックグラウンド実行) をつけずに実行すると、フォアグラウンドで起動します。各コンテナのログがそのまま標準出力に出るので、全体の動きを見ながらやる場合はこちらのほうがわかりやすいかもしれません。
-
-```bash
-docker compose up [-d]
-```
-
-起動確認
-
-- すべて State: Up になることを確認します。
-
-```bash
-docker compose ps
-```
-
-```diff
-playground$ docker compose ps
-NAME                           IMAGE                                                   COMMAND                  SERVICE             CREATED             STATUS              PORTS
-playground-api-proxy-1         nginx:1.21                                              "/docker-entrypoint.…"   api-proxy           18 seconds ago      Up 12 seconds       0.0.0.0:15000->80/tcp, :::15000->80/tcp
-playground-batfish-1           ghcr.io/ool-mddo/batfish:v0.1.0                         "java -XX:-UseCompre…"   batfish             19 seconds ago      Up 16 seconds       9996-9997/tcp
-playground-batfish-wrapper-1   ghcr.io/ool-mddo/batfish-wrapper:netomox-exp-rest-api   "/bin/sh /batfish-wr…"   batfish-wrapper     18 seconds ago      Up 16 seconds       
-playground-fish-tracer-1       ghcr.io/ool-mddo/fish-tracer:netomox-exp-rest-api       "yarn dev"               fish-tracer         18 seconds ago      Up 14 seconds       
-playground-model-conductor-1   ghcr.io/ool-mddo/model-conductor:netomox-exp-rest-api   "rerun --force-polli…"   model-conductor     18 seconds ago      Up 13 seconds       
-playground-netomox-exp-1       ghcr.io/ool-mddo/netomox-exp:netomox-exp-rest-api       "rerun --force-polli…"   netomox-exp         18 seconds ago      Up 14 seconds       
-playground-netoviz-1           ghcr.io/ool-mddo/netoviz:netomox-exp-rest-api           "docker-entrypoint.s…"   netoviz             19 seconds ago      Up 16 seconds       0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
-```
-
-### 指定コンテナの再起動
-
-一部のコンテナが起動していない場合は再起動を試してみてください。
-
-```
-docker compose restart <container>
-```
-
-### コンテナ(システム)の停止
-
-```bash
-# in playground dir
-docker compose down
 ```

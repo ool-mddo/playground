@@ -33,11 +33,11 @@
 
 連結されているクラスタの検出と障害発生時の変化比較→単一障害点の検出
 
-![static verification1](static_verification1.png)
+![static verification1](fig/static_verification1.png)
 
 IPアドレスの重複チェック
 
-![Static verification2](static_verification2.png)
+![Static verification2](fig/static_verification2.png)
 
 ## シミュレーションによる障害試験
 
@@ -47,7 +47,7 @@ Batfish はまた、読み取ったデータを基に実際のネットワーク
 
 人手で障害試験を行う際、どうしても作業時間等のコストに制約があるため、特に問題になりそうな障害個所に限定して試験を行うことがあります。デモではすべてソフトウェアで定義・実行できるため、テストパターンの網羅性をを意識しています。環境内のすべての物理リンクについて、そのリンクに障害が起きたときの構成をソフトウェア上で模擬し、サーバ間通信に影響が出ないかどうかを確認します。
 
-このデモを拡張して、どの程度のネットワーク規模まで取り扱うことができるのかについても別途調査しています。
+[このデモを拡張して、どの程度のネットワーク規模まで取り扱うことができるのかについても別途調査しています。](../../multi_region_expr/README.md)
 
 # デモ概要
 
@@ -58,11 +58,11 @@ Batfish はまた、読み取ったデータを基に実際のネットワーク
 - 2つのエリア(Region)がある
 - リージョン内はOSPF, リージョン間はBGPで経路交換している
 
-![Network diagram](linkdown_simulation_diagram.png)
+![Network diagram](fig/linkdown_simulation_diagram.png)
 
 この環境で以下の2つのデモを行います。
 
-![Demo summary](demo_summary.png)
+![Demo summary](fig/demo_summary.png)
 
 ## デモ①: 設定変更時のリンク障害シミュレーション
 
@@ -72,7 +72,7 @@ Batfish はまた、読み取ったデータを基に実際のネットワーク
     - 変更後コンフィグで、RegionA/Bサーバ間通信に影響が出ないか?
     - 変更後コンフィグで、単一物理リンク障害に対して耐障害性があるか? = 物理リンク障害について、単一障害点(SPoF)がないか?
 
-![Demo(1)](demo1.png)
+![Demo(1)](fig/demo1.png)
 
 ## デモ②: 計画メンテ構成+障害シミュレーション
 
@@ -85,4 +85,4 @@ Batfish はまた、読み取ったデータを基に実際のネットワーク
     - 計画メンテ時にさらに障害が起きたときにどんな影響がありうるか?
     - 通常時と異なる構成をとった時の耐障害性・弱い個所や設定の調査
 
-![Demo(2)](demo2.png)
+![Demo(2)](fig/demo2.png)

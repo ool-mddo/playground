@@ -19,7 +19,7 @@
 デモでは pushed_configs: `202202demo1` ブランチを使用します。
 
 ```bash
-bundle exec ruby simulator.rb change_branch -n pushed_configs -b 202202demo1
+bundle exec mddo-toolbox change_branch -n pushed_configs -b 202202demo1
 ```
 
 ## データ生成
@@ -27,7 +27,7 @@ bundle exec ruby simulator.rb change_branch -n pushed_configs -b 202202demo1
 リンクダウン発生時のスナップショットを生成しますが、元 (original) → Drawoff (計画メンテ構成) → Linkdown (リンクダウン障害発生) の段階を踏んで生成していきます。オプションには Drawoff でどこのリンクを停止させるかを指定します。
 
 ```bash
-bundle exec ruby simulator.rb generate_topology -n pushed_configs --off_node regiona-pe01 --off_intf_re "ge-0/0/0"
+bundle exec mddo-toolbox generate_topology -n pushed_configs --off_node regiona-pe01 --off_intf_re "ge-0/0/0"
 ```
 
 これで生成されるスナップショットは以下のようになります:
@@ -42,7 +42,7 @@ bundle exec ruby simulator.rb generate_topology -n pushed_configs --off_node reg
 ## 静的検査
 
 ```bash
-bundle exec ruby simulator.rb compare_subsets -n pushed_configs -s mddo_network | tee compare_result.json
+bundle exec mddo-toolbox compare_subsets -n pushed_configs -s mddo_network | tee compare_result.json
 cat compare_result.json | jq '.[].score' | sort -n | uniq -c
 cat compare_result.json | jq '.[] | select(.score >= 30)' | grep target_snapshot
 ```
@@ -65,20 +65,20 @@ Region間は2リンク冗長なので、linkdownスナップショット(二重�
 
 ```bash
 # original snapshot
-bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
+bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "mddo_network$" -r
 # drawoff snapshot
-bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "drawoff" -r
+bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "drawoff" -r
 ```
 
 ```bash
 # all linkdown snapshots
-bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
+bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
 ```
 
-Original, Drawoff は問題なし。Linkdown は 8/140 が失敗しました。(original: 36 links → drawoff: 35 links ⇒ 35 link-down patterns * 4 flows = 140 cases)
+Original, Drawoff は問題なし。Linkdown は 8/140 が失敗しました。(original: 36 links → drawoff: 35 links → 35 link-down patterns * 4 flows = 140 cases)
 
 ```
-playground/demo/linkdown_simulation$ bundle exec ruby simulator.rb test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
+playground/demo/linkdown_simulation$ bundle exec mddo-toolbox test_reachability -t traceroute_patterns.yaml -s "linkdown" -r
 ...
 
 Finished in 0.05899858 seconds.
@@ -115,7 +115,7 @@ No.16 は静的検査の段階で自明(回線借用時には単一障害点で�
 リンクダウンスナップショット No.17 を batfish にロードします。
 
 ```
-bundle exec ruby simulator.rb load_snapshot -n pushed_configs -s mddo_network_linkdown_17
+bundle exec mddo-toolbox load_snapshot -n pushed_configs -s mddo_network_linkdown_17
 ```
 
 batfish-wrapper 上で python を実行します。
