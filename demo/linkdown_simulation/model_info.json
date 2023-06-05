@@ -1,0 +1,77 @@
+[
+  {
+    "network": "pushed_configs",
+    "snapshot": "mddo_network",
+    "label": "OOL-MDDO PJ network"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2_sample3",
+    "label": "Test network: layer2/sample3"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2_sample4",
+    "label": "Test network: layer2/sample4"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2_sample5",
+    "label": "Test network: layer2/sample5"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l3_sample1a",
+    "label": "Test network: layer3/sample1a"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l3_sample1b",
+    "label": "Test network: layer3/sample1b"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_demo1",
+    "label": "Test network: layer2+3/demo1"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_demo1a",
+    "label": "Test network: layer2+3/demo1a"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_demo1b",
+    "label": "Test network: layer2+3/demo1b"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_demo1c",
+    "label": "Test network: layer2+3/demo1c"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_demo1d",
+    "label": "Test network: layer2+3/demo1d"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_sample3",
+    "label": "Test network: layer2+3/sample3"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_sample3err",
+    "label": "Test network: layer2+3/sample3err"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_sample3err2",
+    "label": "Test network: layer2+3/sample3err2"
+  },
+  {
+    "network": "batfish-test-topology",
+    "snapshot": "l2l3_sample3err3",
+    "label": "Test network: layer2+3/sample3err3"
+  }
+]

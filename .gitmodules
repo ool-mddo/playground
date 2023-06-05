@@ -19,3 +19,6 @@
 [submodule "configs/mddo-ospf"]
 	path = configs/mddo-ospf
 	url = https://github.com/ool-mddo/mddo-ospf.git
+[submodule "repos/model-conductor"]
+	path = repos/model-conductor
+	url = https://github.com/ool-mddo/model-conductor.git

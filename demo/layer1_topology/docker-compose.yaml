@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  batfish:
+    image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
+    volumes:
+    - ./mnt:/mnt
+    - ${SHARED_SNAPSHOT_DIR}:/mnt/snapshot
+    extra_hosts:
+    - "host.docker.internal:host-gateway"

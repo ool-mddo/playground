@@ -1,0 +1,36 @@
+.group rect { opacity: 0.5; }
+
+.node,
+.group rect { cursor: move; }
+
+.node rect,
+.group rect {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.node text { font-size: 10px; }
+
+.link {
+  stroke: #7a4e4e;
+  stroke-opacity: 1;
+}
+
+.link.hun-meg {
+    stroke: #cccccc;
+    stroke-width: 1;
+}
+
+.link.forty-gig {
+    stroke: #547226;
+}
+
+.link.hun-gig {
+    stroke: #7172d7;
+}
+
+.path-label { font-size: 7px; }
+
+
+.loopback,
+.interface { fill: #333; }

@@ -1,11 +1,7 @@
 configs/nttcom-trial-*/
-models
-netoviz_model
+queries
+topologies
 .idea
 .vscode
-
-docker_stats_*/
-*.dat
-*.png
-*.zip
-*.log
+demo/**/passwords
+demo/**/artifacts/**

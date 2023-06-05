@@ -1,0 +1,4 @@
+snapshot_dict.json
+compare_result.json
+*.test_detail.*
+*.test_summary.*

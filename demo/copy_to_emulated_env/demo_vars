@@ -1,0 +1,7 @@
+ANSIBLERUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v0.0.1"
+API_PROXY="localhost:15000"
+API_BRIDGE="playground_default"
+LOCALSERVER_USER=mddo
+PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
+ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
+

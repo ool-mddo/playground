@@ -1,0 +1,98 @@
+version: "3"
+services:
+  batfish:
+    image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
+    volumes:
+      - ./assets/batfish/log4j2.yaml:/log4j2.yaml
+  netomox-exp:
+    image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
+    tty: true # for rerun (requires console input)
+    environment:
+      NETOMOX_LOG_LEVEL: ${NETOMOX_LOG_LEVEL}
+      NETOMOX_EXP_LOG_LEVEL: ${NETOMOX_EXP_LOG_LEVEL}
+      MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
+      MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
+      MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
+    volumes:
+      # for development
+      - ./repos/netomox-exp/lib:/netomox-exp/lib
+      - ./repos/netomox-exp/app.rb:/netomox-exp/app.rb
+      - ./repos/netomox-exp/config.ru:/netomox-exp/config.ru
+      # data dirs
+      - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
+      - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
+      - ${SHARED_TOPOLOGIES_DIR}:${MDDO_TOPOLOGIES_DIR}
+    depends_on:
+      - batfish-wrapper
+  batfish-wrapper:
+    image: ${BATFISH_WRAPPER_IMAGE}:${BATFISH_WRAPPER_IMAGE_TAG}
+    environment:
+      BATFISH_HOST: batfish
+      BATFISH_WRAPPER_PYBATFISH_LOG_LEVEL: ${BATFISH_WRAPPER_PYBATFISH_LOG_LEVEL}
+      BATFISH_WRAPPER_LOG_LEVEL: ${BATFISH_WRAPPER_LOG_LEVEL}
+      MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
+      MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
+      MDDO_GIT_ALLOWED_CONFIGS_REPOSITORY: ${MDDO_CONFIGS_DIR}/pushed_configs
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./.git:${MDDO_DIR}/.git # git dir of under CONFIGS_DIR submodules
+      - ./repos/batfish-wrapper:/batfish-wrapper # for development
+      - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
+      - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
+    depends_on:
+      - batfish
+  api-proxy:
+    image: ${API_PROXY_IMAGE}:${API_PROXY_IMAGE_TAG}
+    volumes:
+      - ./assets/api-proxy/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - ${API_PROXY_PORT}:80
+    depends_on:
+      - model-conductor
+      - netomox-exp
+      - batfish-wrapper
+      - fish-tracer
+  model-conductor:
+    image: ${MODEL_CONDUCTOR_IMAGE}:${MODEL_CONDUCTOR_IMAGE_TAG}
+    environment:
+      BATFISH_WRAPPER_HOST: batfish-wrapper:5000
+      NETOMOX_EXP_HOST: netomox-exp:9292
+      MODEL_CONDUCTOR_LOG_LEVEL: ${MODEL_CONDUCTOR_LOG_LEVEL}
+    tty: true # for rerun (requires console input)
+    volumes:
+      # for development
+      - ./repos/model-conductor/app.rb:/model-conductor/app.rb
+      - ./repos/model-conductor/config.ru:/model-conductor/config.ru
+      - ./repos/model-conductor/lib:/model-conductor/lib
+    depends_on:
+      - batfish-wrapper
+      - netomox-exp
+  netoviz:
+    image: ${NETOVIZ_IMAGE}:${NETOVIZ_IMAGE_TAG}
+    ports:
+      - ${NETOVIZ_PORT}:3000
+    environment:
+      MDDO_TOPOLOGIES_DIR: /netoviz/static/model
+    volumes:
+      - ${SHARED_TOPOLOGIES_DIR}:/netoviz/static/model
+      - ./repos/netoviz/components:/netoviz/components
+      - ./repos/netoviz/layouts:/netoviz/layouts
+      - ./repos/netoviz/nuxt.config.js:/netoviz/nuxt.config.js
+      - ./repos/netoviz/lib:/netoviz/lib
+      - ./repos/netoviz/pages:/netoviz/pages
+      - ./repos/netoviz/server:/netoviz/server
+      - ./repos/netoviz/static:/netoviz/static
+      - ./repos/netoviz/store:/netoviz/store
+  fish-tracer:
+    image: ${FISH_TRACER_IMAGE}:${FISH_TRACER_IMAGE_TAG}
+    environment:
+      BASE_URL: http://${FISH_TRACER_BASE_HOST}:${API_PROXY_PORT}
+    volumes:
+      - ./repos/fish-tracer/components:/fish-tracer/components
+      - ./repos/fish-tracer/layouts:/fish-tracer/layouts
+      - ./repos/fish-tracer/nuxt.config.js:/fish-tracer/nuxt.config.js
+      - ./repos/fish-tracer/pages:/fish-tracer/pages
+      - ./repos/fish-tracer/static:/fish-tracer/static
+      - ./repos/fish-tracer/store:/fish-tracer/store
+    depends_on:
+      - batfish-wrapper
