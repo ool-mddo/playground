@@ -44,24 +44,29 @@
 - 検証作業時(②')に、対応する元(Original)インタフェース名がわからない
     - 👉Interface descriptionに元のインタフェース名を埋めて対応 (正直イマイチ)
 - CNFだとネーミングルールが大きく違う
-    - Loopback系：lo0 or lo.0 or lo0.0 ? (cRPDがlo.0とかなり特殊)
-    - トラフィックIF系：ethX (NW機器とは異なるルールが出てくる)
-        - 👉Batfishでオレオレパッチを作って対応
+    - Loopback系 : `lo0` or `lo.0` or `lo0.0` ? (cRPDが`lo.0`とかなり特殊)
+    - トラフィックIF系 : `ethX` (NW機器とは異なるルールが出てくる)
+        - 👉[Batfishでオレオレパッチ](https://github.com/ool-mddo/batfish/tree/ool-mddo-patches)を作って対応
 - Batfish (Config parser) 問題
     - IOS系インタフェース名の正規化ルールの違い
-        - 10Gインタフェースは省略形(TenGigE)で正規化するが、100Gインタフェースはフルネーム(HundredGigabitEthernet)で正規化する
+        - 10Gインタフェースは省略形(`TenGigE`)で正規化するが、100Gインタフェースはフルネーム(`HundredGigabitEthernet`)で正規化する
     - 一部コンフィグの "誤読" (誤parse)
-        - 👉Batfishオレオレパッチ
+        - 👉[Batfishオレオレパッチ](https://github.com/ool-mddo/batfish/tree/ool-mddo-patches)
     - OVS非対応
         - 👉OVSにする前にArista cEOSを使っていたので、cEOSのコンフィグをBatfish向けに生成して、OVSの代わりのコンフィグとしてコンフィグパースさせている
-        - L3 segmentをOVSで再現しているが、モデルデータ上L3で名前を一意に識別しようとすると、ある程度複雑な名前が必要になる。一方、OVSで実働するインスタンスをたてようとすると、OVSやOS側インタフェース(veth)名の制約があるためそのまま同じ名前を使えない。また、BatfishがOVS configを読めないため、いったん別な(Batfish が読めるコンフィグ: 今回は Arista cEOS)に置き換えているが、この時にもまたインタフェース名ルールが変わってしまう。
-        - 同じemulated namespaceの範囲内でも、モデルデータ上のノード～実際に検証環境にデプロイされる実体～batfishに読ませるためのコンフィグ(tobe config)でさらに名前の変換が起きて対応がとりにくくなる
+        - L3 segmentをOVSで再現しているが、モデルデータ上L3で名前を一意に識別しようとすると、ある程度複雑な名前が必要になる。一方、OVSで実働するインスタンスをたてようとすると、OVSやOS側インタフェース(veth)名の制約があるためそのまま同じ名前を使えない。また、BatfishがOVS configを読めないため、いったん別なコンフィグ(Batfish が読めるコンフィグ: 今回は Arista cEOS)に置き換えているが、この時にもまたインタフェース名ルールが変わってしまう
+            - 👉コンテキストに応じたインタフェース名の使い分け
+- 同じemulated namespaceの範囲内でも、見る側のコンテキストによって識別子の使い分けをしなければいけないものがある
+    - モデルデータ内のインタフェース名
+    - ホストOS側から見た時のインタフェース名
+    - コンテナ内(コンテナとして動作するNetwork OS)がわからみたときのインタフェース名
+    - 👉変換テーブルで用途別の名前を管理することで対応
 
 ### Containerlab と CNF の取り扱い
 
 - Containerlab Linux Bridge問題
     - ホストOSのLinux Bridgeを使うため、ホスト側のDocker上に存在しているContainerlab以外の仮想ブリッジの経路とEmulated環境上で経路が重複する可能性があり、使えなかった。
-    - 👉OVSコンテナを使うことで対応
+    - 👉初期はOVSコンテナを使うことで対応。その後は [Openvswitch bridge - containerlab](https://containerlab.dev/manual/kinds/ovs-bridge/) で対応。OVSコンテナとホスト側のOVS bridgeを使うのとでは、インタフェース名の一意性を保証しなければいけない範囲が変わるので注意が必要。
 - 管理アクセスIF問題
     - コンフィグに見えてこないのにルーティングテーブルに見えてくる
     - OSPFで余分に管理IFの経路を広報

@@ -11,7 +11,7 @@
 
 共通する環境設定については[デモ環境構築](../../../doc/provision.md)を参照してください。
 
-- `playground` リポジトリのブランチは `netomox-exp-rest-api` を選択してください。
+- `playground` リポジトリの tag は `v1.0.0` を選択してください。
 - デモ用システムを起動してください (`docker compose up`)
 
 ## デモ用コードの取得

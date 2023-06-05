@@ -1,6 +1,6 @@
 <!-- TOC -->
 
-- [環境セットアップ](#%E7%92%B0%E5%A2%83%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
+- [デモ環境セットアップ](#%E3%83%87%E3%83%A2%E7%92%B0%E5%A2%83%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
     - [概要](#%E6%A6%82%E8%A6%81)
 - [デモシステムのセットアップデモ共通](#%E3%83%87%E3%83%A2%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%A2%E5%85%B1%E9%80%9A)
     - [GithubアカウントとPATの準備](#github%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E3%81%A8pat%E3%81%AE%E6%BA%96%E5%82%99)
@@ -17,10 +17,10 @@
         - [指定コンテナの再起動](#%E6%8C%87%E5%AE%9A%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E5%86%8D%E8%B5%B7%E5%8B%95)
         - [コンテナシステムの停止](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E5%81%9C%E6%AD%A2)
 - [検証環境emulated envのセットアップ](#%E6%A4%9C%E8%A8%BC%E7%92%B0%E5%A2%83emulated-env%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
-        - [Pythonのインストール](#python%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-        - [Ansible-runnerのインストール](#ansible-runner%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-        - [Containerlabのインストール](#containerlab%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-        - [Open vSwitch OVS](#open-vswitch-ovs)
+    - [Pythonのインストール](#python%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+    - [Ansible-runnerのインストール](#ansible-runner%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+    - [Containerlabのインストール](#containerlab%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+    - [Open vSwitch OVS](#open-vswitch-ovs)
     - [検証環境内で使用するCNFの設定](#%E6%A4%9C%E8%A8%BC%E7%92%B0%E5%A2%83%E5%86%85%E3%81%A7%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8Bcnf%E3%81%AE%E8%A8%AD%E5%AE%9A)
         - [Juniper cRPDのインポート](#juniper-crpd%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%88)
 
@@ -104,41 +104,37 @@ cd playground
 git submodule update --init --recursive
 ```
 
-Playground自体のブランチあるいはタグをチェックアウトします。最初はローカルにブランチ持ってきてないのでリモートブランチ (`origin/…`)からローカルブランチを作ります。(この跡実施するサブモジュール等でも同様。)
-
-(⚠️開発中 : `netomox-exp-rest-api`ブランチの最新コミットを使ってください)
+Playground自体のブランチあるいはタグをチェックアウトします。初期状態ではローカルにブランチを持ってきてないので、リモートブランチ (`origin/…`)からローカルブランチを作ります。(このあと実施するサブモジュール等でも同様。)
 
 ```shell
 # in playground dir
 git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
+git checkout refs/tags/v1.0.0
 ```
 
 各コンポーネントのブランチあるいはタグを設定します。
-
-(⚠️開発中 : `netomox-exp-rest-api` ブランチの最新コミットを使ってください)
 
 ```shell
 # in playground dir
 cd repos/netomox-exp
 git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
+git checkout refs/tags/v1.0.0
 cd ../batfish-wrapper
 git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
+git checkout refs/tags/v1.0.0
 cd ../netoviz
 git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
+git checkout refs/tags/v0.3.0
 cd ../fish-tracer
 git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
+git checkout refs/tags/v1.0.0
 cd ../model-conductor
 git fetch
-git checkout -b netomox-exp-rest-api origin/netomox-exp-rest-api
+git checkout refs/tags/v1.0.0
 cd ../.. # playground
 ```
 
-⚠️ `repos` ディレクトリ内の各コンポーネントのソースコードを用意しておくのは開発用途です。ここに配置したコードをデモシステムの各コンテナにマウントして、コードの修正・デバッグ・動作確認できるようになっています。ソースコードの修正を行わない場合はコンテナへのマウントを解除して使用することも可能です。(`playground/docker-compose.yaml` を修正してください。その場合  `repos` 下のリポジトリのブランチ設定は不要で、デモシステムで動かすソフトウェアバージョンはコンテナイメージのタグだけで決定できます。)
+⚠️ `repos` ディレクトリ内の各コンポーネントのソースコードを用意しておくのは開発用途です。ここに配置したコードをデモシステムの各コンテナにマウントして、コードの修正・デバッグ・動作確認できるようになっています。ソースコードの修正を行わない場合はコンテナへのマウントを解除して使用することも可能です。(`playground/docker-compose.yaml` を修正してください。その場合  `repos` 下のリポジトリのブランチ設定は不要で、デモシステムで動かすソフトウェアバージョンはコンテナイメージのタグだけで決定できます。コンテナイメージのタグ設定は `.env` を参照してください。)
 
 ## デモ用ツールのインストール
 
@@ -226,14 +222,14 @@ docker compose ps
 
 ```
 playground$ docker compose ps
-NAME                           IMAGE                                                   COMMAND                  SERVICE             CREATED             STATUS              PORTS
-playground-api-proxy-1         nginx:1.21                                              "/docker-entrypoint.…"   api-proxy           18 seconds ago      Up 12 seconds       0.0.0.0:15000->80/tcp, :::15000->80/tcp
-playground-batfish-1           ghcr.io/ool-mddo/batfish:v0.1.0                         "java -XX:-UseCompre…"   batfish             19 seconds ago      Up 16 seconds       9996-9997/tcp
-playground-batfish-wrapper-1   ghcr.io/ool-mddo/batfish-wrapper:netomox-exp-rest-api   "/bin/sh /batfish-wr…"   batfish-wrapper     18 seconds ago      Up 16 seconds       
-playground-fish-tracer-1       ghcr.io/ool-mddo/fish-tracer:netomox-exp-rest-api       "yarn dev"               fish-tracer         18 seconds ago      Up 14 seconds       
-playground-model-conductor-1   ghcr.io/ool-mddo/model-conductor:netomox-exp-rest-api   "rerun --force-polli…"   model-conductor     18 seconds ago      Up 13 seconds       
-playground-netomox-exp-1       ghcr.io/ool-mddo/netomox-exp:netomox-exp-rest-api       "rerun --force-polli…"   netomox-exp         18 seconds ago      Up 14 seconds       
-playground-netoviz-1           ghcr.io/ool-mddo/netoviz:netomox-exp-rest-api           "docker-entrypoint.s…"   netoviz             19 seconds ago      Up 16 seconds       0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
+NAME                           IMAGE                                     COMMAND                  SERVICE             CREATED              STATUS              PORTS
+playground-api-proxy-1         nginx:1.21                                "/docker-entrypoint.…"   api-proxy           About a minute ago   Up 47 seconds       0.0.0.0:15000->80/tcp, :::15000->80/tcp
+playground-batfish-1           ghcr.io/ool-mddo/batfish:v0.1.0-update1   "java -XX:-UseCompre…"   batfish             About a minute ago   Up About a minute   9996-9997/tcp
+playground-batfish-wrapper-1   ghcr.io/ool-mddo/batfish-wrapper:v1.0.0   "/bin/sh /batfish-wr…"   batfish-wrapper     About a minute ago   Up About a minute   
+playground-fish-tracer-1       ghcr.io/ool-mddo/fish-tracer:v1.0.0       "yarn dev"               fish-tracer         About a minute ago   Up 55 seconds       
+playground-model-conductor-1   ghcr.io/ool-mddo/model-conductor:v1.0.0   "rerun --force-polli…"   model-conductor     About a minute ago   Up 51 seconds       
+playground-netomox-exp-1       ghcr.io/ool-mddo/netomox-exp:v1.0.0       "rerun --force-polli…"   netomox-exp         About a minute ago   Up 55 seconds       
+playground-netoviz-1           ghcr.io/ool-mddo/netoviz:v0.3.0           "docker-entrypoint.s…"   netoviz             About a minute ago   Up About a minute   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
 ```
 
 ### 指定コンテナの再起動
@@ -252,7 +248,7 @@ docker compose down
 
 # 検証環境(emulated env)のセットアップ
 
-### Pythonのインストール
+## Pythonのインストール
 
 Ansibleを使用するために python + pip (python3系) をインストールします。
 
@@ -260,7 +256,7 @@ Ansibleを使用するために python + pip (python3系) をインストール�
 sudo apt install python3 python3-pip
 ```
 
-### Ansible-runnerのインストール
+## Ansible-runnerのインストール
 
 ansible-runner をインストールします。
 
@@ -270,13 +266,13 @@ ansible-runner をインストールします。
 sudo python3 -m pip install ansible-runner
 ```
 
-デモで使用する ansible runner のコンテナイメージはプロジェクトのパッケージリポジトリに用意してあります。あらかじめ pull しておきます。
+デモで使用する ansible runner のコンテナイメージは[リポジトリ](https://github.com/ool-mddo/mddo-ansible-runner)に用意してあります。あらかじめ pull しておきます。
 
 ```shell
-docker pull docker pull ghcr.io/ool-mddo/mddo_ansible_runner:demo202211
+docker pull ghcr.io/ool-mddo/mddo-ansible-runner:v0.0.1
 ```
 
-### Containerlabのインストール
+## Containerlabのインストール
 
 検証環境(emulated env)を構築するためにContainerlabをインストールします。
 
@@ -286,7 +282,7 @@ docker pull docker pull ghcr.io/ool-mddo/mddo_ansible_runner:demo202211
 sudo bash -c "$(curl -sL https://get.containerlab.dev)"
 ```
 
-### Open vSwitch (OVS)
+## Open vSwitch (OVS)
 
 Containerlab で構成する検証環境(emulated env)のL2として docker ホスト側のOVS bridgeを使用するため、OVSをインストールします。
 
