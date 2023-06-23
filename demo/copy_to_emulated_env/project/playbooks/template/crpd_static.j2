@@ -16,7 +16,7 @@ routing-options {
         }
     }
 {% endif %}
-{% for ospf_node in ospf_list["json"] %}
+{% for ospf_node in ospf_list["json"][0]["nodes"] %}
 {% if ospf_node["node"] == item["node-id"] and "Seg" not in item["node-id"] %}
     router-id {{ ospf_node["attribute"]["router-id"] }};
 {% endif %}
