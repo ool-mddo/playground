@@ -16,7 +16,7 @@
 
     - name: "get convert table"
       uri:
-        url: "http://localhost:15000/topologies/mddo-ospf/emulated_asis/topology/layer3/config_params"
+        url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology/layer3/config_params"
         method: "GET"
         body_format: json
       register: node_list
@@ -33,7 +33,7 @@
       include_role:
         name: uploadconfig
       vars:
-        url: "http://localhost:15000/configs/mddo-ospf/emulated_tobe/"
+        url: "http://localhost:15000/configs/{{ network_name }}/emulated_tobe/"
         filepath: "/tmp/{{ item.agent_name }}.conf"
       when: '"node" == item.type or "endpoint" == item.type'
       loop: "{{ node_list.json }}"
@@ -42,7 +42,7 @@
       include_role:
         name: uploadconfig
       vars:
-        url: "http://localhost:15000/configs/mddo-ospf/emulated_tobe/"
+        url: "http://localhost:15000/configs/{{ network_name }}/emulated_tobe/"
         filepath: "configs/{{ item.agent_name }}.conf"
       when: '"segment" == item.type'
       loop: "{{ node_list.json }}"
