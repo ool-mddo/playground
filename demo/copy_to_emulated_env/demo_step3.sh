@@ -16,7 +16,13 @@ ansible-runner run . -p /data/project/playbooks/step3.yaml --container-option="-
   --process-isolation --process-isolation-executable docker \
   --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -k -K " -vvvv
 
-# generate emulated_tobe topology from save (emulated_tobe) config
+# save emulated_asis layer3 topology as emulated_tobe layer1 topology
+TEXT=$(jq -c . <(curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/emulated_asis/topology/layer3/batfish_layer1_topology"))
+curl -s -X POST -H 'Content-Type: application/json' \
+  -d @<(jq -nc --arg text "$TEXT" '[{"filename": "layer1_topology.json", "text": $text }]') \
+  "http://localhost:15000/configs/${NETWORK_NAME}/emulated_tobe/"
+
+# generate emulated_tobe topology from saved (emulated_tobe) config
 curl -s -X POST -H 'Content-Type: application/json' \
   -d '{ "label": "OSPF model (emulated_tobe)", "phy_ss_only": true }' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/emulated_tobe/topology"
@@ -28,6 +34,5 @@ curl -s -X POST -H 'Content-Type: application/json' \
 
 # update netoviz index
 curl -s -X POST -H 'Content-Type: application/json' \
-  -d @<(jq --arg network_name $NETWORK_NAME '.[].network=$network_name | { "index_data": .[0:3] }' index.json) \
+  -d @<(jq '{ "index_data": .[0:3] }' "$NETWORK_INDEX") \
   "http://${API_PROXY}/topologies/index"
-

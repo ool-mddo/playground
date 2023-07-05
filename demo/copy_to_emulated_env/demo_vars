@@ -1,11 +1,8 @@
 ANSIBLERUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v0.0.1"
 API_PROXY="localhost:15000"
 API_BRIDGE="playground_default"
-#LOCALSERVER_USER=ubuntu
 LOCALSERVER_USER=mddo
 PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
-#NETWORK_NAME="mddo-ospf"
-NETWORK_NAME="biglobe_deform"
-
-
+NETWORK_NAME="mddo-ospf"
+NETWORK_INDEX="${NETWORK_NAME}_index.json"

@@ -21,7 +21,6 @@
 
   - name: "get ospf table"
     uri:
-      #url: "http://api-proxy/topologies/mddo-ospf/emulated_asis/topology/ospf_area0/interfaces?node_type=ospf_proc"
       url: "http://api-proxy/topologies/{{ network_name }}/emulated_asis/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
       method: "GET"
       body_format: json

@@ -23,6 +23,6 @@ ansible-runner run . -p /data/project/playbooks/step2.yaml --container-option="-
 
 # update netoviz index
 curl -s -X POST -H 'Content-Type: application/json' \
-	-d @<(jq --arg network_name $NETWORK_NAME '.[].network=$network_name | { "index_data": .[0:2] }' index.json) \
+  -d @<(jq '{ "index_data": .[0:2] }' "$NETWORK_INDEX" ) \
   "http://${API_PROXY}/topologies/index"
 
