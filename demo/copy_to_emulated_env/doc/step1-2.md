@@ -70,6 +70,8 @@ cRPDへライセンスを適応したい場合は本項目の手順を実施し�
  vi clab/license.key
 ```
 
+ライセンスファイルをcontainerlabのcRPDへ適応するため、一回clab-topo.yamlの再構築を行います。
+そののちにcontainerlabの一斉実行コマンドでcRPDルータ群へライセンス適応コマンドを実行して、各cRPDルータへライセンスのアクティベーションをします。
 ```bash
 sudo containerlab deploy --topo clab/clab-topo.yaml --reconfigure
 sudo containerlab exec --topo clab/clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'
