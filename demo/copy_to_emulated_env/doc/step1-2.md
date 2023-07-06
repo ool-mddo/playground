@@ -61,6 +61,42 @@ sudo containerlab inspect --all
 +---+--------------------+----------+-----------------------------+--------------+----------------+--------------+---------+-----------------+----------------------+
 ```
 
+### cRPDのライセンス適応する
+cRPDへライセンスを適応したい場合は本項目の手順を実施します。
+
+まずはclab/license.keyへJuniper社から別途入手したライセンス情報をコピーペーストします。
+```bash
+# in playground/demo/copy_to_emulated_env/ dir
+ vi clab/license.key
+```
+
+```bash
+sudo containerlab deploy --topo clab/clab-topo.yaml --reconfigure
+sudo containerlab exec --topo clab/clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'
+sudo containerlab exec --topo clab/clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli show system license'
+```
+
+最後のコマンドにてライセンス適応状態が確認できるので、適応したいルータのライセンスが適応できているかを確認します。
+```bash
+INFO[0000] Executed command 'cli show system license' on clab-emulated-XXXXXXX. stdout:
+License usage: 
+                                 Licenses     Licenses    Licenses    Expiry
+  Feature name                       used    installed      needed 
+  containerized-rpd-standard            1            1           0    2023-MM-DD 00:00:00 UTC
+
+Licenses installed: 
+  License identifier: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  License SKU: (NCKT)S-CRPD-A-HR_TRIAL
+  License version: 1
+  Order Type: trial
+  Customer ID: Juniper Internal
+  License count: 1
+  Features:
+    containerized-rpd-standard - Containerized routing protocol daemon with standard features
+      date-based, 2023-MM-DD 00:00:00 UTC - 2023-MM-DD 00:00:00 UTC 
+```
+上記のようにLicenses installedにインストールしたライセンスの内容が確認できます。
+
 ## 正しく「コピー」できているかどうかの検証
 
 この確認ステップは必須ではありません。初期起動時など、動作確認をステップを追って行いたい場合に実施してください。
