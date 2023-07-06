@@ -20,7 +20,7 @@ ansible-runner run . -p /data/project/playbooks/step3.yaml --container-option="-
 TEXT=$(jq -c . <(curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/emulated_asis/topology/layer3/batfish_layer1_topology"))
 curl -s -X POST -H 'Content-Type: application/json' \
   -d @<(jq -nc --arg text "$TEXT" '[{"filename": "layer1_topology.json", "text": $text }]') \
-  "http://localhost:15000/configs/${NETWORK_NAME}/emulated_tobe/"
+  "http://${API_PROXY}/configs/${NETWORK_NAME}/emulated_tobe/"
 
 # generate emulated_tobe topology from saved (emulated_tobe) config
 curl -s -X POST -H 'Content-Type: application/json' \
