@@ -23,6 +23,7 @@
     - [Open vSwitch OVS](#open-vswitch-ovs)
     - [検証環境内で使用するCNFの設定](#%E6%A4%9C%E8%A8%BC%E7%92%B0%E5%A2%83%E5%86%85%E3%81%A7%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8Bcnf%E3%81%AE%E8%A8%AD%E5%AE%9A)
         - [Juniper cRPDのインポート](#juniper-crpd%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%88)
+        - [Juniper cRPDのライセンス適用](#juniper-crpd%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E9%81%A9%E7%94%A8)
 
 <!-- /TOC -->
 
@@ -306,3 +307,7 @@ docker load -i junos-routing-crpd-amd64-docker-XX.XR.XX.tgz
 ```
 
 MDDO PJにて動作確認できているバージョンは `junos-routing-crpd-amd64-docker-22.1R1.10.tgz` です。
+
+### Juniper cRPDのライセンス適用
+
+cRPDコンテナ起動後にライセンスを適用する必要があります。詳細については [copy to emulated env, step②](../demo/copy_to_emulated_env/doc/step1-2.md)を参照してください。
