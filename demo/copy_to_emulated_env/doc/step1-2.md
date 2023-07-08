@@ -3,6 +3,7 @@
 - [デモ: セグメント移転](#%E3%83%87%E3%83%A2-%E3%82%BB%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E7%A7%BB%E8%BB%A2)
     - [Step① As-Is 現状 モデル作成](#step%E2%91%A0-as-is-%E7%8F%BE%E7%8A%B6-%E3%83%A2%E3%83%87%E3%83%AB%E4%BD%9C%E6%88%90)
     - [Step② As-Is 仮想環境作成](#step%E2%91%A1-as-is-%E4%BB%AE%E6%83%B3%E7%92%B0%E5%A2%83%E4%BD%9C%E6%88%90)
+        - [cRPDのライセンスを適用する](#crpd%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%82%92%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8B)
     - [正しく「コピー」できているかどうかの検証](#%E6%AD%A3%E3%81%97%E3%81%8F%E3%82%B3%E3%83%94%E3%83%BC%E3%81%A7%E3%81%8D%E3%81%A6%E3%81%84%E3%82%8B%E3%81%8B%E3%81%A9%E3%81%86%E3%81%8B%E3%81%AE%E6%A4%9C%E8%A8%BC)
     - [Step②’ 仮想環境上での検証](#step%E2%91%A1-%E4%BB%AE%E6%83%B3%E7%92%B0%E5%A2%83%E4%B8%8A%E3%81%A7%E3%81%AE%E6%A4%9C%E8%A8%BC)
 
@@ -60,6 +61,57 @@ sudo containerlab inspect --all
 | 9 |                    |          | clab-emulated-regionc-svr01 | 1507afdcf528 | crpd:22.1R1.10 | juniper_crpd | running | 172.20.20.6/24  | 2001:172:20:20::6/64 |
 +---+--------------------+----------+-----------------------------+--------------+----------------+--------------+---------+-----------------+----------------------+
 ```
+
+### cRPDのライセンスを適用する
+
+demo_step2.sh を実行して環境を起動させたとき(初回)は空のライセンスファイルをマウントする形で起動しています。
+cRPDへライセンスを適用したい場合は本項目の手順を実施します。
+
+まず clab/license.key へJuniper社から別途入手したライセンス情報をコピーペーストします。
+
+* ⚠ リポジトリ内へのライセンス情報のコミット(操作ミスによる外部公開)を防止するため、ライセンスファイルの位置・ファイル名はスクリプト中で固定してあります
+* 参照: [step2.yaml](../project/playbooks/step2.yaml)
+  * containerlabトポロジデータの生成時のライセンスファイルパスの指定 : `containerlab_topology?bind_license=license.key:/tmp/license.key:ro`
+    * ライセンスファイルをコンテナ(cRPD)内 `/tmp/license.key` としてマウント
+  * containerlab起動時のカレントディレクトリの指定 : `chdir: "{{ ansible_runner_dir }}/clab"`
+    * `ansible_runner_dir` については[環境変数ファイルの作成](provision.md)参照
+
+```bash
+# in playground/demo/copy_to_emulated_env/ dir
+ vi clab/license.key
+```
+
+ライセンスファイルをcontainerlabのcRPDへ適用するため、一回clab-topo.yamlの再構築を行います。
+そののちにcontainerlabの一斉実行コマンドでcRPDルータ群へライセンス適用コマンドを実行して、各cRPDルータへライセンスのアクティベーションをします。
+
+```bash
+sudo containerlab deploy --topo clab/clab-topo.yaml --reconfigure
+sudo containerlab exec --topo clab/clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'
+sudo containerlab exec --topo clab/clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli show system license'
+```
+
+最後のコマンドにてライセンス適用状態が確認できるので、適用したいルータのライセンスが適用できているかを確認します。
+
+```bash
+INFO[0000] Executed command 'cli show system license' on clab-emulated-XXXXXXX. stdout:
+License usage: 
+                                 Licenses     Licenses    Licenses    Expiry
+  Feature name                       used    installed      needed 
+  containerized-rpd-standard            1            1           0    2023-MM-DD 00:00:00 UTC
+
+Licenses installed: 
+  License identifier: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  License SKU: (NCKT)S-CRPD-A-HR_TRIAL
+  License version: 1
+  Order Type: trial
+  Customer ID: Juniper Internal
+  License count: 1
+  Features:
+    containerized-rpd-standard - Containerized routing protocol daemon with standard features
+      date-based, 2023-MM-DD 00:00:00 UTC - 2023-MM-DD 00:00:00 UTC 
+```
+
+上記のようにLicenses installedにインストールしたライセンスの内容が確認できます。
 
 ## 正しく「コピー」できているかどうかの検証
 

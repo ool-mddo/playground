@@ -1,6 +1,6 @@
 protocols {
     ospf {
-        area 0.0.0.0 {
+        area {{ ospf_list.json[0]["attribute"]["identifier"] }} {
 {% for interface in item.interfaces %}
             interface {{ interface.alias.l1_principal }} {
                 metric {{ interface.attribute.metric }};

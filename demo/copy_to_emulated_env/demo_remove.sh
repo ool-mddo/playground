@@ -16,6 +16,6 @@ sudo rm -f "$ANSIBLE_RUNNER_DIR/clab/"*.conf
 sudo rm -f "$ANSIBLE_RUNNER_DIR/clab/clab-topo.yaml"
 
 # delete ovs bridges
-curl -s "http://localhost:15000/topologies/mddo-ospf/emulated_asis/topology/layer3/nodes?node_type=segment" \
-  | jq '.[] | .alias.l1_principal' \
+curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/emulated_asis/topology/layer3/nodes?node_type=segment" \
+  | jq '.nodes[].alias.l1_principal' \
   | xargs -I@ sudo ovs-vsctl del-br @

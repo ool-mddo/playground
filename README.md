@@ -50,3 +50,5 @@
   * [デモ動画_janog51(Model Driven NW DevOps PJ) - YouTube](https://youtu.be/xRxpsly1kls)
 * NTT Tech Conference 2023 (2023/03/24)
   * [ネットワーク設定の抽象化とコンテナルータを用いた検証環境の立ち上げ支援](https://speakerdeck.com/tjmtrhs/ntt-tech-conf-2023)
+* JANOG 52 Meeting (2023/07/05-07)
+  * [コンテナルータをルータ単体として使う: 野良BoF](https://drive.google.com/file/d/1qmufTTErWtO9Ll_sV-7mmQ7ynF7djMY2/view)

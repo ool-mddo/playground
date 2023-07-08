@@ -4,4 +4,5 @@ API_BRIDGE="playground_default"
 LOCALSERVER_USER=mddo
 PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
-
+NETWORK_NAME="mddo-ospf"
+NETWORK_INDEX="${NETWORK_NAME}_index.json"
