@@ -30,12 +30,12 @@ GEM
 GEM
   remote: https://rubygems.pkg.github.com/ool-mddo/
   specs:
-    mddo-toolbox-cli (1.1.0)
+    mddo-toolbox-cli (1.1.1)
       httpclient (~> 2.8)
-      netomox (= 0.3.0)
+      netomox (= 0.4.0)
       test-unit (~> 3.5)
       thor (~> 1.2)
-    netomox (0.3.0)
+    netomox (0.4.0)
       hashdiff (~> 1.0.1)
       jsonpath (~> 1.1.2)
       neography (~> 1.8.0)
@@ -47,7 +47,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  mddo-toolbox-cli (= 1.1.0)!
+  mddo-toolbox-cli (= 1.1.1)!
 
 BUNDLED WITH
    2.4.12
