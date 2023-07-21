@@ -50,16 +50,27 @@ class Interface:
         if hasattr(self, "id"):
             return self
         searched_interface = nb.dcim.interfaces.filter(self.name, device_id = self.device.id)
+        
         if len(searched_interface) == 0:
             print(f"creating interface named ``{self.name}'' in ``{self.device.name}''")
             res  = nb.dcim.interfaces.create(name=self.name, device=self.device.id, type="1000base-t")
             self.id = res.id
-        elif len(searched_interface) > 1:
+        elif len(nb.dcim.interfaces.filter(self.name, device_id = self.device.id)) >= 1:
+            searched_interface = nb.dcim.interfaces.filter(self.name, device_id = self.device.id)
+            print (list(searched_interface))
+            findflag = 0;
+            searched_interface = nb.dcim.interfaces.filter(self.name, device_id = self.device.id)
             for intf in list(searched_interface):
                 if intf.name == self.name:
                     self.id = intf.id
+                    findflag = 1;
                     break
-            if not hasattr(self, "id"):
+            if findflag == 0:
+              print(f"creating interface named ``{self.name}'' in ``{self.device.name}''")
+              res  = nb.dcim.interfaces.create(name=self.name, device=self.device.id, type="1000base-t")
+              self.id = res.id
+            elif not hasattr(self, "id"):
+                #print (f"cannot determine interface named ``{self.name}'' in ``{self.device.name}''({self.device.id})")
                 raise KeyError(f"cannot determine interface named ``{self.name}'' in ``{self.device.name}''({self.device.id})")
         else:
             self.id = list(searched_interface)[0].id
@@ -200,18 +211,43 @@ if __name__ == "__main__":
         src_intf = intf
 
         # parse description
-        m = re.fullmatch(r"to_(.+)_(.+)", row["Description"])
-        device_name, interface_name = m.groups()
+        description_patterns = [
+            r"(.+) (.+) via .+",  # Switch-01 ge-0/0/1 via pp-01
+            r"(.+)_(.+) S-in:.+", # Switch-01 ge-0/0/1 S-in:1970-01-01
+            r"^to_(.+)_(.+)",     # to_Switch-01_ge-0/0/1
+            r"(.+)_(.+) via .+",  # Switch-01_ge-0/0/1 via pp-01
+            r"(.+)_(.+)",         # Switch-01_ge-0/0/1
+            r"(.+) (.+)",         # Switch-01 ge-0/0/1
+        ]
+
+        for pattern in description_patterns:
+            m = re.fullmatch(pattern, row["Description"].replace("\"", ""))
+            if m is not None:
+                break
+        print (str(row))
+        print (str(device_name_lower))
+        print (str(interface_name))
+        print (str(m))
+        #print (str(device_name))
+        device_name_lower, interface_name = m.groups()
+
+        # Convert Et(h)~ to Ethernet~
+        if m := re.fullmatch(r"Eth?([\d/]+)", interface_name):
+            interface_name = f"Ethernet{m.groups()[0]}"
+
+        # Convert Hu~ to HundredGigE~
+        if m := re.fullmatch(r"Hu([\d/]+)", interface_name):
+            interface_name = f"HundredGigE{m.groups()[0]}"
 
         # search dst device
-        if device_name.lower() not in devices:
-            dev = Device(device_name, device_type_id, device_role_id, site_id)
-            devices[device_name.lower()] = dev
+        if device_name_lower not in devices:
+            dev = Device(device_name_lower, device_type_id, device_role_id, site_id)
+            devices[device_name_lower] = dev
         else:
-            devices[device_name.lower()].set_name(device_name)
+            devices[device_name_lower].set_name(device_name_lower)
 
         # search dst intf
-        intf = devices[device_name.lower()].get_interface(interface_name)
+        intf = devices[device_name_lower].get_interface(interface_name)
         dst_intf = intf
 
         cables.append(Cable(src_intf, dst_intf))
