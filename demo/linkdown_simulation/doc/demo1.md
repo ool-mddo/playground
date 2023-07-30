@@ -104,14 +104,12 @@ playground/demo/linkdown_simulation$ cat compare_result.json | jq '.[] | select(
 
 本来はこの時点でどういう障害でスコアが大きく出ているのかを確認しておく必要があります。(各スナップショットの構成やリンクダウン発生箇所は netoviz を参照することで確認できます。)
 
-- 補足
-    
-    特定のスナップショットのスコアを確認したい場合には以下のようにします。
-    
-    ```bash
-    cat compare_result.json | jq '.[] | select(.target_snapshot == "pushed_configs/mddo_network_linkdown_XX").score'
-    ```
-    
+
+補足: 特定のスナップショットのスコアを確認したい場合には以下のようにします。
+
+```bash
+cat compare_result.json | jq '.[] | select(.target_snapshot == "pushed_configs/mddo_network_linkdown_XX").score'
+```
 
 ## 通信シミュレーション
 
@@ -293,7 +291,8 @@ bundle exec mddo-toolbox change_branch -n pushed_configs -b 202202demo
 
 必要に応じて修正点を確認しておきます。
 
-(⚠️ ここはREST API等用意してないので直接リポジトリ参照です。実際にはコンフィグリポジトリは別にあってそちらで修正・コミット・差分確認しており、playground ではそのコピー(clone)を参照するだけの想定です。)
+> [!NOTE]
+> ここはREST API等用意してないので直接リポジトリ参照です。実際にはコンフィグリポジトリは別にあってそちらで修正・コミット・差分確認しており、playground ではそのコピー(clone)を参照するだけの想定です。
 
 ```bash
 # in playground/configs/pushed_configs dir
