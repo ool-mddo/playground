@@ -1,7 +1,8 @@
 from pybatfish.client.commands import *
 from pybatfish.question.question import load_questions, list_questions
 from pybatfish.question import bfq
-from typing import Dict
+from typing import Dict, List
+from collections import defaultdict
 import re
 import pynetbox
 import sys
@@ -194,10 +195,14 @@ if __name__ == "__main__":
         device_role_id = list(res)[0].id
 
 
+    hosts = bfq.nodeProperties(properties="Configuration_Format, Interfaces")\
+            .answer().frame()\
+            .query("Configuration_Format == 'HOST'")
 
+    devices: Dict[str, Device] = {}
+    cables: List[Cable] = []
+    cables_matrix: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
 
-    devices = {}
-    cables = []
     for index, row in interfaces.iterrows():
         # search src device
         device_name_lower = row["Interface"].hostname
@@ -229,6 +234,7 @@ if __name__ == "__main__":
         print (str(interface_name))
         print (str(m))
         #print (str(device_name))
+
         device_name_lower, interface_name = m.groups()
 
         # Convert Et(h)~ to Ethernet~
@@ -252,8 +258,23 @@ if __name__ == "__main__":
 
         cables.append(Cable(src_intf, dst_intf))
 
+        src_key = f"{src_intf.device.lower_name}.{src_intf.name}"
+        dst_key = f"{dst_intf.device.lower_name}.{dst_intf.name}"
+        cables_matrix[src_key][dst_key] += 1
+
+        # batfish上でConfiguration_FormatがHOSTとなっている宛先については、
+        # その宛先デバイスをsrcとしたリンクも存在することにする
+        for _, host in hosts.iterrows():
+            if (host["Node"].lower() == dst_intf.device.lower_name and dst_intf.name in host["Interfaces"]):
+                cables_matrix[dst_key][src_key] += 1
+                break
+
     for dev in devices.values():
         dev.save(nb)
         dev.save_interfaces(nb)
+
     for cable in cables:
+        if not (cables_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] == 1
+            and cables_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] == 1):
+            continue
         cable.save(nb)
