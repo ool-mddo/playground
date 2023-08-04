@@ -1,4 +1,4 @@
-ANSIBLERUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v0.0.1"
+ANSIBLERUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v3.0.0"
 API_PROXY="localhost:15000"
 API_BRIDGE="playground_default"
 LOCALSERVER_USER=mddo
