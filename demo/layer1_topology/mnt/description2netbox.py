@@ -133,6 +133,9 @@ class Device:
         self.interfaces[interface_name] = intf
         return self.interfaces[interface_name]
 
+def found_bidiractional_cable(cable_matrix: Dict[str, Dict[str, int]], cable: Cable) -> bool:
+    return     (cable_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] == 1
+            and cable_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] == 1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
@@ -201,7 +204,7 @@ if __name__ == "__main__":
 
     devices: Dict[str, Device] = {}
     cables: List[Cable] = []
-    cables_matrix: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    cable_matrix: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
 
     for index, row in interfaces.iterrows():
         # search src device
@@ -260,13 +263,13 @@ if __name__ == "__main__":
 
         src_key = f"{src_intf.device.lower_name}.{src_intf.name}"
         dst_key = f"{dst_intf.device.lower_name}.{dst_intf.name}"
-        cables_matrix[src_key][dst_key] += 1
+        cable_matrix[src_key][dst_key] += 1
 
         # batfish上でConfiguration_FormatがHOSTとなっている宛先については、
         # その宛先デバイスをsrcとしたリンクも存在することにする
         for _, host in hosts.iterrows():
             if (host["Node"].lower() == dst_intf.device.lower_name and dst_intf.name in host["Interfaces"]):
-                cables_matrix[dst_key][src_key] += 1
+                cable_matrix[dst_key][src_key] += 1
                 break
 
     for dev in devices.values():
@@ -274,7 +277,7 @@ if __name__ == "__main__":
         dev.save_interfaces(nb)
 
     for cable in cables:
-        if not (cables_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] == 1
-            and cables_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] == 1):
+        if not found_bidiractional_cable(cable_matrix, cable):
             continue
         cable.save(nb)
+
