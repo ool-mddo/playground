@@ -100,7 +100,7 @@ xdg-open multi_region_summary.png
 ### リージョン間通信ができているかどうか
 
 - 環境が大きくなると視認で確認するのが難しい: リージョン間通信ができるかどうか・traceroute hops が狙った hop になっているかどうか
-  - → [単位クエリ](./unit_query.md)のデータとして取得
+  - [単位クエリ](./unit_query.md)のデータとして取得
 
 ### 生成されたトポロジデータに対するL1 description check
 
