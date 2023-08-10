@@ -24,8 +24,10 @@ class Cable:
         if len(searched_cable) == 0:
             searched_cable = nb.dcim.cables.filter(termination_a_type="dcim.interface", termination_a_id=self.b.id, termination_b_type="dcim.interface", termination_b_id=self.a.id)
             if len(searched_cable) == 0:
-                cable = nb.dcim.cables.create(termination_a_type="dcim.interface", termination_a_id=self.a.id, termination_b_type="dcim.interface", termination_b_id=self.b.id)
-                self.id = cable.id
+                if (self.a.id != self.b.id):
+                  print ("a: " + str(self.a.id) + ",b: " + str(self.b.id))
+                  cable = nb.dcim.cables.create(termination_a_type="dcim.interface", termination_a_id=self.a.id, termination_b_type="dcim.interface", termination_b_id=self.b.id)
+                  self.id = cable.id
             elif len(searched_cable) == 1:
                 self.id = list(searched_cable)[0].id
             elif len(searched_cable) > 1:
@@ -238,7 +240,8 @@ if __name__ == "__main__":
         print (str(m))
         #print (str(device_name))
 
-        device_name_lower, interface_name = m.groups()
+        if m:
+          device_name_lower, interface_name = m.groups()
 
         # Convert Et(h)~ to Ethernet~
         if m := re.fullmatch(r"Eth?([\d/]+)", interface_name):
