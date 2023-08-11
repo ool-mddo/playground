@@ -48,7 +48,7 @@ interfaces {
 {% for interface in item.if_list %}
     /*{{ interface.original_if }}*/
     {{ interface.name | regex_replace('\.0', '') }} { 
-{% if 'description' in interface %}
+{% if interface.description %}
         description {{ interface.description }} 
 {% endif %}
         unit 0 {

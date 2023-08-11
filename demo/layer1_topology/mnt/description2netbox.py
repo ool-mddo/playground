@@ -1,7 +1,8 @@
 from pybatfish.client.commands import *
 from pybatfish.question.question import load_questions, list_questions
 from pybatfish.question import bfq
-from typing import Dict
+from typing import Dict, List
+from collections import defaultdict
 import re
 import pynetbox
 import sys
@@ -23,8 +24,10 @@ class Cable:
         if len(searched_cable) == 0:
             searched_cable = nb.dcim.cables.filter(termination_a_type="dcim.interface", termination_a_id=self.b.id, termination_b_type="dcim.interface", termination_b_id=self.a.id)
             if len(searched_cable) == 0:
-                cable = nb.dcim.cables.create(termination_a_type="dcim.interface", termination_a_id=self.a.id, termination_b_type="dcim.interface", termination_b_id=self.b.id)
-                self.id = cable.id
+                if (self.a.id != self.b.id):
+                  print ("a: " + str(self.a.id) + ",b: " + str(self.b.id))
+                  cable = nb.dcim.cables.create(termination_a_type="dcim.interface", termination_a_id=self.a.id, termination_b_type="dcim.interface", termination_b_id=self.b.id)
+                  self.id = cable.id
             elif len(searched_cable) == 1:
                 self.id = list(searched_cable)[0].id
             elif len(searched_cable) > 1:
@@ -50,16 +53,27 @@ class Interface:
         if hasattr(self, "id"):
             return self
         searched_interface = nb.dcim.interfaces.filter(self.name, device_id = self.device.id)
+        
         if len(searched_interface) == 0:
             print(f"creating interface named ``{self.name}'' in ``{self.device.name}''")
             res  = nb.dcim.interfaces.create(name=self.name, device=self.device.id, type="1000base-t")
             self.id = res.id
-        elif len(searched_interface) > 1:
+        elif len(nb.dcim.interfaces.filter(self.name, device_id = self.device.id)) >= 1:
+            searched_interface = nb.dcim.interfaces.filter(self.name, device_id = self.device.id)
+            print (list(searched_interface))
+            findflag = 0;
+            searched_interface = nb.dcim.interfaces.filter(self.name, device_id = self.device.id)
             for intf in list(searched_interface):
                 if intf.name == self.name:
                     self.id = intf.id
+                    findflag = 1;
                     break
-            if not hasattr(self, "id"):
+            if findflag == 0:
+              print(f"creating interface named ``{self.name}'' in ``{self.device.name}''")
+              res  = nb.dcim.interfaces.create(name=self.name, device=self.device.id, type="1000base-t")
+              self.id = res.id
+            elif not hasattr(self, "id"):
+                #print (f"cannot determine interface named ``{self.name}'' in ``{self.device.name}''({self.device.id})")
                 raise KeyError(f"cannot determine interface named ``{self.name}'' in ``{self.device.name}''({self.device.id})")
         else:
             self.id = list(searched_interface)[0].id
@@ -121,6 +135,9 @@ class Device:
         self.interfaces[interface_name] = intf
         return self.interfaces[interface_name]
 
+def found_bidiractional_cable(cable_matrix: Dict[str, Dict[str, int]], cable: Cable) -> bool:
+    return     (cable_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] == 1
+            and cable_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] == 1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
@@ -183,10 +200,14 @@ if __name__ == "__main__":
         device_role_id = list(res)[0].id
 
 
+    hosts = bfq.nodeProperties(properties="Configuration_Format, Interfaces")\
+            .answer().frame()\
+            .query("Configuration_Format == 'HOST'")
 
+    devices: Dict[str, Device] = {}
+    cables: List[Cable] = []
+    cable_matrix: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
 
-    devices = {}
-    cables = []
     for index, row in interfaces.iterrows():
         # search src device
         device_name_lower = row["Interface"].hostname
@@ -200,24 +221,66 @@ if __name__ == "__main__":
         src_intf = intf
 
         # parse description
-        m = re.fullmatch(r"to_(.+)_(.+)", row["Description"])
-        device_name, interface_name = m.groups()
+        description_patterns = [
+            r"(.+) (.+) via .+",  # Switch-01 ge-0/0/1 via pp-01
+            r"(.+)_(.+) S-in:.+", # Switch-01 ge-0/0/1 S-in:1970-01-01
+            r"^to_(.+)_(.+)",     # to_Switch-01_ge-0/0/1
+            r"(.+)_(.+) via .+",  # Switch-01_ge-0/0/1 via pp-01
+            r"(.+)_(.+)",         # Switch-01_ge-0/0/1
+            r"(.+) (.+)",         # Switch-01 ge-0/0/1
+        ]
+
+        for pattern in description_patterns:
+            m = re.fullmatch(pattern, row["Description"].replace("\"", ""))
+            if m is not None:
+                break
+        print (str(row))
+        print (str(device_name_lower))
+        print (str(interface_name))
+        print (str(m))
+        #print (str(device_name))
+
+        if m:
+          device_name_lower, interface_name = m.groups()
+
+        # Convert Et(h)~ to Ethernet~
+        if m := re.fullmatch(r"Eth?([\d/]+)", interface_name):
+            interface_name = f"Ethernet{m.groups()[0]}"
+
+        # Convert Hu~ to HundredGigE~
+        if m := re.fullmatch(r"Hu([\d/]+)", interface_name):
+            interface_name = f"HundredGigE{m.groups()[0]}"
 
         # search dst device
-        if device_name.lower() not in devices:
-            dev = Device(device_name, device_type_id, device_role_id, site_id)
-            devices[device_name.lower()] = dev
+        if device_name_lower not in devices:
+            dev = Device(device_name_lower, device_type_id, device_role_id, site_id)
+            devices[device_name_lower] = dev
         else:
-            devices[device_name.lower()].set_name(device_name)
+            devices[device_name_lower].set_name(device_name_lower)
 
         # search dst intf
-        intf = devices[device_name.lower()].get_interface(interface_name)
+        intf = devices[device_name_lower].get_interface(interface_name)
         dst_intf = intf
 
         cables.append(Cable(src_intf, dst_intf))
 
+        src_key = f"{src_intf.device.lower_name}.{src_intf.name}"
+        dst_key = f"{dst_intf.device.lower_name}.{dst_intf.name}"
+        cable_matrix[src_key][dst_key] += 1
+
+        # batfish上でConfiguration_FormatがHOSTとなっている宛先については、
+        # その宛先デバイスをsrcとしたリンクも存在することにする
+        for _, host in hosts.iterrows():
+            if (host["Node"].lower() == dst_intf.device.lower_name and dst_intf.name in host["Interfaces"]):
+                cable_matrix[dst_key][src_key] += 1
+                break
+
     for dev in devices.values():
         dev.save(nb)
         dev.save_interfaces(nb)
+
     for cable in cables:
+        if not found_bidiractional_cable(cable_matrix, cable):
+            continue
         cable.save(nb)
+

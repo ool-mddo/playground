@@ -1,11 +1,3 @@
-<!-- TOC -->
-
-- [開発用テストネットワークの分析](#開発用テストネットワークの分析)
-
-<!-- /TOC -->
-
----
-
 # 開発用テストネットワークの分析
 
 playground には開発用に使用するテストデータ ([batfish-test-topology](https://github.com/corestate55/batfish-test-topology)) のコンフィグが同梱されています。開発用のデータについては以下のようにトポロジデータを生成することで netoviz で確認可能になります。
@@ -15,10 +7,9 @@ playground には開発用に使用するテストデータ ([batfish-test-topol
 bundle exec mddo-toolbox generate_topology -n batfish-test-topology -p
 ```
 
-⚠️ 注意事項
-
-- network = batfish-test-topology には複数の物理 snapshot が含まれています。 `-p` (`--phy-ss-only`) をつけないと、各物理スナップショットそれぞれに対してリンクダウンパターンを生成します。
-- 特定の物理スナップショットを指定する ( `-s` / `--snapshot`) ことで、1つのスナップショットに対してリンクダウンパターンを生成できます。
+> [!WARNING]
+> - network = batfish-test-topology には複数の物理 snapshot が含まれています。 `-p` (`--phy-ss-only`) をつけないと、各物理スナップショットそれぞれに対してリンクダウンパターンを生成します。
+> - 特定の物理スナップショットを指定する ( `-s` / `--snapshot`) ことで、1つのスナップショットに対してリンクダウンパターンを生成できます。
 
 それぞれの物理スナップショットの目的
 

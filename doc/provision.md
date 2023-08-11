@@ -1,32 +1,3 @@
-<!-- TOC -->
-
-- [デモ環境セットアップ](#%E3%83%87%E3%83%A2%E7%92%B0%E5%A2%83%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
-    - [概要](#%E6%A6%82%E8%A6%81)
-- [デモシステムのセットアップデモ共通](#%E3%83%87%E3%83%A2%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%A2%E5%85%B1%E9%80%9A)
-    - [GithubアカウントとPATの準備](#github%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E3%81%A8pat%E3%81%AE%E6%BA%96%E5%82%99)
-    - [Docker のインストール ubuntu](#docker-%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB-ubuntu)
-    - [Docker の設定](#docker-%E3%81%AE%E8%A8%AD%E5%AE%9A)
-    - [ツールのインストールubuntu](#%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%ABubuntu)
-    - [Rubyのインストール](#ruby%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-    - [デモ用コードの取得](#%E3%83%87%E3%83%A2%E7%94%A8%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E5%8F%96%E5%BE%97)
-    - [デモ用ツールのインストール](#%E3%83%87%E3%83%A2%E7%94%A8%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-    - [環境変数の設定](#%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E3%81%AE%E8%A8%AD%E5%AE%9A)
-    - [コンテナ操作](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E6%93%8D%E4%BD%9C)
-        - [コンテナイメージのダウンロード](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89)
-        - [コンテナの起動](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E8%B5%B7%E5%8B%95)
-        - [指定コンテナの再起動](#%E6%8C%87%E5%AE%9A%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E5%86%8D%E8%B5%B7%E5%8B%95)
-        - [コンテナシステムの停止](#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E5%81%9C%E6%AD%A2)
-- [検証環境emulated envのセットアップ](#%E6%A4%9C%E8%A8%BC%E7%92%B0%E5%A2%83emulated-env%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97)
-    - [Pythonのインストール](#python%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-    - [Ansible-runnerのインストール](#ansible-runner%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-    - [Containerlabのインストール](#containerlab%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-    - [Open vSwitch OVS](#open-vswitch-ovs)
-    - [検証環境内で使用するCNFの設定](#%E6%A4%9C%E8%A8%BC%E7%92%B0%E5%A2%83%E5%86%85%E3%81%A7%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8Bcnf%E3%81%AE%E8%A8%AD%E5%AE%9A)
-        - [Juniper cRPDのインポート](#juniper-crpd%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%88)
-        - [Juniper cRPDのライセンス適用](#juniper-crpd%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E9%81%A9%E7%94%A8)
-
-<!-- /TOC -->
-
 # デモ環境セットアップ
 
 ## 概要
@@ -39,9 +10,10 @@
 
 ![system stack](fig/system_stack.drawio.png)
 
-デモ環境には Linux を使用します。(開発側では Ubuntu22 で動作確認しています)
-
-デモシステムはスクリプト ([ool-mddo/playground リポジトリ](https://github.com/ool-mddo/playground)) とコンテナイメージで提供されています。
+> [!NOTE]
+> デモ環境には Linux を使用します。(開発側では Ubuntu22 で動作確認しています)
+>
+> デモシステムはスクリプト ([ool-mddo/playground リポジトリ](https://github.com/ool-mddo/playground)) とコンテナイメージで提供されています。
 
 # デモシステムのセットアップ(デモ共通)
 
@@ -54,7 +26,8 @@
 
 ## Docker のインストール (ubuntu)
 
-⚠️[2023-03-09] 時点で、Ubuntuの docker.io パッケージでインストールされる docker は version 20.10.12 です。20.10.13 から docker compose (compose サブコマンド)が使えるようになり、今後 docker-compose ではなくこちらを利用することが推奨されています。ディストリビューションのリポジトリからではなく、Docker のリポジトリから最新版の docker をインストールしてください。
+> [!WARNING]
+> [2023-03-09] 時点で、Ubuntuの docker.io パッケージでインストールされる docker は version 20.10.12 です。20.10.13 から docker compose (compose サブコマンド)が使えるようになり、今後 docker-compose ではなくこちらを利用することが推奨されています。ディストリビューションのリポジトリからではなく、Docker のリポジトリから最新版の docker をインストールしてください。
 
 - [Docker Compose V2(Version 2) GA のまとめ - Qiita](https://qiita.com/zembutsu/items/d82b2ae1a511ebd6a350#docker-engine-linux-%E3%81%A7-compose-v2-%E3%82%92%E4%BD%BF%E3%81%86%E3%81%AB%E3%81%AF)
 - [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
@@ -135,7 +108,8 @@ git checkout refs/tags/v1.0.0
 cd ../.. # playground
 ```
 
-⚠️ `repos` ディレクトリ内の各コンポーネントのソースコードを用意しておくのは開発用途です。ここに配置したコードをデモシステムの各コンテナにマウントして、コードの修正・デバッグ・動作確認できるようになっています。ソースコードの修正を行わない場合はコンテナへのマウントを解除して使用することも可能です。(`playground/docker-compose.yaml` を修正してください。その場合  `repos` 下のリポジトリのブランチ設定は不要で、デモシステムで動かすソフトウェアバージョンはコンテナイメージのタグだけで決定できます。コンテナイメージのタグ設定は `.env` を参照してください。)
+> [!WARNING]
+> `repos` ディレクトリ内の各コンポーネントのソースコードを用意しておくのは開発用途です。ここに配置したコードをデモシステムの各コンテナにマウントして、コードの修正・デバッグ・動作確認できるようになっています。ソースコードの修正を行わない場合はコンテナへのマウントを解除して使用することも可能です。(`playground/docker-compose.yaml` を修正してください。その場合  `repos` 下のリポジトリのブランチ設定は不要で、デモシステムで動かすソフトウェアバージョンはコンテナイメージのタグだけで決定できます。コンテナイメージのタグ設定は `.env` を参照してください。)
 
 ## デモ用ツールのインストール
 
@@ -173,7 +147,8 @@ bundle exec mddo-toolbox help generate_topology
 
 `playground/.env` ファイルにシステムの環境変数を設定します。原則変更は不要ですが、fish-tracer のホスト名の設定のみ各環境に合わせて設定する必要があります。
 
-⚠️ `localhost` や `127.0.0.1` をではなく docker ホスト側のIPやホスト名を設定してください。
+> [!WARNING]
+> `localhost` や `127.0.0.1` をではなく docker ホスト側のIPやホスト名を設定してください。
 
 例:
 
