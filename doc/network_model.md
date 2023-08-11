@@ -1,19 +1,3 @@
-<!-- TOC -->
-
-- [ネットワークのモデル](#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%AE%E3%83%A2%E3%83%87%E3%83%AB)
-    - [RFC8345 Data Model for Network Topologies](#rfc8345-data-model-for-network-topologies)
-    - [モデル化の方針](#%E3%83%A2%E3%83%87%E3%83%AB%E5%8C%96%E3%81%AE%E6%96%B9%E9%87%9D)
-        - [Layer1](#layer1)
-        - [Layer2](#layer2)
-        - [Layer3](#layer3)
-        - [OSPF](#ospf)
-        - [BGP](#bgp)
-    - [モデル検討時の注意事項](#%E3%83%A2%E3%83%87%E3%83%AB%E6%A4%9C%E8%A8%8E%E6%99%82%E3%81%AE%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85)
-
-<!-- /TOC -->
-
----
-
 # ネットワークのモデル
 
 ## RFC8345 Data Model for Network Topologies
