@@ -6,12 +6,14 @@ require 'netomox'
 def register_bgp_as(nws)
   nws.register do
     network 'bgp_as' do
-      type Netomox::NWTYPE_MDDO_L3 # temporary
+      type Netomox::NWTYPE_MDDO_BGP_AS
       support 'bgp_proc'
       # attribute({})
 
       # self
       node 'as65518' do
+        attribute({ as_number: 65_518 })
+
         # supporting nodes and term-points will be generated from original-asis configs
         term_point 'peer_172.16.0.5' do
           attribute({ description: 'from Edge-TK01 to PNI01' })
@@ -33,6 +35,7 @@ def register_bgp_as(nws)
 
       # PNI
       node 'as65550' do
+        attribute({ as_number: 65_550 })
         support %w[bgp_proc PNI01]
 
         term_point 'peer_172.16.0.6' do
@@ -47,7 +50,9 @@ def register_bgp_as(nws)
 
       # POI-East
       node 'as65520' do
+        attribute({ as_number: 65_520 })
         support %w[bgp_proc POI-East]
+
         term_point 'peer_192.168.0.9' do
           attribute({ description: 'from POI-East to Edge-TK01' })
           support %w[bgp_proc POI-East peer_192.168.0.9]

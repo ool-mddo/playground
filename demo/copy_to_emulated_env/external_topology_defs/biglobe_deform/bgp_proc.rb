@@ -6,7 +6,7 @@ require 'netomox'
 def register_bgp_proc(nws)
   nws.register do
     network 'bgp_proc' do
-      type Netomox::NWTYPE_MDDO_BGP
+      type Netomox::NWTYPE_MDDO_BGP_PROC
       support 'layer3'
 
       # AS65550, PNI
