@@ -149,9 +149,9 @@ if __name__ == "__main__":
     load_questions()
     bf_init_snapshot("/mnt/snapshot")
     # exclude junos sub interface and other... TODO
-    is_exclude_interface = lambda x:bool(
-        re.search(r'\.\d+$', x.interface)  # e.g. ge-0/0/0.0
-    )
+    #is_exclude_interface = lambda x:bool(
+    #    re.search(r'\.\d+$', x.interface)  # e.g. ge-0/0/0.0
+    #)
     # judge LAG interface to exclude
     is_lag_interface = lambda x:bool(len(x)>0)
     interfaces = bfq \
@@ -159,8 +159,7 @@ if __name__ == "__main__":
         .answer() \
         .frame() \
         .query("Description == Description") \
-        .query('~(Channel_Group_Members.apply(@is_lag_interface))', engine='python') \
-        .query('~(Interface.apply(@is_exclude_interface))', engine='python')
+        .query('~(Channel_Group_Members.apply(@is_lag_interface))', engine='python')
 
     # check and greate meta entries
     res = nb.dcim.sites.filter("dummy-site")
@@ -217,6 +216,11 @@ if __name__ == "__main__":
 
         # search src intf
         interface_name = row["Interface"].interface  # batfish returns correct name such as "Ethernet1"
+        # convert ge-0/0/0.0 -> ge-0/0/0
+        if re.search(r'\.\d+$', interface_name):
+            converted_if = interface_name.split('.')
+            interface_name = converted_if[0]
+
         intf = devices[device_name_lower].get_interface(interface_name)
         src_intf = intf
 
@@ -235,8 +239,8 @@ if __name__ == "__main__":
             if m is not None:
                 break
         print (str(row))
-        print (str(device_name_lower))
-        print (str(interface_name))
+        print ("SrcDevice:" + str(device_name_lower))
+        print ("SrcInterface:" + str(interface_name))
         print (str(m))
         #print (str(device_name))
 
@@ -258,6 +262,8 @@ if __name__ == "__main__":
         else:
             devices[device_name_lower].set_name(device_name_lower)
 
+        print ("DestDevice:" + str(device_name_lower))
+        print ("DestInterface:" + str(interface_name))
         # search dst intf
         intf = devices[device_name_lower].get_interface(interface_name)
         dst_intf = intf

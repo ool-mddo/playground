@@ -1,0 +1,1461 @@
+{
+  "nodes": [
+    {
+      "type": "device",
+      "id": 1,
+      "link": "http://localhost:8000/dcim/devices/1/",
+      "name": "bb011-tyo12"
+    },
+    {
+      "type": "device",
+      "id": 4,
+      "link": "http://localhost:8000/dcim/devices/4/",
+      "name": "sw056-tyo12"
+    },
+    {
+      "type": "device",
+      "id": 167,
+      "link": "http://localhost:8000/dcim/devices/167/",
+      "name": "gw066-tyo12"
+    },
+    {
+      "type": "device",
+      "id": 5,
+      "link": "http://localhost:8000/dcim/devices/5/",
+      "name": "sw021-tyo12"
+    },
+    {
+      "type": "device",
+      "id": 8,
+      "link": "http://localhost:8000/dcim/devices/8/",
+      "name": "sw053-tyo11"
+    },
+    {
+      "type": "device",
+      "id": 103,
+      "link": "http://localhost:8000/dcim/devices/103/",
+      "name": "gw060-tyo11"
+    },
+    {
+      "type": "device",
+      "id": 65,
+      "link": "http://localhost:8000/dcim/devices/65/",
+      "name": "gw059-tyo11"
+    },
+    {
+      "type": "device",
+      "id": 10,
+      "link": "http://localhost:8000/dcim/devices/10/",
+      "name": "gw056-tyo12"
+    },
+    {
+      "type": "device",
+      "id": 9,
+      "link": "http://localhost:8000/dcim/devices/9/",
+      "name": "sw054-tyo11"
+    },
+    {
+      "type": "device",
+      "id": 3,
+      "link": "http://localhost:8000/dcim/devices/3/",
+      "name": "bb019-tyo11"
+    }
+  ],
+  "links": [
+    {
+      "source": "bb011-tyo12",
+      "target": "bb019-tyo11",
+      "cable_id": 1,
+      "meta": {
+        "interface": {
+          "source": "et-3/1/2",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "bb011-tyo12",
+      "target": "sw056-tyo12",
+      "cable_id": 2,
+      "meta": {
+        "interface": {
+          "source": "et-4/0/5",
+          "source_lag": null,
+          "target": "Ethernet3/27/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "bb011-tyo12",
+      "target": "sw056-tyo12",
+      "cable_id": 3,
+      "meta": {
+        "interface": {
+          "source": "et-4/1/5",
+          "source_lag": null,
+          "target": "Ethernet4/27/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "bb011-tyo12",
+      "target": "bb019-tyo11",
+      "cable_id": 4,
+      "meta": {
+        "interface": {
+          "source": "et-5/1/2",
+          "source_lag": null,
+          "target": "HundredGigE0/1/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 82,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/1/1",
+          "source_lag": null,
+          "target": "Ethernet3/1/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 15,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/2/1",
+          "source_lag": null,
+          "target": "et-1/3/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 9,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/5/1",
+          "source_lag": null,
+          "target": "et-0/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 83,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/7/1",
+          "source_lag": null,
+          "target": "Ethernet3/7/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 17,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/9/1",
+          "source_lag": null,
+          "target": "et-1/4/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 84,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/11/1",
+          "source_lag": null,
+          "target": "Ethernet3/11/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 85,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/13/1",
+          "source_lag": null,
+          "target": "Ethernet3/13/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 19,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/15/1",
+          "source_lag": null,
+          "target": "et-1/5/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 86,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/19/1",
+          "source_lag": null,
+          "target": "Ethernet3/19/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 20,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/20/1",
+          "source_lag": null,
+          "target": "et-2/0/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw066-tyo12",
+      "cable_id": 67,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/25/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/16",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw066-tyo12",
+      "cable_id": 68,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/29/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/20",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 87,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/31/1",
+          "source_lag": null,
+          "target": "Ethernet3/31/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 88,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/1/1",
+          "source_lag": null,
+          "target": "Ethernet4/1/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 22,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/3/1",
+          "source_lag": null,
+          "target": "et-2/2/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 89,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/7/1",
+          "source_lag": null,
+          "target": "Ethernet4/7/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 25,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/9/1",
+          "source_lag": null,
+          "target": "et-2/4/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 10,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/10/1",
+          "source_lag": null,
+          "target": "et-0/1/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 90,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/13/1",
+          "source_lag": null,
+          "target": "Ethernet4/13/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 26,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/15/1",
+          "source_lag": null,
+          "target": "et-2/5/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw066-tyo12",
+      "cable_id": 69,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/25/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/24",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 91,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/26/1",
+          "source_lag": null,
+          "target": "Ethernet4/26/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "gw066-tyo12",
+      "cable_id": 70,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/29/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/28",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 92,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/31/1",
+          "source_lag": null,
+          "target": "Ethernet4/31/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw056-tyo12",
+      "target": "sw054-tyo11",
+      "cable_id": 93,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/34/1",
+          "source_lag": null,
+          "target": "Ethernet4/34/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw066-tyo12",
+      "target": "sw021-tyo12",
+      "cable_id": 63,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/3/0/0",
+          "source_lag": null,
+          "target": "Ethernet5/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw066-tyo12",
+      "target": "sw021-tyo12",
+      "cable_id": 64,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/3/0/4",
+          "source_lag": null,
+          "target": "Ethernet5/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw066-tyo12",
+      "target": "sw021-tyo12",
+      "cable_id": 65,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/3/0/8",
+          "source_lag": null,
+          "target": "Ethernet6/5",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw066-tyo12",
+      "target": "sw021-tyo12",
+      "cable_id": 66,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/3/0/12",
+          "source_lag": null,
+          "target": "Ethernet6/12",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 71,
+      "meta": {
+        "interface": {
+          "source": "Ethernet2/1",
+          "source_lag": null,
+          "target": "et-1/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 16,
+      "meta": {
+        "interface": {
+          "source": "Ethernet2/2",
+          "source_lag": null,
+          "target": "et-1/4/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 72,
+      "meta": {
+        "interface": {
+          "source": "Ethernet2/3",
+          "source_lag": null,
+          "target": "et-1/0/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 18,
+      "meta": {
+        "interface": {
+          "source": "Ethernet2/4",
+          "source_lag": null,
+          "target": "et-1/5/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 73,
+      "meta": {
+        "interface": {
+          "source": "Ethernet2/5",
+          "source_lag": null,
+          "target": "et-1/0/10",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 14,
+      "meta": {
+        "interface": {
+          "source": "Ethernet2/7",
+          "source_lag": null,
+          "target": "et-1/1/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 74,
+      "meta": {
+        "interface": {
+          "source": "Ethernet2/9",
+          "source_lag": null,
+          "target": "et-1/0/15",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 75,
+      "meta": {
+        "interface": {
+          "source": "Ethernet5/5",
+          "source_lag": null,
+          "target": "et-0/0/10",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 12,
+      "meta": {
+        "interface": {
+          "source": "Ethernet5/6",
+          "source_lag": null,
+          "target": "et-0/4/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 11,
+      "meta": {
+        "interface": {
+          "source": "Ethernet5/7",
+          "source_lag": null,
+          "target": "et-0/3/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 76,
+      "meta": {
+        "interface": {
+          "source": "Ethernet5/8",
+          "source_lag": null,
+          "target": "et-0/0/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 77,
+      "meta": {
+        "interface": {
+          "source": "Ethernet5/9",
+          "source_lag": null,
+          "target": "et-0/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 13,
+      "meta": {
+        "interface": {
+          "source": "Ethernet5/11",
+          "source_lag": null,
+          "target": "et-0/5/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 78,
+      "meta": {
+        "interface": {
+          "source": "Ethernet5/12",
+          "source_lag": null,
+          "target": "et-1/0/24",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 79,
+      "meta": {
+        "interface": {
+          "source": "Ethernet6/2",
+          "source_lag": null,
+          "target": "et-0/0/12",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 80,
+      "meta": {
+        "interface": {
+          "source": "Ethernet6/6",
+          "source_lag": null,
+          "target": "et-0/0/11",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 24,
+      "meta": {
+        "interface": {
+          "source": "Ethernet6/7",
+          "source_lag": null,
+          "target": "et-2/4/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "sw053-tyo11",
+      "cable_id": 81,
+      "meta": {
+        "interface": {
+          "source": "Ethernet6/8",
+          "source_lag": null,
+          "target": "et-0/0/20",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 21,
+      "meta": {
+        "interface": {
+          "source": "Ethernet6/9",
+          "source_lag": null,
+          "target": "et-2/2/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw021-tyo12",
+      "target": "gw056-tyo12",
+      "cable_id": 23,
+      "meta": {
+        "interface": {
+          "source": "Ethernet6/11",
+          "source_lag": null,
+          "target": "et-2/3/3",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 29,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/2",
+          "source_lag": null,
+          "target": "et-0/4/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 46,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/3",
+          "source_lag": null,
+          "target": "HundredGigE0/1/0/16",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 51,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/4",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 52,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/5",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/4",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 53,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/14",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/8",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 54,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/15",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/12",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "bb019-tyo11",
+      "cable_id": 5,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/19",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 35,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/22",
+          "source_lag": null,
+          "target": "et-1/3/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 30,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/23",
+          "source_lag": null,
+          "target": "et-0/5/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 55,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/24",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/16",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 56,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/25",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/20",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 49,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/27",
+          "source_lag": null,
+          "target": "HundredGigE0/1/0/24",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "bb019-tyo11",
+      "cable_id": 6,
+      "meta": {
+        "interface": {
+          "source": "et-0/0/28",
+          "source_lag": null,
+          "target": "HundredGigE0/2/0/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 34,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/2",
+          "source_lag": null,
+          "target": "et-1/2/2",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 36,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/3",
+          "source_lag": null,
+          "target": "et-1/3/2",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 41,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/11",
+          "source_lag": null,
+          "target": "HundredGigE0/1/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 42,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/20",
+          "source_lag": null,
+          "target": "HundredGigE0/1/0/4",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 43,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/21",
+          "source_lag": null,
+          "target": "HundredGigE0/1/0/8",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 37,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/22",
+          "source_lag": null,
+          "target": "et-1/4/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw053-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 39,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/23",
+          "source_lag": null,
+          "target": "et-1/5/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw060-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 44,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/1/0/9",
+          "source_lag": null,
+          "target": "Ethernet4/2/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw060-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 45,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/1/0/12",
+          "source_lag": null,
+          "target": "Ethernet4/9/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw060-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 47,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/1/0/18",
+          "source_lag": null,
+          "target": "Ethernet4/15/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw060-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 48,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/1/0/20",
+          "source_lag": null,
+          "target": "Ethernet3/2/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw060-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 50,
+      "meta": {
+        "interface": {
+          "source": "HundredGigE0/1/0/28",
+          "source_lag": null,
+          "target": "Ethernet3/29/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw059-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 27,
+      "meta": {
+        "interface": {
+          "source": "et-0/1/0",
+          "source_lag": null,
+          "target": "Ethernet3/33/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw059-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 28,
+      "meta": {
+        "interface": {
+          "source": "et-0/2/2",
+          "source_lag": null,
+          "target": "Ethernet3/5/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw059-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 31,
+      "meta": {
+        "interface": {
+          "source": "et-1/0/3",
+          "source_lag": null,
+          "target": "Ethernet4/27/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw059-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 32,
+      "meta": {
+        "interface": {
+          "source": "et-1/1/3",
+          "source_lag": null,
+          "target": "Ethernet4/33/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "gw059-tyo11",
+      "target": "sw054-tyo11",
+      "cable_id": 33,
+      "meta": {
+        "interface": {
+          "source": "et-1/2/0",
+          "source_lag": null,
+          "target": "Ethernet3/27/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 59,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/3/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/8",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 60,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/9/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/12",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 61,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/15/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/16",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "bb019-tyo11",
+      "cable_id": 7,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/16/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 62,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/21/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/20",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "bb019-tyo11",
+      "cable_id": 8,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/22/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/1",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 57,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/26/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/0",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw060-tyo11",
+      "cable_id": 58,
+      "meta": {
+        "interface": {
+          "source": "Ethernet3/32/1",
+          "source_lag": null,
+          "target": "HundredGigE0/3/0/4",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 38,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/5/1",
+          "source_lag": null,
+          "target": "et-1/4/2",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    },
+    {
+      "source": "sw054-tyo11",
+      "target": "gw059-tyo11",
+      "cable_id": 40,
+      "meta": {
+        "interface": {
+          "source": "Ethernet4/19/1",
+          "source_lag": null,
+          "target": "et-1/5/2",
+          "target_lag": null
+        },
+        "bandwidth": "1G"
+      },
+      "class": "one-gig"
+    }
+  ]
+}
