@@ -136,8 +136,8 @@ class Device:
         return self.interfaces[interface_name]
 
 def found_bidiractional_cable(cable_matrix: Dict[str, Dict[str, int]], cable: Cable) -> bool:
-    return     (cable_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] == 1
-            and cable_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] == 1)
+    return     (cable_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] > 0
+            and cable_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] > 0)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
@@ -229,6 +229,8 @@ if __name__ == "__main__":
             r"(.+) (.+) via .+",  # Switch-01 ge-0/0/1 via pp-01
             r"(.+)_(.+) S-in:.+", # Switch-01 ge-0/0/1 S-in:1970-01-01
             r"^to_(.+)_(.+)",     # to_Switch-01_ge-0/0/1
+            r"^to (.+) (.+)",     # to Switch-01 ge-0/0/1
+            r"^to (.+)_(.+)",     # to Switch-01_ge-0/0/1
             r"(.+)_(.+) via .+",  # Switch-01_ge-0/0/1 via pp-01
             r"(.+)_(.+)",         # Switch-01_ge-0/0/1
             r"(.+) (.+)",         # Switch-01 ge-0/0/1
@@ -245,7 +247,8 @@ if __name__ == "__main__":
         #print (str(device_name))
 
         if m:
-          device_name_lower, interface_name = m.groups()
+          device_name, interface_name = m.groups()
+          device_name_lower = device_name.lower()
 
         # Convert Et(h)~ to Ethernet~
         if m := re.fullmatch(r"Eth?([\d/]+)", interface_name):
@@ -267,8 +270,10 @@ if __name__ == "__main__":
         # search dst intf
         intf = devices[device_name_lower].get_interface(interface_name)
         dst_intf = intf
-
+        print (str(src_intf.name))
+        print (str(dst_intf.name))
         cables.append(Cable(src_intf, dst_intf))
+        print (str(len(cables)))
 
         src_key = f"{src_intf.device.lower_name}.{src_intf.name}"
         dst_key = f"{dst_intf.device.lower_name}.{dst_intf.name}"
@@ -280,7 +285,7 @@ if __name__ == "__main__":
             if (host["Node"].lower() == dst_intf.device.lower_name and dst_intf.name in host["Interfaces"]):
                 cable_matrix[dst_key][src_key] += 1
                 break
-
+    print (str(cable_matrix))
     for dev in devices.values():
         dev.save(nb)
         dev.save_interfaces(nb)
@@ -289,4 +294,3 @@ if __name__ == "__main__":
         if not found_bidiractional_cable(cable_matrix, cable):
             continue
         cable.save(nb)
-
