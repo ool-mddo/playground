@@ -56,6 +56,7 @@ def register_layer3(nws)
       end
 
       node 'endpoint01-iperf1' do
+        attribute({ node_type: 'endpoint' })
         term_point 'ens2' do
           attribute({ ip_addrs: %w[10.0.1.100/24] })
         end
