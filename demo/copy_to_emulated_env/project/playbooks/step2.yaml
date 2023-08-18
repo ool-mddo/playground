@@ -70,6 +70,13 @@
     loop_control:
       index_var: l3_index
 
+  - set_fact:
+      bgpindex: "{{ bgp_proc_index }}"
+    when: item['network-id'] == "bgp_proc"
+    loop: "{{ topology.json | json_query('*.network[]') }}"
+    loop_control:
+      index_var: bgp_proc_index
+
   - name: generate static-route config
     template:
       src: template/crpd_static.j2
