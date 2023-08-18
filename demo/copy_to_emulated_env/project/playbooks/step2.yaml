@@ -33,14 +33,16 @@
       body_format: json
     register: topology
 
-  - set_fact:
+  - name: search L3 network index
+    set_fact:
       layer3index: "{{ l3_index }}"
     when: item['network-id'] == "layer3"
     loop: "{{ topology.json | json_query('*.network[]') }}"
     loop_control:
       index_var: l3_index
 
-  - set_fact:
+  - name: search bgp_proc network index
+    set_fact:
       bgpindex: "{{ bgp_proc_index }}"
     when: item['network-id'] == "bgp_proc"
     loop: "{{ topology.json | json_query('*.network[]') }}"
@@ -62,6 +64,36 @@
       query: '*.network[{{ layer3index }}].node[*]'
     when: '"Seg" not in item["node-id"]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: generate config bgp head
+    template:
+      src: template/crpd_bgp_head.j2
+      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
+    vars:
+      query: '*.network[{{ bgpindex }}].node[*]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: generate config bgp tail
+    template:
+      src: template/crpd_bgp_tail.j2
+      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf"
+    vars:
+      query: '*.network[{{ bgpindex }}].node[*]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: merge bgp tail config
+    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf"
+    vars:
+      query: '*.network[{{ bgpindex }}].node[*]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+    ignore_errors: True
+
+  - name: merge bgp config
+    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
+    vars:
+      query: '*.network[{{ bgpindex }}].node[*]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+    ignore_errors: True
 
   - name: generate config ospf head
     template:
