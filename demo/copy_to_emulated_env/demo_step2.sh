@@ -11,7 +11,6 @@
 source ./demo_vars
 
 # option check
-WITH_CLAB=true
 while getopts d option; do
   case $option in
   d)
@@ -41,7 +40,7 @@ curl -s -X POST -H 'Content-Type: application/json' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/original_asis/emulated_asis"
 
 # generate emulated asis configs from emulated asis topology
-if "$WITH_CLAB"; then
+if "${WITH_CLAB:-true}"; then
   ansible-runner run . -p /data/project/playbooks/step2.yaml --container-option="--net=${API_BRIDGE}" \
     --container-volume-mount="$PWD:/data" --container-image="${ANSIBLERUNNER_IMAGE}" \
     --process-isolation --process-isolation-executable docker \
