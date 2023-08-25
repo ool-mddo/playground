@@ -2,7 +2,7 @@
 
 ### containerlab server login & sudo password Setting
 ###Example
-###$ cat env/passwords 
+###$ cat env/passwords
 ###---
 ###"^SSH password:\\s*?$": "login password"
 ###"^BECOME password.*:\\s*?$": "login password"
@@ -10,19 +10,44 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
+# option check
+while getopts d option; do
+  case $option in
+  d)
+    # data check, debug
+    # -> without container lab; does not build emulated-env
+    WITH_CLAB=false
+    echo "# Check: with_clab = $WITH_CLAB"
+    ;;
+  esac
+done
+
+# for development bgp-model
+if [ "$NETWORK_NAME" == "biglobe_deform" ]; then
+  # generate external-AS topology
+  external_as_json="${NETWORK_NAME}_ext.json"
+  bundle exec ruby "external_topology_defs/${NETWORK_NAME}.rb" > "$external_as_json"
+  # splice external-AS topology to original_asis (overwrite)
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
+    "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/splice_topology" \
+    > /dev/null # ignore echo-back (topology json)
+fi
+
 # convert namespace from original asis topology to emulated asis
 curl -s -X POST -H 'Content-Type: application/json' \
   -d '{ "table_origin": "original_asis" }' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/original_asis/emulated_asis"
 
 # generate emulated asis configs from emulated asis topology
-ansible-runner run . -p /data/project/playbooks/step2.yaml --container-option="--net=${API_BRIDGE}" \
-  --container-volume-mount="$PWD:/data" --container-image="${ANSIBLERUNNER_IMAGE}" \
-  --process-isolation --process-isolation-executable docker \
-  --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -k -K " 
+if "${WITH_CLAB:-true}"; then
+  ansible-runner run . -p /data/project/playbooks/step2.yaml --container-option="--net=${API_BRIDGE}" \
+    --container-volume-mount="$PWD:/data" --container-image="${ANSIBLERUNNER_IMAGE}" \
+    --process-isolation --process-isolation-executable docker \
+    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -k -K "
+fi
 
 # update netoviz index
 curl -s -X POST -H 'Content-Type: application/json' \
   -d @<(jq '{ "index_data": .[0:2] }' "$NETWORK_INDEX" ) \
   "http://${API_PROXY}/topologies/index"
-
