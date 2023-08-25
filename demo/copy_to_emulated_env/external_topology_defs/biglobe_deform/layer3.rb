@@ -103,16 +103,16 @@ def register_layer3(nws)
 
         # to host
         term_point 'Ethernet3' do
-          attribute({ ip_addrs: %w[10.100.0.1/24] })
+          attribute({ ip_addrs: %w[10.100.0.1/16] })
         end
         term_point 'Ethernet4' do
-          attribute({ ip_addrs: %w[10.110.0.1/24] })
+          attribute({ ip_addrs: %w[10.110.0.1/20] })
         end
         term_point 'Ethernet5' do
-          attribute({ ip_addrs: %w[10.120.0.1/24] })
+          attribute({ ip_addrs: %w[10.120.0.1/17] })
         end
         term_point 'Ethernet6' do
-          attribute({ ip_addrs: %w[10.130.0.1/24] })
+          attribute({ ip_addrs: %w[10.130.0.1/21] })
         end
       end
 
