@@ -26,7 +26,7 @@ done
 if [ "$NETWORK_NAME" == "biglobe_deform" ]; then
   # generate external-AS topology
   external_as_json="${NETWORK_NAME}_ext.json"
-  bundle exec ruby "external_topology_defs/${NETWORK_NAME}.rb" > "$external_as_json"
+  docker compose exec netomox-exp bundle exec ruby "external_topology_defs/${NETWORK_NAME}.rb" > "$external_as_json"
   # splice external-AS topology to original_asis (overwrite)
   curl -s -X POST -H "Content-Type: application/json" \
     -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
