@@ -1,0 +1,43 @@
+{% for peer in item["ietf-network-topology:termination-point"] %}
+{% set attrs = peer["mddo-topology:bgp-proc-termination-point-attributes"] %}
+{% if "mddo-topology:bgp-proc-termination-point-attributes" in peer and peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] != "" %}
+        group {{ attrs["peer-group"] }} {
+            family inet {
+                unicast;
+            }
+            peer-as {{ attrs["remote-as"] }};
+            local-as {{ attrs["local-as"] }};
+{% if attrs["remote-as"] == attrs["local-as"] %}
+            type internal;
+{% else %}
+            type external;
+{% endif %}
+            hold-time {{ attrs["timer"]["hold-time"] }};
+{% for group_peer in item["ietf-network-topology:termination-point"] %}
+{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] and group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] == attrs["peer-group"] %}
+            neighbor {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"] }} {
+                local-address {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"] }};
+            }
+{% endif %}
+{% endfor %}
+        }
+{% else %}
+{# if peer-group is not set, use remote-ip instead of it, because usually remote-ip is public-ip and it is unique #}
+        group {{ attrs["remote-ip"] }} {
+            family inet {
+                unicast;
+            }
+            peer-as {{ attrs["remote-as"] }};
+            local-as {{ attrs["local-as"] }};
+{% if attrs["remote-as"] == attrs["local-as"] %}
+            type internal;
+{% else %}
+            type external;
+{% endif %}
+            hold-time {{ attrs["timer"]["hold-time"] }};
+            neighbor {{ attrs["remote-ip"] }} {
+                local-address {{ attrs["local-ip"] }};
+            }
+        }
+{% endif %}
+{% endfor %}

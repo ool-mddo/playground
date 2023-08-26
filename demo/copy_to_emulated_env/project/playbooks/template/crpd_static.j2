@@ -21,5 +21,16 @@ routing-options {
     router-id {{ ospf_node["attribute"]["router-id"] }};
 {% endif %}
 {% endfor  %}
+{# search bgp node which has node-ref with item["node-id"] #}
+{% for bgp_node in topology.json["ietf-network:networks"]["network"][bgpindex]["node"] %}
+{% if bgp_node["supporting-node"][0]["node-ref"] == item["node-id"] and "mddo-topology:bgp-proc-node-attributes" in bgp_node%}
+    autonomous-system {{ bgp_node["ietf-network-topology:termination-point"][0]["mddo-topology:bgp-proc-termination-point-attributes"]["local-as"] }};
+{% if bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-member"] | length != 0 %}
+    confederation {{ bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-id"] }} members [
+{%- for conf_ASN in bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-member"] %} {{ conf_ASN }}{% endfor %}
+ ]
+{% endif %}
+{% endif %}
+{% endfor %}
 }
 
