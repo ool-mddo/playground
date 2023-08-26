@@ -1,6 +1,7 @@
 configs/nttcom-trial-*/
-configs/biglobe_*/
+configs/biglobe*/
 queries
+demo/layer1_topology/inet-henge/*
 topologies
 .idea
 .vscode

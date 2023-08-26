@@ -136,8 +136,8 @@ class Device:
         return self.interfaces[interface_name]
 
 def found_bidiractional_cable(cable_matrix: Dict[str, Dict[str, int]], cable: Cable) -> bool:
-    return     (cable_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] == 1
-            and cable_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] == 1)
+    return     (cable_matrix[f"{cable.a.device.lower_name}.{cable.a.name}"][f"{cable.b.device.lower_name}.{cable.b.name}"] > 0
+            and cable_matrix[f"{cable.b.device.lower_name}.{cable.b.name}"][f"{cable.a.device.lower_name}.{cable.a.name}"] > 0)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
@@ -149,9 +149,9 @@ if __name__ == "__main__":
     load_questions()
     bf_init_snapshot("/mnt/snapshot")
     # exclude junos sub interface and other... TODO
-    is_exclude_interface = lambda x:bool(
-        re.search(r'\.\d+$', x.interface)  # e.g. ge-0/0/0.0
-    )
+    #is_exclude_interface = lambda x:bool(
+    #    re.search(r'\.\d+$', x.interface)  # e.g. ge-0/0/0.0
+    #)
     # judge LAG interface to exclude
     is_lag_interface = lambda x:bool(len(x)>0)
     interfaces = bfq \
@@ -159,8 +159,7 @@ if __name__ == "__main__":
         .answer() \
         .frame() \
         .query("Description == Description") \
-        .query('~(Channel_Group_Members.apply(@is_lag_interface))', engine='python') \
-        .query('~(Interface.apply(@is_exclude_interface))', engine='python')
+        .query('~(Channel_Group_Members.apply(@is_lag_interface))', engine='python')
 
     # check and greate meta entries
     res = nb.dcim.sites.filter("dummy-site")
@@ -217,6 +216,11 @@ if __name__ == "__main__":
 
         # search src intf
         interface_name = row["Interface"].interface  # batfish returns correct name such as "Ethernet1"
+        # convert ge-0/0/0.0 -> ge-0/0/0
+        if re.search(r'\.\d+$', interface_name):
+            converted_if = interface_name.split('.')
+            interface_name = converted_if[0]
+
         intf = devices[device_name_lower].get_interface(interface_name)
         src_intf = intf
 
@@ -225,6 +229,8 @@ if __name__ == "__main__":
             r"(.+) (.+) via .+",  # Switch-01 ge-0/0/1 via pp-01
             r"(.+)_(.+) S-in:.+", # Switch-01 ge-0/0/1 S-in:1970-01-01
             r"^to_(.+)_(.+)",     # to_Switch-01_ge-0/0/1
+            r"^to (.+) (.+)",     # to Switch-01 ge-0/0/1
+            r"^to (.+)_(.+)",     # to Switch-01_ge-0/0/1
             r"(.+)_(.+) via .+",  # Switch-01_ge-0/0/1 via pp-01
             r"(.+)_(.+)",         # Switch-01_ge-0/0/1
             r"(.+) (.+)",         # Switch-01 ge-0/0/1
@@ -235,13 +241,14 @@ if __name__ == "__main__":
             if m is not None:
                 break
         print (str(row))
-        print (str(device_name_lower))
-        print (str(interface_name))
+        print ("SrcDevice:" + str(device_name_lower))
+        print ("SrcInterface:" + str(interface_name))
         print (str(m))
         #print (str(device_name))
 
         if m:
-          device_name_lower, interface_name = m.groups()
+          device_name, interface_name = m.groups()
+          device_name_lower = device_name.lower()
 
         # Convert Et(h)~ to Ethernet~
         if m := re.fullmatch(r"Eth?([\d/]+)", interface_name):
@@ -258,11 +265,15 @@ if __name__ == "__main__":
         else:
             devices[device_name_lower].set_name(device_name_lower)
 
+        print ("DestDevice:" + str(device_name_lower))
+        print ("DestInterface:" + str(interface_name))
         # search dst intf
         intf = devices[device_name_lower].get_interface(interface_name)
         dst_intf = intf
-
+        print (str(src_intf.name))
+        print (str(dst_intf.name))
         cables.append(Cable(src_intf, dst_intf))
+        print (str(len(cables)))
 
         src_key = f"{src_intf.device.lower_name}.{src_intf.name}"
         dst_key = f"{dst_intf.device.lower_name}.{dst_intf.name}"
@@ -274,7 +285,7 @@ if __name__ == "__main__":
             if (host["Node"].lower() == dst_intf.device.lower_name and dst_intf.name in host["Interfaces"]):
                 cable_matrix[dst_key][src_key] += 1
                 break
-
+    print (str(cable_matrix))
     for dev in devices.values():
         dev.save(nb)
         dev.save_interfaces(nb)
@@ -283,4 +294,3 @@ if __name__ == "__main__":
         if not found_bidiractional_cable(cable_matrix, cable):
             continue
         cable.save(nb)
-
