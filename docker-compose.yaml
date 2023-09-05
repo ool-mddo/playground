@@ -14,8 +14,6 @@ services:
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
       MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
     volumes:
-      # v1.2.0, to generate external-as topology data
-      - ./demo/copy_to_emulated_env/external_topology_defs:/netomox-exp/external_topology_defs
       # for development
       - ./repos/netomox-exp/lib:/netomox-exp/lib
       - ./repos/netomox-exp/app.rb:/netomox-exp/app.rb
