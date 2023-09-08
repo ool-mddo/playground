@@ -79,42 +79,15 @@
       query: '*.network[{{ bgpindex }}].node[*]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
 
-  - name: generate config ospf head
+  - name: generate ospf config
     template:
-      src: template/crpd_ospf_head.j2
-      dest: "configs/{{ item.1.node }}_ospf.conf"
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-
-  - name: generate config ospf area parts
-    template:
-      src: template/crpd_ospf_area.j2
+      src: template/crpd_ospf.j2
       dest: "configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
     loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-    #loop: "{{ ospf_list.json[0]['nodes'] }}"
-
-  - name: merge ospf area config
-    shell: "cat configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf  >> configs/{{ item.1.node }}_ospf.conf; rm  configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf "
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-
-  - name: generate config ospf tail
-    template:
-      src: template/crpd_ospf_tail.j2
-      dest: "configs/{{ item.1.node }}_ospf_tail.conf"
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-
-  - name: merge ospf tail config
-    shell: "cat configs/{{ item.1.node }}_ospf_tail.conf  >> configs/{{ item.1.node }}_ospf.conf ; rm  configs/{{ item.1.node }}_ospf_tail.conf "
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-    ignore_errors: True
 
   - name: merge ospf config
-    shell: "cat configs/{{ item.1.node }}_ospf.conf >> configs/{{ item.1.node }}.conf ; rm configs/{{ item.1.node }}_ospf.conf "
+    shell: "cat configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf >> configs/{{ item.1.node }}.conf ; rm configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
     loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-    ignore_errors: True
-#  - name: merge ospf config
-#    shell: "cat configs/{{ item.node }}_ospf.conf >> configs/{{ item.node }}.conf "
-#    loop: "{{ ospf_list.json[0]['nodes'] }}"
-
 
   - name: generate bridge data
     set_fact:

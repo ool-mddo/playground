@@ -1,7 +1,7 @@
 protocols {
     ospf {
-        area {{ ospf_list.json[0]["attribute"]["identifier"] }} {
-{% for interface in item.interfaces %}
+        area {{ item.0.attribute.identifier }} {
+{% for interface in item.1.interfaces %}
             interface {{ interface.alias.l1_principal }} {
                 metric {{ interface.attribute.metric }};
 {% if interface.attribute.passive %}
@@ -16,19 +16,16 @@ protocols {
             }
 {% endfor  %}
         }
-{% if  item.attribute.redistribute | length != 0 %}
+{% if  item.1.attribute.redistribute | length != 0 %}
         export ospf-redistribute;
 {% endif %}
     }
 }
-{% if  item.attribute.redistribute | length != 0 %}
+{% if  item.1.attribute.redistribute | length != 0 %}
 policy-options {
     policy-statement ospf-redistribute {
-        from protocol [ {{ item.attribute.redistribute | json_query('[*].protocol') | join(' ') | regex_replace('connected', 'direct') }} ];
+        from protocol [ {{ item.1.attribute.redistribute | json_query('[*].protocol') | join(' ') | regex_replace('connected', 'direct') }} ];
         then accept;
     }
 }
 {% endif %}
-{#
-        from protocol [ {{ item.attributes.redistribute | json_query('[*].protocol') | join(' ') | regex_replace('connected', 'direct') }} ];
-#}
