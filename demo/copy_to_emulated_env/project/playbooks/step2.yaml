@@ -65,50 +65,19 @@
     when: '"Seg" not in item["node-id"]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
 
-  - name: generate config bgp head
+  - name: generate bgp config
     template:
-      src: template/crpd_bgp_head.j2
+      src: template/crpd_bgp.j2
       dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
     vars:
       query: '*.network[{{ bgpindex }}].node[*]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
-
-  - name: generate config bgp peer
-    template:
-      src: template/crpd_bgp_peer.j2
-      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_peer.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-
-  - name: merge bgp peer config
-    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_peer.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_peer.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-    ignore_errors: True
-
-  - name: generate config bgp tail
-    template:
-      src: template/crpd_bgp_tail.j2
-      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-
-  - name: merge bgp tail config
-    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-    ignore_errors: True
 
   - name: merge bgp config
     shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
     vars:
       query: '*.network[{{ bgpindex }}].node[*]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
-    ignore_errors: True
 
   - name: generate config ospf head
     template:
