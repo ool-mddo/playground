@@ -19,6 +19,9 @@ while getopts d option; do
     WITH_CLAB=false
     echo "# Check: with_clab = $WITH_CLAB"
     ;;
+  *)
+    echo "Unknown option detected, $option"
+    exit 1
   esac
 done
 
@@ -26,7 +29,7 @@ done
 if [ "$NETWORK_NAME" == "biglobe_deform" ]; then
   # generate external-AS topology
   external_as_json="${NETWORK_NAME}_ext.json"
-  docker compose exec netomox-exp bundle exec ruby "external_topology_defs/${NETWORK_NAME}.rb" > "$external_as_json"
+  curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis/external_as_topology" > "$external_as_json"
   # splice external-AS topology to original_asis (overwrite)
   curl -s -X POST -H "Content-Type: application/json" \
     -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
