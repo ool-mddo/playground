@@ -1,3 +1,8 @@
+protocols {
+    bgp {
+        family inet {
+            unicast;
+        }
 {% for peer in item["ietf-network-topology:termination-point"] %}
 {% set attrs = peer["mddo-topology:bgp-proc-termination-point-attributes"] %}
 {% if "mddo-topology:bgp-proc-termination-point-attributes" in peer and peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] != "" %}
@@ -41,3 +46,5 @@
         }
 {% endif %}
 {% endfor %}
+    }
+}

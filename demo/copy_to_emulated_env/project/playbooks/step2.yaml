@@ -59,93 +59,35 @@
     loop: "{{ topology.json | json_query(query) | flatten }}"
 
   - name: merge static-route config
-    shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf "
+    shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf ; rm configs/{{ item['node-id'] }}_routing-options.conf"
     vars:
       query: '*.network[{{ layer3index }}].node[*]'
     when: '"Seg" not in item["node-id"]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
 
-  - name: generate config bgp head
+  - name: generate bgp config
     template:
-      src: template/crpd_bgp_head.j2
+      src: template/crpd_bgp.j2
       dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
     vars:
       query: '*.network[{{ bgpindex }}].node[*]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
-
-  - name: generate config bgp peer
-    template:
-      src: template/crpd_bgp_peer.j2
-      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_peer.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-
-  - name: merge bgp peer config
-    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_peer.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_peer.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-    ignore_errors: True
-
-  - name: generate config bgp tail
-    template:
-      src: template/crpd_bgp_tail.j2
-      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-
-  - name: merge bgp tail config
-    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp_tail.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-    ignore_errors: True
 
   - name: merge bgp config
     shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
     vars:
       query: '*.network[{{ bgpindex }}].node[*]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
-    ignore_errors: True
 
-  - name: generate config ospf head
+  - name: generate ospf config
     template:
-      src: template/crpd_ospf_head.j2
-      dest: "configs/{{ item.1.node }}_ospf.conf"
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-
-  - name: generate config ospf area parts
-    template:
-      src: template/crpd_ospf_area.j2
+      src: template/crpd_ospf.j2
       dest: "configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
     loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-    #loop: "{{ ospf_list.json[0]['nodes'] }}"
-
-  - name: merge ospf area config
-    shell: "cat configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf  >> configs/{{ item.1.node }}_ospf.conf; rm  configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf "
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-
-  - name: generate config ospf tail
-    template:
-      src: template/crpd_ospf_tail.j2
-      dest: "configs/{{ item.1.node }}_ospf_tail.conf"
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-
-  - name: merge ospf tail config
-    shell: "cat configs/{{ item.1.node }}_ospf_tail.conf  >> configs/{{ item.1.node }}_ospf.conf ; rm  configs/{{ item.1.node }}_ospf_tail.conf "
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-    ignore_errors: True
 
   - name: merge ospf config
-    shell: "cat configs/{{ item.1.node }}_ospf.conf >> configs/{{ item.1.node }}.conf ; rm configs/{{ item.1.node }}_ospf.conf "
+    shell: "cat configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf >> configs/{{ item.1.node }}.conf ; rm configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
     loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
-    ignore_errors: True
-#  - name: merge ospf config
-#    shell: "cat configs/{{ item.node }}_ospf.conf >> configs/{{ item.node }}.conf "
-#    loop: "{{ ospf_list.json[0]['nodes'] }}"
-
 
   - name: generate bridge data
     set_fact:
