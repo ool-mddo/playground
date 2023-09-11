@@ -59,7 +59,7 @@
     loop: "{{ topology.json | json_query(query) | flatten }}"
 
   - name: merge static-route config
-    shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf "
+    shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf ; rm configs/{{ item['node-id'] }}_routing-options.conf"
     vars:
       query: '*.network[{{ layer3index }}].node[*]'
     when: '"Seg" not in item["node-id"]'
