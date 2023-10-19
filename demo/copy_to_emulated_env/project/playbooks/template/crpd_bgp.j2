@@ -22,6 +22,20 @@ protocols {
 {% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] and group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] == attrs["peer-group"] %}
             neighbor {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"] }} {
                 local-address {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"] }};
+{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] | length != 0 %}
+{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] | length == 1 %}
+                import {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"][0] }};
+{% else %}
+                import [{% for name in group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] %} {{ name }}{% endfor %} ];
+{% endif %}
+{% endif %}
+{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] | length != 0 %}
+{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] | length == 1 %}
+                export {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"][0] }};
+{% else %}
+                export [{% for name in group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] %} {{ name }}{% endfor %} ];
+{% endif %}
+{% endif %}
             }
 {% endif %}
 {% endfor %}
