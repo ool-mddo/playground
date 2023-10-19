@@ -1,0 +1,84 @@
+{% set attrs = item["mddo-topology:bgp-proc-node-attributes"] %}
+policy-options {
+{% for prefix in attrs["prefix-set"] %}
+    prefix-list {{ prefix["name"] }} {
+{% for prefix in prefix["prefixes"] %}
+        {{ prefix["prefix"] }};
+{% endfor %}
+    }
+{% endfor %}
+{% for path in attrs["as-path-set"] %}
+    as-path-group {{ path["group-name"] }} {
+        as-path {{ path["as-path"]["name"] }} "{{ path["as-path"]["pattern"] }}";
+    }
+{% endfor %}
+{% for community in attrs["community-set"] %}
+    community {{ community[0]["name"] }} members {{ community[0]["community"] }};
+{% endfor %}
+{% for policy in attrs["policy"] %}
+    policy-statement {{ policy["name"] }} {
+{% for term in policy["statements"] %}
+        term {{ loop.index * 10 }} {
+            from {
+{% for cond in term["conditions"] %}
+{% for key, value in cond.items() %}
+{% if key in ["policy", "as-path-group", "protocol", "prefix-list", "rib"] %}
+                {{ key }} {{ value }};
+{% elif key == "community" %}
+                community{% for com in value %} {{ com }}{% endfor %};
+{% elif key == "route-filter" %}
+{% if value["match_type"] == "exact" %}
+                route-filter {{ value["prefix"] }} exact;
+{% elif value["match_type"] == "prefix-length-range" %}
+                route-filter {{ value["prefix"] }} prefix-length-range /{{ value["length"]["max"] }}-/{{ value["length"]["min"] }};
+{% else %}
+                ERROR in route-filter
+{% endif %}
+{% elif key == "prefix-list-filter" %}
+{% if value["match_type"] == "exact" %}
+                prefix-list-filter {{ value["prefix-list"] }} exact;
+{% elif value["match_type"] == "orlonger" %}
+                prefix-list-filter {{ value["prefix-list"] }} orlonger;
+{% else %}
+                ERROR in prefix-list-filter
+{% endif %}
+{% else %}
+                ERROR in from
+{% endif %}
+{% endfor %}
+{% endfor %}
+            }
+            then {
+{% for action in term["actions"] %}
+{% for key, value in action.items() %}
+{% if key in ["metric", "local-preference", "next-hop"] %}
+                {{ key }} {{ value }};
+{% elif key == "community" %}
+                community {{ value["action"] }} {{ value["name"] }};
+{% elif key == "target" %}
+                {{ value }};
+{% else %}
+                ERROR in then
+{% endif %}
+{% endfor %}
+{% endfor %}
+            }
+        }
+{% endfor %}
+{% if policy["default"]["actions"] | length != 0 %}
+        then {
+{% for action in policy["default"]["actions"] %}
+{% for key, value in action.items() %}
+{# shoud be same in above "then" #}
+{% if key == "action" %}
+            {{ value }};
+{% else %}
+            ERROR in default-then
+{% endif %}
+{% endfor %}
+{% endfor %}
+        }
+{% endif %}
+    }
+{% endfor %}
+}

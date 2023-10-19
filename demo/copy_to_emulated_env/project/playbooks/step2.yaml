@@ -65,7 +65,21 @@
     when: '"Seg" not in item["node-id"]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
 
-  - name: generate bgp config
+  - name: generate policy config
+    template:
+      src: template/crpd_policy.j2
+      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf"
+    vars:
+      query: '*.network[{{ bgpindex }}].node[*]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: merge policy config
+    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf"
+    vars:
+      query: '*.network[{{ bgpindex }}].node[*]'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: generate bgp peer config
     template:
       src: template/crpd_bgp.j2
       dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
@@ -73,7 +87,7 @@
       query: '*.network[{{ bgpindex }}].node[*]'
     loop: "{{ topology.json | json_query(query) | flatten }}"
 
-  - name: merge bgp config
+  - name: merge bgp peer config
     shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
     vars:
       query: '*.network[{{ bgpindex }}].node[*]'
