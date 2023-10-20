@@ -42,7 +42,7 @@ services:
     depends_on:
       - batfish
   bgp-policy-parser:
-    image: ${BGP_POLICY_PARSER_IMAGE}:${BGP_POLICY_PARSER_TAG}
+    image: ${BGP_POLICY_PARSER_IMAGE}:${BGP_POLICY_PARSER_IMAGE_TAG}
     tty: true
     environment:
       MODEL_CONDUCTOR_HOST: model-conductor:${MODEL_CONDUCTOR_PORT}
