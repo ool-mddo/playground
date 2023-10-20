@@ -41,6 +41,22 @@ services:
       - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
     depends_on:
       - batfish
+  bgp-policy-parser:
+    image: ${BGP_POLICY_PARSER_IMAGE}:${BGP_POLICY_PARSER_IMAGE_TAG}
+    tty: true
+    environment:
+      MODEL_CONDUCTOR_HOST: model-conductor:${MODEL_CONDUCTOR_PORT}
+      MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
+      MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
+      MDDO_TTP_CONFIGS_DIR: ${MDDO_TTP_CONFIGS_DIR}
+      MDDO_TTP_OUTPUTS_DIR: ${MDDO_TTP_OUTPUTS_DIR}
+      MDDO_BGP_POLICIES_DIR: ${MDDO_BGP_POLICIES_DIR}
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./repos/bgp-policy-parser:/bgp-policy-parser # for development
+      - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
+      - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
+      - ${SHARED_TTP_DIR}:${MDDO_TTP_DIR}
   api-proxy:
     image: ${API_PROXY_IMAGE}:${API_PROXY_IMAGE_TAG}
     volumes:

@@ -3,6 +3,7 @@ configs/biglobe*/
 queries
 demo/layer1_topology/inet-henge/*
 topologies
+ttp
 .idea
 .vscode
 demo/**/passwords
