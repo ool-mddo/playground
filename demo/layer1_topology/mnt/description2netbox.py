@@ -258,6 +258,17 @@ if __name__ == "__main__":
         if m := re.fullmatch(r"Hu([\d/]+)", interface_name):
             interface_name = f"HundredGigE{m.groups()[0]}"
 
+        # Convert Ten~ to TenGigE~
+        if m := re.fullmatch(r"Ten([\d/]+)", interface_name):
+            interface_name = f"TenGigE{m.groups()[0]}"
+        # Convert Te~ to TenGigaEthernet~
+        elif m := re.fullmatch(r"Te([\d/]+)", interface_name):
+            interface_name = f"TenGigaEthernet{m.groups()[0]}"
+
+        # Convert Gi~ to GigaEthernet~
+        if m := re.fullmatch(r"Gi([\d/]+)", interface_name):
+            interface_name = f"GigaEthernet{m.groups()[0]}"
+        
         # search dst device
         if device_name_lower not in devices:
             dev = Device(device_name_lower, device_type_id, device_role_id, site_id)
