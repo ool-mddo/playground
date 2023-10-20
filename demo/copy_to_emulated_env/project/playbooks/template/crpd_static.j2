@@ -4,7 +4,7 @@ routing-options {
         static {
 {% for route in item["mddo-topology:l3-node-attributes"]["static-route"] %}
             route {{ route.prefix }} {
-{% if "AUTO/NONE" in route["next-hop"]  %}
+{% if "discard" in route["next-hop"]  %}
                 discard;
 {% else %}
                 next-hop {{ route["next-hop"] }};
