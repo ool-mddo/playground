@@ -1,4 +1,17 @@
 {% set attrs = item["mddo-topology:bgp-proc-node-attributes"] %}
+{% if "ext-bgp-speaker" in attrs["flag"] %}
+policy-options {
+    policy-statement advertise-all-prefixes {
+        term 10 {
+            from rib inet.0;
+            then accept;
+        }
+    }
+    policy-statement pass-all {
+        then accept;
+    }
+}
+{% else %}
 policy-options {
 {% for prefix in attrs["prefix-set"] %}
     prefix-list {{ prefix["name"] }} {
@@ -82,3 +95,4 @@ policy-options {
     }
 {% endfor %}
 }
+{% endif %}

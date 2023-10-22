@@ -56,6 +56,11 @@ protocols {
             hold-time {{ attrs["timer"]["hold-time"] }};
             neighbor {{ attrs["remote-ip"] }} {
                 local-address {{ attrs["local-ip"] }};
+{# insert default policies on external-AS routers, they don't have "peer-group", so only here #}
+{% if "ext-bgp-speaker" in item["mddo-topology:bgp-proc-node-attributes"]["flag"] %}
+                import pass-all;
+                export advertise-all-prefixes;
+{% endif %}
             }
         }
 {% endif %}
