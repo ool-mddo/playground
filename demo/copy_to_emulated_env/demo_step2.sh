@@ -25,18 +25,6 @@ while getopts d option; do
   esac
 done
 
-# for development bgp-model
-if [ "$NETWORK_NAME" == "biglobe_deform" ]; then
-  # generate external-AS topology
-  external_as_json="${NETWORK_NAME}_ext.json"
-  curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis/external_as_topology" > "$external_as_json"
-  # splice external-AS topology to original_asis (overwrite)
-  curl -s -X POST -H "Content-Type: application/json" \
-    -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
-    "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/splice_topology" \
-    > /dev/null # ignore echo-back (topology json)
-fi
-
 # convert namespace from original asis topology to emulated asis
 curl -s -X POST -H 'Content-Type: application/json' \
   -d '{ "table_origin": "original_asis" }' \
