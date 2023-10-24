@@ -9,7 +9,7 @@ exec_parser="docker compose exec bgp-policy-parser"
 $exec_parser python collect_configs.py -n "$NETWORK_NAME"
 
 # parse configuration files with TTP
-$exec_parser python main.py
+$exec_parser python main.py -n "$NETWORK_NAME"
 
 # post bgp policy data to model-conductor to merge it to topology data
 $exec_parser python post_bgp_policies.py -n "$NETWORK_NAME"
