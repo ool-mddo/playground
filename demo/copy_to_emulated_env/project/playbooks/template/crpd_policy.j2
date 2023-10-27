@@ -25,7 +25,7 @@ policy-options {
 {% if "pattern" in path["as-path"] %}
         as-path {{ path["as-path"]["name"] }} "{{ path["as-path"]["pattern"] }}";
 {% elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
-        as-path {{ path["as-path"]["name"] }} ".{,{{path["as-path"]["length"]["min"]}}};
+        as-path {{ path["as-path"]["name"] }} ".{% raw %}{{% endraw %}{{path["as-path"]["length"]["min"]}}{% raw %},}{% endraw %}";
 {% else %}
         ERROR in as-path-group
 {% endif %}
@@ -52,17 +52,17 @@ policy-options {
 {% elif key == "community" %}
                 community{% for com in value %} {{ com }}{% endfor %};
 {% elif key == "route-filter" %}
-{% if value["match_type"] == "exact" %}
+{% if value["match-type"] == "exact" %}
                 route-filter {{ value["prefix"] }} exact;
-{% elif value["match_type"] == "prefix-length-range" %}
-                route-filter {{ value["prefix"] }} prefix-length-range /{{ value["length"]["max"] }}-/{{ value["length"]["min"] }};
+{% elif value["match-type"] == "prefix-length-range" %}
+                route-filter {{ value["prefix"] }} prefix-length-range /{{ value["length"]["min"] }}-/{{ value["length"]["max"] }};
 {% else %}
                 ERROR in route-filter
 {% endif %}
 {% elif key == "prefix-list-filter" %}
-{% if value["match_type"] == "exact" %}
+{% if value["match-type"] == "exact" %}
                 prefix-list-filter {{ value["prefix-list"] }} exact;
-{% elif value["match_type"] == "orlonger" %}
+{% elif value["match-type"] == "orlonger" %}
                 prefix-list-filter {{ value["prefix-list"] }} orlonger;
 {% else %}
                 ERROR in prefix-list-filter
@@ -82,6 +82,8 @@ policy-options {
                 community {{ value["action"] }} {{ value["name"] }};
 {% elif key == "target" %}
                 {{ value }};
+{% elif key == "apply" %}
+{# ToDo how to express "apply" in junos #}
 {% else %}
                 ERROR in then
 {% endif %}
