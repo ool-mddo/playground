@@ -4,7 +4,7 @@ routing-options {
         static {
 {% for route in item["mddo-topology:l3-node-attributes"]["static-route"] %}
             route {{ route.prefix }} {
-{% if "AUTO/NONE" in route["next-hop"]  %}
+{% if "discard" in route["next-hop"]  %}
                 discard;
 {% else %}
                 next-hop {{ route["next-hop"] }};
@@ -28,7 +28,7 @@ routing-options {
 {% if bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-member"] | length != 0 %}
     confederation {{ bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-id"] }} members [
 {%- for conf_ASN in bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-member"] %} {{ conf_ASN }}{% endfor %}
- ]
+ ];
 {% endif %}
 {% endif %}
 {% endfor %}
