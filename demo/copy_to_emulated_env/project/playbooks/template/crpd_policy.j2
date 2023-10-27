@@ -22,11 +22,23 @@ policy-options {
 {% endfor %}
 {% for path in attrs["as-path-set"] %}
     as-path-group {{ path["group-name"] }} {
+{% if "pattern" in path["as-path"] %}
         as-path {{ path["as-path"]["name"] }} "{{ path["as-path"]["pattern"] }}";
+{% elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
+        as-path {{ path["as-path"]["name"] }} ".{,{{path["as-path"]["length"]["min"]}}};
+{% else %}
+        ERROR in as-path-group
+{% endif %}
     }
 {% endfor %}
 {% for community in attrs["community-set"] %}
-    community {{ community[0]["name"] }} members {{ community[0]["community"] }};
+{% if community["communities"] | length == 1 %}
+    community {{ community["name"] }} members {{ community["communities"][0]["community"] }};
+{% else %}
+    community {{ community["name"] }} members [
+{%- for member in community["communities"] %} {{ member["community"] }}{% endfor %}
+ ];
+{% endif %}
 {% endfor %}
 {% for policy in attrs["policy"] %}
     policy-statement {{ policy["name"] }} {
