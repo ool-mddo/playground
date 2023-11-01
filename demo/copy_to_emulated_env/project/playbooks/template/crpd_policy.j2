@@ -13,100 +13,123 @@ policy-options {
 }
 {% else %}
 policy-options {
-{% for prefix in attrs["prefix-set"] %}
+{%   for prefix in attrs["prefix-set"] %}
     prefix-list {{ prefix["name"] }} {
-{% for prefix in prefix["prefixes"] %}
+{%     for prefix in prefix["prefixes"] %}
         {{ prefix["prefix"] }};
-{% endfor %}
+{%     endfor %}
     }
-{% endfor %}
-{% for path in attrs["as-path-set"] %}
+{%   endfor %}
+{%   for path in attrs["as-path-set"] %}
     as-path-group {{ path["group-name"] }} {
-{% if "pattern" in path["as-path"] %}
+{%     if "pattern" in path["as-path"] %}
         as-path {{ path["as-path"]["name"] }} "{{ path["as-path"]["pattern"] }}";
-{% elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
+{%     elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
         as-path {{ path["as-path"]["name"] }} ".{% raw %}{{% endraw %}{{path["as-path"]["length"]["min"]}}{% raw %},}{% endraw %}";
-{% else %}
+{%     else %}
         ERROR in as-path-group
-{% endif %}
+{%     endif %}
     }
-{% endfor %}
-{% for community in attrs["community-set"] %}
-{% if community["communities"] | length == 1 %}
+{%   endfor %}
+{%   for community in attrs["community-set"] %}
+{%     if community["communities"] | length == 1 %}
     community {{ community["name"] }} members {{ community["communities"][0]["community"] }};
-{% else %}
+{%     else %}
     community {{ community["name"] }} members [
-{%- for member in community["communities"] %} {{ member["community"] }}{% endfor %}
+{%-      for member in community["communities"] %} {{ member["community"] }}{% endfor %}
  ];
-{% endif %}
-{% endfor %}
-{% for policy in attrs["policy"] %}
+{%     endif %}
+{%   endfor %}
+{%   for policy in attrs["policy"] %}
     policy-statement {{ policy["name"] }} {
-{% for term in policy["statements"] %}
+{%     if "statements" in  policy %}
+{%       for term in policy["statements"] %}
         term {{ loop.index * 10 }} {
             from {
-{% for cond in term["conditions"] %}
-{% for key, value in cond.items() %}
-{% if key in ["policy", "as-path-group", "protocol", "prefix-list", "rib"] %}
+{%         for cond in term["conditions"] %}
+{%           for key, value in cond.items() %}
+{%             if key in ["policy", "as-path-group", "protocol", "prefix-list", "rib"] %}
                 {{ key }} {{ value }};
-{% elif key == "community" %}
-                community{% for com in value %} {{ com }}{% endfor %};
-{% elif key == "route-filter" %}
-{% if value["match-type"] == "exact" %}
+{%             elif key == "community" %}
+                community [ {% for com in value %} {{ com }}{% endfor %} ];
+{%             elif key == "route-filter" %}
+{%               if value["match-type"] == "exact" %}
                 route-filter {{ value["prefix"] }} exact;
-{% elif value["match-type"] == "prefix-length-range" %}
+{%               elif value["match-type"] == "prefix-length-range" %}
                 route-filter {{ value["prefix"] }} prefix-length-range /{{ value["length"]["min"] }}-/{{ value["length"]["max"] }};
-{% else %}
+{%               else %}
                 ERROR in route-filter
-{% endif %}
-{% elif key == "prefix-list-filter" %}
-{% if value["match-type"] == "exact" %}
+{%               endif %}
+{%             elif key == "prefix-list-filter" %}
+{%               if value["match-type"] == "exact" %}
                 prefix-list-filter {{ value["prefix-list"] }} exact;
-{% elif value["match-type"] == "orlonger" %}
+{%               elif value["match-type"] == "orlonger" %}
                 prefix-list-filter {{ value["prefix-list"] }} orlonger;
-{% else %}
+{%               else %}
                 ERROR in prefix-list-filter
-{% endif %}
-{% else %}
+{%               endif %}
+{%             else %}
                 ERROR in from
-{% endif %}
-{% endfor %}
-{% endfor %}
+{%             endif %}
+{%           endfor %}
+{%         endfor %}
             }
             then {
-{% for action in term["actions"] %}
-{% for key, value in action.items() %}
-{% if key in ["metric", "local-preference", "next-hop"] %}
+{%         for action in term["actions"] %}
+{%           for key, value in action.items() %}
+{%             if key in ["metric", "local-preference", "next-hop"] %}
                 {{ key }} {{ value }};
-{% elif key == "community" %}
+{%             elif key == "community" %}
                 community {{ value["action"] }} {{ value["name"] }};
-{% elif key == "target" %}
+{%             elif key == "target" %}
                 {{ value }};
-{% elif key == "apply" %}
+{%             elif key == "apply" %}
 {# ToDo how to express "apply" in junos #}
-{% else %}
+{%             else %}
                 ERROR in then
-{% endif %}
-{% endfor %}
-{% endfor %}
+{%             endif %}
+{%           endfor %}
+{%         endfor %}
             }
         }
-{% endfor %}
-{% if policy["default"]["actions"] | length != 0 %}
+{%       endfor %}
+
+{%       if policy["default"]["actions"] | length != 0 %}
         then {
-{% for action in policy["default"]["actions"] %}
-{% for key, value in action.items() %}
+{%         for action in policy["default"]["actions"] %}
+{%           for key, value in action.items() %}
 {# shoud be same in above "then" #}
-{% if key == "action" %}
+{%             if key == "action" %}
             {{ value }};
-{% else %}
+{%             elif key == "target" %}
+            {{ value }};
+{%             else %}
             ERROR in default-then
-{% endif %}
-{% endfor %}
-{% endfor %}
+{%             endif %}
+{%           endfor %}
+{%         endfor %}
         }
-{% endif %}
+{%       endif %}
+{%     else  %}
+{%       for action in policy["actions"] %}
+{%         for key, value in action.items() %}
+{%           if key in ["metric", "local-preference", "next-hop"] %}
+                {{ key }} {{ value }};
+{%           elif key == "community" %}
+                community {{ value["action"] }} {{ value["name"] }};
+{%           elif key == "target" %}
+                {{ value }};
+{%           elif key == "apply" %}
+{# ToDo how to express "apply" in junos #}
+{%           else %}
+                ERROR in then
+{%           endif %}
+{%         endfor %}
+{%       endfor %}
+        }
+
+{%     endif %}
     }
-{% endfor %}
+{%   endfor %}
 }
 {% endif %}
