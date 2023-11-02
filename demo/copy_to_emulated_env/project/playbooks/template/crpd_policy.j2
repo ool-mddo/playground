@@ -22,12 +22,24 @@ policy-options {
 {%   endfor %}
 {%   for path in attrs["as-path-set"] %}
     as-path-group {{ path["group-name"] }} {
-{%     if "pattern" in path["as-path"] %}
+{%     if not path["as-path"].__class__.__name__ == 'list' %}
+{%       if "pattern" in path["as-path"] %}
         as-path {{ path["as-path"]["name"] }} "{{ path["as-path"]["pattern"] }}";
-{%     elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
+{%       elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
         as-path {{ path["as-path"]["name"] }} ".{% raw %}{{% endraw %}{{path["as-path"]["length"]["min"]}}{% raw %},}{% endraw %}";
+{%       else %}
+        as-path any "'.*'";
+{%       endif %}
 {%     else %}
+{%       for aspath in path["as-path"]%}
+{%         if "pattern" in aspath %}
+        as-path {{ aspath["name"] }} "{{ aspath["pattern"] }}";
+{%         elif "length" in aspath and "min" in as-path["length"] %}
+        as-path {{ aspath["name"] }} ".{% raw %}{{% endraw %}{{aspath["length"]["min"]}}{% raw %},}{% endraw %}";
+{%         else %}
         ERROR in as-path-group
+{%         endif %}
+{%       endfor %}
 {%     endif %}
     }
 {%   endfor %}
@@ -36,13 +48,32 @@ policy-options {
     community {{ community["name"] }} members {{ community["communities"][0]["community"] }};
 {%     else %}
     community {{ community["name"] }} members [
-{%-      for member in community["communities"] %} {{ member["community"] }}{% endfor %}
+{%-      for member in community["communities"] %} 
+{%-        if not "[" in member["community"] %}
+        {{ member["community"] }}
+{%-        endif%}
+{%-      endfor %}
  ];
 {%     endif %}
 {%   endfor %}
 {%   for policy in attrs["policy"] %}
     policy-statement {{ policy["name"] }} {
-{%     if "statements" in  policy %}
+{%     if "none" in  policy["statements"] %}
+        then {
+{%       for action in policy["default"]["actions"] %}
+{%         for key, value in action.items() %}
+{# shoud be same in above "then" #}
+{%           if key == "action" %}
+            {{ value }};
+{%           elif key == "target" %}
+            {{ value }};
+{%           else %}
+            ERROR in default-then
+{%           endif %}
+{%         endfor %}
+{%       endfor %}
+        }
+{%     else  %}
 {%       for term in policy["statements"] %}
         term {{ loop.index * 10 }} {
             from {
@@ -57,6 +88,8 @@ policy-options {
                 route-filter {{ value["prefix"] }} exact;
 {%               elif value["match-type"] == "prefix-length-range" %}
                 route-filter {{ value["prefix"] }} prefix-length-range /{{ value["length"]["min"] }}-/{{ value["length"]["max"] }};
+{%               elif value["match-type"] == "upto" %}
+                route-filter {{ value["prefix"] }} upto /{{ value["length"]["max"] | regex_replace(',', '') }};
 {%               else %}
                 ERROR in route-filter
 {%               endif %}
@@ -69,6 +102,7 @@ policy-options {
                 ERROR in prefix-list-filter
 {%               endif %}
 {%             else %}
+                {{ term }}
                 ERROR in from
 {%             endif %}
 {%           endfor %}
@@ -83,6 +117,8 @@ policy-options {
                 community {{ value["action"] }} {{ value["name"] }};
 {%             elif key == "target" %}
                 {{ value }};
+{%             elif key == "as-path-prepend" %}
+                {{ key }} {{ value.asn[0] }};
 {%             elif key == "apply" %}
 {# ToDo how to express "apply" in junos #}
 {%             else %}
@@ -110,24 +146,6 @@ policy-options {
 {%         endfor %}
         }
 {%       endif %}
-{%     else  %}
-{%       for action in policy["actions"] %}
-{%         for key, value in action.items() %}
-{%           if key in ["metric", "local-preference", "next-hop"] %}
-                {{ key }} {{ value }};
-{%           elif key == "community" %}
-                community {{ value["action"] }} {{ value["name"] }};
-{%           elif key == "target" %}
-                {{ value }};
-{%           elif key == "apply" %}
-{# ToDo how to express "apply" in junos #}
-{%           else %}
-                ERROR in then
-{%           endif %}
-{%         endfor %}
-{%       endfor %}
-        }
-
 {%     endif %}
     }
 {%   endfor %}
