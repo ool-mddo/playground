@@ -24,7 +24,7 @@ interfaces {
     /*{{ interface.original_if }}*/
     {{ interface.name | regex_replace('\.0', '') }} {
 {% if interface.description %}
-        description {{ interface.description }}
+        description "{{ interface.description | regex_replace('"', '') }}"
 {% endif %}
         unit 0 {
             family inet {
