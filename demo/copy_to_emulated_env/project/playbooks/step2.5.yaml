@@ -1,0 +1,44 @@
+---
+- hosts: docker-host
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_user: "{{ login_user}}"
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+  - name: "get convert table"
+    uri:
+      url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology"
+      method: "GET"
+      body_format: json
+    register: topology
+
+  - name: search L3 network index
+    set_fact:
+      layer3index: "{{ l3_index }}"
+    when: item['network-id'] == "layer3"
+    loop: "{{ topology.json | json_query('*.network[]') }}"
+    loop_control:
+      index_var: l3_index
+
+  - name: generate iperf endpoint  static-route info
+    set_fact:
+       iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
+    vars:
+      query: '*.network[{{ layer3index }}].node[*]'
+    when: item["mddo-topology:l3-node-attributes"]["node-type"] == 'endpoint'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+ 
+  - name: setting eth1 & default routing
+    shell:
+      cmd: "{{ common }} {{cmd1}}; {{ common }} {{cmd2}}; {{ common }} {{cmd3}} "
+    args:
+      chdir: "{{ ansible_runner_dir }}/clab"
+    vars: 
+        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item['node-id'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        cmd1: 'ip addr add {{ item["ietf-network-topology:termination-point"][0]["mddo-topology:l3-termination-point-attributes"]["ip-address"][0] }} dev eth1 '
+        cmd2: "ip route del default via 172.20.20.1"
+        cmd3: 'ip route add default via {{ item["mddo-topology:l3-node-attributes"]["static-route"][0]["next-hop"] }}'
+    loop: "{{ iperf_list }}"
