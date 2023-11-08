@@ -28,6 +28,7 @@ policy-options {
 {%       elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
         as-path {{ path["as-path"]["name"] }} ".{% raw %}{{% endraw %}{{path["as-path"]["length"]["min"]}}{% raw %},}{% endraw %}";
 {%       else %}
+{#       workaround of empty as-path from XR #}
         as-path any "'.*'";
 {%       endif %}
 {%     else %}
@@ -50,6 +51,7 @@ policy-options {
     community {{ community["name"] }} members [
 {%-      for member in community["communities"] %} 
 {%-        if not "[" in member["community"] %}
+{#         workaround of skipping range community from XR, such as [1000..1999] #}
         {{ member["community"] }}
 {%-        endif%}
 {%-      endfor %}
@@ -75,7 +77,7 @@ policy-options {
         }
 {%     else  %}
 {%       for term in policy["statements"] %}
-        term {{ loop.index * 10 }} {
+        term {{ term["name"] }} {
             from {
 {%         for cond in term["conditions"] %}
 {%           for key, value in cond.items() %}
@@ -89,6 +91,7 @@ policy-options {
 {%               elif value["match-type"] == "prefix-length-range" %}
                 route-filter {{ value["prefix"] }} prefix-length-range /{{ value["length"]["min"] }}-/{{ value["length"]["max"] }};
 {%               elif value["match-type"] == "upto" %}
+{#               workaround of parse error in "max" #}
                 route-filter {{ value["prefix"] }} upto /{{ value["length"]["max"] | regex_replace(',', '') }};
 {%               else %}
                 ERROR in route-filter
@@ -129,7 +132,7 @@ policy-options {
             }
         }
 {%       endfor %}
-
+{#       when default action is existed #}
 {%       if policy["default"]["actions"] | length != 0 %}
         then {
 {%         for action in policy["default"]["actions"] %}
