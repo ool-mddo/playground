@@ -14,47 +14,6 @@
       body_format: json
     register: topology
 
-  - name: search L3 network index
-    set_fact:
-      layer3index: "{{ l3_index }}"
-    when: item['network-id'] == "layer3"
-    loop: "{{ topology.json | json_query('*.network[]') }}"
-    loop_control:
-      index_var: l3_index
-
-  - name: generate iperf endpoint  static-route info
-    set_fact:
-       iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
-    vars:
-      query: '*.network[{{ layer3index }}].node[*]'
-    when: item["mddo-topology:l3-node-attributes"]["node-type"] == 'endpoint'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
-
-  - name: Creating clab-topo.yaml
-    copy:
-      dest: "{{ ansible_runner_dir }}/clab/static-route.yaml"
-      content: "{{ iperf_list | to_yaml }}"
-
-
-  - name: enable bgp license
-    shell:
-      cmd: "sudo containerlab exec --topo clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'"
-    args:
-      chdir: "{{ ansible_runner_dir }}/clab"
-
-
-  - name: setting eth1 & default routing
-    shell:
-      cmd: "{{ common }} {{cmd1}}; {{ common }} {{cmd2}}; {{ common }} {{cmd3}} "
-    args:
-      chdir: "{{ ansible_runner_dir }}/clab"
-    vars: 
-        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item['node-id'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
-        cmd1: 'ip addr add {{ item["ietf-network-topology:termination-point"][0]["mddo-topology:l3-termination-point-attributes"]["ip-address"][0] }} dev eth1 '
-        cmd2: "ip route del default via 172.20.20.1"
-        cmd3: 'ip route add default via {{ item["mddo-topology:l3-node-attributes"]["static-route"][0]["next-hop"] }}'
-    loop: "{{ iperf_list }}"
-    ignore_errors: True
 
   - name: generate iperf command parameter 
     shell:
@@ -86,7 +45,7 @@
 
   - name:  iperf client command
     debug:
-      msg: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K -u  -p {{ item.1.number }} > out_{{ item.0.node }}.log &"'
+      msg: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K  -p {{ item.1.number }} > out_{{ item.0.node }}.log &"'
     vars: 
         common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.1['source'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
     with_subelements:
@@ -95,7 +54,7 @@
 
   - name:  iperf client command
     shell:
-      cmd: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K -u  -p {{ item.1.number }} > out_{{ item.0.node }}.log 2>&1 &"'
+      cmd: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K  -p {{ item.1.number }} > out_{{ item.0.node }}.log 2>&1 &"'
     args:
       chdir: "{{ ansible_runner_dir }}/clab"
     vars: 

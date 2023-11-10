@@ -186,3 +186,36 @@
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
 
+    - name: enable bgp license
+      shell:
+        cmd: "sudo containerlab exec --topo clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'"
+      args:
+        chdir: "{{ ansible_runner_dir }}/clab"
+
+    - name: "get convert table"
+      uri:
+        url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology"
+        method: "GET"
+        body_format: json
+      register: topology
+
+    - name: search L3 network index
+      set_fact:
+        layer3index: "{{ l3_index }}"
+      when: item['network-id'] == "layer3"
+      loop: "{{ topology.json | json_query('*.network[]') }}"
+      loop_control:
+        index_var: l3_index
+
+    - name: generate iperf endpoint  static-route info
+      set_fact:
+         iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
+      vars:
+        query: '*.network[{{ layer3index }}].node[*]'
+      when: item["mddo-topology:l3-node-attributes"]["node-type"] == 'endpoint'
+      loop: "{{ topology.json | json_query(query) | flatten }}"
+
+    - name: import setup_iperf.yaml task
+      ansible.builtin.import_tasks: setup_iperf.yaml
+      when: iperf_list is defined
+
