@@ -61,6 +61,20 @@ protocols {
                 import pass-all;
                 export advertise-all-prefixes;
 {%     endif %}
+{%     if attrs["import-policy"] | length != 0 %}
+{%       if attrs["import-policy"] | length == 1 %}
+                import {{ attrs["import-policy"][0] }};
+{%       else %}
+                import [{% for name in attrs["import-policy"] %} {{ name }}{% endfor %} ];
+{%       endif %}
+{%     endif %}
+{%     if attrs["export-policy"] | length != 0 %}
+{%       if attrs["export-policy"] | length == 1 %}
+                export {{ attrs["export-policy"][0] }};
+{%       else %}
+                export [{% for name in attrs["export-policy"] %} {{ name }}{% endfor %} ];
+{%       endif %}
+{%     endif %}
             }
         }
 {%   endif %}
