@@ -5,42 +5,42 @@ protocols {
         }
 {% for peer in item["ietf-network-topology:termination-point"] %}
 {% set attrs = peer["mddo-topology:bgp-proc-termination-point-attributes"] %}
-{% if "mddo-topology:bgp-proc-termination-point-attributes" in peer and peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] != "" %}
+{%   if "mddo-topology:bgp-proc-termination-point-attributes" in peer and peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] != "" %}
         group {{ attrs["peer-group"] }} {
             family inet {
                 unicast;
             }
             peer-as {{ attrs["remote-as"] }};
             local-as {{ attrs["local-as"] }};
-{% if attrs["remote-as"] == attrs["local-as"] %}
+{%     if attrs["remote-as"] == attrs["local-as"] %}
             type internal;
-{% else %}
+{%     else %}
             type external;
-{% endif %}
+{%     endif %}
             hold-time {{ attrs["timer"]["hold-time"] }};
-{% for group_peer in item["ietf-network-topology:termination-point"] %}
-{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] and group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] == attrs["peer-group"] %}
+{%     for group_peer in item["ietf-network-topology:termination-point"] %}
+{%       if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] and group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] == attrs["peer-group"] %}
             neighbor {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"] }} {
                 local-address {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"] }};
-{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] | length != 0 %}
-{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] | length == 1 %}
+{%         if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] | length != 0 %}
+{%           if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] | length == 1 %}
                 import {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"][0] }};
-{% else %}
+{%           else %}
                 import [{% for name in group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] %} {{ name }}{% endfor %} ];
-{% endif %}
-{% endif %}
-{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] | length != 0 %}
-{% if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] | length == 1 %}
+{%           endif %}
+{%         endif %}
+{%         if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] | length != 0 %}
+{%           if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] | length == 1 %}
                 export {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"][0] }};
-{% else %}
+{%           else %}
                 export [{% for name in group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["export-policy"] %} {{ name }}{% endfor %} ];
-{% endif %}
-{% endif %}
+{%           endif %}
+{%         endif %}
             }
-{% endif %}
-{% endfor %}
+{%       endif %}
+{%     endfor %}
         }
-{% else %}
+{%   else %}
 {# if peer-group is not set, use remote-ip instead of it, because usually remote-ip is public-ip and it is unique #}
         group {{ attrs["remote-ip"] }} {
             family inet {
@@ -48,22 +48,36 @@ protocols {
             }
             peer-as {{ attrs["remote-as"] }};
             local-as {{ attrs["local-as"] }};
-{% if attrs["remote-as"] == attrs["local-as"] %}
+{%     if attrs["remote-as"] == attrs["local-as"] %}
             type internal;
-{% else %}
+{%     else %}
             type external;
-{% endif %}
+{%     endif %}
             hold-time {{ attrs["timer"]["hold-time"] }};
             neighbor {{ attrs["remote-ip"] }} {
                 local-address {{ attrs["local-ip"] }};
 {# insert default policies on external-AS routers, they don't have "peer-group", so only here #}
-{% if "ext-bgp-speaker" in item["mddo-topology:bgp-proc-node-attributes"]["flag"] %}
+{%     if "ext-bgp-speaker" in item["mddo-topology:bgp-proc-node-attributes"]["flag"] %}
                 import pass-all;
                 export advertise-all-prefixes;
-{% endif %}
+{%     endif %}
+{%     if attrs["import-policy"] | length != 0 %}
+{%       if attrs["import-policy"] | length == 1 %}
+                import {{ attrs["import-policy"][0] }};
+{%       else %}
+                import [{% for name in attrs["import-policy"] %} {{ name }}{% endfor %} ];
+{%       endif %}
+{%     endif %}
+{%     if attrs["export-policy"] | length != 0 %}
+{%       if attrs["export-policy"] | length == 1 %}
+                export {{ attrs["export-policy"][0] }};
+{%       else %}
+                export [{% for name in attrs["export-policy"] %} {{ name }}{% endfor %} ];
+{%       endif %}
+{%     endif %}
             }
         }
-{% endif %}
+{%   endif %}
 {% endfor %}
     }
 }

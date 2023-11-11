@@ -9,10 +9,9 @@
 ![mddo system architecture](fig/mddo_architecture.drawio.svg)
 
 > [!WARNING]
-> データはファイルとして管理されています。
->
+> - データはファイルとして管理されています。
 > - 複数人で同時利用することを想定していません (シングルユーザ利用のシステム)
-> - 同時に複数リクエストを並行して処理できない作りになっています (Batfishまわり: 後述)
+> - 同時に複数リクエストを並行して処理できない作りになっています (Batfishまわりの制約: 後述)
 
 ### ディレクトリ構成
 
@@ -21,10 +20,12 @@ Playground のディレクトリ構成と役割は以下のようになってい
 - `configs` (input) : 分析対象のコンフィグファイル(snapshots)
 - `queries` (output) : コンフィグファイルをBatfishに与えて必要な構成情報を抜き出したデータファイル(CSV)
 - `topologies`  (output) : queries の各種データファイルを元に構成したトポロジデータ
+- `ttp` (output) : Batfishでは処理できないコンフィグからのデータ抽出
 - `repos` : 各種ツール : 開発用に、playground から起動するコンテナにマウントする形になっています
     - [model-conductor](https://github.com/ool-mddo/model-conductor): 各種データ操作の実行用APIの提供
     - [netomox-exp](https://github.com/ool-mddo/netomox-exp): トポロジデータ管理 (`topologies` ディレクトリ)
     - [batfish-wrapper](https://github.com/ool-mddo/batfish-wrapper): BatfishへのAPI,コンフィグ管理とBatfishで得られた構成情報の管理 (`configs`, `queries` ディレクトリ)
+    - [bgp-policy-parser](https://github.com/ool-mddo/bgp-policy-parser): Batfishで処理できないBGPポリシ関連のデータ抽出と加工 (`ttp` ディレクトリ)
     - [netoviz](https://github.com/ool-mddo/netoviz): トポロジデータの可視化 (WebUI)
     - [fish-tracer](https://github.com/ool-mddo/fish-tracer): traceroute 実行・結果可視化 (WebUI)
 - `assets` : コンテナに直接マウントする設定ファイル等
