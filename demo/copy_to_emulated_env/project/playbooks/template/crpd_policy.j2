@@ -10,6 +10,12 @@ policy-options {
     policy-statement pass-all {
         then accept;
     }
+    policy-statement pass-all-lp200 {
+        then {
+            local-preference 200;
+            accept;
+        }
+    }
 }
 {% else %}
 policy-options {
