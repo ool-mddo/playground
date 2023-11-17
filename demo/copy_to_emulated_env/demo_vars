@@ -4,5 +4,12 @@ API_BRIDGE="playground_default"
 LOCALSERVER_USER=mddo
 PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
+
+# all steps: target network name
 NETWORK_NAME="biglobe_deform"
 NETWORK_INDEX="${NETWORK_NAME}_index.json"
+
+# step2.5, preffered peer parameter (use original_asis node/interface name)
+PREFERRED_NODE="edge-tk01"
+PREFERRED_INTERFACE="ge-0/0/3.0"
+EXTERNAL_ASN=65550
