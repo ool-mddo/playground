@@ -3,17 +3,18 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
-exec_parser="docker compose exec bgp-policy-parser"
-
-# copy config files from configs dir to ttp dir for bgp-policy-parser
-$exec_parser python collect_configs.py -n "$NETWORK_NAME"
-
+# bgp-policy data handling
 # parse configuration files with TTP
-$exec_parser python main.py -n "$NETWORK_NAME"
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{}' \
+  "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/parsed_result"
 
-# post bgp policy data to model-conductor to merge it to topology data
-$exec_parser python post_bgp_policies.py -n "$NETWORK_NAME"
+# post bgp policy data to model-conductor to merge it with topology data
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{}' \
+  "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/topology"
 
+# external-AS data handling
 BIGLOBE_NETWORK_PATTERN="^biglobe.*$"
 if [[ "$NETWORK_NAME" =~ $BIGLOBE_NETWORK_PATTERN ]]; then
   # generate external-AS topology
