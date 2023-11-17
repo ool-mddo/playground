@@ -33,20 +33,20 @@ EMULATE_PREFERRED_NODE=$(
 )
 EMULATE_PREFERRED_INTERFACE=$(
   curl -s -X POST -H 'Content-Type: application/json' \
-    -d "{ \"host_name\": \"${EMULATE_PREFERRED_NODE}\", \"if_name\": \"${PREFERRED_INTERFACE}\" }" \
+    -d "{ \"host_name\": \"${PREFERRED_NODE}\", \"if_name\": \"${PREFERRED_INTERFACE}\" }" \
     "http://${API_PROXY}/topologies/${NETWORK_NAME}/ns_convert_table/query" | jq -r .target_if.l3_model
 )
 
 # set preferred peer
 curl -s -X POST -H "Content-Type: application/json" \
-  -d "{ \"ext_asn\": ${EXTERNAL_ASN}, \"node\": \"${PREFERRED_NODE}\", \"interface\": \"${EMULATE_PREFERRED_INTERFACE}\" }" \
+  -d "{ \"ext_asn\": ${EXTERNAL_ASN}, \"node\": \"${EMULATE_PREFERRED_NODE}\", \"interface\": \"${EMULATE_PREFERRED_INTERFACE}\" }" \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/emulated_asis/topology/bgp_proc/preferred_peer" \
   > /dev/null # ignore echo-back (topology json)
 
 # configure iperf client/server
 if "${WITH_CLAB:-true}"; then
-    ansible-runner run . -p /data/project/playbooks/step2.5.yaml --container-option="--net=${API_BRIDGE}" \
-        --container-volume-mount="$PWD:/data" --container-image="${ANSIBLERUNNER_IMAGE}" \
-        --process-isolation --process-isolation-executable docker \
-        --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -k -K "
+  ansible-runner run . -p /data/project/playbooks/step2.5.yaml --container-option="--net=${API_BRIDGE}" \
+    --container-volume-mount="$PWD:/data" --container-image="${ANSIBLERUNNER_IMAGE}" \
+    --process-isolation --process-isolation-executable docker \
+    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -k -K "
 fi
