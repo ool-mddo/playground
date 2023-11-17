@@ -6,12 +6,12 @@ source ./demo_vars
 # bgp-policy data handling
 # parse configuration files with TTP
 curl -s -X POST -H "Content-Type: application/json" \
-  -d "{}" \
+  -d '{}' \
   "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/parsed_result"
 
-# post bgp policy data to model-conductor to merge it to topology data
+# post bgp policy data to model-conductor to merge it with topology data
 curl -s -X POST -H "Content-Type: application/json" \
-  -d "{}" \
+  -d '{}' \
   "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/topology"
 
 # external-AS data handling
