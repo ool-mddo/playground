@@ -20,6 +20,9 @@ protocols {
             hold-time {{ attrs["timer"]["hold-time"] }};
 {%     for group_peer in item["ietf-network-topology:termination-point"] %}
 {%       if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] and group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["peer-group"] == attrs["peer-group"] %}
+{%          if  group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["route-reflector-client"] %}
+            cluster {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["cluster-id"] }};
+{%          endif %}
             neighbor {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"] }} {
                 local-address {{ group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"] }};
 {%         if group_peer["mddo-topology:bgp-proc-termination-point-attributes"]["import-policy"] | length != 0 %}
@@ -54,6 +57,9 @@ protocols {
             type external;
 {%     endif %}
             hold-time {{ attrs["timer"]["hold-time"] }};
+{%          if attrs["route-reflector-client"] %}
+            cluster {{ attrs["cluster-id"] }};
+{%          endif %}
             neighbor {{ attrs["remote-ip"] }} {
                 local-address {{ attrs["local-ip"] }};
 {# insert default policies on external-AS routers, they don't have "peer-group", so only here #}
