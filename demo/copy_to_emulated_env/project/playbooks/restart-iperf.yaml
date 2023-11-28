@@ -1,0 +1,104 @@
+---
+- hosts: docker-host
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_user: "{{ login_user}}"
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:  
+  - name: deploy containerlab
+    shell:
+      cmd: "containerlab deploy --topo clab-topo.yaml --reconfigure"
+    args:
+      chdir: "{{ ansible_runner_dir }}/clab"
+
+  - name: enable bgp license
+    shell:
+      cmd: "sudo containerlab exec --topo clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'"
+    args:
+      chdir: "{{ ansible_runner_dir }}/clab"
+
+  - name: "get convert table"
+    uri:
+      url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology"
+      method: "GET"
+      body_format: json
+    register: topology
+
+  - name: search L3 network index
+    set_fact:
+      layer3index: "{{ l3_index }}"
+    when: item['network-id'] == "layer3"
+    loop: "{{ topology.json | json_query('*.network[]') }}"
+    loop_control:
+      index_var: l3_index
+
+  - name: generate iperf endpoint  static-route info
+    set_fact:
+       iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
+    vars:
+      query: '*.network[{{ layer3index }}].node[*]'
+    when: item["mddo-topology:l3-node-attributes"]["node-type"] == 'endpoint'
+    loop: "{{ topology.json | json_query(query) | flatten }}"
+
+  - name: import setup_iperf.yaml task
+    ansible.builtin.import_tasks: setup_iperf.yaml
+    when: iperf_list is defined
+
+
+  - name: "get convert table"
+    uri:
+      url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology"
+      method: "GET"
+      body_format: json
+    register: topology
+
+
+  - name: generate iperf command parameter 
+    shell:
+      cmd: "python3 generate_iperf_command.py clab/flowdata.csv clab/static-route.yaml > project/playbooks/configs/iperf_params.json"
+    args:
+      chdir: "{{ ansible_runner_dir }}"
+
+
+  - name:  iperf server command
+    debug:
+      msg: '{{ common }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.number }} > out_{{ item.1.number }}.log &"'
+    vars: 
+        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.0['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+    with_subelements:
+         - "{{ lookup('file', './configs/iperf_params.json') }}"
+         - port
+
+  - name:  iperf server command
+    shell:
+     cmd: '{{ common }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.number }} > out_{{ item.1.number }}.log 2>&1 &"'
+    args:
+      chdir: "{{ ansible_runner_dir }}/clab"
+    vars: 
+        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.0['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+    with_subelements:
+         - "{{ lookup('file', './configs/iperf_params.json') }}"
+         - port
+
+
+  - name:  iperf client command
+    debug:
+      msg: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K  -p {{ item.1.number }} > out_{{ item.0.node }}.log &"'
+    vars: 
+        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.1['source'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+    with_subelements:
+         - "{{ lookup('file', './configs/iperf_params.json') }}"
+         - port
+
+  - name:  iperf client command
+    shell:
+      cmd: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K  -p {{ item.1.number }} > out_{{ item.0.node }}.log 2>&1 &"'
+    args:
+      chdir: "{{ ansible_runner_dir }}/clab"
+    vars: 
+        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.1['source'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+    with_subelements:
+         - "{{ lookup('file', './configs/iperf_params.json') }}"
+         - port
