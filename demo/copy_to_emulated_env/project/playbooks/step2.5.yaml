@@ -17,7 +17,7 @@
 
   - name: generate iperf command parameter 
     shell:
-      cmd: "python3 generate_iperf_command.py clab/flowdata.csv clab/static-route.yaml > project/playbooks/configs/iperf_params.json"
+      cmd: "python3 generate_iperf_command.py {{ playground_dir }}/configs/{{ network_name }}/original_asis/flowdata/flowdata.csv clab/static-route.yaml > project/playbooks/configs/iperf_params.json"
     args:
       chdir: "{{ ansible_runner_dir }}"
 
