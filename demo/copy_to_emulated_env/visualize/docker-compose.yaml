@@ -1,0 +1,69 @@
+services:
+  grafana:
+    image: grafana/grafana-oss:10.0.3
+    container_name: grafana
+    ports:
+      - target: 3000
+        published: 80
+    volumes:
+        # Grafanaの設定ファイル
+      - type: bind
+        source: ./servers/grafana/grafana.ini
+        target: /etc/grafana/grafana.ini
+        # データソースのprovisioning
+      - type: bind
+        source: ./servers/grafana/datasources
+        target: /etc/grafana/provisioning/datasources
+        # ダッシュボードのprovisioning
+      - type: bind
+        source: ./servers/grafana/dashboards
+        target: /etc/grafana/provisioning/dashboards
+        # データの永続化
+#      - type: volume
+#        source: grafana-data
+#        target: /var/lib/grafana
+    restart: always
+    logging:
+      options:
+        max-size: 50m
+
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    container_name: prometheus
+    ports:
+      - target: 9090
+        published: 9090
+    volumes:
+        # ./prometheus配下に存在する設定ファイルのマウント
+      - type: bind
+        source: ./prometheus/
+        target: /etc/prometheus/
+        # 収集したデータの永続化用volume
+#      - type: volume
+#        source: prometheus-data
+#        target: /prometheus
+    command:
+        # コンフィグファイルのパスの指定
+      - --config.file=/etc/prometheus/prometheus.yaml
+    restart: always
+    logging:
+      options:
+        max-size: 50m
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.38.6
+    container_name: cadvisor
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    depends_on:
+    - redis
+  redis:
+    image: redis:7.0.12
+    container_name: redis
+
+volumes:
+  prometheus-data:
+  grafana-data:
