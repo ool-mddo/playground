@@ -8,15 +8,18 @@ services:
     volumes:
         # Grafanaの設定ファイル
       - type: bind
-        source: ./servers/grafana/grafana.ini
+        source: ./grafana/grafana.ini
+        #source: ./servers/grafana/grafana.ini
         target: /etc/grafana/grafana.ini
         # データソースのprovisioning
       - type: bind
-        source: ./servers/grafana/datasources
+        source: ./grafana/datasources
+        #source: ./servers/grafana/datasources
         target: /etc/grafana/provisioning/datasources
         # ダッシュボードのprovisioning
       - type: bind
-        source: ./servers/grafana/dashboards
+        source: ./grafana/dashboards
+        #source: ./servers/grafana/dashboards
         target: /etc/grafana/provisioning/dashboards
         # データの永続化
 #      - type: volume
@@ -67,3 +70,8 @@ services:
 volumes:
   prometheus-data:
   grafana-data:
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 192.168.255.0/24          
