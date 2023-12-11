@@ -140,7 +140,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\".*edge.*\",interface=~\"eth.+\"}[$__interval]) * 8 ",
+          "expr": "sum (irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\".*edge.*\",interface=~\"eth.+\"}[$__interval]) * 8 ) by (name, interface)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}}: {{interface}}-in",
