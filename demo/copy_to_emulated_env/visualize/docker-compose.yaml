@@ -4,7 +4,7 @@ services:
     container_name: grafana
     ports:
       - target: 3000
-        published: 80
+        published: 23000
     volumes:
         # Grafanaの設定ファイル
       - type: bind
