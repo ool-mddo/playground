@@ -112,3 +112,8 @@ services:
       - ./repos/fish-tracer/store:/fish-tracer/store
     depends_on:
       - batfish-wrapper
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.16.254.0/24       

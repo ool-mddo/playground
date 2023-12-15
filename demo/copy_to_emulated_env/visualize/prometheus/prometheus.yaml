@@ -1,0 +1,7 @@
+scrape_configs:
+  - job_name: cadvisor
+    # 5秒間隔でcAdvisorからメトリクスを取得する
+    scrape_interval: 5s
+    static_configs:
+    - targets:
+      - cadvisor:8080
