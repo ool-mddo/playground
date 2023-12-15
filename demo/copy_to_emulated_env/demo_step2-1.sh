@@ -32,7 +32,7 @@ curl -s -X POST -H 'Content-Type: application/json' \
 
 # generate emulated asis configs from emulated asis topology
 if "${WITH_CLAB:-true}"; then
-  ansible-runner run . -p /data/project/playbooks/step2.yaml --container-option="--net=${API_BRIDGE}" \
+  ansible-runner run . -p /data/project/playbooks/step2-1.yaml --container-option="--net=${API_BRIDGE}" \
     --container-volume-mount="$PWD:/data" --container-image="${ANSIBLERUNNER_IMAGE}" \
     --process-isolation --process-isolation-executable docker \
     --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -k -K "
