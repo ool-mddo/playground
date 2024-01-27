@@ -18,6 +18,8 @@
 * [リンクダウンシミュレーション](./demo/linkdown_simulation/README.md)
   * [大規模ネットワークのシミュレーション性能調査](./demo/multi_region_expr/README.md)
 * [実環境をコンテナベースの検証環境にコピーして検証可能にする](./demo/copy_to_emulated_env/README.md)
+  * [セグメント移転](./demo/copy_to_emulated_env/doc/move_seg/introduction.md)
+  * [PNIユースケース](./demo/copy_to_emulated_env/doc/pni/introduction.md)
 
 ## Reference
 
@@ -52,3 +54,11 @@
   * [ネットワーク設定の抽象化とコンテナルータを用いた検証環境の立ち上げ支援](https://speakerdeck.com/tjmtrhs/ntt-tech-conf-2023)
 * JANOG 52 Meeting (2023/07/05-07)
   * [コンテナルータをルータ単体として使う: 野良BoF](https://drive.google.com/file/d/1qmufTTErWtO9Ll_sV-7mmQ7ynF7djMY2/view)
+
+### FY2023
+* 第 16 回 インターネットと運用技術シンポジウム (IOTS 2023) (2023/12/07-08)
+  * ポスターセッション: [本番機器設定ファイルからBGP設定を含むモデルを抽出する仮想検証環境構築方法の検討](http://id.nii.ac.jp/1001/00231069/)
+* Okinawa Open Days 2023 (2023/12/05-07)
+  * [ISPネットワークのモデルベース再現とBGP運用シミュレーション](https://www.okinawaopendays.com/post/hiroshimaeno)
+* JANOG 53 Meeting (2024/01/17-19)
+  * [BIGLOBE AS2518をまるごと仮想環境へ”コピー”してみた - JANOG53 Meeting in Hakata](https://www.janog.gr.jp/meeting/janog53/as2518/)
