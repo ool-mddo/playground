@@ -19,7 +19,7 @@ sudo clab inspect --all
 ```
 
 ```
-mddo@mddosrv03:~/playground/demo/copy_to_emulated_env$ sudo clab inspect --all
+playground/demo/copy_to_emulated_env$ sudo clab inspect --all
 +----+---------------------+----------+---------------------------------+--------------+---------------------------------+--------------+---------+-----------------+-----------------------+
 | #  |      Topo Path      | Lab Name |              Name               | Container ID |              Image              |     Kind     |  State  |  IPv4 Address   |     IPv6 Address      |
 +----+---------------------+----------+---------------------------------+--------------+---------------------------------+--------------+---------+-----------------+-----------------------+
@@ -74,7 +74,7 @@ cat clab/flowdata.csv
 ```
 
 ```
-mddo@mddosrv03:~/playground/demo/copy_to_emulated_env$ cat clab/flowdata.csv
+playground/demo/copy_to_emulated_env$ cat clab/flowdata.csv
 source,dest,rate
 10.0.1.0/24,10.100.0.0/16,2301.98
 10.0.1.0/24,10.110.0.0/20,1076.84
@@ -125,8 +125,8 @@ source,dest,rate
 
 通常時のPeakトラフィックのFlowDataを所定ファイルパスへコピーする
 
-```python
-mddo@mddosrv03:~/playground/demo/copy_to_emulated_env$ cp clab/before_flowdata.csv clab/flowdata.csv
+```
+playground/demo/copy_to_emulated_env$ cp clab/before_flowdata.csv clab/flowdata.csv
 ```
 
 主に endpoint (iperf node) の設定変更とトラフィック生成(iperfの設定と起動)を行います。

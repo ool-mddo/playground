@@ -37,7 +37,7 @@ docker compose ps
 ```
 
 ```
-mddo@mddosrv03:~/playground/demo/copy_to_emulated_env/visualize$ docker compose ps
+playground/demo/copy_to_emulated_env/visualize$ docker compose ps
 NAME                IMAGE                             COMMAND                  SERVICE             CREATED             STATUS                PORTS
 cadvisor            gcr.io/cadvisor/cadvisor:latest   "/usr/bin/cadvisor -…"   cadvisor            8 days ago          Up 8 days (healthy)   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp
 grafana             grafana/grafana-oss:latest        "/run.sh"                grafana             8 days ago          Up 8 days             0.0.0.0:23000->3000/tcp, :::23000->3000/tcp
@@ -54,7 +54,7 @@ ls ~/playground/configs/biglobe_deform/original_asis/configs/
 ```
 
 ```
-mddo@mddosrv03:~/playground/demo/copy_to_emulated_env$ ls ~/playground/configs/biglobe_deform/original_asis/configs/
+playground/demo/copy_to_emulated_env$ ls ~/playground/configs/biglobe_deform/original_asis/configs/
 Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
 ```
 

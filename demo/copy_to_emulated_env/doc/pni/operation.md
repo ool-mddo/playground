@@ -4,16 +4,21 @@
 
 ## Event Trafficを発生させる
 
-テスト用のEvent発生想定したFlowDataを所定ファイルへコピーする
+自ASでどこからどれくらいのトラフィックが流れているか確認するため、表示を edge-tk0[1-3]に変更します。
 
-```bash
-mddo@mddosrv03:~/playground/demo/copy_to_emulated_env$ cp clab/event_flowdata.csv clab/flowdata.csv
+![grafana select node 2](../fig/grafana_select_node2.png)
+
+
+テスト用のEvent発生想定したFlowDataを所定ファイルへコピーします。
+
+```
+playground/demo/copy_to_emulated_env$ cp clab/event_flowdata.csv clab/flowdata.csv
 ```
 
 iperf処理の再起動を行い、EventFlowDataにのっとってiperfの帯域を指定して付加トラフィックを発生させる
 
-```bash
-mddo@mddosrv03:~/playground/demo/copy_to_emulated_env$ bash demo_restart-iperf.sh
+```
+playground/demo/copy_to_emulated_env$ bash demo_restart-iperf.sh
 ```
 
 ## 経路コントロール操作

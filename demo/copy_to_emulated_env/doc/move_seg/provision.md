@@ -22,7 +22,7 @@
 - ssh するサーバのIPアドレスを `inventory/hosts` ファイルに定義します。
     - ここでは、デモシステムとEmulated環境は同一のサーバ上で動作するものとしています。そのためターゲットは localhost になります。この条件であれば変更は不要です。
 
-![system_stack.drawio.png](../../../doc/fig/system_stack.drawio.png)
+![system_stack.drawio.png](../../../../doc/fig/system_stack.drawio.png)
 
 ### 環境変数ファイルの作成
 
