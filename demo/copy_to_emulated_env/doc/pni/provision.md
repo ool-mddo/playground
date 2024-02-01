@@ -5,6 +5,11 @@
 - `playground` リポジトリのタグは `v1.5.2` を選択してください
 - デモシステムを起動してください ( `docker compose up` )
 
+> [!NOTE]
+> PNIユースケースはセグメント移転ユースケースのシナリオを拡張する形で構築されています。
+> - セグメント移転ユースケースの[環境構築](../move_seg/provision.md)についても参照してください。
+> - Step1,2 などの手順は共通です。(PNIユースケースはいまのところ step1-2 までの実装です。まだ step3-4 については対応できていません)
+
 PNIユースケースでは、ネットワーク = biglobe_deform, スナップショット = original_asis, emulated_asis がベースになります。
 
 - 実際のコンフィグ類: `playground/configs/biglobe_deform`
@@ -79,13 +84,9 @@ Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
     - `PREFERRED_NODE` , `PREFERRED_INTERFACE` , `EXTERNAL_ASN` : step2.5 で解説します。
         - step2.5以降で使用する変数なのでそこまでは未設定でも問題ありません
 
+`demo_vars` ファイル
 ```bash
-ANSIBLERUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v3.0.0"
-API_PROXY="localhost:15000"
-API_BRIDGE="playground_default"
-LOCALSERVER_USER=mddo
-PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
-ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
+(省略)
 
 # all steps: target network name
 NETWORK_NAME="biglobe_deform"
