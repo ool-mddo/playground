@@ -18,8 +18,8 @@ original_asis トポロジデータを生成します。
 - `bgp_proc` レイヤでは bgp policy 関連情報がまだとれていません
     - bgp policy データは batfish ではなく異なるパーサー(bgp-policy-parser) からデータを取得して次のステップ(step1-2)で追加します
 
-![layers](../fig/step11_layers.png)
-![bgp_proc layer](../fig/step11_bgp_proc.png)
+![layers](fig/step11_layers.png)
+![bgp_proc layer](fig/step11_bgp_proc.png)
 
 ## Step1-2: As-Is 現状モデルの拡張
 
@@ -34,5 +34,5 @@ PNIユースケース実行のためにoriginal_asis トポロジデータを拡
   - `bgp_proc` , `layer3` レイヤに外部ASトポロジの情報を追加
 - `bgp_proc` レイヤに bgp policy 関連情報を追加
 
-![layers](../fig/step12_layers.png)
-![bgp_proc layer](../fig/step12_bgp_proc.png)
+![layers](fig/step12_layers.png)
+![bgp_proc layer](fig/step12_bgp_proc.png)

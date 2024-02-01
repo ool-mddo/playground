@@ -13,7 +13,7 @@ As-is ネットワークには問題があり、Emulated環境で修正を加え
 
 Netovizでemulated As-IS/To-Beトポロジーの差分が確認できます
 
-![diff_asis_tobe](../fig/diff_asis_tobe.png)
+![diff_asis_tobe](fig/diff_asis_tobe.png)
 
 また、CLIでもemulated As-Is/To-Beトポロジーの差分が確認できます
 

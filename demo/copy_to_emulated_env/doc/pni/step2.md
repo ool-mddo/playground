@@ -103,23 +103,23 @@ source,dest,rate
 - user: `admin`
 - pass: `mddo`
 
-![grafana login](../fig/grafana_login.png)
+![grafana login](fig/grafana_login.png)
 
 ハンバーガーメニューから [Dashboards]
 
-![grafana dashboard 1](../fig/grafana_dashboard1.png)
+![grafana dashboard 1](fig/grafana_dashboard1.png)
 
 [General] - [ool-mddo]
 
-![grafana dashboard 2](../fig/grafana_dashboard2.png)
+![grafana dashboard 2](fig/grafana_dashboard2.png)
 
 最初は生成されるトラフィックを確認するため、endpoint01-iperf[1-4] を選択しておきます。
 
-![grafana node selection](../fig/grafana_select_node.png)
+![grafana node selection](fig/grafana_select_node.png)
 
 表示時間(”Last N minultes”)・データ更新間隔は適宜設定してください。
 
-![grafana update interval](../fig/grafana_interval.png)
+![grafana update interval](fig/grafana_interval.png)
 
 ### 仮想環境の再構成
 
@@ -137,4 +137,4 @@ playground/demo/copy_to_emulated_env$ cp clab/before_flowdata.csv clab/flowdata.
 
 実行後少し待つと以下の用のトラフィックが流れていることが確認できます。
 
-![grafana initial traffic](../fig/grafana_initial_traffic.png)
+![grafana initial traffic](fig/grafana_initial_traffic.png)

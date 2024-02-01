@@ -6,7 +6,7 @@
 
 自ASでどこからどれくらいのトラフィックが流れているか確認するため、表示を edge-tk0[1-3]に変更します。
 
-![grafana select node 2](../fig/grafana_select_node2.png)
+![grafana select node 2](fig/grafana_select_node2.png)
 
 
 テスト用のEvent発生想定したFlowDataを所定ファイルへコピーします。
@@ -72,5 +72,5 @@ commit
 
 → 追加で迂回対象のprefix を増やす…狙った流量になった
 
-![operation traffic](../fig/grafana_operation_traffic.png)
+![operation traffic](fig/grafana_operation_traffic.png)
 
