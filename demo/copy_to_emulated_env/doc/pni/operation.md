@@ -11,14 +11,15 @@
 
 テスト用のEvent発生想定したFlowDataを所定ファイルへコピーします。
 
-```
-playground/demo/copy_to_emulated_env$ cp clab/event_flowdata.csv clab/flowdata.csv
+```bash
+# playground/demo/copy_to_emulated_env
+cp clab/event_flowdata.csv clab/flowdata.csv
 ```
 
 iperf処理の再起動を行い、EventFlowDataにのっとってiperfの帯域を指定して付加トラフィックを発生させる
 
-```
-playground/demo/copy_to_emulated_env$ bash demo_restart-iperf.sh
+```bash
+bash demo_restart-iperf.sh
 ```
 
 ## 経路コントロール操作

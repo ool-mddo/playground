@@ -30,7 +30,7 @@ cd playground/demo/copy_to_emulated_env/
 デモ用のGrafanaを起動します。
 
 ```bash
-# playground/demo/copy_to_emulated_env/visualize
+# playground/demo/copy_to_emulated_env
 cd visualize
 docker compose up -d
 ```
@@ -55,9 +55,8 @@ redis               redis:latest                      "docker-entrypoint.s…"  
 インプットになる(NW機器コンフィグ)を確認します。
 
 ```bash
-ls ~/playground/configs/biglobe_deform/original_asis/configs/
+ls playground/configs/biglobe_deform/original_asis/configs/
 ```
-
 ```
 playground/demo/copy_to_emulated_env$ ls ~/playground/configs/biglobe_deform/original_asis/configs/
 Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01

@@ -56,7 +56,7 @@ Step2の段階では仮想環境(emulated env)を起動しただけで、まだ�
 - `EXTERNAL_ASN` : 対向(外部)AS番号
 
 ```bash
-# step2.5, preffered peer parameter (use original_asis node/interface name)
+# step2-2, preferred peer parameter (use original_asis node/interface name)
 PREFERRED_NODE="edge-tk01"
 PREFERRED_INTERFACE="ge-0/0/3.0"
 EXTERNAL_ASN=65550
@@ -72,7 +72,6 @@ clab/flowdata.csv に生成するトラフィックの情報を記入します�
 ```bash
 cat clab/flowdata.csv
 ```
-
 ```
 playground/demo/copy_to_emulated_env$ cat clab/flowdata.csv
 source,dest,rate
@@ -125,8 +124,8 @@ source,dest,rate
 
 通常時のPeakトラフィックのFlowDataを所定ファイルパスへコピーする
 
-```
-playground/demo/copy_to_emulated_env$ cp clab/before_flowdata.csv clab/flowdata.csv
+```bash
+cp clab/before_flowdata.csv clab/flowdata.csv
 ```
 
 主に endpoint (iperf node) の設定変更とトラフィック生成(iperfの設定と起動)を行います。

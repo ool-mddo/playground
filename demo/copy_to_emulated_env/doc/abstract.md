@@ -43,5 +43,5 @@ ref. [プロジェクトの位置づけ](../../../doc/project_positioning.md)
 ![translate](./fig/translate.png)
 
 # デモ
-* [セグメント移転](move_seg/introduction.md)
+* [セグメント移転ユースケース](move_seg/introduction.md)
 * [PNIユースケース](pni/introduction.md)
