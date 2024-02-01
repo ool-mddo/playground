@@ -285,4 +285,4 @@ MDDO PJにて動作確認できているバージョンは `junos-routing-crpd-a
 
 ### Juniper cRPDのライセンス適用
 
-cRPDコンテナ起動後にライセンスを適用する必要があります。詳細については [copy to emulated env, step②](../demo/copy_to_emulated_env/doc/step1-2.md)を参照してください。
+cRPDコンテナ起動後にライセンスを適用する必要があります。詳細については [copy to emulated env, step②](../demo/copy_to_emulated_env/doc/move_seg/step1-2.md)を参照してください。
