@@ -44,6 +44,7 @@ As-is/To-be * Original/Emulated で4つの象限があります。作業ステ�
 ![demo_tools](../fig/demo_tools.png)
 
 ## デモ詳細
+- [環境準備](./provision.md)
 * [Step1-2](./step1-2.md)
 * [Step3-4](./step3-4.md)
 * [デモ結果](./result.md)

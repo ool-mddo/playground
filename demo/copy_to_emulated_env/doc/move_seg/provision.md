@@ -1,11 +1,11 @@
 # 環境準備
 
-環境設定については[デモ環境構築](../../../doc/provision.md)を参照してください。
+環境設定については[デモ環境構築](../../../../doc/provision.md)を参照してください。
 
 - `playground` リポジトリのタグは `v1.0.0` を選択してください
 - デモシステムを起動してください ( `docker compose up` )
 
-Copy to emulated env デモでは、セグメント移転ユースケースについて扱います。ネットワーク = mddo-ospf, スナップショット = original_asis, emulated_asis, emulated_tobe がベースになります。
+セグメント移転ユースケースでは、ネットワーク = mddo-ospf, スナップショット = original_asis, emulated_asis, emulated_tobe がベースになります。
 
 - 実際のコンフィグ類: `playground/configs/mddo-ospf`
 - コンフィグリポジトリ: [ool-mddo/mddo-ospf](https://github.com/ool-mddo/mddo-ospf)

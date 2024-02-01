@@ -9,7 +9,7 @@
     * [デモ: step1-2](./doc/step1-2.md)
     * [デモ: step3-4](./doc/step3-4.md)
     * [デモ結果](./doc/result.md)
-  * [PNIユースケース](./doc/move_seg/introduction.md)
+  * [PNIユースケース](./doc/pni/introduction.md)
 
 ## Related info
 
