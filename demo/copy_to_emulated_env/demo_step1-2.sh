@@ -3,6 +3,8 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
+python3 ./generate.py ${NETWORK_NAME} ${SOURCE_AS} ${DEST_AS} "100.0.0.0/8"
+
 # bgp-policy data handling
 # parse configuration files with TTP
 curl -s -X POST -H "Content-Type: application/json" \
