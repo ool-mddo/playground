@@ -20,4 +20,7 @@ $ sudo docker compose up -d
 | Grafana | 23000 |
 | Prometheus | 9090 |
 
-GrafanaとPrometheusのコンテナが起動したら23000番ポートにブラウザでアクセスすることで、トラフィック量可視化のダッシュボードを閲覧できます。
+GrafanaとPrometheusのコンテナが起動したら上記のGrafanaのポートにブラウザでアクセスすることで、トラフィック量可視化のダッシュボードを閲覧できます。
+
+# 可視化の目的
+このダッシュボードは[JANOG53で発表](https://www.janog.gr.jp/meeting/janog53/as2518/)したユースケースでの使用を想定して作成されています。
