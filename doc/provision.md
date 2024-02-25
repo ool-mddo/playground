@@ -15,6 +15,9 @@
 >
 > デモシステムはスクリプト ([ool-mddo/playground リポジトリ](https://github.com/ool-mddo/playground)) とコンテナイメージで提供されています。
 
+> [!NOTE]
+> [実環境コピー](../demo/copy_to_emulated_env/README.md) デモで使用する grafana/prometheus についてはデモシステムとは別環境として起動します。詳細は[トラフィック可視化](../demo/copy_to_emulated_env/visualize/README.md)ドキュメントを参照してください。
+
 # デモシステムのセットアップ(デモ共通)
 
 ## GithubアカウントとPATの準備
