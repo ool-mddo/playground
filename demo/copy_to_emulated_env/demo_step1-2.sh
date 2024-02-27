@@ -18,7 +18,7 @@ curl -s -X POST -H "Content-Type: application/json" \
   "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/topology"
 
 # external-AS data handling
-BIGLOBE_NETWORK_PATTERN="^biglobe.*$"
+BIGLOBE_NETWORK_PATTERN="^mddo.*$"
 if [[ "$NETWORK_NAME" =~ $BIGLOBE_NETWORK_PATTERN ]]; then
   # generate external-AS topology
   external_as_json="${NETWORK_NAME}_ext.json"
