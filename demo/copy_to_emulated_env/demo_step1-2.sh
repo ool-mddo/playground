@@ -3,7 +3,8 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
-python3 ./generate.py ${NETWORK_NAME} ${SOURCE_AS} ${DEST_AS} "100.0.0.0/8"
+python3 ./generate.py ${NETWORK_NAME} ${SOURCE_AS} ${DEST_AS} "169.254.0.0/16" ${PREFERRED_NODE} ${REDUNDANT_NODE}
+#python3 ./generate.py ${NETWORK_NAME} ${SOURCE_AS} ${DEST_AS} "100.0.0.0/8"
 
 # bgp-policy data handling
 # parse configuration files with TTP
@@ -28,3 +29,6 @@ if [[ "$NETWORK_NAME" =~ $BIGLOBE_NETWORK_PATTERN ]]; then
     "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/splice_topology" \
     > /dev/null # ignore echo-back (topology json)
 fi
+
+
+

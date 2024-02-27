@@ -9,19 +9,24 @@ import sys
 args = sys.argv
 
 network_name = args[1]
-srcAS = args[2]
-dstAS = args[3]
+src_as = args[2]
+dst_as = args[3]
 subnet = args[4]
+preferred_node = args[5]
+redundant_node = args[6]
 
 externaldata = []
-flowdata_file = "../../configs/" + str(network_name) + "/original_asis/flowdata/flowdata.csv"
-except_file = "../../configs/" + str(network_name) + "/original_asis/external_as_topology/except.csv"
-addl3_file = "../../configs/" + str(network_name) + "/original_asis/external_as_topology/addl3.csv"
+flowdata_file = "../../configs/" + \
+    str(network_name) + "/original_asis/flowdata/flowdata.csv"
+except_file = "../../configs/" + \
+    str(network_name) + "/original_asis/external_as_topology/except.csv"
+addl3_file = "../../configs/" + \
+    str(network_name) + "/original_asis/external_as_topology/addl3.csv"
 tempinstance = ""
 srccommand = "curl http://localhost:15000/topologies/" + network_name + \
-    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + srcAS + ")' | jq -s '.'"
+    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + src_as + ")' | jq -s '.'"
 dstcommand = "curl http://localhost:15000/topologies/" + network_name + \
-    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + dstAS + ")' | jq -s '.'"
+    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + dst_as + ")' | jq -s '.'"
 localascommand = "curl http://localhost:15000/topologies/" + network_name + \
     "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[]' | jq -s '.'"
 layer3command = "curl http://localhost:15000/topologies/" + network_name + \
@@ -136,6 +141,9 @@ def register_bgp_proc(nws)
         term_point 'peer_{{ item["remoteaddress"] }}' do
           support %w[layer3 {{ node["instancename"] }}  {{ item["ifname"] }}]
           attribute(
+{%-        if "true" in item["attribute"]["preferredFlag"]|string() %}
+            flags: %w[ext-bgp-speaker-preferred],
+{%-        endif %}
             local_as: {{ localas[:-3] }}_{{ localas[-3:] }},
             local_ip: '{{ item["address"] }}',
             remote_as: {{ remoteas[:-3] }}_{{ remoteas[-3:] }},
@@ -157,9 +165,104 @@ def register_bgp_proc(nws)
 end
 """
 
-def ebgpnode(externaldata, topologydata, layer3topology, addl3list):
+jinja_bgp_as = """
+# frozen_string_literal: true
+def register_bgp_as(nws)
+  nws.register do
+    network 'bgp_as' do
+      type Netomox::NWTYPE_MDDO_BGP_AS
+      support 'bgp_proc'
+
+      # self
+{%- set localas = localtopology[0]["ietf-network-topology:termination-point"][0]["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"] | string() %}
+      node 'as{{ localas }}' do
+        attribute({ as_number: {{ localas[:-3] }}_{{ localas[-3:] }} })
+        # supporting nodes and term-points will be generated from original-asis configs
+{%- for node in localtopology %}
+{%-   for tp in node["ietf-network-topology:termination-point"] %}
+{%-     if  src_as|int == tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]|int %}
+{%-       if not tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"]|string() in exceptlist|string() and not tp["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"]|string() in addl3list|string() %}
+        term_point '{{ tp["tp-id"] }}' do
+          attribute({ description: 'from TBD to TBD' })
+          support %w[bgp_proc {{ node["mddo-topology:bgp-proc-node-attributes"]["router-id"] }} {{ tp["tp-id"] }} ]
+        end
+{%-       endif %}        
+{%-     elif dst_as|int == tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]|int %}
+{%-       if not tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"]|string() in exceptlist|string() and not tp["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"]|string() in addl3list|string() %}
+        term_point '{{ tp["tp-id"] }}' do
+          attribute({ description: 'from TBD to TBD' })
+          support %w[bgp_proc {{ node["mddo-topology:bgp-proc-node-attributes"]["router-id"] }} {{ tp["tp-id"] }} ]
+        end
+{%-       endif %}        
+{%-     endif %}
+{%-   endfor %}
+{%- endfor %}
+      end
+      node 'as{{ src_as }}' do
+        attribute({ as_number: {{ src_as[:-3] }}_{{ src_as[-3:] }} })
+{%- for node in externaldata %}
+{%-   if "router" in node["instancetype"] and node["attribute"]["localas"]|int ==  src_as|int%}
+{%-     for tp in node["iflist"] %} 
+{%-       if   tp["attribute"]["remoteas"]|int == localas|int and not "direct" == tp["protocol"] %}        
+        support %w[bgp_proc {{ node["instancename"] }}]
+        term_point 'peer_{{ tp["remoteaddress"] }}' do
+          attribute({ description: 'from TBD to TBD' })
+          support %w[bgp_proc {{ node["instancename"] }} peer_{{ tp["remoteaddress"] }} ]
+        end
+{%-       endif %}
+{%-     endfor %}
+{%-   endif %}
+{%- endfor %}
+      end
+      node 'as{{ dst_as }}' do
+        attribute({ as_number: {{ dst_as[:-3] }}_{{ dst_as[-3:] }} })
+{%- for node in externaldata %}        
+{%-   if "router" in node["instancetype"] and node["attribute"]["localas"]|int ==  dst_as|int%}
+{%-     for tp in node["iflist"] %}        
+{%-       if tp["attribute"]["remoteas"]|int == localas|int  and not "direct" == tp["protocol"] %}        
+        support %w[bgp_proc {{ node["instancename"] }}]
+        term_point 'peer_{{ tp["remoteaddress"] }}' do
+          attribute({ description: 'from TBD to TBD' })
+          support %w[bgp_proc {{ node["instancename"] }} peer_{{ tp["remoteaddress"] }} ]
+        end
+{%-       endif %}
+{%-     endfor %}
+{%-   endif %}
+{%- endfor %}
+      end
+      # inter AS links
+{%- for node in externaldata %}
+{%-   if "router" in node["instancetype"] and ( node["attribute"]["localas"]|int ==  src_as|int  or  node["attribute"]["localas"]|int ==  dst_as|int ) %}
+{%-     for tp in node["iflist"] %}        
+{%-       if  tp["attribute"]["remoteas"]|int == localas|int %}        
+{%-         if not tp["address"] in addl3list|string() %}
+      bdlink %w[as{{ localas }} peer_{{ tp["address"] }} as{{ node["attribute"]["localas"] }} peer_{{ tp["remoteaddress"] }}] 
+{%-         endif %}
+{%-       endif %}
+{%-     endfor %}
+{%-   endif %}
+{%- endfor %}
+    end
+  end
+end
+"""
+
+
+def find_exsited_external(externaldata, target_as, target_node1, target_node2):
+    if len(externaldata) > 0:
+        for nodeindex, node in enumerate(externaldata):
+            if int(target_as) == node["attribute"]["localas"]:
+                for iflist in node["iflist"]:
+                    if str(target_node1) in iflist["attribute"]["remotenode"]:
+                        return nodeindex
+                    elif str(target_node2) in iflist["attribute"]["remotenode"]:
+                        return nodeindex
+    return None
+
+
+def add_ebgp_node(externaldata, topologydata, layer3topology, addl3list, preferred_node, redundant_node):
     for index, router in enumerate(topologydata):
-        ifname = "Ethernet1"
+        baseifname = "Ethernet"
         for l3node in layer3topology:
             if str(l3node["node-id"]) == str(router["supporting-termination-point"][0]["node-ref"]):
                 for l3if in l3node["ietf-network-topology:termination-point"]:
@@ -169,35 +272,127 @@ def ebgpnode(externaldata, topologydata, layer3topology, addl3list):
         instancename = "AS" + \
             str(router["mddo-topology:bgp-proc-termination-point-attributes"]
                 ["remote-as"]) + "-" + str(index+1)
-        tempinstance = {
-            "instancename": instancename,
-            "instancetype": "router",
-            "attribute": {"localas": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]},
-            "iflist":
-            [
-                {
+        if preferred_node and preferred_node in router["supporting-termination-point"][0]["node-ref"]:
+            nodeindex = find_exsited_external(
+                externaldata, router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"], preferred_node, redundant_node)
+            if nodeindex == None:
+                ifname = baseifname + str("1")
+                tempinstance = {
+                    "instancename": instancename,
+                    "instancetype": "router",
+                    "attribute": {"localas": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]},
+                    "iflist": [
+                        {
+                            "ifname": ifname,
+                            "protocol": "ebgp",
+                            "address": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"],
+                            "remoteaddress": router["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"],
+                            "netmask": netmask,
+                            "attribute":
+                            {
+                                "remotenode": router["supporting-termination-point"][0]["node-ref"],
+                                "remoteif": router["supporting-termination-point"][0]["tp-ref"],
+                                "remoteas": router["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"],
+                                "preferredFlag": "true"
+                            }
+                        }
+                    ]
+                }
+                externaldata.append(tempinstance)
+            else:
+                ifname = "Ethernet2"
+                tmpiflist = {
                     "ifname": ifname,
                     "protocol": "ebgp",
                     "address": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"],
                     "remoteaddress": router["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"],
                     "netmask": netmask,
                     "attribute":
-                    {
-                        "remotenode": router["supporting-termination-point"][0]["node-ref"],
-                        "remoteif": router["supporting-termination-point"][0]["tp-ref"],
-                        "remoteas": router["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"]
+                            {
+                                "remotenode": router["supporting-termination-point"][0]["node-ref"],
+                                "remoteif": router["supporting-termination-point"][0]["tp-ref"],
+                                "remoteas": router["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"],
+                                "preferredFlag": "true"
                     }
                 }
-            ]
-        }
-        exceptflag = 0
-        for except_peer in exceptlist:
-            if str(except_peer["except_peer"]) == str(router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"]) or str(except_peer["except_peer"]) == str(router["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"]):
-                print("skipped: " + except_peer["except_peer"])
-                exceptflag = 1
+                externaldata[nodeindex]["iflist"].append(tmpiflist)
 
-        if exceptflag == 0:
-            externaldata.append(tempinstance)
+        elif redundant_node and redundant_node in router["supporting-termination-point"][0]["node-ref"]:
+            nodeindex = find_exsited_external(
+                externaldata, router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"], preferred_node, redundant_node)
+            if nodeindex == None:
+                ifname = baseifname + str("1")
+                tempinstance = {
+                    "instancename": instancename,
+                    "instancetype": "router",
+                    "attribute": {"localas": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]},
+                    "iflist": [
+                        {
+                            "ifname": ifname,
+                            "protocol": "ebgp",
+                            "address": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"],
+                            "remoteaddress": router["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"],
+                            "netmask": netmask,
+                            "attribute":
+                            {
+                                "remotenode": router["supporting-termination-point"][0]["node-ref"],
+                                "remoteif": router["supporting-termination-point"][0]["tp-ref"],
+                                "remoteas": router["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"],
+                                "preferredFlag": "false"
+                            }
+                        }
+                    ]
+                }
+                externaldata.append(tempinstance)
+            else:
+                ifname = "Ethernet2"
+                tmpiflist = {
+                    "ifname": ifname,
+                    "protocol": "ebgp",
+                    "address": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"],
+                    "remoteaddress": router["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"],
+                    "netmask": netmask,
+                    "attribute":
+                            {
+                                "remotenode": router["supporting-termination-point"][0]["node-ref"],
+                                "remoteif": router["supporting-termination-point"][0]["tp-ref"],
+                                "remoteas": router["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"],
+                                "preferredFlag": "false"
+                    }
+                }
+                externaldata[nodeindex]["iflist"].append(tmpiflist)
+        else:
+            ifname = baseifname + str("1")
+            tempinstance = {
+                "instancename": instancename,
+                "instancetype": "router",
+                "attribute": {"localas": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]},
+                "iflist":
+                [
+                    {
+                        "ifname": ifname,
+                        "protocol": "ebgp",
+                        "address": router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"],
+                        "remoteaddress": router["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"],
+                        "netmask": netmask,
+                        "attribute":
+                        {
+                            "remotenode": router["supporting-termination-point"][0]["node-ref"],
+                            "remoteif": router["supporting-termination-point"][0]["tp-ref"],
+                            "remoteas": router["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"],
+                            "preferredFlag": "false"
+                        }
+                    }
+                ]
+            }
+            exceptflag = 0
+            for except_peer in exceptlist:
+                if str(except_peer["except_peer"]) == str(router["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"]) or str(except_peer["except_peer"]) == str(router["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"]):
+                    print("skipped: " + except_peer["except_peer"])
+                    exceptflag = 1
+
+            if exceptflag == 0:
+                externaldata.append(tempinstance)
     # addl3
     for addl3node in addl3list:
         instancename = "AS" + addl3node["peeras"] + "ADD"
@@ -220,12 +415,11 @@ def ebgpnode(externaldata, topologydata, layer3topology, addl3list):
                         "bdlink": bdlink,
                         "remotenode": addl3node["srcrouter"],
                         "remoteif": addl3node["srcif"],
-                        "remoteas": addl3node["srcas"]
+                        "remoteas": addl3node["src_as"]
                     }
                 }
             ]
         }
-        print(str(tempinstance))
         externaldata.append(tempinstance)
     return externaldata
 
@@ -269,18 +463,15 @@ def assignibgpsubnet(externaldata, ibgpsubnet, srcnode, dstnode, srcif, dstif):
             return subnet["subnet"]
 
 
-def ibgpnode(externaldata):
+def add_ibgp_node(externaldata):
     ibgpsubnet = subnetlist_init(subnet_list)
-    # print (str(ibgpsubnet))
     for peer1node in externaldata:
         if str(peer1node["instancetype"]) == "router":
             for peer2node in externaldata:
-                # print (str(peer1node))
                 if str(peer2node["instancetype"]) == "router":
                     if int(peer1node["attribute"]["localas"]) == int(peer2node["attribute"]["localas"]) and str(peer1node["instancename"]) != str(peer2node["instancename"]):
                         getsubnet = assignibgpsubnet(externaldata, ibgpsubnet, peer1node["instancename"], peer2node["instancename"], "Ethernet" + str(
                             len(peer1node["iflist"])+1), "Ethernet" + str(len(peer2node["iflist"])+1))
-                        # print (str(getsubnet))
                         if not "already" in str(getsubnet):
 
                             ifname = "Ethernet" + \
@@ -321,7 +512,21 @@ def get_random_gateway(AS, externaldata):
     return 0
 
 
-def assign_iperfSegment(flowdata, externaldata, srcAS, dstAS):
+def find_l3_node(AS, externaldata, preferred_node):
+    for node in externaldata:
+        if "router" in node["instancetype"] and int(node["attribute"]["localas"]) == int(AS):
+            for iflist in node["iflist"]:
+                if iflist["protocol"] == "ebgp" and iflist["attribute"]["preferredFlag"] == "true":
+                    interfacename = "Ethernet" + str(len(node["iflist"])+1)
+                    returndict = {
+                        "router": node["instancename"],
+                        "interface": interfacename
+                    }
+                    return returndict
+    return 0
+
+
+def assign_iperfSegment(flowdata, externaldata, src_as, dst_as, preferred_node):
     assigndata = []
     # src part
     srcprefixlist = []
@@ -330,9 +535,11 @@ def assign_iperfSegment(flowdata, externaldata, srcAS, dstAS):
     uniq_srcprefixlist = list(set(srcprefixlist))
 
     for index, value in enumerate(uniq_srcprefixlist):
-        gatewayinfo = get_random_gateway(srcAS, externaldata)
+        gatewayinfo = find_l3_node(src_as, externaldata, preferred_node)
+        if not gatewayinfo:
+            gatewayinfo = get_random_gateway(src_as, externaldata)
         while gatewayinfo == 0:
-            gatewayinfo = get_random_gateway(srcAS, externaldata)
+            gatewayinfo = get_random_gateway(src_as, externaldata)
         for node in externaldata:
             if gatewayinfo["router"] in node["instancename"]:
                 tempinterface = {
@@ -415,9 +622,9 @@ def assign_iperfSegment(flowdata, externaldata, srcAS, dstAS):
     uniq_dstprefixlist = list(set(dstprefixlist))
 
     for index, value in enumerate(uniq_dstprefixlist):
-        gatewayinfo = get_random_gateway(dstAS, externaldata)
+        gatewayinfo = get_random_gateway(dst_as, externaldata)
         while gatewayinfo == 0:
-            gatewayinfo = get_random_gateway(dstAS, externaldata)
+            gatewayinfo = get_random_gateway(dst_as, externaldata)
         for node in externaldata:
             if gatewayinfo["router"] in node["instancename"]:
                 tempinterface = {
@@ -500,109 +707,27 @@ srctopologydata = json.loads(str(srctopology.stdout))
 # print (str(srctopologydata))
 dsttopologydata = json.loads(str(dsttopology.stdout))
 l3topologydata = json.loads(str(layer3topology.stdout))
-ebgpnode(externaldata, srctopologydata, l3topologydata, addl3list)
-ebgpnode(externaldata, dsttopologydata, l3topologydata, [])
-ibgpnode(externaldata)
+add_ebgp_node(externaldata, srctopologydata, l3topologydata,
+              addl3list, preferred_node, redundant_node)
+add_ebgp_node(externaldata, dsttopologydata, l3topologydata, [], "", "")
+add_ibgp_node(externaldata)
 localastopologydata = json.loads(str(localastopology.stdout))
-
-jinja_bgp_as = """
-# frozen_string_literal: true
-def register_bgp_as(nws)
-  nws.register do
-    network 'bgp_as' do
-      type Netomox::NWTYPE_MDDO_BGP_AS
-      support 'bgp_proc'
-
-      # self
-{%- set localas = localtopology[0]["ietf-network-topology:termination-point"][0]["mddo-topology:bgp-proc-termination-point-attributes"]["confederation"] | string() %}
-      node 'as{{ localas }}' do
-        attribute({ as_number: {{ localas[:-3] }}_{{ localas[-3:] }} })
-        # supporting nodes and term-points will be generated from original-asis configs
-{%- for node in localtopology %}
-{%-   for tp in node["ietf-network-topology:termination-point"] %}
-{%-     if  srcAS|int == tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]|int %}
-{%-       if not tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"]|string() in exceptlist|string() and not tp["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"]|string() in addl3list|string() %}
-        term_point '{{ tp["tp-id"] }}' do
-          attribute({ description: 'from TBD to TBD' })
-          support %w[bgp_proc {{ node["mddo-topology:bgp-proc-node-attributes"]["router-id"] }} {{ tp["tp-id"] }} ]
-        end
-{%-       endif %}        
-{%-     elif dstAS|int == tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]|int %}
-{%-       if not tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"]|string() in exceptlist|string() and not tp["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"]|string() in addl3list|string() %}
-        term_point '{{ tp["tp-id"] }}' do
-          attribute({ description: 'from TBD to TBD' })
-          support %w[bgp_proc {{ node["mddo-topology:bgp-proc-node-attributes"]["router-id"] }} {{ tp["tp-id"] }} ]
-        end
-{%-       endif %}        
-{%-     endif %}
-{%-   endfor %}
-{%- endfor %}
-      end
-      node 'as{{ srcAS }}' do
-        attribute({ as_number: {{ srcAS[:-3] }}_{{ srcAS[-3:] }} })
-{%- for node in externaldata %}
-{%-   if "router" in node["instancetype"] and node["attribute"]["localas"]|int ==  srcAS|int%}
-{%-     for tp in node["iflist"] %} 
-{%-       if   tp["attribute"]["remoteas"]|int == localas|int and not "direct" == tp["protocol"] %}        
-        support %w[bgp_proc {{ node["instancename"] }}]
-        term_point 'peer_{{ tp["remoteaddress"] }}' do
-          attribute({ description: 'from TBD to TBD' })
-          support %w[bgp_proc {{ node["instancename"] }} peer_{{ tp["remoteaddress"] }} ]
-        end
-{%-       endif %}
-{%-     endfor %}
-{%-   endif %}
-{%- endfor %}
-      end
-      node 'as{{ dstAS }}' do
-        attribute({ as_number: {{ dstAS[:-3] }}_{{ dstAS[-3:] }} })
-{%- for node in externaldata %}        
-{%-   if "router" in node["instancetype"] and node["attribute"]["localas"]|int ==  dstAS|int%}
-{%-     for tp in node["iflist"] %}        
-{%-       if tp["attribute"]["remoteas"]|int == localas|int  and not "direct" == tp["protocol"] %}        
-        support %w[bgp_proc {{ node["instancename"] }}]
-        term_point 'peer_{{ tp["remoteaddress"] }}' do
-          attribute({ description: 'from TBD to TBD' })
-          support %w[bgp_proc {{ node["instancename"] }} peer_{{ tp["remoteaddress"] }} ]
-        end
-{%-       endif %}
-{%-     endfor %}
-{%-   endif %}
-{%- endfor %}
-      end
-      # inter AS links
-{%- for node in externaldata %}
-{%-   if "router" in node["instancetype"] and ( node["attribute"]["localas"]|int ==  srcAS|int  or  node["attribute"]["localas"]|int ==  dstAS|int ) %}
-{%-     for tp in node["iflist"] %}        
-{%-       if  tp["attribute"]["remoteas"]|int == localas|int %}        
-{%-         if not tp["address"] in addl3list|string() %}
-      bdlink %w[as{{ localas }} peer_{{ tp["address"] }} as{{ node["attribute"]["localas"] }} peer_{{ tp["remoteaddress"] }}] 
-{%-         endif %}
-{%-       endif %}
-{%-     endfor %}
-{%-   endif %}
-{%- endfor %}
-    end
-  end
-end
-"""
 template = Template(jinja_bgp_as)
-result = template.render(localtopology=localastopologydata, srcAS=srcAS, dstAS=dstAS,
+result = template.render(localtopology=localastopologydata, src_as=src_as, dst_as=dst_as,
                          externaldata=externaldata, exceptlist=exceptlist, addl3list=addl3list)
-file = open( "../../configs/" + str(network_name) + '/original_asis/external_as_topology/bgp_as.rb', 'w')
+file = open("../../configs/" + str(network_name) +
+            '/original_asis/external_as_topology/bgp_as.rb', 'w')
 file.write(result)
-print(str(result))
-assign_iperfSegment(flowdata, externaldata, srcAS, dstAS)
+assign_iperfSegment(flowdata, externaldata, src_as, dst_as, preferred_node)
 template = Template(jinja_template_l3)
 result = template.render(topology=externaldata)
-file2 = open( "../../configs/" + str(network_name) + '/original_asis/external_as_topology/layer3.rb', 'w')
+file2 = open("../../configs/" + str(network_name) +
+             '/original_asis/external_as_topology/layer3.rb', 'w')
 file2.write(result)
-print(str(result))
 template = Template(jinja_template_bgp_proc)
 result = template.render(topology=externaldata)
-print(str(result))
-file3 = open( "../../configs/" + str(network_name) + '/original_asis/external_as_topology/bgp_proc.rb', 'w')
+file3 = open("../../configs/" + str(network_name) +
+             '/original_asis/external_as_topology/bgp_proc.rb', 'w')
 file3.write(result)
 print(str(json.dumps(externaldata, indent=2)))
-
 

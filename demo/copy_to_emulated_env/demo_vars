@@ -10,7 +10,10 @@ NETWORK_NAME="biglobe_deform"
 NETWORK_INDEX="${NETWORK_NAME}_index.json"
 
 # step2.5, preffered peer parameter (use original_asis node/interface name)
+#PREFERRED_NODE="NONE"
 PREFERRED_NODE="edge-tk01"
+REDUNDANT_NODE="edge-tk03"
+#REDUNDANT_NODE="NONE"
 PREFERRED_INTERFACE="ge-0/0/3.0"
 EXTERNAL_ASN=65550
 
