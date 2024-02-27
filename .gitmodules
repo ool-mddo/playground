@@ -25,3 +25,6 @@
 [submodule "repos/bgp-policy-parser"]
 	path = repos/bgp-policy-parser
 	url = https://github.com/ool-mddo/bgp-policy-parser.git
+[submodule "configs/mddo-bgp"]
+	path = configs/mddo-bgp
+	url = https://github.com/ool-mddo/mddo-bgp.git
