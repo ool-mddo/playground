@@ -10,10 +10,10 @@
 > - セグメント移転ユースケースの[環境構築](../move_seg/provision.md)についても参照してください。
 > - Step1,2 などの手順は共通です。(PNIユースケースはいまのところ step1-2 までの実装です。まだ step3-4 については対応できていません)
 
-PNIユースケースでは、ネットワーク = biglobe_deform, スナップショット = original_asis, emulated_asis がベースになります。
+PNIユースケースでは、ネットワーク = mddo-bgp, スナップショット = original_asis, emulated_asis がベースになります。
 
-- 実際のコンフィグ類: `playground/configs/biglobe_deform`
-- コンフィグリポジトリ: [ool-mddo/biglobe_deform](https://github.com/ool-mddo/biglobe_deform)
+- 実際のコンフィグ類: `playground/configs/mddo-bgp`
+- コンフィグリポジトリ: [ool-mddo/mddo-bgp](https://github.com/ool-mddo/mddo-bgp)
 
 ## デモ準備
 
@@ -55,10 +55,10 @@ redis               redis:latest                      "docker-entrypoint.s…"  
 インプットになる(NW機器コンフィグ)を確認します。
 
 ```bash
-ls playground/configs/biglobe_deform/original_asis/configs/
+ls playground/configs/mddo-bgp/original_asis/configs/
 ```
 ```
-playground/demo/copy_to_emulated_env$ ls ~/playground/configs/biglobe_deform/original_asis/configs/
+playground/demo/copy_to_emulated_env$ ls ~/playground/configs/mddo-bgp/original_asis/configs/
 Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
 ```
 
@@ -67,7 +67,7 @@ Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
 コンフィグファイルから物理(L1)トポロジデータを生成して用意しておく必要がありますが、ここでは割愛します。
 
 - [物理トポロジデータの生成](../../../layer1_topology/doc/operation.md) を参照してください
-- 物理トポロジデータは `playground/configs/biglobe_deform/original_asis/batfish/layer1_topology.json` です
+- 物理トポロジデータは `playground/configs/mddo-bgp/original_asis/batfish/layer1_topology.json` です
 
 ### デモ環境変数
 
@@ -88,7 +88,7 @@ Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
 (省略)
 
 # all steps: target network name
-NETWORK_NAME="biglobe_deform"
+NETWORK_NAME="mddo-bgp"
 NETWORK_INDEX="${NETWORK_NAME}_index.json"
 
 # step2.5, preffered peer parameter (use original_asis node/interface name)
