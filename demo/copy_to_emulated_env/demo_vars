@@ -6,8 +6,8 @@ PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
 
 # all steps: target network name
-NETWORK_NAME="biglobe_deform"
-NETWORK_INDEX="${NETWORK_NAME}_index.json"
+NETWORK_NAME="mddo-bgp"
+NETWORK_INDEX="network_index/${NETWORK_NAME}.json"
 
 # step2.5, preffered peer parameter (use original_asis node/interface name)
 PREFERRED_NODE="edge-tk01"
