@@ -1,4 +1,4 @@
-# copy_to_emulated_env
+# copy_to_emulated_env ("環境コピー" デモ)
 
 ## Main scenario
 
@@ -10,4 +10,5 @@
 ## Related info
 
 * [名前空間の変換](../../doc/system_architecture.md)
-- [Emulated環境のトラフィック可視化](./visualize/README.md)
+* [Emulated環境のトラフィック可視化](./visualize/README.md)
+* コンテナの使い方・管理方法等は各コンテナのリポジトリ、README.md 等を参照してください。
