@@ -56,7 +56,10 @@ cRPDへライセンスを適用したい場合は本項目の手順を実施し�
 
 まず clab/license.key へJuniper社から別途入手したライセンス情報をコピーペーストします。
 
-* ⚠ リポジトリ内へのライセンス情報のコミット(操作ミスによる外部公開)を防止するため、ライセンスファイルの位置・ファイル名はスクリプト中で固定してあります
+
+> [!WARNING]
+> リポジトリ内へのライセンス情報のコミット(操作ミスによる外部公開)を防止するため、ライセンスファイルの位置・ファイル名はスクリプト中で固定してあります
+
 * 参照: [step2.yaml](../project/playbooks/step2.yaml)
   * containerlabトポロジデータの生成時のライセンスファイルパスの指定 : `containerlab_topology?bind_license=license.key:/tmp/license.key:ro`
     * ライセンスファイルをコンテナ(cRPD)内 `/tmp/license.key` としてマウント
@@ -110,7 +113,7 @@ Emulated As-IsモデルからEmulated環境が正しく構築・起動できて�
 - 起動したEmulated環境で何も変更を加えていない (この後の Step②’ を実行しない) 状態で Step③ を実施するので、emulated asis = emulated tobe になる状態を作っています。
 - この状態で emulated asis/tobe モデルの差分を比較します。差分がない場合、Emulated As-IsモデルからEmulated Configの生成が正しく行われていることがわかります。
 
-![static_inspection](./fig/static_inspection.png)
+![static_inspection](fig/static_inspection.png)
 
 ```bash
 ./demo_step3.sh
