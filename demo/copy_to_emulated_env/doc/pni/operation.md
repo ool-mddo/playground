@@ -31,7 +31,7 @@ docker exec -it clab-emulated-edge-tk01 cli
 configure
 ```
 
-Operation1
+### Operation1
 
 ```
 delete policy-options prefix-list as65550-advd-ipv4 10.100.0.0/16
@@ -42,7 +42,7 @@ commit
 
 → 大きすぎた
 
-Operation2
+### Operation2
 
 ```
 set policy-options prefix-list as65550-advd-ipv4 10.130.0.0/21
@@ -52,7 +52,7 @@ commit
 
 → 10.100.0.0/16のみ移す: まだ大きい
 
-Operation3
+### Operation3
 
 ```
 set policy-options prefix-list as65550-advd-ipv4 10.100.0.0/16
@@ -63,7 +63,7 @@ commit
 
 → 逆パターン: 今度は少なすぎた
 
-Operation4
+### Operation4
 
 ```
 delete policy-options prefix-list as65550-advd-ipv4 10.120.0.0/17

@@ -134,6 +134,6 @@ cp clab/before_flowdata.csv clab/flowdata.csv
 ./demo_step2-2.sh
 ```
 
-実行後少し待つと以下の用のトラフィックが流れていることが確認できます。
+実行後少し待つと以下のようにトラフィックが流れていることが確認できます。
 
 ![grafana initial traffic](fig/grafana_initial_traffic.png)
