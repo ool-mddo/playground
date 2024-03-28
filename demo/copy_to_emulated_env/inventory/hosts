@@ -7,4 +7,4 @@ all:
     docker-host:
       hosts:
         docker-host:
-          ansible_host: 172.17.0.1
+          ansible_host: 172.16.254.1
