@@ -9,19 +9,17 @@ import sys
 args = sys.argv
 
 network_name = args[1]
-src_as = args[2]
-dst_as = args[3]
-subnet = args[4]
-preferred_node = args[5]
-redundant_node = args[6]
+usecase_name = args[2]
+src_as = args[3]
+dst_as = args[4]
+subnet = args[5]
+preferred_node = args[6]
+redundant_node = args[7]
 
 externaldata = []
-flowdata_file = "../../configs/" + \
-    str(network_name) + "/original_asis/flowdata/flowdata.csv"
-except_file = "../../configs/" + \
-    str(network_name) + "/original_asis/external_as_topology/except.csv"
-addl3_file = "../../configs/" + \
-    str(network_name) + "/original_asis/external_as_topology/addl3.csv"
+flowdata_file = f"../../configs/{network_name}/original_asis/flowdata/flowdata.csv"
+except_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/except.csv"
+addl3_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/addl3.csv"
 tempinstance = ""
 srccommand = "curl http://localhost:15000/topologies/" + network_name + \
     "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + src_as + ")' | jq -s '.'"
@@ -715,19 +713,21 @@ localastopologydata = json.loads(str(localastopology.stdout))
 template = Template(jinja_bgp_as)
 result = template.render(localtopology=localastopologydata, src_as=src_as, dst_as=dst_as,
                          externaldata=externaldata, exceptlist=exceptlist, addl3list=addl3list)
-file = open("../../configs/" + str(network_name) +
-            '/original_asis/external_as_topology/bgp_as.rb', 'w')
+
+# generate (save) external-AS scripts
+ext_as_topology_dir = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}"
+# bgp_as
+file = open(f"{ext_as_topology_dir}/bgp_as.rb", 'w')
 file.write(result)
 assign_iperfSegment(flowdata, externaldata, src_as, dst_as, preferred_node)
 template = Template(jinja_template_l3)
 result = template.render(topology=externaldata)
-file2 = open("../../configs/" + str(network_name) +
-             '/original_asis/external_as_topology/layer3.rb', 'w')
+# layer3
+file2 = open(f"{ext_as_topology_dir}/layer3.rb", 'w')
 file2.write(result)
 template = Template(jinja_template_bgp_proc)
 result = template.render(topology=externaldata)
-file3 = open("../../configs/" + str(network_name) +
-             '/original_asis/external_as_topology/bgp_proc.rb', 'w')
+# bgp_proc
+file3 = open(f"{ext_as_topology_dir}/bgp_proc.rb", 'w')
 file3.write(result)
 print(str(json.dumps(externaldata, indent=2)))
-
