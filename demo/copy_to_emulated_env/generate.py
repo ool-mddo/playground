@@ -413,7 +413,7 @@ def add_ebgp_node(externaldata, topologydata, layer3topology, addl3list, preferr
                         "bdlink": bdlink,
                         "remotenode": addl3node["srcrouter"],
                         "remoteif": addl3node["srcif"],
-                        "remoteas": addl3node["src_as"]
+                        "remoteas": addl3node["srcas"]
                     }
                 }
             ]
