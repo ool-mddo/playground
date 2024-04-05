@@ -108,15 +108,15 @@
       bridgedata: "{{ bridgedata | default([])  + [ data ] }}"
     vars:
       data:
-       name: "{{ item.agent_name }}"
-       if_list: >-
-         {%- for dict in item.if_list -%}
-         {%-  if 'description' in dict -%}
-         { 'name': '{{ dict.agent_name }}', 'description': '{{ dict.description }}'},
-         {%- else -%}
-         { 'name': '{{ dict.agent_name }}' },
-         {%- endif -%}
-         {%- endfor -%}
+        name: "{{ item.agent_name }}"
+        if_list: >-
+          {%- for dict in item.if_list -%}
+          {%-  if 'description' in dict -%}
+          { 'name': '{{ dict.agent_name }}', 'description': '{{ dict.description }}'},
+          {%- else -%}
+          { 'name': '{{ dict.agent_name }}' },
+          {%- endif -%}
+          {%- endfor -%}
     when: '"segment" in item.type'
     loop: "{{ node_list.json }}"
 
@@ -158,12 +158,12 @@
 
     - name: "get clab topo yaml"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology/layer3/containerlab_topology?bind_license=license.key:/tmp/license.key:ro"
+        url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"
         method: "GET"
         body_format: json
       register: containerlab
 
-    - name: Creating clab-topo.yaml 
+    - name: Creating clab-topo.yaml
       copy:
         dest: "{{ ansible_runner_dir }}/clab/clab-topo.yaml"
         content: "{{ containerlab.json | to_yaml }}"
@@ -209,7 +209,7 @@
 
     - name: generate iperf endpoint  static-route info
       set_fact:
-         iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
+        iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
       vars:
         query: '*.network[{{ layer3index }}].node[*]'
       when: item["mddo-topology:l3-node-attributes"]["node-type"] == 'endpoint'
