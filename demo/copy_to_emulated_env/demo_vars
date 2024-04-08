@@ -1,5 +1,5 @@
 ANSIBLE_RUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v3.1.0"
-CRPD_IMAGE="crpd:22.1R1.10"
+CRPD_IMAGE="crpd:23.4R1.9"
 API_PROXY="localhost:15000"
 API_BRIDGE="playground_default"
 LOCALSERVER_USER=mddo

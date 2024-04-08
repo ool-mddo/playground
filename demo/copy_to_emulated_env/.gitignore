@@ -1,2 +1,4 @@
 # files generated in demo scenario
 *.bak
+*_ext.json
+
