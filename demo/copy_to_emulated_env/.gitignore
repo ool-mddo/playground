@@ -1,10 +1,4 @@
 # files generated in demo scenario
 *.bak
-clab-topo.yaml
-emulated_layer1_topology*.json
-emulated.json
 *_ext.json
-*_spliced.json
 
-# ruby
-Gemfile.lock
