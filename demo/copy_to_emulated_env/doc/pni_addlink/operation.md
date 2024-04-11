@@ -13,7 +13,6 @@ configure
 PNI03へのebgpピアの設定を入れるため以下のコンフィグを投入します。
 
 ```bash
-configure
 delete policy-options policy-statement as65550-peer-out1-tyo-ipv4 
 set policy-options community aggregated members 65518:1
 set policy-options community any members *:*
@@ -89,7 +88,6 @@ configure
 Edge-TK03へのebgpピアの設定を入れるため以下のコンフィグを投入します。
 
 ```bash
-configure
 set protocols bgp family inet unicast
 set protocols bgp group 172.16.1.18 type external
 set protocols bgp group 172.16.1.18 hold-time 90
@@ -101,6 +99,21 @@ set protocols bgp group 172.16.1.18 neighbor 172.16.1.18 import pass-all
 set protocols bgp group 172.16.1.18 neighbor 172.16.1.18 export advertise-all-prefixes
 ```
 
+
+## Edge-TK01のBGP設定を投入
+操作のため edge-tk01 CLI にはいります。
+
+```bash
+docker exec -it clab-emulated-edge-tk01 cli
+configure
+```
+
+```bash
+delete policy-options prefix-list as65550-advd-ipv4 10.120.0.0/17
+delete policy-options prefix-list as65550-advd-ipv4 10.130.0.0/21
+show | compare
+commit
+```
 
 → 追加した対象Linkにトラフィックが流れるようになった
 
