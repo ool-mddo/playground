@@ -7,6 +7,10 @@ import random
 import sys
 
 args = sys.argv
+<<<<<<< HEAD
+=======
+
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5
 network_name = args[1]
 usecase_name = args[2]
 src_as = args[3]
@@ -16,9 +20,13 @@ preferred_node = args[6]
 redundant_node = args[7]
 
 externaldata = []
+<<<<<<< HEAD
 flowdata_file = "../../configs/" + \
     str(network_name) + "/original_asis/flowdata/flowdata.csv"
 
+=======
+flowdata_file = f"../../configs/{network_name}/original_asis/flowdata/flowdata.csv"
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5
 except_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/except.csv"
 addl3_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/addl3.csv"
 tempinstance = ""
@@ -414,7 +422,11 @@ def add_ebgp_node(externaldata, topologydata, layer3topology, addl3list, preferr
                         "bdlink": bdlink,
                         "remotenode": addl3node["srcrouter"],
                         "remoteif": addl3node["srcif"],
+<<<<<<< HEAD
                         "remoteas": addl3node["srcas"]
+=======
+                        "remoteas": addl3node["src_as"]
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5
                     }
                 }
             ]
@@ -498,6 +510,7 @@ def add_ibgp_node(externaldata):
                             peer2node["iflist"].append(tempiflist)
 
 
+<<<<<<< HEAD
 def get_iperf_gateway(AS, externaldata):
     for node in externaldata:
         #print (str(node))
@@ -511,6 +524,11 @@ def get_iperf_gateway(AS, externaldata):
             return returndict
     for node in externaldata:
         if "router" in node["instancetype"] and ( int(node["attribute"]["localas"]) == int(AS)):
+=======
+def get_random_gateway(AS, externaldata):
+    for node in externaldata:
+        if "router" in node["instancetype"] and int(node["attribute"]["localas"]) == int(AS):
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5
             if random.choice([0, 1, 2, 3]) == 1:
                 interfacename = "Ethernet" + str(len(node["iflist"])+1)
                 returndict = {
@@ -546,9 +564,15 @@ def assign_iperfSegment(flowdata, externaldata, src_as, dst_as, preferred_node):
     for index, value in enumerate(uniq_srcprefixlist):
         gatewayinfo = find_l3_node(src_as, externaldata, preferred_node)
         if not gatewayinfo:
+<<<<<<< HEAD
             gatewayinfo = get_iperf_gateway(src_as, externaldata)
         while gatewayinfo == 0:
             gatewayinfo = get_iperf_gateway(src_as, externaldata)
+=======
+            gatewayinfo = get_random_gateway(src_as, externaldata)
+        while gatewayinfo == 0:
+            gatewayinfo = get_random_gateway(src_as, externaldata)
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5
         for node in externaldata:
             if gatewayinfo["router"] in node["instancename"]:
                 tempinterface = {
@@ -631,9 +655,15 @@ def assign_iperfSegment(flowdata, externaldata, src_as, dst_as, preferred_node):
     uniq_dstprefixlist = list(set(dstprefixlist))
 
     for index, value in enumerate(uniq_dstprefixlist):
+<<<<<<< HEAD
         gatewayinfo = get_iperf_gateway(dst_as, externaldata)
         while gatewayinfo == 0:
             gatewayinfo = get_iperf_gateway(dst_as, externaldata)
+=======
+        gatewayinfo = get_random_gateway(dst_as, externaldata)
+        while gatewayinfo == 0:
+            gatewayinfo = get_random_gateway(dst_as, externaldata)
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5
         for node in externaldata:
             if gatewayinfo["router"] in node["instancename"]:
                 tempinterface = {
@@ -724,6 +754,10 @@ localastopologydata = json.loads(str(localastopology.stdout))
 template = Template(jinja_bgp_as)
 result = template.render(localtopology=localastopologydata, src_as=src_as, dst_as=dst_as,
                          externaldata=externaldata, exceptlist=exceptlist, addl3list=addl3list)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5
 # generate (save) external-AS scripts
 ext_as_topology_dir = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}"
 # bgp_as
@@ -740,4 +774,8 @@ result = template.render(topology=externaldata)
 # bgp_proc
 file3 = open(f"{ext_as_topology_dir}/bgp_proc.rb", 'w')
 file3.write(result)
+<<<<<<< HEAD
 print(str(json.dumps(externaldata, indent=2)))
+=======
+print(str(json.dumps(externaldata, indent=2)))
+>>>>>>> 126d9597d6ef0a71aff505e527487e637ce58bf5

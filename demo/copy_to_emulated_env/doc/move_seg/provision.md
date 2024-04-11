@@ -33,24 +33,26 @@
 vi demo_vars
 ```
 
-- `ANSIBLERUNNER_IMAGE` : Ansible runner 用コンテナイメージのリポジトリURL
+- `ANSIBLE_RUNNER_IMAGE` : Ansible runner 用コンテナイメージイメージ名
+- `CRPD_IMAGE` : Emulated env で使用するルータ用コンテナ (Juniper cRPD) のイメージ名
 - `API_PROXY` : デモシステムのREST APIエントリポイント (api-proxy host:port)
 - `API_BRIDGE` : デモシステムに接続するための docker bridge 名
 - `LOCALSERVER_USER` : ホストサーバのSSHログインユーザー名
 - `PLAYGROUND_DIR` : playgroundディレクトリのパス(絶対パス)
-- `ANSIBLERUNNER_DIR` : Ansible runner実行ディレクトリ
+- `ANSIBLE_RUNNER_DIR` : Ansible runner実行ディレクトリ
 - `NETWORK_NAME` : 対象にするコンフィグリポジトリのディレクトリ名 (Batfishに入力するネットワーク名)
 - `NETWORK_INDEX` : トポロジ可視化ツール(netoviz)に入力するためのネットワーク/スナップショットの情報
 
 ```bash
-ANSIBLERUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v0.0.1"
+ANSIBLE_RUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v3.1.0"
+CRPD_IMAGE="crpd:22.1R1.10"
 API_PROXY="localhost:15000"
 API_BRIDGE="playground_default"
 LOCALSERVER_USER=mddo
 PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
 NETWORK_NAME="mddo-ospf"
-NETWORK_INDEX="${NETWORK_NAME}_index.json"
+NETWORK_INDEX="network_index/${NETWORK_NAME}.json"
 ```
 
 ### Passwordsファイルの作成
