@@ -93,33 +93,6 @@ source,dest,rate
 10.0.4.0/24,10.130.0.0/21,162.38
 ```
 
-### トラフィック可視化ツール(Grafana)画面の準備
-
-次(以降)のステップで、仮想環境内でのトラフィック生成や経路制御を行います。トラフィック流量を可視化するためにGrafanaを使用するため、先に準備しておきます。(grafanaの設定については `copy_to_emulated_env/visualize/grafana/grafana.ini` を参照してください)
-
-`http://localhost:23000` にアクセス
-
-- user: `admin`
-- pass: `mddo`
-
-![grafana login](fig/grafana_login.png)
-
-ハンバーガーメニューから [Dashboards]
-
-![grafana dashboard 1](fig/grafana_dashboard1.png)
-
-[General] - [ool-mddo]
-
-![grafana dashboard 2](fig/grafana_dashboard2.png)
-
-最初は生成されるトラフィックを確認するため、endpoint01-iperf[1-4] を選択しておきます。
-
-![grafana node selection](fig/grafana_select_node.png)
-
-表示時間(”Last N minultes”)・データ更新間隔は適宜設定してください。
-
-![grafana update interval](fig/grafana_interval.png)
-
 ### 仮想環境の再構成
 
 通常時のPeakトラフィックのFlowDataを所定ファイルパスへコピーする

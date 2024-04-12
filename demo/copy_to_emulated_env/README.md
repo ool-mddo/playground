@@ -5,8 +5,9 @@
 * [デモ概要](./doc/abstract.md)
 * ユースケース (デモシナリオ)
   * [セグメント移転](./doc/move_seg/introduction.md)
-  * [PNI トラフィック制御](./doc/pni_te/introduction.md)
-  * [PNI リンク増設](./doc/pni_addlink/introduction.md)
+  * PNIユースケース
+    * [PNI トラフィック制御](./doc/pni_te/introduction.md)
+    * [PNI リンク増設](./doc/pni_addlink/introduction.md)
 
 ## Related info
 

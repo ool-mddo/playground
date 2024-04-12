@@ -2,7 +2,7 @@
 
 環境設定については[デモ環境構築](../../../../doc/provision.md)を参照してください。
 
-- `playground` リポジトリのタグは `v1.5.2` を選択してください
+- `playground` リポジトリのタグは `v1.7.0` を選択してください
 - デモシステムを起動してください ( `docker compose up` )
 
 > [!NOTE]
@@ -50,6 +50,33 @@ prometheus          prom/prometheus:latest            "/bin/prometheus --c…"  
 redis               redis:latest                      "docker-entrypoint.s…"   redis               8 days ago          Up 8 days             6379/tcp
 ```
 
+### トラフィック可視化ツール(Grafana)画面の準備
+
+次(以降)のステップで、仮想環境内でのトラフィック生成や経路制御を行います。トラフィック流量を可視化するためにGrafanaを使用するため、先に準備しておきます。(grafanaの設定については `copy_to_emulated_env/visualize/grafana/grafana.ini` を参照してください)
+
+`http://localhost:23000` にアクセス
+
+- user: `admin`
+- pass: `mddo`
+
+![grafana login](fig/grafana_login.png)
+
+ハンバーガーメニューから [Dashboards]
+
+![grafana dashboard 1](fig/grafana_dashboard1.png)
+
+[General] - [ool-mddo]
+
+![grafana dashboard 2](fig/grafana_dashboard2.png)
+
+最初は生成されるトラフィックを確認するため、endpoint01-iperf[1-4] を選択しておきます。
+
+![grafana node selection](fig/grafana_select_node.png)
+
+表示時間(”Last N minultes”)・データ更新間隔は適宜設定してください。
+
+![grafana update interval](fig/grafana_interval.png)
+
 ### 入力データ(NW機器コンフィグ)
 
 インプットになる(NW機器コンフィグ)を確認します。
@@ -68,31 +95,3 @@ Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
 
 - [物理トポロジデータの生成](../../../layer1_topology/doc/operation.md) を参照してください
 - 物理トポロジデータは `playground/configs/mddo-bgp/original_asis/batfish/layer1_topology.json` です
-
-### デモ環境変数
-
-デモ用パラメタを設定します。(ファイルは `demo_vars`)
-
-デモでは以下の値(デモ環境で使用する変数)を設定する必要があります。
-
-- 仮想環境(emulate env)構築のためのデータ
-    - `LOCALSERVER_USER` : 環境構築の際、ansible で localhost にsshして操作しているため、そこで使用するユーザ名を指定
-- デモ全体で使用するパラメータ
-    - `NETORK_NAME` : 対象となるネットワークの名前 ([Batfishのデータ管理とネーミングの制約](https://github.com/ool-mddo/playground/blob/main/doc/system_architecture.md#%E3%83%8D%E3%83%BC%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%88%B6%E7%B4%84) を参照してください)
-- デモの一部ステップ(step2.5)で使用するデータ…優先してトラフィックを流すeBGP peerの指定
-    - `PREFERRED_NODE` , `PREFERRED_INTERFACE` , `EXTERNAL_ASN` : step2.5 で解説します。
-        - step2.5以降で使用する変数なのでそこまでは未設定でも問題ありません
-
-`demo_vars` ファイル
-```bash
-(省略)
-
-# all steps: target network name
-NETWORK_NAME="mddo-bgp"
-NETWORK_INDEX="${NETWORK_NAME}_index.json"
-
-# step2.5, preffered peer parameter (use original_asis node/interface name)
-PREFERRED_NODE="edge-tk01"
-PREFERRED_INTERFACE="ge-0/0/3.0"
-EXTERNAL_ASN=65550
-```

@@ -1,3 +1,34 @@
+# デモ環境変数の設定
+
+デモ用パラメタを設定します。(ファイルは `demo_vars`)
+
+デモでは以下の値(デモ環境で使用する変数)を設定する必要があります。
+
+- 実行するシナリオ(ユースケース)指定
+  - `USECASE_NAME="pni_te"`
+- 仮想環境(emulate env)構築のためのデータ
+    - `LOCALSERVER_USER` : 環境構築の際、ansible で localhost にsshして操作しているため、そこで使用するユーザ名を指定
+- デモ全体で使用するパラメータ
+    - `NETORK_NAME` : 対象となるネットワークの名前 ([Batfishのデータ管理とネーミングの制約](https://github.com/ool-mddo/playground/blob/main/doc/system_architecture.md#%E3%83%8D%E3%83%BC%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%88%B6%E7%B4%84) を参照してください)
+- デモの一部ステップ(step2-2)で使用するデータ…優先してトラフィックを流すeBGP peerの指定
+    - `PREFERRED_NODE` , `PREFERRED_INTERFACE` , `EXTERNAL_ASN` : step2-2 で解説します。
+        - step2-2以降で使用する変数なのでそこまでは未設定でも問題ありません
+
+`demo_vars` ファイル
+```bash
+(省略)
+
+# all steps: target network name
+NETWORK_NAME="mddo-bgp"
+USECASE_NAME="pni_te"
+NETWORK_INDEX="${NETWORK_NAME}_index.json"
+
+# step2-2, preferred peer parameter (use original_asis node/interface name)
+PREFERRED_NODE="edge-tk01"
+PREFERRED_INTERFACE="ge-0/0/3.0"
+EXTERNAL_ASN=65550
+```
+
 # Step1
 Step1は２つのオペレーションに分割しています。
 

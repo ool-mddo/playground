@@ -1,5 +1,42 @@
+# デモ環境変数の設定
+
+デモ用パラメタを設定します。(ファイルは `demo_vars`)
+
+デモでは以下の値(デモ環境で使用する変数)を設定する必要があります。
+
+- 実行するシナリオ(ユースケース)指定
+  - `USECASE_NAME="pni_addlink"`
+- トラフィック生成(iperf)コマンドの自動生成
+  - `SOURCE_AS`, `DEST_AS`: 送信元/先AS番号
+- 外部ASトポロジの自動生成
+  - `PREFERRED_NODE`, `PREFERRED_INTERFACE`: 優先的にトラフィックを通す経路
+  - `REDUNDANT_NODE`: リンク増設先ルータ
+
+`demo_vars` ファイル
+```bash
+(省略)
+
+# all steps: target network name
+NETWORK_NAME="mddo-bgp"
+USECASE_NAME="pni_addlink"
+NETWORK_INDEX="${NETWORK_NAME}_index.json"
+
+# step1-2, generate external-AS topology script
+SOURCE_AS=65550
+DEST_AS=65520
+
+# step1-2 and 2-2, preferred peer parameter (use original_asis node/interface name)
+#PREFERRED_NODE="NONE"
+PREFERRED_NODE="edge-tk01"
+REDUNDANT_NODE="edge-tk03"
+#REDUNDANT_NODE="NONE"
+PREFERRED_INTERFACE="ge-0/0/3.0"
+EXTERNAL_ASN=65550
+```
+
 # Step1
-Step1は２つのオペレーションに分割しています。
+
+Step1は2つのオペレーションに分割しています。
 
 > [!NOTE]
 > [セグメント移転ユースケース](../move_seg/introduction.md)から拡張をしています。step1-1はセグメント移転ユースケースと共通、step1-2はPNIユースケース用の拡張です。
