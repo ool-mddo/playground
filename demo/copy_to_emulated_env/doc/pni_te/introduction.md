@@ -6,7 +6,7 @@ PNIユースケースは通信事業者(ISP)のBGPオペレーションの一つ
 
 次のような状況でのトラフィックコントロールを考えます: ゲームのアップデートデータの配信により、PNI回線の ACT側 (Edge-TK01 と PNI01 間の回線) の流量が増加し、利用率が 30% に上昇 (デモでは 8Mbps 前後から 10Mbps 前後へ)
 
-![pni usecase situation](fig/pni_usecase_1.png)
+![initial situation](fig/pni_te_situation1.drawio.svg)
 
 - このままでは輻輳の恐れがあるので、PNI ACT回線の流量を減らしたい
 - 今回はPNIのSBY回線があるため、こちらに一部のトラフィックを移すことで輻輳が回避可能
@@ -17,8 +17,8 @@ PNIユースケースは通信事業者(ISP)のBGPオペレーションの一つ
 - 20-30%程度のトラフィックをSBY側に移動して、ACT側の輻輳が回避できると推測
 - 実際にシミュレーションして、どの経路の停止を行うのが最適な組み合わせかを探る
 
-![pni usecase ops1](fig/pni_usecase_2.png)
-![pni usecase ops2](fig/pni_usecase_3.png)
+![change policy ops1](fig/pni_te_situation2.drawio.svg)
+![change policy ops2](fig/pni_te_situation3.drawio.svg)
 
 ## デモの流れ
 

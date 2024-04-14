@@ -81,7 +81,7 @@ PNIユースケース実行のためにoriginal_asis トポロジデータを拡
 - bgp_procではAS65550ADDのBGPノードが存在している。
   PNI03相当のBGPノードとなっており、まだ65518の自ASと直接ピア接続していないため、BGP上でのリンクはない状態
 
-![alt text](fig/step12_layer3_pni03.png)
+![bgp_proc as655550](fig/step12_layer3_pni03.png)
 - Layer3に関してはEdge-TK03とのLayer3でのPNI03との接続性はあるため、ここではAS65550ADDとEdge-TK03との間にリンクが存在している。
 - また、AS65550ADDにiperf用の負荷を発生させるノードがすべて紐づいている。
 - AS65520のPOI側のiperfノードはランダムにPNI01-03のノードに紐づく形となっている。

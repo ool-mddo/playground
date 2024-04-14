@@ -6,18 +6,18 @@ PNIユースケースは通信事業者(ISP)のBGPオペレーションの一つ
 
 次のような状況でのトラフィックコントロールを考えます
 - 事前状態：拠点AからのトラフィックはPNI01-Edge-TK01間を経由している
-![alt text](fig/pni_addlink_usecase_1.png)
+![initial traffic flow](fig/pni_addlink_situation1.drawio.svg)
 
 
 - PNI回線の拠点A側 (Edge-TK01 と PNI01 間の回線) の定常的に流れるトラフィックが増加する
-![alt text](fig/pni_addlink_usecase_2.png)
+![increasing traffic](fig/pni_addlink_situation2.drawio.svg)
 
 
 - PNI回線の拠点A側 (Edge-TK03 と PNI01 間の回線) の回線を増設する
-![alt text](fig/pni_addlink_usecase_3.png)
+![add link](fig/pni_addlink_situation3.drawio.svg)
 
 - PNI回線の拠点A側 (Edge-TK03 と PNI01 間の回線) の回線上でBGPピアを確立し、経路の一部を増設した回線に流れるようにポリシー設定を入れる
-![alt text](fig/pni_addlink_usecase_4.png)
+![add policy](fig/pni_addlink_situation4.drawio.svg)
 
 
 ## デモの流れ

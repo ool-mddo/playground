@@ -11,10 +11,10 @@ docker exec -it clab-emulated-edge-tk03 cli
 configure
 ```
 
-PNI03へのebgpピアの設定を入れるため以下のコンフィグを投入します。
+PNI03へのeBGPピアの設定を入れるため以下のコンフィグを投入します。
 
 ```
-delete policy-options policy-statement as65550-peer-out1-tyo-ipv4 
+delete policy-options policy-statement as65550-peer-out1-tyo-ipv4
 set policy-options community aggregated members 65518:1
 set policy-options community any members *:*
 set policy-options community peer members 65518:2
@@ -123,6 +123,6 @@ show | compare
 commit
 ```
 
-→ 追加した対象Linkにトラフィックが流れるようになった
+追加した対象Linkにトラフィックが流れます。
 
 ![operation traffic](fig/grafana_operation_traffic.png)
