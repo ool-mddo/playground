@@ -26,10 +26,8 @@ SOURCE_AS=65550
 DEST_AS=65520
 
 # step1-2 and 2-2, preferred peer parameter (use original_asis node/interface name)
-#PREFERRED_NODE="NONE"
-PREFERRED_NODE="edge-tk01"
-REDUNDANT_NODE="edge-tk03"
-#REDUNDANT_NODE="NONE"
+PREFERRED_NODE="NONE"
+REDUNDANT_NODE="NONE"
 PREFERRED_INTERFACE="ge-0/0/3.0"
 EXTERNAL_ASN=65550
 ```
