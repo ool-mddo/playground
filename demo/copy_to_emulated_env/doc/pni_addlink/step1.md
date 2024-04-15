@@ -1,4 +1,16 @@
+
 # デモ環境変数の設定
+
+## コンフィグ選択
+
+mddo-bgp コンフィグを使用します。ユースケースによって微妙にコンフィグの違いがある(ユースケースによってトポロジに若干の差異がある)ため、pni_addlink ユースケース用のタグをチェックアウトします。
+
+```bash
+# playground/configs/mddo-bgp
+git checkout v0.2.0-pni_addlink
+```
+
+## パラメタ設定
 
 デモ用パラメタを設定します。(ファイルは `demo_vars`)
 
@@ -6,11 +18,14 @@
 
 - 実行するシナリオ(ユースケース)指定
   - `USECASE_NAME="pni_addlink"`
-- トラフィック生成(iperf)コマンドの自動生成
-  - `SOURCE_AS`, `DEST_AS`: 送信元/先AS番号
-- 外部ASトポロジの自動生成
-  - `PREFERRED_NODE`, `PREFERRED_INTERFACE`: 優先的にトラフィックを通す経路
-  - `REDUNDANT_NODE`: リンク増設先ルータ
+- デモ全体で使用するパラメータ
+    - `NETORK_NAME` : 対象となるネットワークの名前 ([Batfishのデータ管理とネーミングの制約](https://github.com/ool-mddo/playground/blob/main/doc/system_architecture.md#%E3%83%8D%E3%83%BC%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%88%B6%E7%B4%84) を参照してください)
+- デモの一部ステップ(step1-2,2-2)で使用するデータ
+  - トラフィック生成(iperf)コマンドの自動生成
+    - `SOURCE_AS`, `DEST_AS`: 送信元/先AS番号
+  - 外部ASトポロジの自動生成
+    - `PREFERRED_NODE`, `PREFERRED_INTERFACE`: 優先的にトラフィックを通す経路
+    - `REDUNDANT_NODE`: リンク増設先ルータ
 
 `demo_vars` ファイル
 ```bash
