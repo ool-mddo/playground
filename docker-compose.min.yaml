@@ -1,4 +1,3 @@
-version: "3"
 services:
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
@@ -82,3 +81,8 @@ services:
     depends_on:
       - batfish-wrapper
       - netomox-exp
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.16.254.0/24

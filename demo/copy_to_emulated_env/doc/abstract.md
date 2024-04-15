@@ -43,5 +43,7 @@ ref. [プロジェクトの位置づけ](../../../doc/project_positioning.md)
 ![translate](./fig/translate.png)
 
 # デモシナリオ (ユースケース)
-* [セグメント移転ユースケース](move_seg/introduction.md)
-* [PNIユースケース](pni/introduction.md)
+* [セグメント移転](move_seg/introduction.md)
+* PNIユースケース
+    * [PNI トラフィック制御](pni_te/introduction.md)
+    * [PNI リンク増設](pni_addlink/introduction.md)

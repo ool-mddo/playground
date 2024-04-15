@@ -19,7 +19,9 @@
   * [大規模ネットワークのシミュレーション性能調査](./demo/multi_region_expr/README.md)
 * [実環境をコンテナベースの検証環境にコピーして検証可能にする](./demo/copy_to_emulated_env/README.md)
   * [セグメント移転](./demo/copy_to_emulated_env/doc/move_seg/introduction.md)
-  * [PNIユースケース](./demo/copy_to_emulated_env/doc/pni/introduction.md)
+  * PNIユースケース
+    * [PNI トラフィック制御](./demo/copy_to_emulated_env/doc/pni_te/introduction.md)
+    * [PNI リンク増設](./demo/copy_to_emulated_env/doc/pni_addlink/introduction.md)
 
 ## Reference
 
