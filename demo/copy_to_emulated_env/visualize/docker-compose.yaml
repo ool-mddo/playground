@@ -53,19 +53,28 @@ services:
       options:
         max-size: 50m
 
+  relabeler:
+    build: ./relabeler
+    container_name: relabeler
+    volumes:
+      - type: bind
+        source: ./relabeler/ns_convert_table.json
+        target: /opt/relabeler/ns_convert_table.json
+    logging:
+      options:
+        max-size: 50m
+
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.38.6
+    ports:
+      - target: 8080
+        published: 20080
     container_name: cadvisor
     volumes:
     - /:/rootfs:ro
     - /var/run:/var/run:rw
     - /sys:/sys:ro
     - /var/lib/docker/:/var/lib/docker:ro
-    depends_on:
-    - redis
-  redis:
-    image: redis:7.0.12
-    container_name: redis
 
 volumes:
   prometheus-data:
