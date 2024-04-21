@@ -5,6 +5,7 @@ import ipaddress
 import csv
 import random
 import sys
+import os
 
 args = sys.argv
 network_name = args[1]
@@ -15,12 +16,14 @@ subnet = args[5]
 preferred_node = args[6]
 redundant_node = args[7]
 
-externaldata = []
-flowdata_file = "../../configs/" + \
-    str(network_name) + "/original_asis/flowdata/flowdata.csv"
+current_directory = os.path.dirname(os.path.abspath(__file__))
+ext_as_topology_dir = os.path.join(current_directory, "external_as_topology")
 
-except_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/except.csv"
-addl3_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/addl3.csv"
+externaldata = []
+flowdata_file = os.path.join(current_directory, "flowdata.csv")
+except_file = os.path.join(ext_as_topology_dir, "except.csv")
+addl3_file = os.path.join(ext_as_topology_dir, "addl3.csv")
+
 tempinstance = ""
 srccommand = "curl http://localhost:15000/topologies/" + network_name + \
     "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + src_as + ")' | jq -s '.'"
@@ -724,8 +727,7 @@ localastopologydata = json.loads(str(localastopology.stdout))
 template = Template(jinja_bgp_as)
 result = template.render(localtopology=localastopologydata, src_as=src_as, dst_as=dst_as,
                          externaldata=externaldata, exceptlist=exceptlist, addl3list=addl3list)
-# generate (save) external-AS scripts
-ext_as_topology_dir = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}"
+
 # bgp_as
 file = open(f"{ext_as_topology_dir}/bgp_as.rb", 'w')
 file.write(result)
