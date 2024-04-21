@@ -25,24 +25,6 @@ while getopts d option; do
   esac
 done
 
-# convert node/interface name (original to emulated)
-EMULATE_PREFERRED_NODE=$(
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d "{ \"host_name\": \"${PREFERRED_NODE}\" }" \
-    "http://${API_PROXY}/topologies/${NETWORK_NAME}/ns_convert_table/query" | jq -r .target_host.l3_model
-)
-EMULATE_PREFERRED_INTERFACE=$(
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d "{ \"host_name\": \"${PREFERRED_NODE}\", \"if_name\": \"${PREFERRED_INTERFACE}\" }" \
-    "http://${API_PROXY}/topologies/${NETWORK_NAME}/ns_convert_table/query" | jq -r .target_if.l3_model
-)
-
-# set preferred peer
-curl -s -X POST -H "Content-Type: application/json" \
-  -d "{ \"ext_asn\": ${EXTERNAL_ASN}, \"node\": \"${EMULATE_PREFERRED_NODE}\", \"interface\": \"${EMULATE_PREFERRED_INTERFACE}\" }" \
-  "http://${API_PROXY}/conduct/${NETWORK_NAME}/emulated_asis/topology/bgp_proc/preferred_peer" \
-  > /dev/null # ignore echo-back (topology json)
-
 # configure iperf client/server
 if "${WITH_CLAB:-true}"; then
   ansible-runner run . -p /data/project/playbooks/step2-2.yaml --container-option="--net=${API_BRIDGE}" \

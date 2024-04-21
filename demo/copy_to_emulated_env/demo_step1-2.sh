@@ -31,6 +31,7 @@ if  [[ "$USECASE_NAME" == "pni_addlink" ]]; then
   # python3 ./generate.py "${NETWORK_NAME}" "${SOURCE_AS}" "${DEST_AS}" "100.0.0.0/8"
 fi
 # generate external-AS topology
+# TODO: specify preferred peer when generate external-as topology
 external_as_json="${USECASE_CONFIGS_DIR}/external_as_topology.json"
 ruby "${USECASE_DIR}/external_as_topology/main.rb" > "$external_as_json"
 # splice external-AS topology to original_asis (overwrite)

@@ -9,7 +9,6 @@ services:
     environment:
       NETOMOX_LOG_LEVEL: ${NETOMOX_LOG_LEVEL}
       NETOMOX_EXP_LOG_LEVEL: ${NETOMOX_EXP_LOG_LEVEL}
-      MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
       MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
     volumes:
@@ -18,7 +17,6 @@ services:
       - ./repos/netomox-exp/app.rb:/netomox-exp/app.rb
       - ./repos/netomox-exp/config.ru:/netomox-exp/config.ru
       # data dirs
-      - ${SHARED_CONFIGS_DIR}:${MDDO_CONFIGS_DIR}
       - ${SHARED_QUERIES_DIR}:${MDDO_QUERIES_DIR}
       - ${SHARED_TOPOLOGIES_DIR}:${MDDO_TOPOLOGIES_DIR}
     depends_on:
