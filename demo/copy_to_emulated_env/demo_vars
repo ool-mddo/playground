@@ -1,27 +1,23 @@
+# runtime and environment
 ANSIBLE_RUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v3.1.0"
 CRPD_IMAGE="crpd:23.4R1.9"
 API_PROXY="localhost:15000"
 API_BRIDGE="playground_default"
 LOCALSERVER_USER=mddo
-PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
-ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
 
-# all steps: target network name
+# all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
 USECASE_NAME="pni_addlink" # "pni_addlink" or "pni_te" for mddo-bgp network
+
+# constants
+PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 NETWORK_INDEX="network_index/${NETWORK_NAME}.json"
+ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/copy_to_emulated_env"
+ANSIBLE_PLAYBOOK_DIR="${ANSIBLE_RUNNER_DIR}/project/playbook"
+USECASE_CONFIGS_DIR="$ANSIBLE_PLAYBOOK_DIR/configs"
+USECASE_COMMON_NAME=$(echo "$USECASE_NAME" | cut -d_ -f1)
+USECASE_COMMON_DIR="${ANSIBLE_PLAYBOOK_DIR}/${USECASE_COMMON_NAME}"
+USECASE_DIR="${ANSIBLE_PLAYBOOK_DIR}/${USECASE_NAME}"
 
 # step1-2: define network-name regexp (to merge bgp-policy data/external-as topology)
 BGP_NETWORK_PATTERN="^(biglobe|mddo-bgp).*$"
-
-# step1-2, generate external-AS topology script
-SOURCE_AS=65550
-DEST_AS=65520
-
-# step1-2 and 2-2, preffered peer parameter (use original_asis node/interface name)
-PREFERRED_NODE="NONE"
-#PREFERRED_NODE="edge-tk01"
-#REDUNDANT_NODE="edge-tk03"
-REDUNDANT_NODE="NONE"
-PREFERRED_INTERFACE="ge-0/0/3.0"
-EXTERNAL_ASN=65550
