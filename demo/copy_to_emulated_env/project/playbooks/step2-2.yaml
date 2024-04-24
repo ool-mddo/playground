@@ -5,9 +5,14 @@
   vars:
     ansible_user: "{{ login_user}}"
     ansible_python_interpreter: /usr/bin/python3
+    gen_iperf_command: project/playbooks/{{ usecase_common_name }}/generate_iperf_command.py
+    flow_data: project/playbooks/{{ usecase_name }}/flowdata.csv
+    static_route_data: project/playbooks/configs/static-route.yaml
+    iperf_params_data_runner: configs/iperf_params.json # in runner container path (origin: this playbook dir)
+    iperf_params_data: project/playbooks/configs/iperf_params.json # in remote host path
 
   tasks:
-  - name: "get convert table"
+  - name: "get converted topology data"
     uri:
       url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology"
       method: "GET"
@@ -16,47 +21,43 @@
 
   - name: generate iperf command parameter
     shell:
-      cmd: "python3 generate_iperf_command.py {{ playground_dir }}/configs/{{ network_name }}/original_asis/flowdata/flowdata.csv clab/static-route.yaml > project/playbooks/configs/iperf_params.json"
+      cmd: "python3 {{ gen_iperf_command }} {{ flow_data }} {{ static_route_data }} > {{ iperf_params_data }}"
     args:
       chdir: "{{ ansible_runner_dir }}"
 
-  - name:  iperf server command
+  - name: iperf server command
     debug:
-      msg: '{{ common }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.number }} > out_{{ item.1.number }}.log &"'
+      msg: '{{ exec_container }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.number }} > out_{{ item.1.number }}.log &"'
     vars:
-        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.0['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+      exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
     with_subelements:
-      - "{{ lookup('file', './configs/iperf_params.json') }}"
+      - "{{ lookup('file', iperf_params_data_runner) }}"
       - port
 
-  - name:  iperf server command
+  - name: iperf server command
     shell:
-      cmd: '{{ common }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.number }} > out_{{ item.1.number }}.log 2>&1 &"'
-    args:
-      chdir: "{{ ansible_runner_dir }}/clab"
+      cmd: '{{ exec_container }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.number }} > out_{{ item.1.number }}.log 2>&1 &"'
     vars:
-        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.0['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+      exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
     with_subelements:
-      - "{{ lookup('file', './configs/iperf_params.json') }}"
+      - "{{ lookup('file', iperf_params_data_runner) }}"
       - port
 
-
-  - name:  iperf client command
+  - name: iperf client command
     debug:
-      msg: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K  -p {{ item.1.number }} > out_{{ item.0.node }}.log &"'
+      msg: '{{ exec_container }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K -p {{ item.1.number }} > out_{{ item.0.node }}.log &"'
     vars:
-        common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.1['source'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+      exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['source'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
     with_subelements:
-      - "{{ lookup('file', './configs/iperf_params.json') }}"
+      - "{{ lookup('file', iperf_params_data_runner) }}"
       - port
 
-  - name:  iperf client command
+  - name: iperf client command
     shell:
-      cmd: '{{ common }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K  -p {{ item.1.number }} > out_{{ item.0.node }}.log 2>&1 &"'
-    args:
-      chdir: "{{ ansible_runner_dir }}/clab"
+      cmd: '{{ exec_container }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["dest_address"] }} -b {{ item.1.rate | int }}K -p {{ item.1.number }} > out_{{ item.0.node }}.log 2>&1 &"'
     vars:
-      common: "sudo containerlab inspect --all --format json | jq '.containers[] |  select( .name | contains (\"{{ item.1['source'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+      exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['source'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
     with_subelements:
-      - "{{ lookup('file', './configs/iperf_params.json') }}"
+      - "{{ lookup('file', iperf_params_data_runner) }}"
       - port
+

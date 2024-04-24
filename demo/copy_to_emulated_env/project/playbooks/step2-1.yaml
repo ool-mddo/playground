@@ -216,6 +216,6 @@
       loop: "{{ topology.json | json_query(query) | flatten }}"
 
     - name: import setup_iperf.yaml task
-      ansible.builtin.import_tasks: setup_iperf.yaml
+      ansible.builtin.import_tasks: "{{ usecase_common_name }}/setup_iperf.yaml"
       when: iperf_list is defined
 
