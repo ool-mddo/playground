@@ -10,6 +10,13 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
+if [[ ! "$NETWORK_NAME" =~ $BGP_NETWORK_PATTERN ]]; then
+  echo "Network:$NETWORK_NAME is not BGP network (Nothing to do in step2-2)"
+  exit 0
+else
+  echo "# Network:$NETWORK_NAME is specified as BGP network, generate traffic between PNI and POI"
+fi
+
 # option check
 while getopts d option; do
   case $option in
