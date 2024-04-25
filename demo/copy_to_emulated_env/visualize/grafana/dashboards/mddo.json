@@ -107,7 +107,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 11,
         "w": 24,
         "x": 0,
         "y": 1
@@ -140,7 +140,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum (irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\".*edge.*\",interface=~\"eth.+\"}[$__interval]) * 8 ) by (name, interface)",
+          "expr": "sum (irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\".*edge.*\", interface=~\"(ge-.*|Gigabit.*)\"}[$__interval]) * 8 ) by (name, interface)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}}: {{interface}}-in",
@@ -211,7 +211,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 7
+        "y": 12
       },
       "id": 4,
       "interval": "15s",
@@ -242,7 +242,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\"$container\",interface=~\"eth.+\"}[$__interval]) * 8",
+          "expr": "irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(ge-.*|Gigabit.*)\"}[$__interval]) * 8",
           "hide": false,
           "interval": "",
           "legendFormat": "{{interface}}-in",
@@ -255,7 +255,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_transmit_bytes_total{instance=~\"$host\",name=~\"$container\",interface=~\"eth.+\"}[$__interval]) * -8 ",
+          "expr": "irate(container_network_transmit_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(ge-.*|Gigabit.*)\"}[$__interval]) * -8 ",
           "hide": false,
           "instant": false,
           "legendFormat": "{{interface}}-out",
@@ -276,7 +276,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 55
+        "y": 30
       },
       "id": 8,
       "panels": [
@@ -399,7 +399,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 56
+        "y": 31
       },
       "id": 11,
       "panels": [
@@ -606,7 +606,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 32
       },
       "id": 19,
       "panels": [
@@ -778,9 +778,9 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": "relabeler:5000",
+          "value": "relabeler:5000"
         },
         "datasource": {
           "type": "prometheus",
@@ -844,7 +844,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
