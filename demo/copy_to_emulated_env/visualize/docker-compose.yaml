@@ -29,6 +29,8 @@ services:
     logging:
       options:
         max-size: 50m
+    networks:
+      - playground_default
 
   prometheus:
     image: prom/prometheus:v2.46.0
@@ -52,17 +54,24 @@ services:
     logging:
       options:
         max-size: 50m
+    networks:
+      - playground_default
 
   relabeler:
-    build: ./relabeler
+    image: ghcr.io/ool-mddo/namespace-relabeler:v0.1.1
     container_name: relabeler
-    volumes:
-      - type: bind
-        source: ./relabeler/ns_convert_table.json
-        target: /opt/relabeler/ns_convert_table.json
+    ports:
+      - target: 5000
+        published: 5000
+    environment:
+      - NS_CONVERT_TABLE_URL=${NS_CONVERT_TABLE_URL}
+      - CADVISOR_URL=${CADVISOR_URL}
     logging:
       options:
         max-size: 50m
+    stop_signal: SIGINT
+    networks:
+      - playground_default
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.38.6
@@ -71,16 +80,17 @@ services:
         published: 20080
     container_name: cadvisor
     volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:rw
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - playground_default
 
 volumes:
   prometheus-data:
   grafana-data:
+
 networks:
-  default:
-    ipam:
-      config:
-        - subnet: 192.168.255.0/24          
+  playground_default:
+    external: true
