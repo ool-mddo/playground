@@ -16,7 +16,6 @@ def register_bgp_proc(nws)
         term_point 'peer_172.16.0.6' do
           support %w[layer3 AS65550-1  Ethernet1]
           attribute(
-            flags: %w[ext-bgp-speaker-preferred],
             local_as: 65_550,
             local_ip: '172.16.0.5',
             remote_as: 65_518,

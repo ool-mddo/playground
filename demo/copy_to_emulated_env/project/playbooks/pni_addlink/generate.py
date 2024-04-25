@@ -1,20 +1,33 @@
 from jinja2 import Template
-import subprocess
-import json
-import ipaddress
+import argparse
 import csv
-import random
-import sys
+import ipaddress
+import json
 import os
+import random
+import subprocess
+import yaml
 
-args = sys.argv
-network_name = args[1]
-usecase_name = args[2]
-src_as = args[3]
-dst_as = args[4]
-subnet = args[5]
-preferred_node = args[6]
-redundant_node = args[7]
+parser = argparse.ArgumentParser(description="Command line argument parser")
+parser.add_argument("-p", "--param-file", type=str, required=True, help="Parameter file name")
+parser.add_argument("-a", "--api-proxy", type=str, default=os.getenv("API_PROXY", "localhost:15000"), help="API proxy URL")
+parser.add_argument("-n", "--network", type=str, default=os.getenv("NETWORK_NAME", "mddo-bgp"), help="Network name")
+parser.add_argument("-u", "--usecase", type=str, default=os.getenv("USEACSE_NAME", "pni_addlink"), help="Usecase name")
+args = parser.parse_args()
+
+# read usecase params
+with open(args.param_file, "r") as file:
+    param_data = yaml.safe_load(file)
+
+print("param_data: ", param_data)
+
+network_name = args.network
+usecase_name = args.usecase
+src_as = str(param_data["source_as"])
+dst_as = str(param_data["dest_as"])
+subnet = param_data["subnet"]
+preferred_node = param_data["preferred_node"]
+redundant_node = param_data["redundant_node"]
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 ext_as_topology_dir = os.path.join(current_directory, "external_as_topology")

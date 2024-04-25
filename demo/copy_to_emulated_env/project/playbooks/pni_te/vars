@@ -1,6 +1,0 @@
-# variables for pni_addlink usecase
-
-# step2-2, preferred peer parameter (use original_asis node/interface name)
-PREFERRED_NODE="edge-tk01"
-PREFERRED_INTERFACE="ge-0/0/3.0"
-EXTERNAL_ASN=65550
