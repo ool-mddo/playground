@@ -30,7 +30,7 @@ fi
 
 # generate external-AS topology
 external_as_json="${USECASE_CONFIGS_DIR}/external_as_topology.json"
-ruby "${USECASE_DIR}/external_as_topology/main.rb" -p "${USECASE_DIR}/params.json" > "$external_as_json"
+ruby "${USECASE_DIR}/external_as_topology/main.rb" -p "${USECASE_DIR}/params.yaml" > "$external_as_json"
 # splice external-AS topology to original_asis (overwrite)
 curl -s -X POST -H "Content-Type: application/json" \
   -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
