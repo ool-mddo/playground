@@ -28,7 +28,7 @@ while getopts d option; do
     ;;
   *)
     echo "Unknown option detected, $option"
-    cd "$current_dir"
+    cd "$current_dir" || exit
     exit 1
   esac
 done
@@ -42,5 +42,4 @@ if "${WITH_CLAB:-true}"; then
 fi
 
 echo "# return dir: $PWD -> $current_dir"
-cd "$current_dir"
-
+cd "$current_dir" || exit

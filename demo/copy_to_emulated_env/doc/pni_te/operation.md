@@ -8,20 +8,6 @@
 
 ![grafana select node 2](fig/grafana_select_node2.png)
 
-
-テスト用のEvent発生想定したFlowDataを所定ファイルへコピーします。
-
-```bash
-# playground/demo/copy_to_emulated_env
-cp clab/event_flowdata.csv clab/flowdata.csv
-```
-
-iperf処理の再起動を行い、EventFlowDataにのっとってiperfの帯域を指定して付加トラフィックを発生させます。
-
-```bash
-bash demo_restart-iperf.sh
-```
-
 ## 経路コントロール操作
 
 操作のため edge-tk01 CLI にはいります。
