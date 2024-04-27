@@ -8,7 +8,7 @@
     gen_iperf_command: project/playbooks/{{ usecase_common_name }}/generate_iperf_command.py
     flow_data: project/playbooks/{{ usecase_name }}/flowdata.csv
     static_route_data: project/playbooks/configs/static-route.yaml
-    iperf_params_data_runner: ../configs/iperf_params.json  # in runner container path (origin: this playbook dir)
+    iperf_params_data_runner: configs/iperf_params.json  # in runner container path (origin: this playbook dir)
     iperf_params_data: project/playbooks/configs/iperf_params.json  # in remote host path
     clab_restart: "{{ clab_restart }}"
 
