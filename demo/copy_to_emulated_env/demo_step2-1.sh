@@ -10,8 +10,17 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
+print_usage() {
+    echo "Usage: $(basename "$0") [options]"
+    echo "Options:"
+    echo "  -d     Debug/data check, without executing ansible-runner (clab)"
+    echo "  -h     Display this help message"
+}
+
 # option check
-while getopts d option; do
+# defaults
+WITH_CLAB=true
+while getopts dh option; do
   case $option in
   d)
     # data check, debug
@@ -19,9 +28,15 @@ while getopts d option; do
     WITH_CLAB=false
     echo "# Check: with_clab = $WITH_CLAB"
     ;;
+  h)
+    print_usage
+    exit 0
+    ;;
   *)
-    echo "Unknown option detected, $option"
+    echo "Unknown option detected, -$OPTARG" >&2
+    print_usage
     exit 1
+    ;;
   esac
 done
 
@@ -31,11 +46,18 @@ curl -s -X POST -H 'Content-Type: application/json' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/original_asis/emulated_asis"
 
 # generate emulated asis configs from emulated asis topology
-if "${WITH_CLAB:-true}"; then
-  ansible-runner run . -p /data/project/playbooks/step2-1.yaml --container-option="--net=${API_BRIDGE}" \
-    --container-volume-mount="$PWD:/data" --container-image="${ANSIBLE_RUNNER_IMAGE}" \
-    --process-isolation --process-isolation-executable docker \
-    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -e crpd_image=${CRPD_IMAGE} -k -K "
+if "${WITH_CLAB}"; then
+  ansible-runner run . -p /data/project/playbooks/step2-1.yaml \
+    --container-option="--net=${API_BRIDGE}" \
+    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
+    --container-volume-mount="$PWD:/data" \
+    --process-isolation \
+    --process-isolation-executable docker \
+    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
+               -e login_user=${LOCALSERVER_USER} \
+               -e network_name=${NETWORK_NAME} \
+               -e crpd_image=${CRPD_IMAGE} \
+               -k -K"
 fi
 
 # update netoviz index
