@@ -1,0 +1,4 @@
+---
+preferred_node: edge-tk01
+preferred_interface: ge-0/0/3.0
+external_asn: 65550

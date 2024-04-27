@@ -1,7 +1,7 @@
 ---
 - hosts: docker-host
   gather_facts: false
-  become: yes
+  become: true
   vars:
     ansible_user: "{{ login_user}}"
     ansible_python_interpreter: /usr/bin/python3
@@ -25,7 +25,7 @@
       ansible.builtin.fetch:
         src: "{{ ansible_runner_dir }}/clab/clab-emulated/{{ item.agent_name }}/config/juniper.conf"
         dest: "/tmp/{{ item.agent_name }}.conf"
-        flat: yes
+        flat: true
       when: '"node" == item.type or "endpoint" == item.type'
       loop: "{{ node_list.json }}"
 
@@ -46,4 +46,3 @@
         filepath: "configs/{{ item.agent_name }}.conf"
       when: '"segment" == item.type'
       loop: "{{ node_list.json }}"
-

@@ -1,43 +1,62 @@
 from jinja2 import Template
-import subprocess
-import json
-import ipaddress
+import argparse
 import csv
+import ipaddress
+import json
+import os
 import random
-import sys
+import subprocess
+import yaml
 
-args = sys.argv
-network_name = args[1]
-usecase_name = args[2]
-src_as = args[3]
-dst_as = args[4]
-subnet = args[5]
-preferred_node = args[6]
-redundant_node = args[7]
+parser = argparse.ArgumentParser(description="Command line argument parser")
+parser.add_argument("-p", "--param-file", type=str, required=True, help="Parameter file name")
+parser.add_argument("-a", "--api-proxy", type=str, default=os.getenv("API_PROXY", "localhost:15000"), help="API proxy URL")
+parser.add_argument("-n", "--network", type=str, default=os.getenv("NETWORK_NAME", "mddo-bgp"), help="Network name")
+parser.add_argument("-u", "--usecase", type=str, default=os.getenv("USEACSE_NAME", "pni_addlink"), help="Usecase name")
+args = parser.parse_args()
+
+# read usecase params
+with open(args.param_file, "r") as file:
+    param_data = yaml.safe_load(file)
+
+print("param_data: ", param_data)
+
+network_name = args.network
+usecase_name = args.usecase
+src_as = str(param_data["source_as"])
+dst_as = str(param_data["dest_as"])
+subnet = param_data["subnet"]
+preferred_node = param_data["preferred_node"]
+redundant_node = param_data["redundant_node"]
+
+current_directory = os.path.dirname(os.path.abspath(__file__))
+ext_as_topology_dir = os.path.join(current_directory, "external_as_topology")
 
 externaldata = []
-flowdata_file = "../../configs/" + \
-    str(network_name) + "/original_asis/flowdata/flowdata.csv"
+flowdata_file = os.path.join(current_directory, "flowdata.csv")
+except_file = os.path.join(ext_as_topology_dir, "except.csv")
+addl3_file = os.path.join(ext_as_topology_dir, "addl3.csv")
 
-except_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/except.csv"
-addl3_file = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}/addl3.csv"
+curl_cmd = f"curl http://{args.api_proxy}/topologies/{network_name}/original_asis/topology"
 tempinstance = ""
-srccommand = "curl http://localhost:15000/topologies/" + network_name + \
-    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + src_as + ")' | jq -s '.'"
-dstcommand = "curl http://localhost:15000/topologies/" + network_name + \
-    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[][\"ietf-network-topology:termination-point\"][] | select (.[\"mddo-topology:bgp-proc-termination-point-attributes\"][\"remote-as\"] == " + dst_as + ")' | jq -s '.'"
-localascommand = "curl http://localhost:15000/topologies/" + network_name + \
-    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"bgp_proc\")' | jq -r '.node[]' | jq -s '.'"
-layer3command = "curl http://localhost:15000/topologies/" + network_name + \
-    "/original_asis/topology | jq -r '.[\"ietf-network:networks\"][\"network\"][] | select (.[\"network-id\"] == \"layer3\")' | jq -r '.node[]' | jq -s '.'"
-srctopology = subprocess.run(
-    srccommand, shell=True, capture_output=True, text=True)
-dsttopology = subprocess.run(
-    dstcommand, shell=True, capture_output=True, text=True)
-localastopology = subprocess.run(
-    localascommand, shell=True, capture_output=True, text=True)
-layer3topology = subprocess.run(
-    layer3command, shell=True, capture_output=True, text=True)
+srccommand = f"""
+{curl_cmd} | \
+    jq -r '.["ietf-network:networks"]["network"][] | select (.["network-id"] == "bgp_proc")' | \
+    jq -r '.node[]["ietf-network-topology:termination-point"][] | select (.["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"] == {src_as})' | \
+    jq -s '.'
+"""
+dstcommand = f"""
+{curl_cmd} | \
+    jq -r '.["ietf-network:networks"]["network"][] | select (.["network-id"] == "bgp_proc")' | \
+    jq -r '.node[]["ietf-network-topology:termination-point"][] | select (.["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"] == {dst_as})' | \
+    jq -s '.'
+"""
+localascommand = f"""{curl_cmd} | jq -r '.["ietf-network:networks"]["network"][] | select (.["network-id"] == "bgp_proc")' | jq -r '.node[]' | jq -s '.'"""
+layer3command = f"""{curl_cmd} | jq -r '.["ietf-network:networks"]["network"][] | select (.["network-id"] == "layer3")' | jq -r '.node[]' | jq -s '.'"""
+srctopology = subprocess.run(srccommand, shell=True, capture_output=True, text=True)
+dsttopology = subprocess.run(dstcommand, shell=True, capture_output=True, text=True)
+localastopology = subprocess.run(localascommand, shell=True, capture_output=True, text=True)
+layer3topology = subprocess.run(layer3command, shell=True, capture_output=True, text=True)
 
 subnet_list = list(ipaddress.ip_network(subnet).subnets(new_prefix=30))
 
@@ -185,14 +204,14 @@ def register_bgp_as(nws)
           attribute({ description: 'from TBD to TBD' })
           support %w[bgp_proc {{ node["mddo-topology:bgp-proc-node-attributes"]["router-id"] }} {{ tp["tp-id"] }} ]
         end
-{%-       endif %}        
+{%-       endif %}
 {%-     elif dst_as|int == tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-as"]|int %}
 {%-       if not tp["mddo-topology:bgp-proc-termination-point-attributes"]["remote-ip"]|string() in exceptlist|string() and not tp["mddo-topology:bgp-proc-termination-point-attributes"]["local-ip"]|string() in addl3list|string() %}
         term_point '{{ tp["tp-id"] }}' do
           attribute({ description: 'from TBD to TBD' })
           support %w[bgp_proc {{ node["mddo-topology:bgp-proc-node-attributes"]["router-id"] }} {{ tp["tp-id"] }} ]
         end
-{%-       endif %}        
+{%-       endif %}
 {%-     endif %}
 {%-   endfor %}
 {%- endfor %}
@@ -201,8 +220,8 @@ def register_bgp_as(nws)
         attribute({ as_number: {{ src_as[:-3] }}_{{ src_as[-3:] }} })
 {%- for node in externaldata %}
 {%-   if "router" in node["instancetype"] and node["attribute"]["localas"]|int ==  src_as|int%}
-{%-     for tp in node["iflist"] %} 
-{%-       if   tp["attribute"]["remoteas"]|int == localas|int and not "direct" == tp["protocol"] %}        
+{%-     for tp in node["iflist"] %}
+{%-       if   tp["attribute"]["remoteas"]|int == localas|int and not "direct" == tp["protocol"] %}
         support %w[bgp_proc {{ node["instancename"] }}]
         term_point 'peer_{{ tp["remoteaddress"] }}' do
           attribute({ description: 'from TBD to TBD' })
@@ -215,10 +234,10 @@ def register_bgp_as(nws)
       end
       node 'as{{ dst_as }}' do
         attribute({ as_number: {{ dst_as[:-3] }}_{{ dst_as[-3:] }} })
-{%- for node in externaldata %}        
+{%- for node in externaldata %}
 {%-   if "router" in node["instancetype"] and node["attribute"]["localas"]|int ==  dst_as|int%}
-{%-     for tp in node["iflist"] %}        
-{%-       if tp["attribute"]["remoteas"]|int == localas|int  and not "direct" == tp["protocol"] %}        
+{%-     for tp in node["iflist"] %}
+{%-       if tp["attribute"]["remoteas"]|int == localas|int  and not "direct" == tp["protocol"] %}
         support %w[bgp_proc {{ node["instancename"] }}]
         term_point 'peer_{{ tp["remoteaddress"] }}' do
           attribute({ description: 'from TBD to TBD' })
@@ -232,10 +251,10 @@ def register_bgp_as(nws)
       # inter AS links
 {%- for node in externaldata %}
 {%-   if "router" in node["instancetype"] and ( node["attribute"]["localas"]|int ==  src_as|int  or  node["attribute"]["localas"]|int ==  dst_as|int ) %}
-{%-     for tp in node["iflist"] %}        
-{%-       if  tp["attribute"]["remoteas"]|int == localas|int %}        
+{%-     for tp in node["iflist"] %}
+{%-       if  tp["attribute"]["remoteas"]|int == localas|int %}
 {%-         if not tp["address"] in addl3list|string() %}
-      bdlink %w[as{{ localas }} peer_{{ tp["address"] }} as{{ node["attribute"]["localas"] }} peer_{{ tp["remoteaddress"] }}] 
+      bdlink %w[as{{ localas }} peer_{{ tp["address"] }} as{{ node["attribute"]["localas"] }} peer_{{ tp["remoteaddress"] }}]
 {%-         endif %}
 {%-       endif %}
 {%-     endfor %}
@@ -724,8 +743,7 @@ localastopologydata = json.loads(str(localastopology.stdout))
 template = Template(jinja_bgp_as)
 result = template.render(localtopology=localastopologydata, src_as=src_as, dst_as=dst_as,
                          externaldata=externaldata, exceptlist=exceptlist, addl3list=addl3list)
-# generate (save) external-AS scripts
-ext_as_topology_dir = f"../../configs/{network_name}/original_asis/external_as_topology/{usecase_name}"
+
 # bgp_as
 file = open(f"{ext_as_topology_dir}/bgp_as.rb", 'w')
 file.write(result)

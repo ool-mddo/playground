@@ -10,8 +10,19 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
+print_usage() {
+    echo "Usage: $(basename "$0") [options]"
+    echo "Options:"
+    echo "  -d     Debug/data check, without executing ansible-runner (clab)"
+    echo "  -r     Restart containerlab"
+    echo "  -h     Display this help message"
+}
+
 # option check
-while getopts d option; do
+# defaults
+WITH_CLAB=true
+CLAB_RESTART=false
+while getopts drh option; do
   case $option in
   d)
     # data check, debug
@@ -19,34 +30,44 @@ while getopts d option; do
     WITH_CLAB=false
     echo "# Check: with_clab = $WITH_CLAB"
     ;;
+  r)
+    # restart clab/iperf
+    CLAB_RESTART=true
+    ;;
+  h)
+    print_usage
+    exit 0
+    ;;
   *)
-    echo "Unknown option detected, $option"
+    echo "Unknown option detected, -$OPTARG" >&2
+    print_usage
     exit 1
+    ;;
   esac
 done
 
-# convert node/interface name (original to emulated)
-EMULATE_PREFERRED_NODE=$(
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d "{ \"host_name\": \"${PREFERRED_NODE}\" }" \
-    "http://${API_PROXY}/topologies/${NETWORK_NAME}/ns_convert_table/query" | jq -r .target_host.l3_model
-)
-EMULATE_PREFERRED_INTERFACE=$(
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d "{ \"host_name\": \"${PREFERRED_NODE}\", \"if_name\": \"${PREFERRED_INTERFACE}\" }" \
-    "http://${API_PROXY}/topologies/${NETWORK_NAME}/ns_convert_table/query" | jq -r .target_if.l3_model
-)
-
-# set preferred peer
-curl -s -X POST -H "Content-Type: application/json" \
-  -d "{ \"ext_asn\": ${EXTERNAL_ASN}, \"node\": \"${EMULATE_PREFERRED_NODE}\", \"interface\": \"${EMULATE_PREFERRED_INTERFACE}\" }" \
-  "http://${API_PROXY}/conduct/${NETWORK_NAME}/emulated_asis/topology/bgp_proc/preferred_peer" \
-  > /dev/null # ignore echo-back (topology json)
+if [[ ! "$NETWORK_NAME" =~ $BGP_NETWORK_PATTERN ]]; then
+  echo "Network:$NETWORK_NAME is not BGP network (Nothing to do in step2-2)"
+  exit 0
+else
+  echo "# Network:$NETWORK_NAME is specified as BGP network, generate traffic between PNI and POI"
+fi
 
 # configure iperf client/server
-if "${WITH_CLAB:-true}"; then
-  ansible-runner run . -p /data/project/playbooks/step2-2.yaml --container-option="--net=${API_BRIDGE}" \
-    --container-volume-mount="$PWD:/data" --container-image="${ANSIBLE_RUNNER_IMAGE}" \
-    --process-isolation --process-isolation-executable docker \
-    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e playground_dir=${PLAYGROUND_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -k -K "
+if "${WITH_CLAB}"; then
+  echo "# Check: clab_restart = $CLAB_RESTART"
+
+  ansible-runner run . -p "/data/project/playbooks/step2-2.yaml" \
+    --container-option="--net=${API_BRIDGE}" \
+    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
+    --container-volume-mount="$PWD:/data" \
+    --process-isolation \
+    --process-isolation-executable docker \
+    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
+               -e login_user=${LOCALSERVER_USER} \
+               -e network_name=${NETWORK_NAME} \
+               -e usecase_name=${USECASE_NAME} \
+               -e usecase_common_name=${USECASE_COMMON_NAME} \
+               -e clab_restart=${CLAB_RESTART} \
+               -k -K"
 fi

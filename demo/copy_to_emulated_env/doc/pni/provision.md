@@ -2,7 +2,7 @@
 
 環境設定については[デモ環境構築](../../../../doc/provision.md)を参照してください。
 
-- `playground` リポジトリのタグは `v1.7.0` を選択してください
+- `playground` リポジトリのタグは `v1.7.1` を選択してください
 - デモシステムを起動してください ( `docker compose up` )
 
 > [!NOTE]
@@ -24,6 +24,14 @@ PNIユースケースでは、ネットワーク = mddo-bgp, スナップショ�
 ```bash
 cd playground/demo/copy_to_emulated_env/
 ```
+
+以降の作業はこのディレクトリが起点になります。ユースケース別/一部ユースケース共通のデータ・スクリプト等のディレクトリ配下のようになっています。
+* copy_to_emulated_env
+  * project/playbooks
+    * (seg_move): 固有のデータ等は特にありません
+    * pni : pni ユースケース共通
+    * pni_te : pni_te ユースケース固有のデータ・スクリプト
+    * pni_addlink : pni_addlink ユースケース固有のデータ・スクリプト
 
 ### Grafana(トラフィックの可視化)
 
@@ -95,3 +103,18 @@ Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
 
 - [物理トポロジデータの生成](../../../layer1_topology/doc/operation.md) を参照してください
 - 物理トポロジデータは `playground/configs/mddo-bgp/original_asis/batfish/layer1_topology.json` です
+
+
+### (optional) トラフィックの再生成・環境再起動
+
+pni ユースケースでは指定されたフローデータをもとにトラフィックを生成します (step2-2)。トラフィックデータ (flowdata.csv) のデータを差し替えたあと、環境を再起動して emulated env で付加するトラフィックを変えることができます。(実行前にユースケースディレクトリにある flowdata.csv をさしかえてください。)
+
+```bash
+# in copy_to_emulated_env dir
+
+# データの差替(例)
+# cp project/playbooks/pni_te/before_flowdata.csv project/playbooks/pni_te/flowdata.csv
+
+# 再起動
+./demo_step2-2.sh -r
+```

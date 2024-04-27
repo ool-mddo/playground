@@ -77,9 +77,10 @@ set protocols bgp group PNI neighbor 172.16.1.17 import as65550-peer-in1-tyo-ipv
 set protocols bgp group PNI neighbor 172.16.1.17 export as65550-peer-out1-tyo-ipv4
 
 show | compare
+```
+```
 commit
 ```
-
 
 ## PNI03(AS65550ADD)のBGP設定
 
