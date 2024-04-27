@@ -34,8 +34,8 @@ done
 
 # configure iperf client/server
 if "${WITH_CLAB:-true}"; then
-  ansible-runner run . -p /data/project/playbooks/step2-2.yaml --container-option="--net=${API_BRIDGE}" \
+  ansible-runner run . -p "/data/project/playbooks/${USECASE_COMMON_NAME}/restart_iperf.yaml" --container-option="--net=${API_BRIDGE}" \
     --container-volume-mount="$PWD:/data" --container-image="${ANSIBLE_RUNNER_IMAGE}" \
     --process-isolation --process-isolation-executable docker \
-    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -e usecase_name=${USECASE_NAME} -e usecase_common_name=${USECASE_COMMON_NAME} -k -K "
+    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} -e login_user=${LOCALSERVER_USER} -e network_name=${NETWORK_NAME} -e usecase_name=${USECASE_NAME} -e usecase_common_name=${USECASE_COMMON_NAME} -e clab_restart=false -k -K "
 fi
