@@ -139,6 +139,7 @@
   vars:
     ansible_user: "{{ login_user}}"
     ansible_python_interpreter: /usr/bin/python3
+    with_clab: "{{ with_clab }}"
 
   tasks:
     - name: "get convert table"
@@ -168,13 +169,13 @@
 
     - name: "delete ovs-br {{ item.key }}"
       shell: "ovs-vsctl del-br {{ item.key }}"
-      when: '"ovs" in item.value.kind'
+      when: with_clab == "true" and "ovs" in item.value.kind
       loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
       ignore_errors: true
 
     - name: "create ovs-br {{ item.key }}"
       shell: "ovs-vsctl add-br {{ item.key }}"
-      when: '"ovs" in item.value.kind'
+      when: with_clab == "true" and "ovs" in item.value.kind
       loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
       ignore_errors: true
 
@@ -183,3 +184,4 @@
         cmd: "containerlab deploy --topo clab-topo.yaml --reconfigure"
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
+      when: with_clab == "true"

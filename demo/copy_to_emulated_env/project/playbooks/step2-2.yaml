@@ -10,6 +10,7 @@
     static_route_data: project/playbooks/configs/static-route.yaml
     iperf_params_data_runner: configs/iperf_params.json  # in runner container path (origin: this playbook dir)
     iperf_params_data: project/playbooks/configs/iperf_params.json  # in remote host path
+    with_clab: "{{ with_clab }}"
     clab_restart: "{{ clab_restart }}"
 
   tasks:
@@ -19,13 +20,15 @@
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
       when:
-        clab_restart == "true"
+        with_clab == "true" and clab_restart == "true"
 
     - name: enable bgp license
       shell:
         cmd: "sudo containerlab exec --topo clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'"
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
+      when:
+        with_clab == "true"
 
     - name: "get converted topology"
       uri:
@@ -62,6 +65,8 @@
         add_default_route: 'ip route add default via {{ item["mddo-topology:l3-node-attributes"]["static-route"][0]["next-hop"] }}'
       loop: "{{ iperf_list }}"
       ignore_errors: true
+      when:
+        with_clab == "true"
 
     - name: create static-route.yaml (as input for generate_iperf_coomand.py)
       copy:
@@ -82,6 +87,8 @@
       with_subelements:
         - "{{ lookup('file', iperf_params_data_runner) }}"
         - port
+      when:
+        with_clab == "true"
 
     - name: iperf server command
       shell:
@@ -91,6 +98,8 @@
       with_subelements:
         - "{{ lookup('file', iperf_params_data_runner) }}"
         - port
+      when:
+        with_clab == "true"
 
     - name: iperf client command
       debug:
@@ -100,6 +109,8 @@
       with_subelements:
         - "{{ lookup('file', iperf_params_data_runner) }}"
         - port
+      when:
+        with_clab == "true"
 
     - name: iperf client command
       shell:
@@ -109,3 +120,5 @@
       with_subelements:
         - "{{ lookup('file', iperf_params_data_runner) }}"
         - port
+      when:
+        with_clab == "true"
