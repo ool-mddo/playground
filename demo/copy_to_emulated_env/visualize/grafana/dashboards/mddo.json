@@ -140,7 +140,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum (irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\".*edge.*\", interface=~\"(ge-.*|Gigabit.*)\"}[$__interval]) * 8 ) by (name, interface)",
+          "expr": "sum (irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\".*edge.*\", interface=~\"(ge-|Gigabit).*\"}[$__interval]) * 8 ) by (name, interface)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}}: {{interface}}-in",
@@ -242,7 +242,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(ge-.*|Gigabit.*)\"}[$__interval]) * 8",
+          "expr": "irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(Ethernet|ge-|Gigabit).*\"}[$__interval]) * 8",
           "hide": false,
           "interval": "",
           "legendFormat": "{{interface}}-in",
@@ -255,7 +255,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_transmit_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(ge-.*|Gigabit.*)\"}[$__interval]) * -8 ",
+          "expr": "irate(container_network_transmit_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(Ethernet|ge-|Gigabit).*\"}[$__interval]) * -8 ",
           "hide": false,
           "instant": false,
           "legendFormat": "{{interface}}-out",
