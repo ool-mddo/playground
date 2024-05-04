@@ -67,8 +67,8 @@ services:
   model-conductor:
     image: ${MODEL_CONDUCTOR_IMAGE}:${MODEL_CONDUCTOR_IMAGE_TAG}
     environment:
-      BATFISH_WRAPPER_HOST: batfish-wrapper:5000
-      NETOMOX_EXP_HOST: netomox-exp:9292
+      BATFISH_WRAPPER_HOST: batfish-wrapper:${BATFISH_WRAPPER_PORT}
+      NETOMOX_EXP_HOST: netomox-exp:${NETOMOX_EXP_PORT}
       MODEL_CONDUCTOR_LOG_LEVEL: ${MODEL_CONDUCTOR_LOG_LEVEL}
     tty: true # for rerun (requires console input)
     volumes:

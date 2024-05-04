@@ -1,0 +1,80 @@
+services:
+  grafana:
+    image: grafana/grafana-oss:10.0.3
+    ports:
+      - target: 3000
+        published: 23000
+    environment:
+      GF_LOG_LEVEL: error
+    volumes:
+      # Grafanaの設定ファイル
+      - type: bind
+        source: ./assets/visualize/grafana/grafana.ini
+        target: /etc/grafana/grafana.ini
+      # データソースのprovisioning
+      - type: bind
+        source: ./assets/visualize/grafana/datasources
+        target: /etc/grafana/provisioning/datasources
+      # ダッシュボードのprovisioning
+      - type: bind
+        source: ./assets/visualize/grafana/dashboards
+        target: /etc/grafana/provisioning/dashboards
+    restart: always
+    logging:
+      options:
+        max-size: 50m
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    ports:
+      - target: 9090
+        published: 9090
+    volumes:
+      # ./prometheus配下に存在する設定ファイルのマウント
+      - type: bind
+        source: ./assets/visualize/prometheus/
+        target: /etc/prometheus/
+    command:
+      # コンフィグファイルのパスの指定
+      - --config.file=/etc/prometheus/prometheus.yaml
+    restart: always
+    logging:
+      options:
+        max-size: 50m
+    depends_on:
+      - namespace-relabeler
+
+  namespace-relabeler:
+    image: ghcr.io/ool-mddo/namespace-relabeler:v0.1.1
+    ports:
+      - target: 5000
+        published: 5000
+    environment:
+      NETOMOX_EXP_HOST: netomox-exp:${NETOMOX_EXP_PORT}
+      CADVISOR_URL: http://cadvisor:8080/metrics
+    volumes:
+      # for development
+      - type: bind
+        source: ./repos/namespace-relabeler/src
+        target: /opt/relabeler
+    logging:
+      options:
+        max-size: 50m
+    stop_signal: SIGINT
+    depends_on:
+      - cadvisor
+      - netomox-exp
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.38.6
+    ports:
+      - target: 8080
+        published: 20080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
