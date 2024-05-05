@@ -1,3 +1,4 @@
+---
 services:
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
@@ -7,7 +8,7 @@ services:
         target: /log4j2.yaml
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
-    tty: true # for rerun (requires console input)
+    tty: true  # for rerun (requires console input)
     environment:
       NETOMOX_LOG_LEVEL: ${NETOMOX_LOG_LEVEL}
       NETOMOX_EXP_LOG_LEVEL: ${NETOMOX_EXP_LOG_LEVEL}
@@ -47,7 +48,7 @@ services:
       # data dirs
       - type: bind
         source: ./.git
-        target: ${MDDO_DIR}/.git # git dir of under CONFIGS_DIR submodules
+        target: ${MDDO_DIR}/.git  # git dir of under CONFIGS_DIR submodules
       - type: bind
         source: ${SHARED_CONFIGS_DIR}
         target: ${MDDO_CONFIGS_DIR}
@@ -94,7 +95,7 @@ services:
         target: /etc/nginx/conf.d/default.conf
     ports:
       - target: 80
-        published: ${API_PROXY_PORT}
+        published: ${API_PROXY_PUB_PORT}
     depends_on:
       - model-conductor
       - netomox-exp
@@ -106,7 +107,7 @@ services:
       BATFISH_WRAPPER_HOST: batfish-wrapper:${BATFISH_WRAPPER_PORT}
       NETOMOX_EXP_HOST: netomox-exp:${NETOMOX_EXP_PORT}
       MODEL_CONDUCTOR_LOG_LEVEL: ${MODEL_CONDUCTOR_LOG_LEVEL}
-    tty: true # for rerun (requires console input)
+    tty: true  # for rerun (requires console input)
     volumes:
       # for development
       - type: bind
@@ -125,7 +126,7 @@ services:
     image: ${NETOVIZ_IMAGE}:${NETOVIZ_IMAGE_TAG}
     ports:
       - target: 3000
-        published: ${NETOVIZ_PORT}
+        published: 3000
     environment:
       MDDO_TOPOLOGIES_DIR: /netoviz/static/model
     volumes:
@@ -161,7 +162,7 @@ services:
   fish-tracer:
     image: ${FISH_TRACER_IMAGE}:${FISH_TRACER_IMAGE_TAG}
     environment:
-      BASE_URL: http://${FISH_TRACER_BASE_HOST}:${API_PROXY_PORT}
+      BASE_URL: http://${FISH_TRACER_BASE_HOST}:${API_PROXY_PUB_PORT}
     volumes:
       # for development
       - type: bind

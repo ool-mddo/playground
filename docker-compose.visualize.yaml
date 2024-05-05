@@ -1,3 +1,4 @@
+---
 services:
   grafana:
     image: grafana/grafana-oss:10.0.3
@@ -5,7 +6,7 @@ services:
       - target: 3000
         published: 23000
     environment:
-      GF_LOG_LEVEL: error
+      GF_LOG_LEVEL: ${GRAFANA_LOG_LEVEL}
     volumes:
       # Grafanaの設定ファイル
       - type: bind
@@ -39,6 +40,7 @@ services:
     command:
       # コンフィグファイルのパスの指定
       - --config.file=/etc/prometheus/prometheus.yaml
+      - --log.level=${PROMETHEUS_LOG_LEVEL}
     restart: always
     logging:
       options:
@@ -47,15 +49,16 @@ services:
       - namespace-relabeler
 
   namespace-relabeler:
-    image: ghcr.io/ool-mddo/namespace-relabeler:v0.1.1
+    image: ${NAMESPACE_RELABELER_IMAGE}:${NAMESPACE_RELABELER_IMAGE_TAG}
     environment:
+      NAMESPACE_RELABELER_LOG_LEVEL: ${NAMESPACE_RELABELER_LOG_LEVEL}
       NETOMOX_EXP_HOST: netomox-exp:${NETOMOX_EXP_PORT}
       CADVISOR_URL: http://cadvisor:8080/metrics
     volumes:
       # for development
       - type: bind
         source: ./repos/namespace-relabeler/src
-        target: /opt/relabeler
+        target: /opt/namespace-relabeler
     logging:
       options:
         max-size: 50m

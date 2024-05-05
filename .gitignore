@@ -1,10 +1,19 @@
+# editor
+.idea
+.vscode
+# temporary files
+*.tmp
+*.temp
+*.bak
+# data directories
 configs/nttcom-trial-*/
 configs/biglobe*/
 queries
 demo/layer1_topology/inet-henge/*
 topologies
 ttp
-.idea
-.vscode
+# tools
+.ansible
+# demo
 demo/**/passwords
 demo/**/artifacts/**
