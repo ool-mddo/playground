@@ -26,11 +26,14 @@ PNIユースケースは通信事業者(ISP)のBGPオペレーションの一つ
 - どのルータ（ASBR）の、どのインターフェース（PNI向きpeer）が溢れそうか
   - Edge-TK01: ge-0/0/3 の Interface を対象としています
 - そのインターフェースのフロー統計情報
-  - 通常時のトラフィックのフローデータ：`playground/demo/copy_to_emulated_env/clab/before_flowdata.csv`
-  - 想定イベントトラフィックのフローデータ：`playground/demo/copy_to_emulated_env/clab/event_flowdata.csv`
+  - (optional) 通常時のトラフィックのフローデータ：`before_flowdata.csv`
+  - 想定イベントトラフィックのフローデータ：`flowdata.csv`
 - 目標となる流量 (I/F速度に対する使用率)
   - 30％前後 (2Mbps 前後)
   - 下限: 目安として5割超えたらやりすぎ
+
+上記のデータについては、pni_te ユースケース用のデータディレクトリ `playground/demo/copy_to_emulated_env/project/playbooks/pni_te/` にあります
+
 
 オペレーションの目的は、当該インターフェースの流量が目標以下になることです。そのために、検証(Emulated)環境で以下の操作・実際のNW動作シミュレーションをします。
 - [環境準備](../pni/provision.md): デモシステムの設定・起動 (PNIユースケース共通)

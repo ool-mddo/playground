@@ -15,11 +15,11 @@ Step2は2つのオペレーションに分割しています。
 仮想環境が起動したことを確認します。
 
 ```bash
-sudo clab inspect --all
+sudo containerlab inspect --all
 ```
 
 ```
-playground/demo/copy_to_emulated_env$ sudo clab inspect --all
+playground/demo/copy_to_emulated_env$ sudo containerlab inspect --all
 +----+---------------------+----------+---------------------------------+--------------+---------------------------------+--------------+---------+-----------------+-----------------------+
 | #  |      Topo Path      | Lab Name |              Name               | Container ID |              Image              |     Kind     |  State  |  IPv4 Address   |     IPv6 Address      |
 +----+---------------------+----------+---------------------------------+--------------+---------------------------------+--------------+---------+-----------------+-----------------------+

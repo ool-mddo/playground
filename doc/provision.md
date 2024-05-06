@@ -8,15 +8,12 @@
     - デモシステムについては [デモシステムの構造と設計](system_architecture.md) を参照してください
 - [実環境を検証環境にコピーするデモ ("環境コピー"デモ, copy to emulated env)](../demo/copy_to_emulated_env/README.md) で使用する、検証環境(emulated env)のためのセットアップ
 
-![system stack](fig/system_stack.drawio.png)
+![system stack](fig/system_stack.drawio.svg)
 
 > [!NOTE]
-> デモ環境には Linux を使用します。(開発側では Ubuntu22 で動作確認しています)
->
-> デモシステムはスクリプト ([ool-mddo/playground リポジトリ](https://github.com/ool-mddo/playground)) とコンテナイメージで提供されています。
-
-> [!NOTE]
-> [環境コピー](../demo/copy_to_emulated_env/README.md) デモで使用する grafana/prometheus についてはデモシステムとは別環境として起動します。詳細は[トラフィック可視化](../demo/copy_to_emulated_env/visualize/README.md)ドキュメントを参照してください。
+> - デモ環境には Linux を使用します。(開発側では Ubuntu22 で動作確認しています)
+> - デモシステムはスクリプト ([ool-mddo/playground リポジトリ](https://github.com/ool-mddo/playground)) とコンテナイメージで提供されています。
+> - [環境コピー](../demo/copy_to_emulated_env/README.md) デモで使用する grafana/prometheus についてはデモシステムとは定義(compose file)を分けてあります。詳細は[トラフィック可視化](../assets/visualize/README.md), [PNIユースケース/環境準備](../demo/copy_to_emulated_env/doc/pni/provision.md) ドキュメントを参照してください。
 
 # デモシステムのセットアップ(デモ共通)
 
@@ -112,7 +109,8 @@ cd ../.. # playground
 ```
 
 > [!NOTE]
-> `repos` ディレクトリ内の各コンポーネントのソースコードを用意しておくのは開発用途です。ここに配置したコードをデモシステムの各コンテナにマウントして、コードの修正・デバッグ・動作確認できるようになっています。ソースコードの修正を行わない場合はコンテナへのマウントを解除して使用することも可能です。(`playground/docker-compose.yaml` を修正してください。その場合  `repos` 下のリポジトリのブランチ設定は不要で、デモシステムで動かすソフトウェアバージョンはコンテナイメージのタグだけで決定できます。コンテナイメージのタグ設定は `.env` を参照してください。)
+> * `repos` ディレクトリ内の各コンポーネントのソースコードを用意しておくのは開発用途です。ここに配置したコードをデモシステムの各コンテナにマウントして、コードの修正・デバッグ・動作確認できるようになっています。
+> * ソースコードの修正を行わない場合はコンテナへのマウントを解除して使用することも可能です。(`playground/docker-compose.yaml` を修正してください。その場合  `repos` 下のリポジトリのブランチ設定は不要で、デモシステムで動かすソフトウェアバージョンはコンテナイメージのタグだけで決定できます。コンテナイメージのタグ設定は `.env` を参照してください。)
 
 ## デモ用ツールのインストール
 
@@ -266,7 +264,7 @@ docker pull ghcr.io/ool-mddo/mddo-ansible-runner:v3.1.0
 sudo bash -c "$(curl -sL https://get.containerlab.dev)"
 ```
 
-## Open vSwitch (OVS)
+## Open vSwitch (OVS) のインストール
 
 Containerlab で構成する検証環境(emulated env)のL2として docker ホスト側のOVS bridgeを使用するため、OVSをインストールします。
 

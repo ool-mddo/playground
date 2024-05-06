@@ -7,17 +7,8 @@
 sudo ./demo_remove.sh
 ```
 
-Grafanaを停止します。
-
-```bash
-# playground/demo/copy_to_emulated_env
-cd visualize
-docker compose down
-```
-
 デモシステムを停止します。
 
 ```bash
-cd playground
 docker compose down
 ```

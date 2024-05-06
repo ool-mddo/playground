@@ -9,39 +9,35 @@ mddo-bgp コンフィグを使用します。ユースケースによって微�
 git checkout v0.2.0-pni_te
 ```
 
-## パラメタ設定
+## パラメタ設定(デモ全体)
 
 デモ用パラメタを設定します。(ファイルは `demo_vars`)
 
 デモでは以下の値(デモ環境で使用する変数)を設定する必要があります。
 
-- 実行するシナリオ(ユースケース)指定
-  - `USECASE_NAME="pni_te"`
-- 仮想環境(emulate env)構築のためのデータ
-    - `LOCALSERVER_USER` : 環境構築の際、ansible で localhost にsshして操作しているため、そこで使用するユーザ名を指定
-- デモ全体で使用するパラメータ
-    - `NETORK_NAME` : 対象となるネットワークの名前 ([Batfishのデータ管理とネーミングの制約](https://github.com/ool-mddo/playground/blob/main/doc/system_architecture.md#%E3%83%8D%E3%83%BC%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%88%B6%E7%B4%84) を参照してください)
-- デモの一部ステップ(step2-2)で使用するデータ…優先してトラフィックを流すeBGP peerの指定
-    - `PREFERRED_NODE` , `PREFERRED_INTERFACE` , `EXTERNAL_ASN` : step2-2 で解説します。
-        - step2-2以降で使用する変数なのでそこまでは未設定でも問題ありません
+- playground 環境の設定
+  - `LOCALSERVER_USER` : 環境構築の際、ansible で localhost にsshして操作しているため、そこで使用するユーザ名を指定
+  - `PLAYGROUND_DIR`: 起点となるディレクトリ (playground リポジトリのパスを絶対パスで指定します)
+- 対象とするネットワークと実行するでもユースケースの指定
+  - `NETWORK_NAME` : 環境コピー対象とするネットワークの名前 ([Batfishのデータ管理とネーミングの制約](https://github.com/ool-mddo/playground/blob/main/doc/system_architecture.md#%E3%83%8D%E3%83%BC%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%88%B6%E7%B4%84) を参照してください)
+  - `USECASE_NAME="pni_te"`: 実行するシナリオ(ユースケース)
 
 `demo_vars` ファイル
-```bash
-(省略)
 
-# all steps: target network name
+```bash
+# 省略
+
+# all steps: demo user & directory
+LOCALSERVER_USER=mddo
+PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
+
+# all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
 USECASE_NAME="pni_te"
-NETWORK_INDEX="${NETWORK_NAME}_index.json"
-
-# step2-2, preferred peer parameter (use original_asis node/interface name)
-PREFERRED_NODE="edge-tk01"
-PREFERRED_INTERFACE="ge-0/0/3.0"
-EXTERNAL_ASN=65550
 ```
 
 # Step1
-Step1は２つのオペレーションに分割しています。
+Step1は2つのオペレーションに分割しています。
 
 > [!NOTE]
 > [セグメント移転ユースケース](../move_seg/introduction.md)から拡張をしています。step1-1はセグメント移転ユースケースと共通、step1-2はPNIユースケース用の拡張です。
@@ -70,12 +66,6 @@ PNIユースケース実行のためにoriginal_asis トポロジデータを拡
 ```bash
 ./demo_step1-2.sh
 ```
-
-> [!CAUTION]
-> 外部ASスクリプトを変更した場合は netomox-exp コンテナを再起動してください。
-> Netomox-exp コンテナは外部ASスクリプトをロードして所定のAPIがキックされた際に実行(eval)します。
-> 一度コンテナにロードされたスクリプトは、元のスクリプト(ファイル)が変更されても自動ではリロードされません。
-> (この動作は将来的に変更される予定です。)
 
 以下の点が変化します:
 - 外部ASの情報が追加されます

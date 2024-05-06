@@ -15,36 +15,20 @@ git checkout v0.2.0-pni_addlink
 デモ用パラメタを設定します。(ファイルは `demo_vars`)
 
 デモでは以下の値(デモ環境で使用する変数)を設定する必要があります。
-
-- 実行するシナリオ(ユースケース)指定
-  - `USECASE_NAME="pni_addlink"`
-- デモ全体で使用するパラメータ
-    - `NETORK_NAME` : 対象となるネットワークの名前 ([Batfishのデータ管理とネーミングの制約](https://github.com/ool-mddo/playground/blob/main/doc/system_architecture.md#%E3%83%8D%E3%83%BC%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%88%B6%E7%B4%84) を参照してください)
-- デモの一部ステップ(step1-2,2-2)で使用するデータ
-  - トラフィック生成(iperf)コマンドの自動生成
-    - `SOURCE_AS`, `DEST_AS`: 送信元/先AS番号
-  - 外部ASトポロジの自動生成
-    - `PREFERRED_NODE`, `PREFERRED_INTERFACE`: 優先的にトラフィックを通す経路
-    - `REDUNDANT_NODE`: リンク増設先ルータ
+- `USECASE_NAME` 以外は [pni_te ユースケースと同様](../pni_te/step1.md)です。
 
 `demo_vars` ファイル
-```bash
-(省略)
 
-# all steps: target network name
+```bash
+# 省略
+
+# all steps: demo user & directory
+LOCALSERVER_USER=mddo
+PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
+
+# all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
 USECASE_NAME="pni_addlink"
-NETWORK_INDEX="${NETWORK_NAME}_index.json"
-
-# step1-2, generate external-AS topology script
-SOURCE_AS=65550
-DEST_AS=65520
-
-# step1-2 and 2-2, preferred peer parameter (use original_asis node/interface name)
-PREFERRED_NODE="NONE"
-REDUNDANT_NODE="NONE"
-PREFERRED_INTERFACE="ge-0/0/3.0"
-EXTERNAL_ASN=65550
 ```
 
 # Step1
@@ -78,12 +62,6 @@ PNIユースケース実行のためにoriginal_asis トポロジデータを拡
 ```bash
 ./demo_step1-2.sh
 ```
-
-> [!CAUTION]
-> 外部ASスクリプトを変更した場合は netomox-exp コンテナを再起動してください。
-> Netomox-exp コンテナは外部ASスクリプトをロードして所定のAPIがキックされた際に実行(eval)します。
-> 一度コンテナにロードされたスクリプトは、元のスクリプト(ファイル)が変更されても自動ではリロードされません。
-> (この動作は将来的に変更される予定です。)
 
 以下の点が変化します:
 - 外部ASの情報が追加されます

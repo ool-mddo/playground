@@ -22,7 +22,7 @@
 - ssh するサーバのIPアドレスを `inventory/hosts` ファイルに定義します。
     - ここでは、デモシステムとEmulated環境は同一のサーバ上で動作するものとしています。そのためターゲットは localhost になります。この条件であれば変更は不要です。
 
-![system_stack.drawio.png](../../../../doc/fig/system_stack.drawio.png)
+![system stack](../../../../doc/fig/system_stack.drawio.svg)
 
 ### 環境変数ファイルの作成
 
@@ -73,16 +73,16 @@ vi env/passwords
 "^BECOME password.*:\\s*?$": "sudo password"
 ```
 
-### 可視化ツールインデックスファイルの作成
+### トポロジ可視化ツールインデックスファイルの作成
 
-対象にするコンフィグリポジトリ (Batfishに入力するネットワーク) に合わせて可視化ツール(netoviz)用のインデックスファイルを用意します。
+対象にするコンフィグリポジトリ (Batfishに入力するネットワーク) に合わせてトポロジ可視化ツール(netoviz)用のインデックスファイルを用意します。
 
-* ネットワーク、スナップショットについては[デモシステムの構造と設計 - Batfish周辺の設計](../../../doc/system_architecture.md#batfish%E5%91%A8%E8%BE%BA%E3%81%AE%E8%A8%AD%E8%A8%88)を参照してください。
-* 可視化ツール(netoviz)インデックスファイルは、複数のスナップショット情報の定義を束ねたリストになっています。スナップショット情報の定義については[デモシステムの構造と設計 - model-info](../../../doc/system_architecture.md#model-info) を参照してください。
+* ネットワーク、スナップショットについては[デモシステムの構造と設計 - Batfish周辺の設計](../../../../doc/system_architecture.md#batfish周辺の設計)を参照してください。
+* 可視化ツール(netoviz)インデックスファイルは、複数のスナップショット情報の定義を束ねたリストになっています。スナップショット情報の定義については[デモシステムの構造と設計 - model-info](../../../../doc/system_architecture.md#model-info) を参照してください。
 
-デモ用のインデックスファイル: [mddo-ospf_index.json](../mddo-ospf_index.json)
+デモ用のインデックスファイル: [network_index/mddo-ospf.json](../../network_index/mddo-ospf.json)
 * デモでは original_asis, emulated_asis, emulated_tobe, original_asis の4つのスナップショットを作成するので、それぞれのスナップショットに対する情報を定義します。
-* 4つのスナップショットについては [デモシステムの構造と設計 - 名前空間の変換と変換処理](../../../doc/system_architecture.md#%E5%90%8D%E5%89%8D%E7%A9%BA%E9%96%93%E3%81%AE%E5%A4%89%E6%8F%9B%E3%81%A8%E5%A4%89%E6%8F%9B%E5%87%A6%E7%90%86)を参照してください。
+* 4つのスナップショットについては [デモシステムの構造と設計 - 名前空間の変換と変換処理](../../../../doc/system_architecture.md#名前空間の変換と変換処理) を参照してください。
 
 ```json
 [
