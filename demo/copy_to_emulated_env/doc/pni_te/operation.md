@@ -80,5 +80,6 @@ commit
 
 → 追加で迂回対象の prefix を増やす…狙った流量になった
 
-![operation traffic](fig/grafana_operation_traffic.png)
+![operation traffic](fig/grafana_operation_traffic.drawio.png)
 
+(一部トラフィックに欠けがあるのは cAdvisor の前段に入れた namespace-relabeler の影響と思われます。調査中。)
