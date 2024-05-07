@@ -11,6 +11,7 @@
 * [システムアーキテクチャ](./doc/system_architecture.md)
 * [ネットワークのモデル](./doc/network_model.md)
 * [デモ環境セットアップ](./doc/provision.md)
+  * [開発用・開発者向け](./doc/development.md)
 
 ## Demonstration
 
