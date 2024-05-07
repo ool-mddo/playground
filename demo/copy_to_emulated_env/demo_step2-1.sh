@@ -46,19 +46,18 @@ curl -s -X POST -H 'Content-Type: application/json' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/original_asis/emulated_asis"
 
 # generate emulated asis configs from emulated asis topology
-if "${WITH_CLAB}"; then
-  ansible-runner run . -p /data/project/playbooks/step2-1.yaml \
-    --container-option="--net=${API_BRIDGE}" \
-    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
-    --container-volume-mount="$PWD:/data" \
-    --process-isolation \
-    --process-isolation-executable docker \
-    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
-               -e login_user=${LOCALSERVER_USER} \
-               -e network_name=${NETWORK_NAME} \
-               -e crpd_image=${CRPD_IMAGE} \
-               -k -K"
-fi
+ansible-runner run . -p /data/project/playbooks/step2-1.yaml \
+  --container-option="--net=${API_BRIDGE}" \
+  --container-image="${ANSIBLE_RUNNER_IMAGE}" \
+  --container-volume-mount="$PWD:/data" \
+  --process-isolation \
+  --process-isolation-executable docker \
+  --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
+             -e login_user=${LOCALSERVER_USER} \
+             -e network_name=${NETWORK_NAME} \
+             -e crpd_image=${CRPD_IMAGE} \
+             -e with_clab=${WITH_CLAB} \
+             -k -K"
 
 # update netoviz index
 curl -s -X POST -H 'Content-Type: application/json' \

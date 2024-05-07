@@ -54,20 +54,19 @@ else
 fi
 
 # configure iperf client/server
-if "${WITH_CLAB}"; then
-  echo "# Check: clab_restart = $CLAB_RESTART"
+echo "# Check: clab_restart = $CLAB_RESTART"
 
-  ansible-runner run . -p "/data/project/playbooks/step2-2.yaml" \
-    --container-option="--net=${API_BRIDGE}" \
-    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
-    --container-volume-mount="$PWD:/data" \
-    --process-isolation \
-    --process-isolation-executable docker \
-    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
-               -e login_user=${LOCALSERVER_USER} \
-               -e network_name=${NETWORK_NAME} \
-               -e usecase_name=${USECASE_NAME} \
-               -e usecase_common_name=${USECASE_COMMON_NAME} \
-               -e clab_restart=${CLAB_RESTART} \
-               -k -K"
-fi
+ansible-runner run . -p "/data/project/playbooks/step2-2.yaml" \
+  --container-option="--net=${API_BRIDGE}" \
+  --container-image="${ANSIBLE_RUNNER_IMAGE}" \
+  --container-volume-mount="$PWD:/data" \
+  --process-isolation \
+  --process-isolation-executable docker \
+  --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
+             -e login_user=${LOCALSERVER_USER} \
+             -e network_name=${NETWORK_NAME} \
+             -e usecase_name=${USECASE_NAME} \
+             -e usecase_common_name=${USECASE_COMMON_NAME} \
+             -e with_clab=${WITH_CLAB} \
+             -e clab_restart=${CLAB_RESTART} \
+             -k -K"

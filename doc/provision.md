@@ -253,7 +253,7 @@ sudo python3 -m pip install ansible-runner
 ansible runner 実行時(デモ用スクリプトの中で呼ばれています)に指定されたコンテナイメージがなければ自動でダウンロード (pull) が実行されますが、ここではあらかじめ pull しておきます。
 
 ```shell
-docker pull ghcr.io/ool-mddo/mddo-ansible-runner:v3.0.0
+docker pull ghcr.io/ool-mddo/mddo-ansible-runner:v3.1.0
 ```
 
 ## Containerlabのインストール
@@ -288,8 +288,14 @@ cRPDコンテナイメージは適宜入手してください。
 ```shell
 docker load -i junos-routing-crpd-amd64-docker-XX.XR.XX.tgz
 ```
+```
+$ docker image ls | grep crpd
+crpd                                   23.4R1.9             9ed2949df81f   4 months ago    502MB
+```
 
-MDDO PJにて動作確認できているバージョンは `junos-routing-crpd-amd64-docker-22.1R1.10.tgz` です。
+インポートしたコンテナの情報を `demo/copy_to_emulated_env/demo_vars` の環境変数で指定します。(設定済み…詳細は[環境準備ドキュメント](../demo/copy_to_emulated_env/doc/move_seg/provision.md)参照)
+
+MDDO PJにて動作確認できているバージョンは `junos-routing-crpd-amd64-docker-23.4R1.9.tgz` です。
 
 ### Juniper cRPDのライセンス適用
 
