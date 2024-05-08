@@ -23,54 +23,148 @@ static-route.yaml
     - {description: default, interface: dynamic, metric: 10, next-hop: 10.0.1.1, preference: 1,
       prefix: 0.0.0.0/0}
   node-id: endpoint01-iperf1
-
 """
-import ipaddress, yaml, json, csv, sys
+
+import argparse
+import csv
+import json
+import yaml
 from ipaddress import ip_network
 
-csvdata = []
 
-with open(sys.argv[1], "r", newline='') as csv_file:
-    reader = csv.DictReader(csv_file)
-    for row in reader:
-      csvdata.append(row)
-    csv_file.close()
+# constant (alias)
+TP_KEY = "ietf-network-topology:termination-point"
+L3TP_ATTR_KEY = "mddo-topology:l3-termination-point-attributes"
 
-with open(sys.argv[2]) as file:
-    config = yaml.safe_load(file.read())
 
-start_port = 5201
-iperf_cmd = []
-for iperf in config:
-    target_ip = str(iperf["ietf-network-topology:termination-point"][0]["mddo-topology:l3-termination-point-attributes"]["ip-address"][0].split('/')[0])
-    for flowdata in csvdata:
-        ip1 = ip_network(flowdata["dest"])
-        ip2 = ip_network(str( target_ip + "/32"))
-        if ip2.subnet_of(ip1):
-            source_network=ip_network(flowdata["source"])
-            for iperf_client in config:
-                source_ip=str(iperf_client["ietf-network-topology:termination-point"][0]["mddo-topology:l3-termination-point-attributes"]["ip-address"][0].split('/')[0])
-                source_ip_address=ip_network(str(source_ip + "/32"))
-                if source_ip_address.subnet_of(source_network):
-                    if not  str(iperf["node-id"]) in str(iperf_cmd):
-                        iperf_cmd.append({"node": str(iperf["node-id"]), "port": [] })
-  
-                    for index, dest_node in enumerate(iperf_cmd):
-                        if  str(iperf["node-id"]) in dest_node["node"]:
-                            tmpport = {"source": iperf_client["node-id"], "dest_address": target_ip, "number": int(start_port + len(iperf_cmd[index]["port"])), "rate" : str(flowdata["rate"] )}
-                            iperf_cmd[index]["port"].append(tmpport)
-print(json.dumps(iperf_cmd, indent=2))
+def read_flow_data_file(file_path: str) -> list:
+    with open(file_path, "r", newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        return list(reader)
+
+
+def read_static_route_data_file(file_path: str) -> list:
+    with open(file_path) as file:
+        return yaml.safe_load(file.read())
+
+
+def ip_addr_from_l3tp_data(l3tp_data: dict) -> str:
+    return str(l3tp_data[TP_KEY][0][L3TP_ATTR_KEY]["ip-address"][0].split("/")[0])
+
+
+def l3tp_in_subnet(l3tp_data: dict, subnet_addr: str) -> bool:
+    l3tp_ip_addr_str = ip_addr_from_l3tp_data(l3tp_data)
+    l3tp_ip_addr = ip_network(f"{l3tp_ip_addr_str}/32")
+    subnet_addr = ip_network(subnet_addr)
+    return l3tp_ip_addr.subnet_of(subnet_addr)
+
+
+def extract_l3tp_data(l3tp_data: dict) -> dict:
+    return {"id": l3tp_data["node-id"], "ip_addr": ip_addr_from_l3tp_data(l3tp_data)}
+
+
+def find_l3tp_by_flow(l3tp_data_list: list, subnet_addr: str) -> dict:
+    l3tp_data = next(
+        filter(lambda l3tp: l3tp_in_subnet(l3tp, subnet_addr), l3tp_data_list), None
+    )
+    # TODO: error check (if not found l3tp?)
+    return extract_l3tp_data(l3tp_data)
+
+
+def create_l3tp_dict(flow_data_list: list, l3tp_data_list: list) -> dict:
+    """
+    Assumption: There is one iperf endpoint for each source/destination subnet in the flow_data.
+    """
+    l3tp_dict = {}
+    for flow_data in flow_data_list:
+        if flow_data["source"] not in l3tp_data_list:
+            l3tp_dict[flow_data["source"]] = find_l3tp_by_flow(
+                l3tp_data_list, flow_data["source"]
+            )
+        if flow_data["dest"] not in l3tp_data_list:
+            l3tp_dict[flow_data["dest"]] = find_l3tp_by_flow(
+                l3tp_data_list, flow_data["dest"]
+            )
+    return l3tp_dict
+
+
+def find_iperf_cmd_by_node_id(iperf_commands: list, dst_node_id: str) -> dict | None:
+    return next(filter(lambda cmd: cmd["server_node"] == dst_node_id, iperf_commands), None)
+
+
+def create_iperf_commands(flow_data_list: list, l3tp_dict: dict) -> list:
+    iperf_commands = []
+    for flow_data in flow_data_list:
+        dst_node_id = l3tp_dict[flow_data["dest"]]["id"]
+        target_iperf_command = find_iperf_cmd_by_node_id(iperf_commands, dst_node_id)
+        source_info = {
+            "client_node": l3tp_dict[flow_data["source"]]["id"],
+            "server_address": l3tp_dict[flow_data["dest"]]["ip_addr"],
+            "server_port": 0,  # define later
+            "rate": float(flow_data["rate"]),
+        }
+        if target_iperf_command is None:
+            iperf_commands.append({"server_node": dst_node_id, "clients": [source_info]})
+        else:
+            target_iperf_command["clients"].append(source_info)
+
+    return iperf_commands
+
+
+def assign_port_number(iperf_commands: list):
+    iperf_commands.sort(key=lambda cmd: cmd["server_node"])
+    for iperf_command in iperf_commands:
+        iperf_command["clients"].sort(key=lambda cmd: cmd["client_node"])
+
+        base_port_num = 5201
+        for index, port in enumerate(iperf_command["clients"]):
+            port["server_port"] = base_port_num + index
+
+
+def main(flow_data_file: str, static_route_data_file: str):
+    # read data
+    flow_data_list = read_flow_data_file(flow_data_file)
+    l3tp_data_list = read_static_route_data_file(static_route_data_file)
+
+    # combine L3 TP information with flow_data
+    l3tp_dict = create_l3tp_dict(flow_data_list, l3tp_data_list)
+    iperf_commands = create_iperf_commands(flow_data_list, l3tp_dict)
+    assign_port_number(iperf_commands)
+
+    # output
+    print(json.dumps(iperf_commands, indent=2))
+
+
+if __name__ == "__main__":
+    # argument check
+    parser = argparse.ArgumentParser(description="generate iperf command")
+    parser.add_argument(
+        "-f", "--flow-data", type=str, required=True, help="flow data (csv)"
+    )
+    parser.add_argument(
+        "-s",
+        "--static-route-data",
+        type=str,
+        required=True,
+        help="static-route data (json)",
+    )
+    args = parser.parse_args()
+
+    main(args.flow_data, args.static_route_data)
+
+
 """
-source iperf command:
-root@endpoint01-iperf1:/# iperf3 -c 10.100.0.100 -b 100K -u -p 5201-52XX
-dest iperf command:
+# client(src) iperf command:
+root@endpoint01-iperf1:/# iperf3 -c 10.100.1.100 -b 100K -u -p 5201-52XX
+# server(dst) iperf command:
 root@endpoint02-iperf1:/# iperf3 -s -p 5201-52XX
 
 output 
-- "node": "endpoint01-iperf1"
-  "port":
-     - "number": 5201
-       "source": "endpoint02-iperf1"
-       "bandwidth": "700.12"
-       "dest_address": "10.0.1.100"
+- "server_node": "endpoint02-iperf1"
+  "clients":
+     - "server_port": 5201
+       "client_node": "endpoint01-iperf1"
+       "rate": "700.12"
+       "server_address": "10.0.1.100"
+
 """

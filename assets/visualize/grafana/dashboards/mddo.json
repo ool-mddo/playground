@@ -779,8 +779,8 @@
         "allValue": ".*",
         "current": {
           "selected": true,
-          "text": "relabeler:5000",
-          "value": "relabeler:5000"
+          "text": "namespace-relabeler:5000",
+          "value": "namespace-relabeler:5000"
         },
         "datasource": {
           "type": "prometheus",

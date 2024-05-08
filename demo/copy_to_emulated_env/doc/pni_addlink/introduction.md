@@ -25,17 +25,19 @@ PNIユースケースは通信事業者(ISP)のBGPオペレーションの一つ
 デモにあたって、以下の情報はあらかじめ既知あるいは指定するものとします (Given)。
 また、コンフィグの状態としては追加する回線のLayer3でのリンクはすでに確立済みの状態とします。
 
-- ディレクトリ: `playground/configs/mddo-bgp/original_asis/external_as_topology/pni_addlink`
-- `addl3.csv`: 追加する回線情報(BGP情報も含む)
+- 追加する回線情報(BGP情報も含む): `external_as_topology/addl3.csv`
   ```
   srcrouter,srcif,srcaddress,peeraddress,netmask,peeras,srcas
   edge-tk03,GigabitEthernet0/0/0/2,172.16.1.18,172.16.1.17,30,65550,65518
   ```
-- `except.csv`: (Option)IXピアなどのまだ対応していないピア形態を除外するためのピア情報
+- (Optional) IXピアなどのまだ対応していないピア形態を除外するためのピア情報: `external_as_topology/except.csv`
   ```
   except_peer
   172.16.1.12
   ```
+- フローデータ ([pni_te ユースケース](../pni_te/introduction.md)と同様): `flowdata.csv`
+
+上記のデータについては、pni_addlink ユースケース用のデータディレクトリ `playground/demo/copy_to_emulated_env/project/playbooks/pni_addlink` にあります
 
 オペレーションの目的は、増設した回線に特定のPrefixのトラフィックを移植することです。そのために、検証(Emulated)環境で以下の操作・実際のNW動作シミュレーションをします。
 - [環境準備](../pni/provision.md): デモシステムの設定・起動 (PNIユースケース共通)

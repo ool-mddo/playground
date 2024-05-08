@@ -6,7 +6,7 @@
 
 ```bash
 # in playground/demo/copy_to_emulated_env/ dir
-./demo_step1.sh
+./demo_step1-1.sh
 ```
 
 NetovizへアクセスしてOriginal Asisトポロジーが確認できます。(以降の各ステップで同様)
@@ -22,7 +22,7 @@ Orginal環境を再現した仮想環境(Emulated環境)を作成するために
     - Emulated config で動作する仮想環境を起動
 
 ```bash
-./demo_step2.sh
+./demo_step2-1.sh
 ```
 
 ContainerlabにEmulated環境ができていることを確認します。
@@ -60,7 +60,7 @@ cRPDへライセンスを適用したい場合は本項目の手順を実施し�
 > [!WARNING]
 > リポジトリ内へのライセンス情報のコミット(操作ミスによる外部公開)を防止するため、ライセンスファイルの位置・ファイル名はスクリプト中で固定してあります
 
-* 参照: [step2.yaml](../project/playbooks/step2.yaml)
+* 参照: [step2.yaml](../../project/playbooks/step2-1.yaml)
   * containerlabトポロジデータの生成時のライセンスファイルパスの指定 : `containerlab_topology?bind_license=license.key:/tmp/license.key:ro`
     * ライセンスファイルをコンテナ(cRPD)内 `/tmp/license.key` としてマウント
   * containerlab起動時のカレントディレクトリの指定 : `chdir: "{{ ansible_runner_dir }}/clab"`

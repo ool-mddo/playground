@@ -15,11 +15,11 @@ Step2は2つのオペレーションに分割しています。
 仮想環境が起動したことを確認します。
 
 ```bash
-sudo clab inspect --all
+sudo containerlab inspect --all
 ```
 
 ```
-playground/demo/copy_to_emulated_env$ sudo clab inspect --all
+playground/demo/copy_to_emulated_env$ sudo containerlab inspect --all
 +----+---------------------+----------+---------------------------------+--------------+---------------------------------+--------------+---------+-----------------+-----------------------+
 | #  |      Topo Path      | Lab Name |              Name               | Container ID |              Image              |     Kind     |  State  |  IPv4 Address   |     IPv6 Address      |
 +----+---------------------+----------+---------------------------------+--------------+---------------------------------+--------------+---------+-----------------+-----------------------+
@@ -56,9 +56,7 @@ pni_addlink ユースケースで使用する外部ASトポロジ生成スクリ
 - `dest_as`: トラフィック送信先AS番号(外部AS/POI)
 - `subnet`: 外部AS内で使用するアドレス情報
 - `preferred_node`: PNI通信の優先経路指定 (自ASノード名)
-- `preferred_interface`: PNI通信の優先経路指定 (preferred_node のインタフェース名)
 - `redundant_node`: 外部AS(PNI)側の冗長リンク指定
-- `external_asn`: 外部AS番号(PNI)
 
 ```yaml
 ---
@@ -70,8 +68,6 @@ preferred_node: NONE
 # preferred_node: edge-tk01
 redundant_node: NONE
 # redundant_node: edge-tk03
-preferred_interface: ge-0/0/3.0
-external_asn: 65550
 ```
 
 ### 生成するトラフィック情報の設定

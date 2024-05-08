@@ -2,7 +2,7 @@
 
 実際に検証(Emulated)環境でBGPオペレーションを行って、本番環境でどういったコントロールができるかを試していきます。
 
-## Event Trafficを発生させる
+## Event Trafficを確認する
 
 自ASでどこからどれくらいのトラフィックが流れているか確認するため、表示を edge-tk0[1-3]に変更します。
 
@@ -80,5 +80,6 @@ commit
 
 → 追加で迂回対象の prefix を増やす…狙った流量になった
 
-![operation traffic](fig/grafana_operation_traffic.png)
+![operation traffic](fig/grafana_operation_traffic.drawio.png)
 
+(一部トラフィックに欠けがあるのは cAdvisor の前段に入れた namespace-relabeler の影響と思われます。調査中。)

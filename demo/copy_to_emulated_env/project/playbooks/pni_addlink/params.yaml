@@ -7,5 +7,3 @@ preferred_node: NONE
 # preferred_node: edge-tk01
 redundant_node: NONE
 # redundant_node: edge-tk03
-preferred_interface: ge-0/0/3.0
-external_asn: 65550
