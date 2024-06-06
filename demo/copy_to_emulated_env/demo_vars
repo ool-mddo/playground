@@ -5,8 +5,8 @@ API_PROXY="localhost:15000"
 API_BRIDGE="playground_default"
 
 # all steps: demo user & directory
-LOCALSERVER_USER=mddo
-PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
+LOCALSERVER_USER=hagiwara
+PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/ool-mddo/playground"
 
 # all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
