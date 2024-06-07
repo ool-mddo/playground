@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'ipaddr'
-require 'net/http'
 require 'optparse'
 require 'pathname'
 

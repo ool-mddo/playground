@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'netomox'
-require_relative 'ip_management'
 
 module Netomox
   module PseudoDSL

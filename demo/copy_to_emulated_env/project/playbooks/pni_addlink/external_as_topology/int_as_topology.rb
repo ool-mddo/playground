@@ -2,6 +2,7 @@
 
 require 'netomox'
 require 'ipaddr'
+require 'net/http'
 
 # External-AS topology builder
 class ExternalASTopologyBuilder

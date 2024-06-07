@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require 'ipaddr'
 require 'netomox'
-require_relative 'ip_management'
 
 # External-AS topology builder
 class ExternalASTopologyBuilder
