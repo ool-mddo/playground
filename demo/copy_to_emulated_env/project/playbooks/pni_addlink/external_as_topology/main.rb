@@ -13,6 +13,7 @@ require_relative 'ip_management.rb'
 require_relative 'int_as_topology'
 require_relative 'layer3'
 require_relative 'bgp_proc'
+require_relative 'bgp_as'
 
 
 # @param [String] column Column name
@@ -31,12 +32,12 @@ def generate_ext_as_topology(params, flow_data)
   int_as_topology_data = fetch_int_as_topology(params[:api_proxy], params[:network_name])
   int_as_topology = Netomox::Topology::Networks.new(int_as_topology_data)
   src_peer_list = find_all_peers(int_as_topology, params['source_as'].to_i)
-  warn "# DEBUG src_peer_list: #{src_peer_list}"
   src_flow_list = column_items_from_flows('source', flow_data)
 
   ext_as_topology = Netomox::PseudoDSL::PNetworks.new
   make_ext_as_layer3_nw(ext_as_topology, src_peer_list, src_flow_list)
   make_ext_as_bgp_proc_nw(ext_as_topology, src_peer_list)
+  make_ext_as_bgp_as_nw(ext_as_topology, int_as_topology, src_peer_list)
   ext_as_topology.interpret.topo_data
 end
 

@@ -70,7 +70,7 @@ def add_bgp_proc_ebgp_speakers(bgp_proc_nw, peer_list)
       local_ip: peer_item[:bgp_proc][:remote_ip],
       remote_as: peer_item[:bgp_proc][:local_as],
       remote_ip: peer_item[:bgp_proc][:local_ip],
-      flags: ["ebgp-peer=#{peer_item[:layer3][:node_name]}[#{peer_item[:layer3][:tp_name]}]"]
+      flags: ["ebgp-peer=#{peer_item[:bgp_proc][:node_name]}[#{peer_item[:bgp_proc][:tp_name]}]"]
     }
     bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, "Eth0"])
 
