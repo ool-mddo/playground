@@ -51,7 +51,7 @@ def add_bgp_proc_ebgp_speakers(bgp_proc_nw, peer_list)
   ipam = IPManagement.instance
 
   # add ebgp-speakers
-  peer_list.each_with_index do |peer_item, peer_index|
+  peer_list.each do |peer_item|
     loopback_ip_str = ipam.current_loopback_ip.to_s
 
     # bgp-proc edge-router node
@@ -104,9 +104,8 @@ end
 # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
 # @param [Netomox::PseudoDSL::PNode] bgp_proc_core_node bgp_proc core router
 # @param [Hash] peer_item Peer item (an item in peer_list with layer3/node memo)
-# @param [Integer] peer_index Index number
 # @return [void]
-def add_bgp_proc_core_to_edge_links(layer3_nw, bgp_proc_nw, bgp_proc_core_node, peer_item, peer_index)
+def add_bgp_proc_core_to_edge_links(layer3_nw, bgp_proc_nw, bgp_proc_core_node, peer_item)
   # edge-router node
   bgp_proc_edge_node = peer_item[:bgp_proc][:node]
 
@@ -122,13 +121,14 @@ def add_bgp_proc_core_to_edge_links(layer3_nw, bgp_proc_nw, bgp_proc_core_node, 
     remote_ip: tp2_ip_str
   }
   bgp_proc_core_tp.supports.push(['layer3', layer3_edge[:node1][:node].name, layer3_edge[:node1][:tp].name])
+
   # edge-router tp
   bgp_proc_edge_tp = bgp_proc_edge_node.term_point("peer_#{tp1_ip_str}")
   bgp_proc_edge_tp.attribute = {
     local_ip: tp2_ip_str,
     remote_ip: tp1_ip_str
   }
-  bgp_proc_core_tp.supports.push(['layer3', layer3_edge[:node2][:node].name, layer3_edge[:node2][:tp].name])
+  bgp_proc_edge_tp.supports.push(['layer3', layer3_edge[:node2][:node].name, layer3_edge[:node2][:tp].name])
 
   # core-edge link (bidirectional)
   bgp_proc_nw.link(bgp_proc_core_node.name, bgp_proc_core_tp.name, bgp_proc_edge_node.name, bgp_proc_edge_tp.name)
@@ -159,7 +159,7 @@ def make_ext_as_bgp_proc_nw(ext_as_topology, peer_list)
 
   # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
   layer3_nw = ext_as_topology.network('layer3')
-  peer_list.each_with_index do | peer_item, peer_index|
-    add_bgp_proc_core_to_edge_links(layer3_nw, bgp_proc_nw, bgp_proc_core_node, peer_item, peer_index)
+  peer_list.each do | peer_item|
+    add_bgp_proc_core_to_edge_links(layer3_nw, bgp_proc_nw, bgp_proc_core_node, peer_item)
   end
 end
