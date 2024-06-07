@@ -10,12 +10,12 @@ def add_layer3_ebgp_speakers(layer3_nw, peer_list)
   # add ebgp-speakers
   peer_list.each_with_index do |peer_item, peer_index|
     # layer3 edge-router node
-    layer3_node = layer3_nw.node(sprintf("PNI%02d", peer_index + 1))
+    layer3_node = layer3_nw.node(format('PNI%02d', peer_index + 1))
     peer_item[:layer3][:node] = layer3_node # memo
     layer3_node.attribute = { node_type: 'node' }
 
     # layer3 edge-router term-point
-    layer3_tp = layer3_node.term_point("Eth0")
+    layer3_tp = layer3_node.term_point('Eth0')
     layer3_tp.attribute = {
       ip_addrs: ["#{peer_item[:bgp_proc][:remote_ip]}/#{IPAddr.new(peer_item[:layer3][:ip_addr]).prefix}"],
       flags: ["ebgp-peer=#{peer_item[:layer3][:node_name]}[#{peer_item[:layer3][:tp_name]}]"]
@@ -42,8 +42,8 @@ def add_layer3_core_to_edge_links(layer3_nw, layer3_core_node, peer_item, peer_i
   # core-router tp
   layer3_core_tp = layer3_core_node.term_point("Eth#{peer_index}")
   # segment tp
-  layer3_seg_tp1 = layer3_seg_node.term_point("Eth0")
-  layer3_seg_tp2 = layer3_seg_node.term_point("Eth1")
+  layer3_seg_tp1 = layer3_seg_node.term_point('Eth0')
+  layer3_seg_tp2 = layer3_seg_node.term_point('Eth1')
   # edge-router tp
   edge_tp_index = layer3_edge_node.tps.length
   layer3_edge_tp = layer3_edge_node.term_point("Eth#{edge_tp_index}")
@@ -51,13 +51,13 @@ def add_layer3_core_to_edge_links(layer3_nw, layer3_core_node, peer_item, peer_i
   # core-router tp attribute
   layer3_core_tp.attribute = {
     flags: ["ibgp-peer=#{layer3_edge_node.name}[#{layer3_edge_tp.name}]"],
-    ip_addrs: [ link_intf_ip_str_pair[0] ]
+    ip_addrs: [link_intf_ip_str_pair[0]]
   }
   # edge-router tp attribute
   # TODO: ip address assign
   layer3_edge_tp.attribute = {
     flags: ["ibgp-peer=#{layer3_core_node.name}[#{layer3_core_tp.name}]"],
-    ip_addrs: [ link_intf_ip_str_pair[1] ]
+    ip_addrs: [link_intf_ip_str_pair[1]]
   }
 
   # core-seg link (bidirectional)
@@ -73,9 +73,8 @@ end
 
 # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
 # @param [Netomox::PseudoDSL::PNode] layer3_core_node Layer3 core node
-# @param [String] flow_src_item Flow source (network prefix: e.g. a.b.c.d/xx)
 # @param [Integer] src_flow_index Flow source index
-def add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, flow_src_item, src_flow_index)
+def add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_index)
   ipam = IPManagement.instance
   link_ip_str = ipam.current_link_ip_str # network address
   link_intf_ip_pair = ipam.current_link_intf_ip_pair # interface address pair
@@ -97,15 +96,15 @@ def add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, flow_src_item
   core_tp_index = layer3_core_node.tps.length
   layer3_core_tp = layer3_core_node.term_point("Eth#{core_tp_index}")
   # segment_tp
-  layer3_seg_tp1 = layer3_seg_node.term_point("Eth0")
-  layer3_seg_tp2 = layer3_seg_node.term_point("Eth1")
+  layer3_seg_tp1 = layer3_seg_node.term_point('Eth0')
+  layer3_seg_tp2 = layer3_seg_node.term_point('Eth1')
   # endpoint tp
   layer3_endpoint_tp = layer3_endpoint_node.term_point('Eth0')
 
   # core-router tp attribute
-  layer3_core_tp.attribute = { ip_addrs: [ link_intf_ip_str_pair[0] ] }
+  layer3_core_tp.attribute = { ip_addrs: [link_intf_ip_str_pair[0]] }
   # endpoint tp attribute
-  layer3_endpoint_tp.attribute = { ip_addrs: [ link_intf_ip_str_pair[1] ] }
+  layer3_endpoint_tp.attribute = { ip_addrs: [link_intf_ip_str_pair[1]] }
 
   # core-seg link (bidirectional)
   layer3_nw.link(layer3_core_node.name, layer3_core_tp.name, layer3_seg_node.name, layer3_seg_tp1.name)
@@ -133,7 +132,7 @@ def make_ext_as_layer3_nw(ext_as_topology, peer_list, src_flow_list)
 
   # add core (aggregation) router
   layer3_core_node = layer3_nw.node('PNI_core')
-  layer3_core_node.attribute = { node_type: 'node'}
+  layer3_core_node.attribute = { node_type: 'node' }
 
   # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
   peer_list.each_with_index do |peer_item, peer_index|
@@ -142,7 +141,7 @@ def make_ext_as_layer3_nw(ext_as_topology, peer_list, src_flow_list)
 
   # endpoint = iperf node
   # endpoint [] -- [tp1] Seg_y.y.y.y [tp2] -- [] core
-  src_flow_list.each_with_index do |src_flow_item, src_flow_index|
-    add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_item, src_flow_index)
+  src_flow_list.each_with_index do |_src_flow_item, src_flow_index|
+    add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_index)
   end
 end

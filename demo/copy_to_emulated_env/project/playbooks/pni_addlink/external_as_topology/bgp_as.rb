@@ -2,6 +2,8 @@
 
 require 'netomox'
 
+# rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
 # @param [Netomox::PseudoDSL::Networks] ext_as_topology Topology object of external-AS
 # @param [Netomox::Topology::Networks] int_as_topology Topology object of internal-AS
 # @param [Array<Hash>] peer_list Peer list
@@ -20,29 +22,23 @@ def make_ext_as_bgp_as_nw(ext_as_topology, int_as_topology, peer_list)
   ext_asn = peer_list.map { |item| item[:bgp_proc][:remote_as] }.uniq[0]
   ext_bgp_as_node = bgp_as_nw.node("as#{ext_asn}")
   ext_bgp_as_node.attribute = { as_number: ext_asn }
-  ext_bgp_proc_nw.nodes.each do |ext_bgp_proc_node|
-    ext_bgp_as_node.supports.push(['bgp_proc', ext_bgp_proc_node.name])
-  end
+  ext_bgp_as_node.supports = ext_bgp_proc_nw.nodes.map { |node| ['bgp_proc', node.name] }
 
   # bgp_as node (int-as node)
   int_asn = peer_list.map { |item| item[:bgp_proc][:local_as] }.uniq[0]
   int_bgp_as_node = bgp_as_nw.node("as#{int_asn}")
   int_bgp_as_node.attribute = { as_number: int_asn }
-  int_bgp_proc_nw.nodes.each do |int_bgp_proc_node|
-    int_bgp_as_node.supports.push(['bgp_proc', int_bgp_proc_node.name])
-  end
+  int_bgp_as_node.supports = int_bgp_proc_nw.nodes.map { |node| ['bgp_proc', node.name] }
 
   # tp/link
   ext_bgp_proc_nw.nodes.each do |ext_bgp_proc_node|
     ext_bgp_proc_node.tps.each do |ext_bgp_proc_tp|
-      warn "# DEBUG: ext_bgp_proc_node=#{ext_bgp_proc_node.name}, tp=#{ext_bgp_proc_tp.name}, attr=#{ext_bgp_proc_tp.attribute}"
       next unless ext_bgp_proc_tp.attribute.key?(:flags)
 
-      peer_flag = ext_bgp_proc_tp.attribute[:flags].find { |f| f =~ %r{^ebgp-peer=.+$}}
-      warn "# DEBUG: peer_flag = #{peer_flag}"
+      peer_flag = ext_bgp_proc_tp.attribute[:flags].find { |f| f =~ /^ebgp-peer=.+$/ }
       next unless peer_flag
 
-      match = peer_flag.split('=')[-1].match(%r{(?<node>.+)\[(?<tp>.+)\]})
+      match = peer_flag.split('=')[-1].match(/(?<node>.+)\[(?<tp>.+)\]/)
       peer_int_node = match[:node]
       peer_int_tp = match[:tp]
 
@@ -58,3 +54,4 @@ def make_ext_as_bgp_as_nw(ext_as_topology, int_as_topology, peer_list)
     end
   end
 end
+# rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

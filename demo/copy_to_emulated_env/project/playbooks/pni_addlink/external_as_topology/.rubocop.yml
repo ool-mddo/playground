@@ -1,0 +1,20 @@
+require:
+  - rubocop-rake
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.0.0
+
+# disable several metrics for hand-made models
+
+Metrics/AbcSize:
+  Exclude:
+    - '*.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - '*.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - '*.rb'

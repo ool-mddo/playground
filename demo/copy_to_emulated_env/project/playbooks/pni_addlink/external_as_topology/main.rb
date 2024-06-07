@@ -9,12 +9,11 @@ require 'optparse'
 require 'pathname'
 require 'yaml'
 
-require_relative 'ip_management.rb'
+require_relative 'ip_management'
 require_relative 'int_as_topology'
 require_relative 'layer3'
 require_relative 'bgp_proc'
 require_relative 'bgp_as'
-
 
 # @param [String] column Column name
 # @param [CSV::Table] flow_data Flow data
@@ -53,27 +52,27 @@ options = {
 
 # Create OptionParser object
 opt_parser = OptionParser.new do |opts|
-  opts.banner = "Usage: ruby #{$0} [options]"
+  opts.banner = "Usage: ruby #{$PROGRAM_NAME} [options]"
 
   # Define the options
-  opts.on("-aAPI_PROXY", "--api-proxy API", "API proxy name") do |api|
+  opts.on('-aAPI_PROXY', '--api-proxy API', 'API proxy name') do |api|
     options[:api_proxy] = api
   end
 
-  opts.on("-nNETWORK_NAME", "--network NETWORK_NAME", "Network name") do |network|
+  opts.on('-nNETWORK_NAME', '--network NETWORK_NAME', 'Network name') do |network|
     options[:network_name] = network
   end
 
-  opts.on("-pFILE", "--param-file FILE", "Parameter file") do |file|
+  opts.on('-pFILE', '--param-file FILE', 'Parameter file') do |file|
     options[:param_file] = Pathname.new(file)
   end
 
-  opts.on("-fFILE", "--flow-data FILE", "Flow-data file") do |file|
+  opts.on('-fFILE', '--flow-data FILE', 'Flow-data file') do |file|
     options[:flow_data_file] = file
   end
 
   # Display help message
-  opts.on("-h", "--help", "Prints this help") do
+  opts.on('-h', '--help', 'Prints this help') do
     puts opts
     exit
   end
@@ -85,7 +84,7 @@ begin
 
   # Check if required options are provided
   if options[:network_name].nil?
-    warn "Error: Network name is required."
+    warn 'Error: Network name is required.'
     warn opt_parser
     exit
   end
@@ -104,7 +103,7 @@ begin
   params[:network_name] = options[:network_name]
 
   # read flow-data file
-  flow_data = csv_data = CSV.read(options[:flow_data_file], headers: true)
+  flow_data = CSV.read(options[:flow_data_file], headers: true)
 rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
   warn e.message
   warn opt_parser

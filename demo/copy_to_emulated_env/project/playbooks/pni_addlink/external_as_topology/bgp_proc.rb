@@ -7,6 +7,8 @@ module Netomox
   module PseudoDSL
     # pseudo network
     class PNetwork
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
       # @param [String] node1 Node1 name
       # @param [String] node2 Node2 name
       # @return [nil, PLink]
@@ -28,11 +30,9 @@ module Netomox
           link1 = @links.find { |link| link.src.node == node1 && link.dst.node == mid_node }
           link2 = @links.find { |link| link.src.node == mid_node && link.dst.node == node2 }
           PLink.new(link1.src, link2.dst)
-        else
-          # error
-          nil
         end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # @param [PNode] node (upper layer node)
       # @return [PNode, nil] supported node
@@ -72,7 +72,7 @@ def add_bgp_proc_ebgp_speakers(bgp_proc_nw, peer_list)
       remote_ip: peer_item[:bgp_proc][:local_ip],
       flags: ["ebgp-peer=#{peer_item[:bgp_proc][:node_name]}[#{peer_item[:bgp_proc][:tp_name]}]"]
     }
-    bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, "Eth0"])
+    bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, 'Eth0'])
 
     # next loopback_ip
     ipam.count_loopback
@@ -92,7 +92,6 @@ def find_layer3_link_between_node(layer3_nw, bgp_proc_node1, bgp_proc_node2)
     {}
   end
 end
-
 
 # @param [Netomox::PseudoDSL::PTermPoint] layer3_tp
 # @return [String] IP address
@@ -159,7 +158,7 @@ def make_ext_as_bgp_proc_nw(ext_as_topology, peer_list)
 
   # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
   layer3_nw = ext_as_topology.network('layer3')
-  peer_list.each do | peer_item|
+  peer_list.each do |peer_item|
     add_bgp_proc_core_to_edge_links(layer3_nw, bgp_proc_nw, bgp_proc_core_node, peer_item)
   end
 end

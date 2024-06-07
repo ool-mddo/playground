@@ -9,7 +9,7 @@ require 'ipaddr'
 def fetch_int_as_topology(api_proxy, network_name)
   url = URI("http://#{api_proxy}/topologies/#{network_name}/original_asis/topology")
   response = Net::HTTP.get_response(url)
-  response.is_a?(Net::HTTPSuccess) ? JSON.parse(response.body) : { :error => response.message }
+  response.is_a?(Net::HTTPSuccess) ? JSON.parse(response.body) : { error: response.message }
 end
 
 # @param [Netomox::Topology::Networks] int_as_topology Topology object of internal-AS
