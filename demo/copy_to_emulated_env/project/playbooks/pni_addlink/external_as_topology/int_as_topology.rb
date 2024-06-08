@@ -8,6 +8,24 @@ require 'net/http'
 class ExternalASTopologyBuilder
   private
 
+  # @return [void]
+  def merge_ext_into_int_topology!
+    ext_as_topology_data = @ext_as_topology.interpret.topo_data
+    ext_as_topology = Netomox::Topology::Networks.new(ext_as_topology_data)
+
+    # merge existing layer
+    %w[layer3 bgp_proc].each do |layer|
+      int_target_nw = @int_as_topology.find_network(layer)
+      ext_target_nw = ext_as_topology.find_network(layer)
+
+      int_target_nw.nodes.append(*ext_target_nw.nodes)
+      int_target_nw.links.append(*ext_target_nw.links)
+    end
+
+    # insert new layer
+    @int_as_topology.networks.unshift(ext_as_topology.find_network('bgp_as'))
+  end
+
   # @param [String] api_proxy
   # @param [String] network_name
   # @return [Hash] Internal-AS topology data (rfc8345)

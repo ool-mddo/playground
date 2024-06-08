@@ -9,7 +9,7 @@ class ExternalASTopologyBuilder
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # @return [void]
-  def make_ext_as_bgp_as_nw
+  def make_ext_as_bgp_as_nw!
     # bgp_proc networks
     ext_bgp_proc_nw = @ext_as_topology.network('bgp_proc')
     int_bgp_proc_nw = @int_as_topology.find_network('bgp_proc')

@@ -33,10 +33,13 @@ class ExternalASTopologyBuilder
 
   # @return [Hash] External-AS topology data (rfc8345)
   def build_topology
-    make_ext_as_layer3_nw
-    make_ext_as_bgp_proc_nw
-    make_ext_as_bgp_as_nw
-    @ext_as_topology.interpret.topo_data
+    make_ext_as_layer3_nw!
+    make_ext_as_bgp_proc_nw!
+    make_ext_as_bgp_as_nw!
+    # for DEBUG
+    # @ext_as_topology.interpret.topo_data
+    merge_ext_into_int_topology!
+    @int_as_topology.to_data
   end
 
   private

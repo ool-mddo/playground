@@ -24,6 +24,10 @@ class ExternalASTopologyBuilder
         ip_addrs: ["#{peer_item[:bgp_proc][:remote_ip]}/#{IPAddr.new(peer_item[:layer3][:ip_addr]).prefix}"],
         flags: ["ebgp-peer=#{peer_item[:layer3][:node_name]}[#{peer_item[:layer3][:tp_name]}]"]
       }
+
+      # inter-AS link (bidirectional)
+      layer3_nw.link(layer3_node.name, layer3_tp.name, peer_item[:layer3][:node_name], peer_item[:layer3][:tp_name])
+      layer3_nw.link(peer_item[:layer3][:node_name], peer_item[:layer3][:tp_name], layer3_node.name, layer3_tp.name)
     end
   end
 
@@ -120,7 +124,7 @@ class ExternalASTopologyBuilder
   end
 
   # @return [void]
-  def make_ext_as_layer3_nw
+  def make_ext_as_layer3_nw!
     # layer3 network
     layer3_nw = @ext_as_topology.network('layer3')
     layer3_nw.type = Netomox::NWTYPE_MDDO_L3

@@ -1,47 +1,7 @@
 # frozen_string_literal: true
 
 require 'netomox'
-
-module Netomox
-  module PseudoDSL
-    # pseudo network
-    class PNetwork
-      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-      # @param [String] node1 Node1 name
-      # @param [String] node2 Node2 name
-      # @return [nil, PLink]
-      def find_link_between_node(node1, node2)
-        # pattern:
-        #   node1 [tp1] -------------------- [tp2] node2
-        #   node1 [tp1] -- [] seg_node [] -- [tp2] node2
-        # return: Link: node1 [tp1] -- [tp2] node2
-        node1_dst_nodes = find_all_links_by_src_name(node1).map { |link| link.dst.node }
-        node2_dst_nodes = find_all_links_by_src_name(node2).map { |link| link.dst.node }
-        mid_nodes = node1_dst_nodes & node2_dst_nodes
-
-        if mid_nodes.empty? && node1_dst_nodes.include?(node2) && node2_dst_nodes.include?(node1)
-          # direct connected
-          @links.find { |link| link.src.node == node1 && link.dst.node == node2 }
-        elsif !mid_nodes.empty?
-          # node-seg-node pattern
-          mid_node = mid_nodes[0]
-          link1 = @links.find { |link| link.src.node == node1 && link.dst.node == mid_node }
-          link2 = @links.find { |link| link.src.node == mid_node && link.dst.node == node2 }
-          PLink.new(link1.src, link2.dst)
-        end
-      end
-      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-      # @param [PNode] node (upper layer node)
-      # @return [PNode, nil] supported node
-      def find_supporting_node(node)
-        support = node.supports.find { |s| s[0] == @name }
-        node(support[1])
-      end
-    end
-  end
-end
+require_relative 'pnetwork_patch'
 
 # External-AS topology builder
 class ExternalASTopologyBuilder
@@ -73,6 +33,14 @@ class ExternalASTopologyBuilder
         flags: ["ebgp-peer=#{peer_item[:bgp_proc][:node_name]}[#{peer_item[:bgp_proc][:tp_name]}]"]
       }
       bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, 'Eth0'])
+
+      # inter-AS link (bidirectional)
+      bgp_proc_nw.link(
+        bgp_proc_node.name, bgp_proc_tp.name, peer_item[:bgp_proc][:node_name], peer_item[:bgp_proc][:tp_name]
+      )
+      bgp_proc_nw.link(
+        peer_item[:bgp_proc][:node_name], peer_item[:bgp_proc][:tp_name], bgp_proc_node.name, bgp_proc_tp.name
+      )
 
       # next loopback_ip
       @ipam.count_loopback
@@ -139,7 +107,7 @@ class ExternalASTopologyBuilder
   end
 
   # @return [void]
-  def make_ext_as_bgp_proc_nw
+  def make_ext_as_bgp_proc_nw!
     # bgp_proc network
     bgp_proc_nw = @ext_as_topology.network('bgp_proc')
     bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
