@@ -14,7 +14,7 @@ class ExternalASTopologyBuilder
     # add ebgp-speakers
     peer_list.each_with_index do |peer_item, peer_index|
       # layer3 edge-router node
-      layer3_node = layer3_nw.node(format('PNI%02d', peer_index + 1))
+      layer3_node = layer3_nw.node(format('as%s_edge%02d', @as_state[:ext_asn], peer_index + 1))
       peer_item[:layer3][:node] = layer3_node # memo
       layer3_node.attribute = { node_type: 'node' }
 
@@ -103,7 +103,7 @@ class ExternalASTopologyBuilder
     addrs = flow_addr_table(src_flow_item)
 
     # endpoint node
-    layer3_endpoint_node = layer3_nw.node("iperf#{src_flow_index}")
+    layer3_endpoint_node = layer3_nw.node(sprintf('as%s_endpoint%02d', @as_state[:ext_asn], src_flow_index))
     layer3_endpoint_node.attribute = {
       node_type: 'endpoint',
       static_routes: [
@@ -139,7 +139,7 @@ class ExternalASTopologyBuilder
   # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
   # @return [Netomox::PseudoDSL::PNode] layer3 core router node
   def add_layer3_core_router(layer3_nw)
-    layer3_core_node = layer3_nw.node('PNI_core')
+    layer3_core_node = layer3_nw.node("as#{@as_state[:ext_asn]}_core")
     layer3_core_node.attribute = { node_type: 'node' }
     layer3_core_node
   end
@@ -154,16 +154,16 @@ class ExternalASTopologyBuilder
     # add core (aggregation) router
     layer3_core_node = add_layer3_core_router(layer3_nw)
     # add edge-router (ebgp speaker)
-    add_layer3_ebgp_speakers(layer3_nw, @src_peer_list)
+    add_layer3_ebgp_speakers(layer3_nw, @peer_list)
 
     # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
-    @src_peer_list.each_with_index do |peer_item, peer_index|
+    @peer_list.each_with_index do |peer_item, peer_index|
       add_layer3_core_to_edge_links(layer3_nw, layer3_core_node, peer_item, peer_index)
     end
 
     # endpoint = iperf node
     # endpoint [] -- [tp1] Seg_y.y.y.y [tp2] -- [] core
-    @src_flow_list.each_with_index do |src_flow_item, src_flow_index|
+    @flow_list.each_with_index do |src_flow_item, src_flow_index|
       add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_item, src_flow_index)
     end
   end

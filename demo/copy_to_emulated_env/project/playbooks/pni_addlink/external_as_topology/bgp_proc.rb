@@ -11,7 +11,7 @@ class ExternalASTopologyBuilder
   # @return [void]
   def add_bgp_proc_ebgp_speakers(bgp_proc_nw)
     # add ebgp-speakers
-    @src_peer_list.each do |peer_item|
+    @peer_list.each do |peer_item|
       loopback_ip_str = @ipam.current_loopback_ip.to_s
 
       # bgp-proc edge-router node
@@ -88,7 +88,9 @@ class ExternalASTopologyBuilder
     # core-router tp
     bgp_proc_core_tp = bgp_proc_core_node.term_point("peer_#{tp2_ip_str}")
     bgp_proc_core_tp.attribute = {
+      local_as: @as_state[:ext_asn],
       local_ip: tp1_ip_str,
+      remote_as: @as_state[:int_asn],
       remote_ip: tp2_ip_str
     }
     bgp_proc_core_tp.supports.push(['layer3', layer3_edge[:node1][:node].name, layer3_edge[:node1][:tp].name])
@@ -96,7 +98,9 @@ class ExternalASTopologyBuilder
     # edge-router tp
     bgp_proc_edge_tp = bgp_proc_edge_node.term_point("peer_#{tp1_ip_str}")
     bgp_proc_edge_tp.attribute = {
+      local_as: @as_state[:ext_asn],
       local_ip: tp2_ip_str,
+      remote_as: @as_state[:int_asn],
       remote_ip: tp1_ip_str
     }
     bgp_proc_edge_tp.supports.push(['layer3', layer3_edge[:node2][:node].name, layer3_edge[:node2][:tp].name])
@@ -115,7 +119,7 @@ class ExternalASTopologyBuilder
       # TODO: bgp-proc node attribute
       router_id: loopback_ip_str
     }
-    bgp_proc_core_node.supports.push(%w[layer3 PNI_core])
+    bgp_proc_core_node.supports.push(%W[layer3 as#{@as_state[:ext_asn]}_core])
     @ipam.count_loopback
 
     bgp_proc_core_node
@@ -137,7 +141,7 @@ class ExternalASTopologyBuilder
 
     # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
     layer3_nw = @ext_as_topology.network('layer3')
-    @src_peer_list.each do |peer_item|
+    @peer_list.each do |peer_item|
       add_bgp_proc_core_to_edge_links(layer3_nw, bgp_proc_nw, bgp_proc_core_node, peer_item)
     end
   end

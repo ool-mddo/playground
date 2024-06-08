@@ -20,15 +20,13 @@ class ExternalASTopologyBuilder
     bgp_as_nw.attribute = { name: 'mddo-bgp-as-network' }
 
     # bgp_as node (ext-as node)
-    ext_asn = @src_peer_list.map { |item| item[:bgp_proc][:remote_as] }.uniq[0]
-    ext_bgp_as_node = bgp_as_nw.node("as#{ext_asn}")
-    ext_bgp_as_node.attribute = { as_number: ext_asn }
+    ext_bgp_as_node = bgp_as_nw.node("as#{@as_state[:ext_asn]}")
+    ext_bgp_as_node.attribute = { as_number: @as_state[:ext_asn] }
     ext_bgp_as_node.supports = ext_bgp_proc_nw.nodes.map { |node| ['bgp_proc', node.name] }
 
     # bgp_as node (int-as node)
-    int_asn = @src_peer_list.map { |item| item[:bgp_proc][:local_as] }.uniq[0]
-    int_bgp_as_node = bgp_as_nw.node("as#{int_asn}")
-    int_bgp_as_node.attribute = { as_number: int_asn }
+    int_bgp_as_node = bgp_as_nw.node("as#{@as_state[:int_asn]}")
+    int_bgp_as_node.attribute = { as_number: @as_state[:int_asn] }
     int_bgp_as_node.supports = int_bgp_proc_nw.nodes.map { |node| ['bgp_proc', node.name] }
 
     # tp/link

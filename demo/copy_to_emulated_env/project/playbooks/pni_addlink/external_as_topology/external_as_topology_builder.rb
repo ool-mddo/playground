@@ -17,32 +17,56 @@ class ExternalASTopologyBuilder
   # @param [String] api_proxy API proxy URL
   # @param [String] network_name Network name
   def initialize(params_file, flow_data_file, api_proxy, network_name)
-    params = read_params_file(params_file)
-    flow_data = read_flow_data_file(flow_data_file)
-    int_as_topology_data = fetch_int_as_topology(api_proxy, network_name)
+    @params = read_params_file(params_file)
+    @flow_data = read_flow_data_file(flow_data_file)
 
+    int_as_topology_data = fetch_int_as_topology(api_proxy, network_name)
     @int_as_topology = Netomox::Topology::Networks.new(int_as_topology_data)
-    @ext_as_topology = Netomox::PseudoDSL::PNetworks.new
 
     @ipam = IPManagement.instance # singleton
-    @ipam.assign_base_prefix(params['subnet'])
-
-    @src_peer_list = find_all_peers(params['source_as'].to_i)
-    @src_flow_list = column_items_from_flows('source', flow_data)
+    @ipam.assign_base_prefix(@params['subnet'])
   end
 
   # @return [Hash] External-AS topology data (rfc8345)
   def build_topology
-    make_ext_as_layer3_nw!
-    make_ext_as_bgp_proc_nw!
-    make_ext_as_bgp_as_nw!
-    # for DEBUG
-    # @ext_as_topology.interpret.topo_data
-    merge_ext_into_int_topology!
+    src_ext_as_topology = build_ext_as_topology(:source_as)
+    dst_ext_as_topology = build_ext_as_topology(:dest_as)
+
+    merge_ext_into_int_topology!([src_ext_as_topology, dst_ext_as_topology])
     @int_as_topology.to_data
   end
 
   private
+
+  # @param [Symbol] as_type (enum: [source_as, :dest_as])
+  # @return [Netomox::PseudoDSL::PNetworks] External-AS topology
+  def build_ext_as_topology(as_type)
+    warn "# Build External AS Topollgy: #{as_type}"
+
+    # set state
+    if as_type == :source_as
+      @as_state = { type: :source_as }
+      @peer_list = find_all_peers(@params['source_as'].to_i)
+      @flow_list = column_items_from_flows('source', @flow_data)
+    else
+      @as_state = { type: :dest_as }
+      @peer_list = find_all_peers(@params['dest_as'].to_i)
+      @flow_list = column_items_from_flows('dest', @flow_data)
+    end
+    @as_state[:int_asn] = @peer_list.map { |item| item[:bgp_proc][:local_as] }.uniq[0]
+    @as_state[:ext_asn] = @peer_list.map { |item| item[:bgp_proc][:remote_as] }.uniq[0]
+
+    # build
+    @ext_as_topology = Netomox::PseudoDSL::PNetworks.new
+    make_ext_as_layer3_nw!
+    make_ext_as_bgp_proc_nw!
+    make_ext_as_bgp_as_nw!
+
+    # for DEBUG
+    # @ext_as_topology.interpret.topo_data
+
+    @ext_as_topology
+  end
 
   # @param [String] file_path Params file path
   # @return [Hash] params

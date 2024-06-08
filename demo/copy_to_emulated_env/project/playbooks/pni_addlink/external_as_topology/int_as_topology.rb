@@ -8,22 +8,27 @@ require 'net/http'
 class ExternalASTopologyBuilder
   private
 
+  # @param [Array<Netomox::PseudoDSL::PNetworks>] p_ext_as_topologies
   # @return [void]
-  def merge_ext_into_int_topology!
-    ext_as_topology_data = @ext_as_topology.interpret.topo_data
-    ext_as_topology = Netomox::Topology::Networks.new(ext_as_topology_data)
+  def merge_ext_into_int_topology!(p_ext_as_topologies)
+    p_ext_as_topologies.each_with_index do |p_ext_as_topology, index|
+      # convert PseudoDSL::Networks -> Topology::Networks
+      ext_as_topology_data = p_ext_as_topology.interpret.topo_data
+      ext_as_topology = Netomox::Topology::Networks.new(ext_as_topology_data)
 
-    # merge existing layer
-    %w[layer3 bgp_proc].each do |layer|
-      int_target_nw = @int_as_topology.find_network(layer)
-      ext_target_nw = ext_as_topology.find_network(layer)
+      # merge existing layer
+      exist_layers = index.zero? ? %w[layer3 bgp_proc] : %w[layer3 bgp_proc bgp_as]
+      exist_layers.each do |layer|
+        int_target_nw = @int_as_topology.find_network(layer)
+        ext_target_nw = ext_as_topology.find_network(layer)
 
-      int_target_nw.nodes.append(*ext_target_nw.nodes)
-      int_target_nw.links.append(*ext_target_nw.links)
+        int_target_nw.nodes.append(*ext_target_nw.nodes)
+        int_target_nw.links.append(*ext_target_nw.links)
+      end
+
+      # insert new layer
+      @int_as_topology.networks.unshift(ext_as_topology.find_network('bgp_as')) if index.zero?
     end
-
-    # insert new layer
-    @int_as_topology.networks.unshift(ext_as_topology.find_network('bgp_as'))
   end
 
   # @param [String] api_proxy
