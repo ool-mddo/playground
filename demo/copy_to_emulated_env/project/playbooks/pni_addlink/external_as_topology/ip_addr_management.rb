@@ -51,9 +51,7 @@ class IPAddrManagement
   # @raise [StandardError] loopback /24 overflow
   def loopback_ip_of_index(index)
     # a.b.0.0/24, 0 <= index <= 255 (per /32 = 1-ip addr index)
-    if index >= 256
-      raise StandardError, "Loopback address overflow in #{ip_and_prefix_str(@base_prefix)}"
-    end
+    raise StandardError, "Loopback address overflow in #{ip_and_prefix_str(@base_prefix)}" if index >= 256
 
     mask = ip_mask_str(@base_prefix)
     ip = ((@base_prefix & mask) | "0.0.0.#{index}")
@@ -66,10 +64,9 @@ class IPAddrManagement
   # @raise [StandardError] link addr block overflow
   def link_ip_of_index(index)
     # a.b.(1...255).x/30, 0 <= index (per /30 = 4-ip-addrs index)
-    mask = ip_mask_str(@base_prefix)
     base_oct3 = @base_prefix.to_s.split('.')[2].to_i
     oct3 = base_oct3 + (index / 64) + 1 # +1 -> next of loopback block: x.x.?.0/24
-    if oct3 > 2 ** (24 - @base_prefix.prefix) - 1 + base_oct3
+    if oct3 > (2**(24 - @base_prefix.prefix)) - 1 + base_oct3
       raise StandardError, "Link address overflow in #{ip_and_prefix_str(@base_prefix)}"
     end
 
@@ -123,7 +120,7 @@ class IPAddrManagement
   # @param [IPAddr] ip IP addr
   # @return [String] subnet mask
   def ip_mask_str(ip)
-    ip.inspect.match(/\/(.+)>/)[1]
+    ip.inspect.match(%r{/(.+)>})[1]
   end
 
   # @param [IPAddr] ip IP addr
