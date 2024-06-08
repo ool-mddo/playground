@@ -132,7 +132,6 @@ class ExternalASTopologyBuilder
     bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
     bgp_proc_nw.attribute = { name: 'mddo-bgp-network' }
 
-
     # add core (aggregation) router
     # NOTE: assign 1st router-id for core router
     bgp_proc_core_node = add_bgp_proc_core_router(bgp_proc_nw)

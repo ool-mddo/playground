@@ -6,7 +6,7 @@ require 'netomox'
 class ExternalASTopologyBuilder
   private
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
 
   # @return [void]
   def make_ext_as_bgp_as_nw!
@@ -53,5 +53,5 @@ class ExternalASTopologyBuilder
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 end
