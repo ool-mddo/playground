@@ -3,8 +3,6 @@
 require 'ipaddr'
 require 'netomox'
 
-# rubocop:disable Metrics/ClassLength
-
 # External-AS topology builder
 class ExternalASTopologyBuilder
   private
@@ -31,21 +29,6 @@ class ExternalASTopologyBuilder
         ip_addrs: ["#{peer_item[:bgp_proc][:remote_ip]}/#{seg_ip.prefix}"],
         flags: ["ebgp-peer=#{peer_item[:layer3][:node_name]}[#{peer_item[:layer3][:tp_name]}]"]
       }
-
-      # inter-AS segment node
-      layer3_seg_node = layer3_nw.node("Seg_#{seg_ip}/#{seg_ip.prefix}")
-      layer3_seg_node.attribute = { node_type: 'segment', prefixes: [{ prefix: "#{seg_ip}/#{seg_ip.prefix}" }] }
-      layer3_seg_tp1 = layer3_seg_node.term_point('Eth0')
-      layer3_seg_tp2 = layer3_seg_node.term_point('Eth1')
-
-      # inter-AS link, ext-as-edge to seg (bidirectional)
-      layer3_nw.link(layer3_node.name, layer3_tp.name, layer3_seg_node.name, layer3_seg_tp1.name)
-      layer3_nw.link(layer3_seg_node.name, layer3_seg_tp1.name, layer3_node.name, layer3_tp.name)
-      # inter-AS link, seg to int-as-edge (bidirectional)
-      layer3_nw.link(layer3_seg_node.name, layer3_seg_tp2.name,
-                     peer_item[:layer3][:node_name], peer_item[:layer3][:tp_name])
-      layer3_nw.link(peer_item[:layer3][:node_name], peer_item[:layer3][:tp_name],
-                     layer3_seg_node.name, layer3_seg_tp2.name)
     end
   end
 
@@ -186,4 +169,3 @@ class ExternalASTopologyBuilder
     end
   end
 end
-# rubocop:enable Metrics/ClassLength

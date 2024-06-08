@@ -8,29 +8,6 @@ require 'net/http'
 class ExternalASTopologyBuilder
   private
 
-  # @param [Array<Netomox::PseudoDSL::PNetworks>] p_ext_as_topologies
-  # @return [void]
-  def merge_ext_into_int_topology!(p_ext_as_topologies)
-    p_ext_as_topologies.each_with_index do |p_ext_as_topology, index|
-      # convert PseudoDSL::Networks -> Topology::Networks
-      ext_as_topology_data = p_ext_as_topology.interpret.topo_data
-      ext_as_topology = Netomox::Topology::Networks.new(ext_as_topology_data)
-
-      # merge existing layer
-      exist_layers = index.zero? ? %w[layer3 bgp_proc] : %w[layer3 bgp_proc bgp_as]
-      exist_layers.each do |layer|
-        int_target_nw = @int_as_topology.find_network(layer)
-        ext_target_nw = ext_as_topology.find_network(layer)
-
-        int_target_nw.nodes.append(*ext_target_nw.nodes)
-        int_target_nw.links.append(*ext_target_nw.links)
-      end
-
-      # insert new layer
-      @int_as_topology.networks.unshift(ext_as_topology.find_network('bgp_as')) if index.zero?
-    end
-  end
-
   # @param [String] api_proxy
   # @param [String] network_name
   # @return [Hash] Internal-AS topology data (rfc8345)
@@ -57,18 +34,18 @@ class ExternalASTopologyBuilder
     bgp_proc_nw = @int_as_topology.find_network('bgp_proc')
     bgp_proc_nw.nodes.each do |bgp_proc_node|
       bgp_proc_node.termination_points.each do |bgp_proc_tp|
-        bgp_proc_attr = bgp_proc_tp.attribute
-        next unless bgp_proc_attr.remote_as == remote_asn
+        tp_attr = bgp_proc_tp.attribute
+        next unless tp_attr.remote_as == remote_asn
 
         layer3_ref = bgp_proc_tp.supports.find { |s| s.ref_network == 'layer3' }
         peer_item = {
           bgp_proc: {
             node_name: bgp_proc_node.name,
             tp_name: bgp_proc_tp.name,
-            local_as: bgp_proc_attr.local_as,
-            local_ip: bgp_proc_attr.local_ip,
-            remote_as: bgp_proc_attr.remote_as,
-            remote_ip: bgp_proc_attr.remote_ip
+            local_as: tp_attr.confederation.negative? ? tp_attr.local_as : tp_attr.confederation,
+            local_ip: tp_attr.local_ip,
+            remote_as: tp_attr.remote_as,
+            remote_ip: tp_attr.remote_ip
           },
           layer3: {
             node_name: layer3_ref.ref_node,
@@ -87,7 +64,7 @@ class ExternalASTopologyBuilder
     #       :tp_name => "peer_172.16.0.5",
     #       :local_as => 65500,
     #       :local_ip => "172.16.0.6",
-    #       :remote_as => 65550,
+    #       :remote_as => 65518,          ... NOTICE: confederation
     #       :remote_ip => "172.16.0.5"
     #     },
     #     :layer3 => {

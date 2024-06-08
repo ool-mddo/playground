@@ -32,16 +32,40 @@ class ExternalASTopologyBuilder
     src_ext_as_topology = build_ext_as_topology(:source_as)
     dst_ext_as_topology = build_ext_as_topology(:dest_as)
 
-    merge_ext_into_int_topology!([src_ext_as_topology, dst_ext_as_topology])
-    @int_as_topology.to_data
+    merge_ext_topologies!([src_ext_as_topology, dst_ext_as_topology])
+    @ext_as_topology.interpret.topo_data
   end
 
   private
 
+  # @param [Array<Netomox::PseudoDSL::PNetworks>] src_ext_as_topologies Src/Dst Ext-AS topologies (layer3/bgp-proc)
+  # @return [void]
+  def merge_ext_topologies!(src_ext_as_topologies)
+    @as_state[:type] = :all_as
+    @ext_as_topology = Netomox::PseudoDSL::PNetworks.new
+
+    # merge
+    %w[layer3 bgp_proc].each do |layer|
+      src_ext_as_topologies.each do |src_ext_as_topology|
+        src_network = src_ext_as_topology.network(layer)
+        dst_network = @ext_as_topology.network(layer)
+
+        dst_network.type = src_network.type
+        dst_network.attribute = src_network.attribute
+
+        dst_network.nodes.append(*src_network.nodes)
+        dst_network.links.append(*src_network.links)
+      end
+    end
+
+    # make bgp_as layer
+    make_ext_as_bgp_as_nw!
+  end
+
   # @param [Symbol] as_type (enum: [source_as, :dest_as])
   # @return [Netomox::PseudoDSL::PNetworks] External-AS topology
   def build_ext_as_topology(as_type)
-    warn "# Build External AS Topollgy: #{as_type}"
+    warn "# Build External AS topology: #{as_type}"
 
     # set state
     if as_type == :source_as
@@ -60,10 +84,6 @@ class ExternalASTopologyBuilder
     @ext_as_topology = Netomox::PseudoDSL::PNetworks.new
     make_ext_as_layer3_nw!
     make_ext_as_bgp_proc_nw!
-    make_ext_as_bgp_as_nw!
-
-    # for DEBUG
-    # @ext_as_topology.interpret.topo_data
 
     @ext_as_topology
   end

@@ -34,14 +34,6 @@ class ExternalASTopologyBuilder
       }
       bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, 'Eth0'])
 
-      # inter-AS link (bidirectional)
-      bgp_proc_nw.link(
-        bgp_proc_node.name, bgp_proc_tp.name, peer_item[:bgp_proc][:node_name], peer_item[:bgp_proc][:tp_name]
-      )
-      bgp_proc_nw.link(
-        peer_item[:bgp_proc][:node_name], peer_item[:bgp_proc][:tp_name], bgp_proc_node.name, bgp_proc_tp.name
-      )
-
       # next loopback_ip
       @ipam.count_loopback
     end
@@ -138,6 +130,7 @@ class ExternalASTopologyBuilder
     bgp_proc_nw = @ext_as_topology.network('bgp_proc')
     bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
     bgp_proc_nw.attribute = { name: 'mddo-bgp-network' }
+    bgp_proc_nw.supports.push('layer3')
 
     # add core (aggregation) router
     # NOTE: assign 1st router-id for core router

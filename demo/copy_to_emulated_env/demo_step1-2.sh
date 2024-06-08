@@ -21,13 +21,6 @@ curl -s -X POST -H "Content-Type: application/json" \
   -d '{}' \
   "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/topology"
 
-# external-AS data handling
-# generate "external-as topology script" for PNI-addlink (janog53) demo
-if  [[ "$USECASE_NAME" == "pni_addlink" ]]; then
-  echo "# NOTE: interim operation to generate external-as script for pni_addlink usecase"
-  python3 "${USECASE_DIR}/generate.py" -p "${USECASE_DIR}/params.yaml"
-fi
-
 # generate external-AS topology
 external_as_json="${USECASE_CONFIGS_DIR}/external_as_topology.json"
 ruby "${USECASE_DIR}/external_as_topology/main.rb" -p "${USECASE_DIR}/params.yaml" > "$external_as_json"
