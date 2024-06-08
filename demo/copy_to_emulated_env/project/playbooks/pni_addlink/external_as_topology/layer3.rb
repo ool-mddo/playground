@@ -50,47 +50,43 @@ class ExternalASTopologyBuilder
   end
 
   # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
-  # @param [Netomox::PseudoDSL::PNode] layer3_core_node Layer3 core node
-  # @param [Hash] peer_item Peer item (an item in peer_list with layer3/node memo)
-  # @param [Integer] peer_index Index number
+  # @param [Array<Hash>] peer_item_l3_pair Peer item (layer3 part)
   # @return [void]
-  def add_layer3_core_to_edge_links(layer3_nw, layer3_core_node, peer_item, peer_index)
+  def add_layer3_ibgp_links(layer3_nw, peer_item_l3_pair)
     link_ip_str = @ipam.current_link_ip_str # network address
     link_intf_ip_str_pair = @ipam.current_link_intf_ip_str_pair # interface address pair
 
-    # edge-router node
-    layer3_edge_node = peer_item[:layer3][:node]
-    # segment node
+    # topology pattern:
+    #   node1 [tp1] -- [seg_tp1] seg_node [seg_tp2] -- [tp2] node2
+
+    # target nodes/tp
+    layer3_node1 = peer_item_l3_pair[0][:node]
+    layer3_tp1 = layer3_node1.term_point("Eth#{layer3_node1.tps.length}")
+    layer3_node2 = peer_item_l3_pair[1][:node]
+    layer3_tp2 = layer3_node2.term_point("Eth#{layer3_node2.tps.length}")
+
+    # segment node/tp
     layer3_seg_node = layer3_nw.node("Seg_#{@ipam.current_link_ip_str}")
     layer3_seg_node.attribute = { node_type: 'segment', prefixes: [{ prefix: link_ip_str }] }
-
-    # core-router tp
-    layer3_core_tp = layer3_core_node.term_point("Eth#{peer_index}")
-    # segment tp
     layer3_seg_tp1 = layer3_seg_node.term_point('Eth0')
     layer3_seg_tp2 = layer3_seg_node.term_point('Eth1')
-    # edge-router tp
-    edge_tp_index = layer3_edge_node.tps.length
-    layer3_edge_tp = layer3_edge_node.term_point("Eth#{edge_tp_index}")
 
-    # core-router tp attribute
-    layer3_core_tp.attribute = {
-      flags: ["ibgp-peer=#{layer3_edge_node.name}[#{layer3_edge_tp.name}]"],
+    # target tp attribute
+    layer3_tp1.attribute = {
+      flags: ["ibgp-peer=#{layer3_node2.name}[#{layer3_tp2.name}]"],
       ip_addrs: [link_intf_ip_str_pair[0]]
     }
-    # edge-router tp attribute
-    # TODO: ip address assign
-    layer3_edge_tp.attribute = {
-      flags: ["ibgp-peer=#{layer3_core_node.name}[#{layer3_core_tp.name}]"],
+    layer3_tp2.attribute = {
+      flags: ["ibgp-peer=#{layer3_node1.name}[#{layer3_tp1.name}]"],
       ip_addrs: [link_intf_ip_str_pair[1]]
     }
 
-    # core-seg link (bidirectional)
-    layer3_nw.link(layer3_core_node.name, layer3_core_tp.name, layer3_seg_node.name, layer3_seg_tp1.name)
-    layer3_nw.link(layer3_seg_node.name, layer3_seg_tp1.name, layer3_core_node.name, layer3_core_tp.name)
-    # seg-edge link (bidirectional)
-    layer3_nw.link(layer3_seg_node.name, layer3_seg_tp2.name, layer3_edge_node.name, layer3_edge_tp.name)
-    layer3_nw.link(layer3_edge_node.name, layer3_edge_tp.name, layer3_seg_node.name, layer3_seg_tp2.name)
+    # src to seg link (bidirectional)
+    layer3_nw.link(layer3_node1.name, layer3_tp1.name, layer3_seg_node.name, layer3_seg_tp1.name)
+    layer3_nw.link(layer3_seg_node.name, layer3_seg_tp1.name, layer3_node1.name, layer3_tp1.name)
+    # seg to dst link (bidirectional)
+    layer3_nw.link(layer3_seg_node.name, layer3_seg_tp2.name, layer3_node2.name, layer3_tp2.name)
+    layer3_nw.link(layer3_node2.name, layer3_tp2.name, layer3_seg_node.name, layer3_seg_tp2.name)
 
     # next link-ip
     @ipam.count_link
@@ -172,12 +168,15 @@ class ExternalASTopologyBuilder
 
     # add core (aggregation) router
     layer3_core_node = add_layer3_core_router(layer3_nw)
-    # add edge-router (ebgp speaker)
+    # add edge-router (ebgp speaker and inter-AS links)
     add_layer3_ebgp_speakers(layer3_nw, @peer_list)
 
-    # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
-    @peer_list.each_with_index do |peer_item, peer_index|
-      add_layer3_core_to_edge_links(layer3_nw, layer3_core_node, peer_item, peer_index)
+    # iBGP mesh
+    # router [] -- [tp1] Seg_x.x.x.x [tp2] -- [] router
+    @peer_list.map { |peer_item| peer_item[:layer3] }
+              .append({ node_name: layer3_core_node.name, node: layer3_core_node })
+              .combination(2).to_a.each do |peer_item_l3_pair|
+      add_layer3_ibgp_links(layer3_nw, peer_item_l3_pair)
     end
 
     # endpoint = iperf node
