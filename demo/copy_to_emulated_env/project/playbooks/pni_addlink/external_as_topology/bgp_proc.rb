@@ -106,17 +106,9 @@ class ExternalASTopologyBuilder
     bgp_proc_nw.link(bgp_proc_edge_node.name, bgp_proc_edge_tp.name, bgp_proc_core_node.name, bgp_proc_core_tp.name)
   end
 
-  # @return [void]
-  def make_ext_as_bgp_proc_nw!
-    # bgp_proc network
-    bgp_proc_nw = @ext_as_topology.network('bgp_proc')
-    bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
-    bgp_proc_nw.attribute = { name: 'mddo-bgp-network' }
-
-    # add edge-router (ebgp speaker)
-    add_bgp_proc_ebgp_speakers(bgp_proc_nw)
-
-    # add core (aggregation) router
+  # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
+  # @return [Netomox::PseudoDSL::PNode] bgp_proc core router node
+  def add_bgp_proc_core_router(bgp_proc_nw)
     loopback_ip_str = @ipam.current_loopback_ip.to_s
     bgp_proc_core_node = bgp_proc_nw.node(loopback_ip_str)
     bgp_proc_core_node.attribute = {
@@ -125,6 +117,23 @@ class ExternalASTopologyBuilder
     }
     bgp_proc_core_node.supports.push(%w[layer3 PNI_core])
     @ipam.count_loopback
+
+    bgp_proc_core_node
+  end
+
+  # @return [void]
+  def make_ext_as_bgp_proc_nw!
+    # bgp_proc network
+    bgp_proc_nw = @ext_as_topology.network('bgp_proc')
+    bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
+    bgp_proc_nw.attribute = { name: 'mddo-bgp-network' }
+
+
+    # add core (aggregation) router
+    # NOTE: assign 1st router-id for core router
+    bgp_proc_core_node = add_bgp_proc_core_router(bgp_proc_nw)
+    # add edge-router (ebgp speaker)
+    add_bgp_proc_ebgp_speakers(bgp_proc_nw)
 
     # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
     layer3_nw = @ext_as_topology.network('layer3')

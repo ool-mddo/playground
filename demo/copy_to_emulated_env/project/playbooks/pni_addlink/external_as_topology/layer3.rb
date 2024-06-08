@@ -78,25 +78,41 @@ class ExternalASTopologyBuilder
     @ipam.count_link
   end
 
+  # @param [String] flow_item Prefix (e.g. a.b.c.d/xx)
+  # @return [Hash]
+  def flow_addr_table(flow_item)
+    seg_addr = IPAddr.new(flow_item)
+    router_addr = seg_addr | '0.0.0.1'
+    endpoint_addr = seg_addr | '0.0.0.100'
+
+    {
+      seg_addr: seg_addr.to_s,
+      seg_addr_prefix: "#{seg_addr.to_s}/#{seg_addr.prefix}",
+      router_addr: router_addr.to_s,
+      router_addr_prefix: "#{router_addr}/#{router_addr.prefix}",
+      endpoint_addr: endpoint_addr.to_s,
+      endpoint_addr_prefix: "#{endpoint_addr}/#{endpoint_addr.prefix}",
+    }
+  end
+
   # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
   # @param [Netomox::PseudoDSL::PNode] layer3_core_node Layer3 core node
+  # @param [String] src_flow_item Flow source prefix
   # @param [Integer] src_flow_index Flow source index
-  def add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_index)
-    link_ip_str = @ipam.current_link_ip_str # network address
-    link_intf_ip_pair = @ipam.current_link_intf_ip_pair # interface address pair
-    link_intf_ip_str_pair = @ipam.current_link_intf_ip_str_pair
+  def add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_item, src_flow_index)
+    addrs = flow_addr_table(src_flow_item)
 
     # endpoint node
     layer3_endpoint_node = layer3_nw.node("iperf#{src_flow_index}")
     layer3_endpoint_node.attribute = {
       node_type: 'endpoint',
       static_routes: [
-        { prefix: '0.0.0.0/0', next_hop: link_intf_ip_pair[0].to_s, interface: 'Eth0', description: 'default-route' }
+        { prefix: '0.0.0.0/0', next_hop: addrs[:router_addr], interface: 'Eth0', description: 'default-route' }
       ]
     }
     # segment node
-    layer3_seg_node = layer3_nw.node("Seg_#{link_ip_str}")
-    layer3_seg_node.attribute = { node_type: 'segment', prefixes: [{ prefix: link_ip_str }] }
+    layer3_seg_node = layer3_nw.node("Seg_#{addrs[:seg_addr_prefix]}")
+    layer3_seg_node.attribute = { node_type: 'segment', prefixes: [{ prefix: addrs[:seg_addr_prefix] }] }
 
     # core-router tp
     core_tp_index = layer3_core_node.tps.length
@@ -108,9 +124,9 @@ class ExternalASTopologyBuilder
     layer3_endpoint_tp = layer3_endpoint_node.term_point('Eth0')
 
     # core-router tp attribute
-    layer3_core_tp.attribute = { ip_addrs: [link_intf_ip_str_pair[0]] }
+    layer3_core_tp.attribute = { ip_addrs: [addrs[:router_addr_prefix]] }
     # endpoint tp attribute
-    layer3_endpoint_tp.attribute = { ip_addrs: [link_intf_ip_str_pair[1]] }
+    layer3_endpoint_tp.attribute = { ip_addrs: [addrs[:endpoint_addr_prefix]] }
 
     # core-seg link (bidirectional)
     layer3_nw.link(layer3_core_node.name, layer3_core_tp.name, layer3_seg_node.name, layer3_seg_tp1.name)
@@ -118,9 +134,14 @@ class ExternalASTopologyBuilder
     # seg-endpoint link (bidirectional)
     layer3_nw.link(layer3_seg_node.name, layer3_seg_tp2.name, layer3_endpoint_node.name, layer3_endpoint_tp.name)
     layer3_nw.link(layer3_endpoint_node.name, layer3_endpoint_tp.name, layer3_seg_node.name, layer3_seg_tp2.name)
+  end
 
-    # next link-ip
-    @ipam.count_link
+  # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
+  # @return [Netomox::PseudoDSL::PNode] layer3 core router node
+  def add_layer3_core_router(layer3_nw)
+    layer3_core_node = layer3_nw.node('PNI_core')
+    layer3_core_node.attribute = { node_type: 'node' }
+    layer3_core_node
   end
 
   # @return [void]
@@ -130,12 +151,10 @@ class ExternalASTopologyBuilder
     layer3_nw.type = Netomox::NWTYPE_MDDO_L3
     layer3_nw.attribute = { name: 'mddo-layer3-network' }
 
+    # add core (aggregation) router
+    layer3_core_node = add_layer3_core_router(layer3_nw)
     # add edge-router (ebgp speaker)
     add_layer3_ebgp_speakers(layer3_nw, @src_peer_list)
-
-    # add core (aggregation) router
-    layer3_core_node = layer3_nw.node('PNI_core')
-    layer3_core_node.attribute = { node_type: 'node' }
 
     # core [] -- [tp1] Seg_x.x.x.x [tp2] -- [] edge
     @src_peer_list.each_with_index do |peer_item, peer_index|
@@ -144,8 +163,8 @@ class ExternalASTopologyBuilder
 
     # endpoint = iperf node
     # endpoint [] -- [tp1] Seg_y.y.y.y [tp2] -- [] core
-    @src_flow_list.each_with_index do |_src_flow_item, src_flow_index|
-      add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_index)
+    @src_flow_list.each_with_index do |src_flow_item, src_flow_index|
+      add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_item, src_flow_index)
     end
   end
 end
