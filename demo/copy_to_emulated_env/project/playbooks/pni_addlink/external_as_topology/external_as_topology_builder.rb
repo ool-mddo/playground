@@ -4,7 +4,7 @@ require 'csv'
 require 'netomox'
 require 'yaml'
 
-require_relative 'ip_management'
+require_relative 'ip_addr_management'
 require_relative 'int_as_topology'
 require_relative 'layer3'
 require_relative 'bgp_proc'
@@ -23,8 +23,7 @@ class ExternalASTopologyBuilder
     int_as_topology_data = fetch_int_as_topology(api_proxy, network_name)
     @int_as_topology = Netomox::Topology::Networks.new(int_as_topology_data)
 
-    @ipam = IPManagement.instance # singleton
-    @ipam.assign_base_prefix(@params['subnet'])
+    @ipam = IPAddrManagement.instance # singleton
   end
 
   # @return [Hash] External-AS topology data (rfc8345)
@@ -70,12 +69,14 @@ class ExternalASTopologyBuilder
     # set state
     if as_type == :source_as
       @as_state = { type: :source_as }
-      @peer_list = find_all_peers(@params['source_as'].to_i)
+      @peer_list = find_all_peers(@params['source_as']['asn'].to_i)
       @flow_list = column_items_from_flows('source', @flow_data)
+      @ipam.assign_base_prefix(@params['source_as']['subnet'])
     else
       @as_state = { type: :dest_as }
-      @peer_list = find_all_peers(@params['dest_as'].to_i)
+      @peer_list = find_all_peers(@params['dest_as']['asn'].to_i)
       @flow_list = column_items_from_flows('dest', @flow_data)
+      @ipam.assign_base_prefix(@params['dest_as']['subnet'])
     end
     @as_state[:int_asn] = @peer_list.map { |item| item[:bgp_proc][:local_as] }.uniq[0]
     @as_state[:ext_asn] = @peer_list.map { |item| item[:bgp_proc][:remote_as] }.uniq[0]

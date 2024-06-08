@@ -16,7 +16,7 @@ class ExternalASTopologyBuilder
     bgp_as_nw.attribute = { name: 'mddo-bgp-as-network' }
 
     int_asn = @as_state[:int_asn]
-    ext_asn_list = [@params['source_as'], @params['dest_as']].map(&:to_i)
+    ext_asn_list = [@params['source_as']['asn'], @params['dest_as']['asn']].map(&:to_i)
 
     # internal-AS node
     int_bgp_as_node = bgp_as_nw.node("as#{int_asn}")
