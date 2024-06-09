@@ -18,13 +18,13 @@ class ExternalASTopologyBuilder
       seg_ip = IPAddr.new(peer_item[:layer3][:ip_addr])
 
       # layer3 edge-router node
-      node_name = format('as%<asn>s_edge%<index>02d', asn: @as_state[:ext_asn], index: peer_index + 1)
+      node_name = format('as%<asn>s-edge%<index>02d', asn: @as_state[:ext_asn], index: peer_index + 1)
       layer3_node = layer3_nw.node(node_name)
       peer_item[:layer3][:node] = layer3_node # memo
       layer3_node.attribute = { node_type: 'node' }
 
       # layer3 edge-router term-point
-      layer3_tp = layer3_node.term_point('Eth0')
+      layer3_tp = layer3_node.term_point('Ethernet0')
       layer3_tp.attribute = {
         ip_addrs: ["#{peer_item[:bgp_proc][:remote_ip]}/#{seg_ip.prefix}"],
         flags: ["ebgp-peer=#{peer_item[:layer3][:node_name]}[#{peer_item[:layer3][:tp_name]}]"]
@@ -44,15 +44,15 @@ class ExternalASTopologyBuilder
 
     # target nodes/tp
     layer3_node1 = peer_item_l3_pair[0][:node]
-    layer3_tp1 = layer3_node1.term_point("Eth#{layer3_node1.tps.length}")
+    layer3_tp1 = layer3_node1.term_point("Ethernet#{layer3_node1.tps.length}")
     layer3_node2 = peer_item_l3_pair[1][:node]
-    layer3_tp2 = layer3_node2.term_point("Eth#{layer3_node2.tps.length}")
+    layer3_tp2 = layer3_node2.term_point("Ethernet#{layer3_node2.tps.length}")
 
     # segment node/tp
     layer3_seg_node = layer3_nw.node("Seg_#{@ipam.current_link_ip_str}")
     layer3_seg_node.attribute = { node_type: 'segment', prefixes: [{ prefix: link_ip_str }] }
-    layer3_seg_tp1 = layer3_seg_node.term_point('Eth0')
-    layer3_seg_tp2 = layer3_seg_node.term_point('Eth1')
+    layer3_seg_tp1 = layer3_seg_node.term_point("#{layer3_node1.name}_#{layer3_tp1.name}")
+    layer3_seg_tp2 = layer3_seg_node.term_point("#{layer3_node2.name}_#{layer3_tp2.name}")
 
     # target tp attribute
     layer3_tp1.attribute = {
@@ -77,10 +77,13 @@ class ExternalASTopologyBuilder
 
   # @param [String] flow_item Prefix (e.g. a.b.c.d/xx)
   # @return [Hash]
+  # @raise [StandardError] Endpoint segment is too small
   def flow_addr_table(flow_item)
     seg_addr = IPAddr.new(flow_item)
+    raise StandardError, "Endpoint segment is too small (>/25), #{flow_item}" if seg_addr.prefix > 25
+
     router_addr = seg_addr | '0.0.0.1'
-    endpoint_addr = seg_addr | '0.0.0.100'
+    endpoint_addr = seg_addr | '0.0.0.100' # MUST prefix <= /25
 
     {
       seg_addr: seg_addr.to_s,
@@ -99,32 +102,31 @@ class ExternalASTopologyBuilder
   def add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_item, src_flow_index)
     addrs = flow_addr_table(src_flow_item)
 
-    # endpoint node
-    ep_name = format('as%<asn>s_endpoint%<index>02d', asn: @as_state[:ext_asn], index: src_flow_index)
+    # topology pattern:
+    #   endpoint [tp] -- [seg_tp1] seg_node [seg_tp2] -- [tp] core
+
+    # core tp
+    core_tp_index = layer3_core_node.tps.length
+    layer3_core_tp = layer3_core_node.term_point("Ethernet#{core_tp_index}")
+    layer3_core_tp.attribute = { ip_addrs: [addrs[:router_addr_prefix]] }
+
+    # endpoint node/tp
+    ep_name = format('as%<asn>s-endpoint%<index>02d', asn: @as_state[:ext_asn], index: src_flow_index)
     layer3_endpoint_node = layer3_nw.node(ep_name)
     layer3_endpoint_node.attribute = {
       node_type: 'endpoint',
       static_routes: [
-        { prefix: '0.0.0.0/0', next_hop: addrs[:router_addr], interface: 'Eth0', description: 'default-route' }
+        { prefix: '0.0.0.0/0', next_hop: addrs[:router_addr], interface: 'Ethernet0', description: 'default-route' }
       ]
     }
-    # segment node
+    layer3_endpoint_tp = layer3_endpoint_node.term_point('Ethernet0')
+    layer3_endpoint_tp.attribute = { ip_addrs: [addrs[:endpoint_addr_prefix]] }
+
+    # segment node/tp
     layer3_seg_node = layer3_nw.node("Seg_#{addrs[:seg_addr_prefix]}")
     layer3_seg_node.attribute = { node_type: 'segment', prefixes: [{ prefix: addrs[:seg_addr_prefix] }] }
-
-    # core-router tp
-    core_tp_index = layer3_core_node.tps.length
-    layer3_core_tp = layer3_core_node.term_point("Eth#{core_tp_index}")
-    # segment_tp
-    layer3_seg_tp1 = layer3_seg_node.term_point('Eth0')
-    layer3_seg_tp2 = layer3_seg_node.term_point('Eth1')
-    # endpoint tp
-    layer3_endpoint_tp = layer3_endpoint_node.term_point('Eth0')
-
-    # core-router tp attribute
-    layer3_core_tp.attribute = { ip_addrs: [addrs[:router_addr_prefix]] }
-    # endpoint tp attribute
-    layer3_endpoint_tp.attribute = { ip_addrs: [addrs[:endpoint_addr_prefix]] }
+    layer3_seg_tp1 = layer3_seg_node.term_point("#{layer3_core_node.name}_#{layer3_core_tp.name}")
+    layer3_seg_tp2 = layer3_seg_node.term_point("#{layer3_endpoint_node.name}_#{layer3_endpoint_tp.name}")
 
     # core-seg link (bidirectional)
     layer3_nw.link(layer3_core_node.name, layer3_core_tp.name, layer3_seg_node.name, layer3_seg_tp1.name)
@@ -137,7 +139,7 @@ class ExternalASTopologyBuilder
   # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
   # @return [Netomox::PseudoDSL::PNode] layer3 core router node
   def add_layer3_core_router(layer3_nw)
-    layer3_core_node = layer3_nw.node("as#{@as_state[:ext_asn]}_core")
+    layer3_core_node = layer3_nw.node("as#{@as_state[:ext_asn]}-core")
     layer3_core_node.attribute = { node_type: 'node' }
     layer3_core_node
   end

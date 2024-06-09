@@ -18,8 +18,8 @@ class ExternalASTopologyBuilder
       bgp_proc_node = bgp_proc_nw.node(loopback_ip_str)
       peer_item[:bgp_proc][:node] = bgp_proc_node # memo
       bgp_proc_node.attribute = {
-        # TODO: bgp-proc node attribute
-        router_id: loopback_ip_str
+        router_id: loopback_ip_str,
+        flags: ['ext-bgp-speaker'] # flag for external-AS BGP speaker
       }
       bgp_proc_node.supports.push(['layer3', peer_item[:layer3][:node].name])
 
@@ -32,7 +32,7 @@ class ExternalASTopologyBuilder
         remote_ip: peer_item[:bgp_proc][:local_ip],
         flags: ["ebgp-peer=#{peer_item[:bgp_proc][:node_name]}[#{peer_item[:bgp_proc][:tp_name]}]"]
       }
-      bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, 'Eth0'])
+      bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, 'Ethernet0'])
 
       # next loopback_ip
       @ipam.count_loopback
@@ -43,6 +43,7 @@ class ExternalASTopologyBuilder
   # @param [Netomox::PseudoDSL::PNode] bgp_proc_node1 bgp-proc node
   # @param [Netomox::PseudoDSL::PNode] bgp_proc_node2 bgp-proc node
   # @return [Hash]
+  # @raise [StandardError] underlay (layer3) link not found
   def find_layer3_link_between_node(layer3_nw, bgp_proc_node1, bgp_proc_node2)
     layer3_node1 = layer3_nw.find_supporting_node(bgp_proc_node1)
     layer3_node2 = layer3_nw.find_supporting_node(bgp_proc_node2)
@@ -53,7 +54,8 @@ class ExternalASTopologyBuilder
         node2: { node: layer3_node2, tp: layer3_nw.node(link.dst.node).term_point(link.dst.tp) }
       }
     else
-      {}
+      link_str = "#{bgp_proc_node1.name}>#{layer3_node1.name} -- #{bgp_proc_node2.name}>#{layer3_node2.name}"
+      raise StandardError, "Layer3 link not found between: #{link_str}"
     end
   end
 
@@ -115,10 +117,10 @@ class ExternalASTopologyBuilder
     loopback_ip_str = @ipam.current_loopback_ip.to_s
     bgp_proc_core_node = bgp_proc_nw.node(loopback_ip_str)
     bgp_proc_core_node.attribute = {
-      # TODO: bgp-proc node attribute
-      router_id: loopback_ip_str
+      router_id: loopback_ip_str,
+      flags: ['ext-bgp-speaker'] # flag for external-AS BGP speaker
     }
-    bgp_proc_core_node.supports.push(%W[layer3 as#{@as_state[:ext_asn]}_core])
+    bgp_proc_core_node.supports.push(%W[layer3 as#{@as_state[:ext_asn]}-core])
     @ipam.count_loopback
 
     bgp_proc_core_node
