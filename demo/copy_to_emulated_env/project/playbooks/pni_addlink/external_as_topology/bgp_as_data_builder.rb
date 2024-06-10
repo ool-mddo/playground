@@ -24,8 +24,8 @@ class BgpASDataBuilder
 
   # @return [Hash] External-AS topology data (rfc8345)
   def build_topology
-    merge_ext_topologies!([@src_topo_builder, @dst_topo_builder].map(&:topology))
-    make_ext_as_bgp_as_nw!
+    merge_ext_topologies!([@src_topo_builder, @dst_topo_builder].map(&:ext_as_topology))
+    make_bgp_as_topology!
 
     @ext_as_topology.interpret.topo_data
   end
@@ -53,7 +53,7 @@ class BgpASDataBuilder
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # @return [void]
-  def make_ext_as_bgp_as_nw!
+  def make_bgp_as_topology!
     # bgp_as network
     bgp_as_nw = @ext_as_topology.network('bgp_as')
     bgp_as_nw.type = Netomox::NWTYPE_MDDO_BGP_AS

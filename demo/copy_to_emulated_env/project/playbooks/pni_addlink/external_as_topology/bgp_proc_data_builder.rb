@@ -9,7 +9,6 @@ class BgpProcDataBuilder < Layer3DataBuilder
   # @!attribute [r] ext_as_topology External-AS topology, contains bgp-proc/layer3
   #   @return [Netomox::PseudoDSL::PNetworks]
   attr_accessor :ext_as_topology
-  alias :topology :ext_as_topology
 
   # @param [Symbol] as_type (enum: [source_as, :dest_as])
   # @param [String] params_file Params file path
