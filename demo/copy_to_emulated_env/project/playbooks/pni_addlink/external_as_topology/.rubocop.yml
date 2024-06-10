@@ -18,3 +18,7 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Exclude:
     - '*.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - '*.rb'

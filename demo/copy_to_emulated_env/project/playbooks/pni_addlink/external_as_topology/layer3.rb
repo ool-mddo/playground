@@ -3,8 +3,6 @@
 require 'ipaddr'
 require 'netomox'
 
-# rubocop:disable Metrics/ClassLength
-
 # External-AS topology builder
 class ExternalASTopologyBuilder
   private
@@ -188,4 +186,3 @@ class ExternalASTopologyBuilder
     end
   end
 end
-# rubocop:enable Metrics/ClassLength

@@ -9,9 +9,18 @@ class ExternalASTopologyBuilder
 
   # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
   # @return [void]
+  # @raise [StandardError]
   def add_bgp_proc_ebgp_speakers(bgp_proc_nw)
+    preferred_peer = @params[@as_state[:type].to_s]['preferred_peer']
+
     # add ebgp-speakers
     @peer_list.each do |peer_item|
+      # underlay(layer3) node/tp
+      layer3_node = peer_item[:layer3][:node]
+      layer3_tp = layer3_node.tps.find { |tp| tp.name == 'Ethernet0' }
+      raise StandardError, "Underlay node is not found: #{layer3_node.name}[Ethernet0]" if layer3_tp.nil?
+
+      # assign loopback ip
       loopback_ip_str = @ipam.current_loopback_ip.to_s
 
       # bgp-proc edge-router node
@@ -21,7 +30,7 @@ class ExternalASTopologyBuilder
         router_id: loopback_ip_str,
         flags: ['ext-bgp-speaker'] # flag for external-AS BGP speaker
       }
-      bgp_proc_node.supports.push(['layer3', peer_item[:layer3][:node].name])
+      bgp_proc_node.supports.push(['layer3', layer3_node.name])
 
       # bgp-proc edge-router term-point
       bgp_proc_tp = bgp_proc_node.term_point("peer_#{peer_item[:bgp_proc][:local_ip]}")
@@ -32,7 +41,16 @@ class ExternalASTopologyBuilder
         remote_ip: peer_item[:bgp_proc][:local_ip],
         flags: ["ebgp-peer=#{peer_item[:bgp_proc][:node_name]}[#{peer_item[:bgp_proc][:tp_name]}]"]
       }
-      bgp_proc_tp.supports.push(['layer3', peer_item[:layer3][:node].name, 'Ethernet0'])
+      bgp_proc_tp.supports.push(['layer3', layer3_node.name, layer3_tp.name])
+
+      # preferred peer check
+      if preferred_peer
+        layer3_ebgp_peer_flag = "ebgp-peer=#{preferred_peer['node']}[#{preferred_peer['interface']}]"
+        if layer3_tp.attribute[:flags].include?(layer3_ebgp_peer_flag)
+          warn "Warn: set preferred flag: #{@as_state[:type]}, #{bgp_proc_node.name}[#{bgp_proc_tp.name}]"
+          bgp_proc_tp.attribute[:flags].push('ext-bgp-speaker-preferred')
+        end
+      end
 
       # next loopback_ip
       @ipam.count_loopback

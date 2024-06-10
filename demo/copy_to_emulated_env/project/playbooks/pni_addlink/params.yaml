@@ -2,6 +2,9 @@
 source_as:
   asn: 65550
   subnet: 169.254.0.0/23
+  preferred_peer:
+    node: edge-tk01
+    interface: ge-0/0/3.0
 dest_as:
   asn: 65520
   subnet: 169.254.2.0/23
