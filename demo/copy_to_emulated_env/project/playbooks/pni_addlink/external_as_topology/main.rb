@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# NOTE: this script must be executed just after step1-1
+
 require 'json'
 require 'optparse'
 require 'pathname'
