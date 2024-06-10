@@ -2,9 +2,53 @@
 
 require 'netomox'
 
-# External-AS topology builder
-class ExternalASTopologyBuilder
+require_relative 'bgp_proc_data_builder'
+
+# bgp_as network data builder
+class BgpASDataBuilder
+  # @param [String] params_file Params file path
+  # @param [String] flow_data_file Flow data file path
+  # @param [String] api_proxy API proxy (host:port str)
+  # @param [String] network_name Network name
+  def initialize(params_file, flow_data_file, api_proxy, network_name)
+    # each external-AS topology which contains layer3/bgp_proc layer
+    @src_topo_builder = BgpProcDataBuilder.new(:source_as, params_file, flow_data_file, api_proxy, network_name)
+    @dst_topo_builder = BgpProcDataBuilder.new(:dest_as, params_file, flow_data_file, api_proxy, network_name)
+
+    # target external-AS topology (empty)
+    # src/dst ext-AS topology (layer3/bgp-proc) are merged into it with a new layer, bgp_as.
+    @ext_as_topology = Netomox::PseudoDSL::PNetworks.new
+    # internal-AS topology data (Netomox::Topology::Networks)
+    @int_as_topology = @src_topo_builder.int_as_topology
+  end
+
+  # @return [Hash] External-AS topology data (rfc8345)
+  def build_topology
+    merge_ext_topologies!([@src_topo_builder, @dst_topo_builder].map(&:topology))
+    make_ext_as_bgp_as_nw!
+
+    @ext_as_topology.interpret.topo_data
+  end
+
   private
+
+  # @param [Array<Netomox::PseudoDSL::PNetworks>] src_ext_as_topologies Src/Dst Ext-AS topologies (layer3/bgp-proc)
+  # @return [void]
+  def merge_ext_topologies!(src_ext_as_topologies)
+    # merge
+    %w[layer3 bgp_proc].each do |layer|
+      src_ext_as_topologies.each do |src_ext_as_topology|
+        src_network = src_ext_as_topology.network(layer)
+        dst_network = @ext_as_topology.network(layer)
+
+        dst_network.type = src_network.type
+        dst_network.attribute = src_network.attribute
+
+        dst_network.nodes.append(*src_network.nodes)
+        dst_network.links.append(*src_network.links)
+      end
+    end
+  end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
@@ -15,8 +59,8 @@ class ExternalASTopologyBuilder
     bgp_as_nw.type = Netomox::NWTYPE_MDDO_BGP_AS
     bgp_as_nw.attribute = { name: 'mddo-bgp-as-network' }
 
-    int_asn = @as_state[:int_asn]
-    ext_asn_list = [@params['source_as']['asn'], @params['dest_as']['asn']].map(&:to_i)
+    int_asn = @src_topo_builder.as_state[:int_asn]
+    ext_asn_list = [@src_topo_builder.as_state[:ext_asn], @dst_topo_builder.as_state[:ext_asn]].map(&:to_i)
 
     # internal-AS node
     int_bgp_as_node = bgp_as_nw.node("as#{int_asn}")

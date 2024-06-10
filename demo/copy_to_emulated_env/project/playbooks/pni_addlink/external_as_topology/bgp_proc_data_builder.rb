@@ -1,17 +1,35 @@
 # frozen_string_literal: true
 
 require 'netomox'
-require_relative 'pnetwork_patch'
+require_relative 'layer3_data_builder'
+require_relative 'p_network'
 
-# External-AS topology builder
-class ExternalASTopologyBuilder
+# bgp_proc network data builder
+class BgpProcDataBuilder < Layer3DataBuilder
+  # @!attribute [r] ext_as_topology External-AS topology, contains bgp-proc/layer3
+  #   @return [Netomox::PseudoDSL::PNetworks]
+  attr_accessor :ext_as_topology
+  alias :topology :ext_as_topology
+
+  # @param [Symbol] as_type (enum: [source_as, :dest_as])
+  # @param [String] params_file Params file path
+  # @param [String] flow_data_file Flow data file path
+  # @param [String] api_proxy API proxy (host:port str)
+  # @param [String] network_name Network name
+  def initialize(as_type, params_file, flow_data_file, api_proxy, network_name)
+    super(as_type, params_file, flow_data_file, api_proxy, network_name)
+
+    @layer3_nw = @ext_as_topology.network('layer3') # underlay network
+    make_bgp_proc_topology!
+  end
+
   private
 
   # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
   # @return [void]
   # @raise [StandardError]
   def add_bgp_proc_ebgp_speakers(bgp_proc_nw)
-    preferred_peer = @params[@as_state[:type].to_s]['preferred_peer']
+    preferred_peer = @params['preferred_peer']
 
     # add ebgp-speakers
     @peer_list.each do |peer_item|
@@ -57,19 +75,18 @@ class ExternalASTopologyBuilder
     end
   end
 
-  # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
   # @param [Netomox::PseudoDSL::PNode] bgp_proc_node1 bgp-proc node
   # @param [Netomox::PseudoDSL::PNode] bgp_proc_node2 bgp-proc node
   # @return [Hash]
   # @raise [StandardError] underlay (layer3) link not found
-  def find_layer3_link_between_node(layer3_nw, bgp_proc_node1, bgp_proc_node2)
-    layer3_node1 = layer3_nw.find_supporting_node(bgp_proc_node1)
-    layer3_node2 = layer3_nw.find_supporting_node(bgp_proc_node2)
-    link = layer3_nw.find_link_between_node(layer3_node1.name, layer3_node2.name)
+  def find_layer3_link_between_node(bgp_proc_node1, bgp_proc_node2)
+    layer3_node1 = @layer3_nw.find_supporting_node(bgp_proc_node1)
+    layer3_node2 = @layer3_nw.find_supporting_node(bgp_proc_node2)
+    link = @layer3_nw.find_link_between_node(layer3_node1.name, layer3_node2.name)
     if link
       {
-        node1: { node: layer3_node1, tp: layer3_nw.node(link.src.node).term_point(link.src.tp) },
-        node2: { node: layer3_node2, tp: layer3_nw.node(link.dst.node).term_point(link.dst.tp) }
+        node1: { node: layer3_node1, tp: @layer3_nw.node(link.src.node).term_point(link.src.tp) },
+        node2: { node: layer3_node2, tp: @layer3_nw.node(link.dst.node).term_point(link.dst.tp) }
       }
     else
       link_str = "#{bgp_proc_node1.name}>#{layer3_node1.name} -- #{bgp_proc_node2.name}>#{layer3_node2.name}"
@@ -83,11 +100,10 @@ class ExternalASTopologyBuilder
     layer3_tp.attribute[:ip_addrs][0].sub(%r{/\d+$}, '')
   end
 
-  # @param [Netomox::PseudoDSL::PNetwork] layer3_nw layer3 network
   # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
   # @param [Array<Hash>] peer_item_bgp_proc_pair Peer item (bgp_proc part)
   # @return [void]
-  def add_bgp_proc_ibgp_links(layer3_nw, bgp_proc_nw, peer_item_bgp_proc_pair)
+  def add_bgp_proc_ibgp_links(bgp_proc_nw, peer_item_bgp_proc_pair)
     # topology pattern:
     #   bgp_proc: node1 [tp1] -------------- [tp2] node2
     #               :     :                    :    :
@@ -100,7 +116,7 @@ class ExternalASTopologyBuilder
     bgp_proc_node2 = peer_item_bgp_proc_pair[1][:node]
 
     # underlay (layer3) link/ip addr
-    layer3_edge = find_layer3_link_between_node(layer3_nw, bgp_proc_node1, bgp_proc_node2)
+    layer3_edge = find_layer3_link_between_node(bgp_proc_node1, bgp_proc_node2)
     layer3_tp1_ip_str = layer3_tp_addr_str(layer3_edge[:node1][:tp])
     layer3_tp2_ip_str = layer3_tp_addr_str(layer3_edge[:node2][:tp])
 
@@ -145,7 +161,7 @@ class ExternalASTopologyBuilder
   end
 
   # @return [void]
-  def make_ext_as_bgp_proc_nw!
+  def make_bgp_proc_topology!
     # bgp_proc network
     bgp_proc_nw = @ext_as_topology.network('bgp_proc')
     bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
@@ -160,11 +176,10 @@ class ExternalASTopologyBuilder
 
     # iBGP mesh
     # router [] -- [tp1] Seg_x.x.x.x [tp2] -- [] router
-    layer3_nw = @ext_as_topology.network('layer3')
     @peer_list.map { |peer_item| peer_item[:bgp_proc] }
               .append({ node_name: bgp_proc_core_node.name, node: bgp_proc_core_node })
               .combination(2).to_a.each do |peer_item_bgp_proc_pair|
-      add_bgp_proc_ibgp_links(layer3_nw, bgp_proc_nw, peer_item_bgp_proc_pair)
+      add_bgp_proc_ibgp_links(bgp_proc_nw, peer_item_bgp_proc_pair)
     end
   end
 end

@@ -6,7 +6,7 @@ require 'json'
 require 'optparse'
 require 'pathname'
 
-require_relative 'external_as_topology_builder'
+require_relative 'bgp_as_data_builder'
 
 # Hash to store the options
 options = {
@@ -71,7 +71,7 @@ rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
 end
 
 # main
-ext_as_topology_builder = ExternalASTopologyBuilder.new(
+ext_as_topology_builder = BgpASDataBuilder.new(
   options[:param_file], options[:flow_data_file], options[:api_proxy], options[:network_name]
 )
 puts JSON.pretty_generate(ext_as_topology_builder.build_topology)

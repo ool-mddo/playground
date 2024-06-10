@@ -1,10 +1,34 @@
 # frozen_string_literal: true
 
+require 'csv'
 require 'ipaddr'
 require 'netomox'
 
-# External-AS topology builder
-class ExternalASTopologyBuilder
+require_relative 'int_as_data_builder'
+require_relative 'ip_addr_management'
+
+# Layer3 network data builder
+class Layer3DataBuilder < IntASDataBuilder
+  # @param [Symbol] as_type (enum: [source_as, :dest_as])
+  # @param [String] params_file Params file path
+  # @param [String] flow_data_file Flow data file path
+  # @param [String] api_proxy API proxy (host:port str)
+  # @param [String] network_name Network name
+  def initialize(as_type, params_file, flow_data_file, api_proxy, network_name)
+    super(as_type, params_file, api_proxy, network_name)
+
+    flow_data = read_flow_data_file(flow_data_file)
+    @flow_list = column_items_from_flows(flow_data)
+
+    @ipam = IPAddrManagement.instance # singleton
+    @ipam.assign_base_prefix(@params['subnet'])
+
+    # target external-AS topology (empty)
+    @ext_as_topology = Netomox::PseudoDSL::PNetworks.new
+
+    make_layer3_topology!
+  end
+
   private
 
   # @param [Netomox::PseudoDSL::PNetwork] layer3_nw Layer3 network
@@ -160,7 +184,7 @@ class ExternalASTopologyBuilder
   end
 
   # @return [void]
-  def make_ext_as_layer3_nw!
+  def make_layer3_topology!
     # layer3 network
     layer3_nw = @ext_as_topology.network('layer3')
     layer3_nw.type = Netomox::NWTYPE_MDDO_L3
@@ -184,5 +208,21 @@ class ExternalASTopologyBuilder
     @flow_list.each_with_index do |src_flow_item, src_flow_index|
       add_layer3_core_to_endpoint_links(layer3_nw, layer3_core_node, src_flow_item, src_flow_index)
     end
+  end
+
+  # @param [String] file_path Flow data file path
+  # @return [CSV::Table] flow data
+  def read_flow_data_file(file_path)
+    CSV.read(file_path, headers: true)
+  rescue CSV::MalformedCSVError => e
+    warn "Error: Malformed CSV row: #{e.message}"
+    exit 1
+  end
+
+  # @param [CSV::Table] flow_data Flow data
+  # @return [Array<String>] items in specified column
+  def column_items_from_flows(flow_data)
+    column = @as_state[:type] == :source_as ? 'source' : 'dest'
+    flow_data.map { |row| row.to_h[column] }.uniq
   end
 end

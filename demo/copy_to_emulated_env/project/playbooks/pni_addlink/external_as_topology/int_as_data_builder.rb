@@ -3,10 +3,45 @@
 require 'netomox'
 require 'ipaddr'
 require 'net/http'
+require 'yaml'
 
-# External-AS topology builder
-class ExternalASTopologyBuilder
+# Internal-AS peer data builder
+class IntASDataBuilder
+  # @!attribute [r] as_state
+  #   @return [Hash]
+  # @!attribute [r] int_as_topology
+  #   @return [Netomox::Topology::Networks]
+  attr_reader :as_state, :int_as_topology
+
+  # @param [Symbol] as_type (enum: [source_as, :dest_as])
+  # @param [String] params_file Params file path
+  # @param [String] api_proxy API proxy (host:port str)
+  # @param [String] network_name Network name
+  def initialize(as_type, params_file, api_proxy, network_name)
+    # self (internal) AS topology
+    int_as_topology_data = fetch_int_as_topology(api_proxy, network_name)
+    @int_as_topology = Netomox::Topology::Networks.new(int_as_topology_data)
+
+    # single (target) as params
+    all_params = read_params_file(params_file)
+    @params = all_params[as_type.to_s]
+    # peer info
+    @peer_list = find_all_peers(@params['asn'])
+    # target AS info
+    @as_state = make_as_state(as_type)
+  end
+
   private
+
+  # @param [Symbol] as_type (enum: [source_as, :dest_as])
+  # @return [Hash] as_state
+  def make_as_state(as_type)
+    {
+      type: as_type,
+      int_asn: @peer_list.map { |item| item[:bgp_proc][:local_as] }.uniq[0],
+      ext_asn: @peer_list.map { |item| item[:bgp_proc][:remote_as] }.uniq[0]
+    }
+  end
 
   # @param [String] api_proxy
   # @param [String] network_name
@@ -77,5 +112,14 @@ class ExternalASTopologyBuilder
     #   ...
     # ]
     peer_list
+  end
+
+  # @param [String] file_path Params file path
+  # @return [Hash] params
+  def read_params_file(file_path)
+    YAML.load_file(file_path)
+  rescue Psych::SyntaxError => e
+    warn "Error: Failed to parse YAML file: #{e.message}"
+    exit 1
   end
 end
