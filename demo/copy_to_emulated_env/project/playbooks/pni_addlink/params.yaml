@@ -2,9 +2,14 @@
 source_as:
   asn: 65550
   subnet: 169.254.0.0/23
+  allowed_peers: # TBA
   preferred_peer:
     node: edge-tk01
     interface: ge-0/0/3.0
+  add_links:
+    - node: edge-tk03
+      interface: GigabitEthernet0/0/0/2
+      remote_ip: 172.16.1.17
 dest_as:
   asn: 65520
   subnet: 169.254.2.0/23

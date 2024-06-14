@@ -34,6 +34,21 @@ class Layer3DataBuilder < IntASDataBuilder
     make_layer3_topology!
   end
 
+  protected
+
+  # @param [String] suffix Router-name suffix
+  # @return [String] Router-name
+  def layer3_router_name(suffix)
+    "as#{@as_state[:ext_asn]}-#{suffix}"
+  end
+
+  # @return [Array<Netomox::PseudoDSL::PNode>] ebgp-candidate-routers
+  def find_all_layer3_ebgp_candidate_routers
+    @layer3_nw.nodes.find_all do |node|
+      node.attribute.key?(:flags) && node.attribute[:flags].include?('ebgp-candidate-router')
+    end
+  end
+
   private
 
   # @return [void]
@@ -176,17 +191,71 @@ class Layer3DataBuilder < IntASDataBuilder
     @layer3_nw.link(layer3_endpoint_node.name, layer3_endpoint_tp.name, layer3_seg_node.name, layer3_seg_tp2.name)
   end
 
-  # @param [String] suffix Router-name suffix
-  # @return [String] Router-name
-  def layer3_router_name(suffix)
-    "as#{@as_state[:ext_asn]}-#{suffix}"
-  end
-
   # @return [Netomox::PseudoDSL::PNode] layer3 core router node
   def add_layer3_core_router
     layer3_core_node = @layer3_nw.node(layer3_router_name('core'))
     layer3_core_node.attribute = { node_type: 'node' }
     layer3_core_node
+  end
+
+  # @param [IPAddr] ipaddr
+  # @return [String] ip/prefix format tstring (e.g. "a.b.c.d/nn")
+  def ipaddr_to_full_str(ipaddr)
+    "#{ipaddr}/#{ipaddr.prefix}"
+  end
+
+  # @param [Hash] add_link A link info to add (internal-AS edge interface)
+  # @return [void]
+  # @raise [StandardError] add-link node/tp is not found
+  def add_layer3_ebgp_candidate_router(add_link)
+    # internal edge
+    layer3_int_nw = @int_as_topology.find_network(@layer3_nw.name)
+    layer3_int_node = layer3_int_nw.find_node_by_name(add_link['node'])
+    raise StandardError, "Internal-AS edge-node:#{add_link['node']} to add is not found" if layer3_int_node.nil?
+
+    layer3_int_tp = layer3_int_node.find_tp_by_name(add_link['interface'])
+    raise StandardError, "Internal-AS edge-tp:#{add_link['interface']} to add is not found" if layer3_int_tp.nil?
+
+    layer3_int_tp_ipaddr = IPAddr.new(layer3_int_tp.attribute[:ip_addrs][0])
+    unless layer3_int_tp_ipaddr.include?(add_link['remote_ip'])
+      int_node = "#{layer3_int_node.name}[#{layer3_int_tp.name}]"
+      raise StandardError,
+            "Remote-IP:#{add_link['remote_ip']} is not included in IP:#{layer3_int_tp_ipaddr} at #{int_node}"
+    end
+
+    # external edge
+    layer3_ext_node = @layer3_nw.node(layer3_router_name(format('edge%02d', @layer3_nw.nodes.length)))
+    layer3_ext_node.attribute = {
+      node_type: 'node',
+      prefixes: [{ prefix: ipaddr_to_full_str(layer3_int_tp_ipaddr), metric: 0, flags: ['connected'] }],
+      flags: ['ebgp-candidate-router']
+    }
+    layer3_ext_tp = layer3_ext_node.term_point("Ethernet#{layer3_ext_node.tps.length}")
+    layer3_ext_tp.attribute = {
+      ip_addrs: "#{add_link['remote_ip']}/#{layer3_int_tp_ipaddr.prefix}",
+      flags: ["ebgp-peer=#{add_link['node']}[#{add_link['interface']}]", 'ebgp-candidate-interface']
+    }
+
+    # links (inter-AS links)
+    # NOTICE: Usually, inter-AS links are added later by the splice API.
+    #   However, this is done based on the inter-AS interface information defined in the bgp_as layer.
+    #   Therefore, L3 interface information of candidate routers for which BGP is not configured is not added.
+    #   Inter-AS link information is added here beforehand.
+    # pattern:
+    #   int-as-edge [] -- [tp1] seg [tp2] -- [] ext-as-edge
+    seg_node = @layer3_nw.node("Seg_#{ipaddr_to_full_str(layer3_int_tp_ipaddr)}")
+    seg_node.attribute = {
+      node_type: 'segment',
+      prefixes: [{ prefix: ipaddr_to_full_str(layer3_int_tp_ipaddr), metric: 0 }]
+    }
+    seg_tp1 = seg_node.term_point("#{layer3_int_node.name}_#{layer3_int_tp.name}")
+    seg_tp2 = seg_node.term_point("#{layer3_ext_node.name}_#{layer3_ext_tp.name}")
+    # int-as-edge -- seg
+    @layer3_nw.link(layer3_int_node.name, layer3_int_tp.name, seg_node.name, seg_tp1.name)
+    @layer3_nw.link(seg_node.name, seg_tp1.name, layer3_int_node.name, layer3_int_tp.name)
+    # seg -- ext-as-edge
+    @layer3_nw.link(seg_node.name, seg_tp2.name, layer3_ext_node.name, layer3_ext_tp.name)
+    @layer3_nw.link(layer3_ext_node.name, layer3_ext_tp.name, seg_node.name, seg_tp2.name)
   end
 
   # @return [void]
@@ -195,11 +264,14 @@ class Layer3DataBuilder < IntASDataBuilder
     layer3_core_node = add_layer3_core_router
     # add edge-router (ebgp speaker and inter-AS links)
     add_layer3_ebgp_routers
+    # add edge-candidate-router (NOT ebgp yet, but will be ebgp)
+    @params['add_links']&.each { |add_link| add_layer3_ebgp_candidate_router(add_link) }
 
     # iBGP mesh
     # router [] -- [tp1] Seg_x.x.x.x [tp2] -- [] router
     @peer_list.map { |peer_item| peer_item[:layer3] }
               .append({ node_name: layer3_core_node.name, node: layer3_core_node })
+              .concat(find_all_layer3_ebgp_candidate_routers.map { |node| { node_name: node.name, node: node } })
               .combination(2).to_a.each do |peer_item_l3_pair|
       add_layer3_ibgp_links(peer_item_l3_pair)
     end

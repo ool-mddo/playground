@@ -27,6 +27,15 @@ class BgpProcDataBuilder < Layer3DataBuilder
     make_bgp_proc_topology!
   end
 
+  protected
+
+  # @return [Array<Netomox::PseudoDSL::PNode>] ebgp-candidate-routers
+  def find_all_bgp_proc_ebgp_candidate_routers
+    @bgp_proc_nw.nodes.find_all do |node|
+      node.attribute.key?(:flags) && node.attribute[:flags].include?('ebgp-candidate-router')
+    end
+  end
+
   private
 
   # @return [void]
@@ -163,6 +172,20 @@ class BgpProcDataBuilder < Layer3DataBuilder
     bgp_proc_core_node
   end
 
+  # @param [Netomox::PseudoDSL::PNode] layer3_ebgp_candidate_router eBGP candidate router (layer3)
+  # @return [void]
+  def add_bgp_proc_ebgp_candidate_router(layer3_ebgp_candidate_router)
+    loopback_ip_str = @ipam.current_loopback_ip.to_s
+
+    # the node is NOT ebgp-speaker. (will be configured manually in emulated-env instance)
+    #   -> it has only iBGP peer term-point as bgp-proc node (in bgp-proc network)
+    bgp_proc_node = @bgp_proc_nw.node(loopback_ip_str)
+    bgp_proc_node.attribute = { router_id: loopback_ip_str, flags: ['ebgp-candidate-router'] }
+    bgp_proc_node.supports.push([@layer3_nw.name, layer3_ebgp_candidate_router.name])
+
+    @ipam.count_loopback
+  end
+
   # @return [void]
   def make_bgp_proc_topology!
     # add core (aggregation) router
@@ -170,11 +193,16 @@ class BgpProcDataBuilder < Layer3DataBuilder
     bgp_proc_core_node = add_bgp_proc_core_router
     # add edge-router (ebgp speaker and inter-AS links)
     add_bgp_proc_ebgp_routers
+    # add edge-candidate-router (NOT ebgp yet, but will be ebgp)
+    find_all_layer3_ebgp_candidate_routers.each do |router|
+      add_bgp_proc_ebgp_candidate_router(router)
+    end
 
     # iBGP mesh
     # router [] -- [tp1] Seg_x.x.x.x [tp2] -- [] router
     @peer_list.map { |peer_item| peer_item[:bgp_proc] }
               .append({ node_name: bgp_proc_core_node.name, node: bgp_proc_core_node })
+              .concat(find_all_bgp_proc_ebgp_candidate_routers.map { |node| { node_name: node.name, node: node } })
               .combination(2).to_a.each do |peer_item_bgp_proc_pair|
       add_bgp_proc_ibgp_links(peer_item_bgp_proc_pair)
     end
