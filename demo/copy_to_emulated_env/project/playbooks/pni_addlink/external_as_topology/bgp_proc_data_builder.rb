@@ -18,16 +18,20 @@ class BgpProcDataBuilder < Layer3DataBuilder
   def initialize(as_type, params_file, flow_data_file, api_proxy, network_name)
     super(as_type, params_file, flow_data_file, api_proxy, network_name)
 
-    @layer3_nw = @ext_as_topology.network('layer3') # underlay network
+    # bgp_proc network
+    @bgp_proc_nw = @ext_as_topology.network('bgp_proc')
+    @bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
+    @bgp_proc_nw.attribute = { name: 'mddo-bgp-network' }
+    @bgp_proc_nw.supports.push(@layer3_nw.name)
+
     make_bgp_proc_topology!
   end
 
   private
 
-  # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
   # @return [void]
   # @raise [StandardError]
-  def add_bgp_proc_ebgp_speakers(bgp_proc_nw)
+  def add_bgp_proc_ebgp_routers
     preferred_peer = @params['preferred_peer']
 
     # add ebgp-speakers
@@ -41,13 +45,13 @@ class BgpProcDataBuilder < Layer3DataBuilder
       loopback_ip_str = @ipam.current_loopback_ip.to_s
 
       # bgp-proc edge-router node
-      bgp_proc_node = bgp_proc_nw.node(loopback_ip_str)
+      bgp_proc_node = @bgp_proc_nw.node(loopback_ip_str)
       peer_item[:bgp_proc][:node] = bgp_proc_node # memo
       bgp_proc_node.attribute = {
         router_id: loopback_ip_str,
         flags: ['ext-bgp-speaker'] # flag for external-AS BGP speaker
       }
-      bgp_proc_node.supports.push(['layer3', layer3_node.name])
+      bgp_proc_node.supports.push([@layer3_nw.name, layer3_node.name])
 
       # bgp-proc edge-router term-point
       bgp_proc_tp = bgp_proc_node.term_point("peer_#{peer_item[:bgp_proc][:local_ip]}")
@@ -58,7 +62,7 @@ class BgpProcDataBuilder < Layer3DataBuilder
         remote_ip: peer_item[:bgp_proc][:local_ip],
         flags: ["ebgp-peer=#{peer_item[:bgp_proc][:node_name]}[#{peer_item[:bgp_proc][:tp_name]}]"]
       }
-      bgp_proc_tp.supports.push(['layer3', layer3_node.name, layer3_tp.name])
+      bgp_proc_tp.supports.push([@layer3_nw.name, layer3_node.name, layer3_tp.name])
 
       # preferred peer check
       if preferred_peer
@@ -99,10 +103,21 @@ class BgpProcDataBuilder < Layer3DataBuilder
     layer3_tp.attribute[:ip_addrs][0].sub(%r{/\d+$}, '')
   end
 
-  # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
+  # @param [String] local_ip
+  # @param [String] remote_ip
+  # @return [Hash] bgp_proc tp attribute
+  def bgp_proc_tp_ibgp_attribute(local_ip, remote_ip)
+    {
+      local_as: @as_state[:ext_asn],
+      local_ip: local_ip,
+      remote_as: @as_state[:ext_asn], # iBGP
+      remote_ip: remote_ip
+    }
+  end
+
   # @param [Array<Hash>] peer_item_bgp_proc_pair Peer item (bgp_proc part)
   # @return [void]
-  def add_bgp_proc_ibgp_links(bgp_proc_nw, peer_item_bgp_proc_pair)
+  def add_bgp_proc_ibgp_links(peer_item_bgp_proc_pair)
     # topology pattern:
     #   bgp_proc: node1 [tp1] -------------- [tp2] node2
     #               :     :                    :    :
@@ -121,39 +136,28 @@ class BgpProcDataBuilder < Layer3DataBuilder
 
     # node1 tp (tp1)
     bgp_proc_tp1 = bgp_proc_node1.term_point("peer_#{layer3_tp2_ip_str}")
-    bgp_proc_tp1.attribute = {
-      local_as: @as_state[:ext_asn],
-      local_ip: layer3_tp1_ip_str,
-      remote_as: @as_state[:ext_asn], # iBGP
-      remote_ip: layer3_tp2_ip_str
-    }
-    bgp_proc_tp1.supports.push(['layer3', layer3_edge[:node1][:node].name, layer3_edge[:node1][:tp].name])
+    bgp_proc_tp1.attribute = bgp_proc_tp_ibgp_attribute(layer3_tp1_ip_str, layer3_tp2_ip_str)
+    bgp_proc_tp1.supports.push([@layer3_nw.name, layer3_edge[:node1][:node].name, layer3_edge[:node1][:tp].name])
 
     # node2 tp (tp2)
     bgp_proc_tp2 = bgp_proc_node2.term_point("peer_#{layer3_tp1_ip_str}")
-    bgp_proc_tp2.attribute = {
-      local_as: @as_state[:ext_asn],
-      local_ip: layer3_tp2_ip_str,
-      remote_as: @as_state[:ext_asn], # iBGP
-      remote_ip: layer3_tp1_ip_str
-    }
-    bgp_proc_tp2.supports.push(['layer3', layer3_edge[:node2][:node].name, layer3_edge[:node2][:tp].name])
+    bgp_proc_tp2.attribute = bgp_proc_tp_ibgp_attribute(layer3_tp2_ip_str, layer3_tp1_ip_str)
+    bgp_proc_tp2.supports.push([@layer3_nw.name, layer3_edge[:node2][:node].name, layer3_edge[:node2][:tp].name])
 
     # core-edge link (bidirectional)
-    bgp_proc_nw.link(bgp_proc_node1.name, bgp_proc_tp1.name, bgp_proc_node2.name, bgp_proc_tp2.name)
-    bgp_proc_nw.link(bgp_proc_node2.name, bgp_proc_tp2.name, bgp_proc_node1.name, bgp_proc_tp1.name)
+    @bgp_proc_nw.link(bgp_proc_node1.name, bgp_proc_tp1.name, bgp_proc_node2.name, bgp_proc_tp2.name)
+    @bgp_proc_nw.link(bgp_proc_node2.name, bgp_proc_tp2.name, bgp_proc_node1.name, bgp_proc_tp1.name)
   end
 
-  # @param [Netomox::PseudoDSL::PNetwork] bgp_proc_nw bgp_proc network
   # @return [Netomox::PseudoDSL::PNode] bgp_proc core router node
-  def add_bgp_proc_core_router(bgp_proc_nw)
+  def add_bgp_proc_core_router
     loopback_ip_str = @ipam.current_loopback_ip.to_s
-    bgp_proc_core_node = bgp_proc_nw.node(loopback_ip_str)
+    bgp_proc_core_node = @bgp_proc_nw.node(loopback_ip_str)
     bgp_proc_core_node.attribute = {
       router_id: loopback_ip_str,
       flags: ['ext-bgp-speaker'] # flag for external-AS BGP speaker
     }
-    bgp_proc_core_node.supports.push(%W[layer3 as#{@as_state[:ext_asn]}-core])
+    bgp_proc_core_node.supports.push([@layer3_nw.name, layer3_router_name('core')])
     @ipam.count_loopback
 
     bgp_proc_core_node
@@ -161,24 +165,18 @@ class BgpProcDataBuilder < Layer3DataBuilder
 
   # @return [void]
   def make_bgp_proc_topology!
-    # bgp_proc network
-    bgp_proc_nw = @ext_as_topology.network('bgp_proc')
-    bgp_proc_nw.type = Netomox::NWTYPE_MDDO_BGP_PROC
-    bgp_proc_nw.attribute = { name: 'mddo-bgp-network' }
-    bgp_proc_nw.supports.push('layer3')
-
     # add core (aggregation) router
     # NOTE: assign 1st router-id for core router
-    bgp_proc_core_node = add_bgp_proc_core_router(bgp_proc_nw)
+    bgp_proc_core_node = add_bgp_proc_core_router
     # add edge-router (ebgp speaker and inter-AS links)
-    add_bgp_proc_ebgp_speakers(bgp_proc_nw)
+    add_bgp_proc_ebgp_routers
 
     # iBGP mesh
     # router [] -- [tp1] Seg_x.x.x.x [tp2] -- [] router
     @peer_list.map { |peer_item| peer_item[:bgp_proc] }
               .append({ node_name: bgp_proc_core_node.name, node: bgp_proc_core_node })
               .combination(2).to_a.each do |peer_item_bgp_proc_pair|
-      add_bgp_proc_ibgp_links(bgp_proc_nw, peer_item_bgp_proc_pair)
+      add_bgp_proc_ibgp_links(peer_item_bgp_proc_pair)
     end
   end
 end
