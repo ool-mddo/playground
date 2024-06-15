@@ -180,7 +180,7 @@ class BgpProcDataBuilder < Layer3DataBuilder
     # the node is NOT ebgp-speaker. (will be configured manually in emulated-env instance)
     #   -> it has only iBGP peer term-point as bgp-proc node (in bgp-proc network)
     bgp_proc_node = @bgp_proc_nw.node(loopback_ip_str)
-    bgp_proc_node.attribute = { router_id: loopback_ip_str, flags: ['ebgp-candidate-router'] }
+    bgp_proc_node.attribute = { router_id: loopback_ip_str, flags: %w[ext-bgp-speaker ebgp-candidate-router] }
     bgp_proc_node.supports.push([@layer3_nw.name, layer3_ebgp_candidate_router.name])
 
     @ipam.count_loopback
