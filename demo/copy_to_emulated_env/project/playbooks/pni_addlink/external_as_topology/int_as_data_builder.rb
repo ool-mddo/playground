@@ -62,6 +62,13 @@ class IntASDataBuilder
     layer3_tp.attribute.ip_addrs[0]
   end
 
+  # @param [Netomox::Topology::MddoBgpProcTPAttribute] tp_attr An attribute of internal-AS eBGP term-point
+  # @param [Integer] remote_asn Remote ASN
+  # @return [Boolean] true if target eBGP edge
+  def target_ebgp_peer?(tp_attr, remote_asn)
+    tp_attr.remote_as == remote_asn && @params['allowed_peers'].include?(tp_attr.remote_ip)
+  end
+
   # @param [Integer] remote_asn Remote ASN
   # @return [Array<Hash>] peer list
   def find_all_peers(remote_asn)
@@ -70,7 +77,7 @@ class IntASDataBuilder
     bgp_proc_nw.nodes.each do |bgp_proc_node|
       bgp_proc_node.termination_points.each do |bgp_proc_tp|
         tp_attr = bgp_proc_tp.attribute
-        next unless tp_attr.remote_as == remote_asn
+        next unless target_ebgp_peer?(tp_attr, remote_asn)
 
         layer3_ref = bgp_proc_tp.supports.find { |s| s.ref_network == 'layer3' }
         peer_item = {
