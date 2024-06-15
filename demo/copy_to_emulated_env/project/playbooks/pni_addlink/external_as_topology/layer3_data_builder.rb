@@ -232,7 +232,7 @@ class Layer3DataBuilder < IntASDataBuilder
     }
     layer3_ext_tp = layer3_ext_node.term_point("Ethernet#{layer3_ext_node.tps.length}")
     layer3_ext_tp.attribute = {
-      ip_addrs: "#{add_link['remote_ip']}/#{layer3_int_tp_ipaddr.prefix}",
+      ip_addrs: ["#{add_link['remote_ip']}/#{layer3_int_tp_ipaddr.prefix}"],
       flags: ["ebgp-peer=#{add_link['node']}[#{add_link['interface']}]", 'ebgp-candidate-interface']
     }
 
