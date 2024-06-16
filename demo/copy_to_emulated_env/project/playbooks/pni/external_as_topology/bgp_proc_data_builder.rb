@@ -10,6 +10,23 @@ class BgpProcDataBuilder < Layer3DataBuilder
   #   @return [Netomox::PseudoDSL::PNetworks]
   attr_accessor :ext_as_topology
 
+  # external-AS bgp node default policies
+  POLICY_ADV_ALL_PREFIXES = {
+    name: 'advertise-all-prefixes',
+    statements: [
+      { name: 10, conditions: [{ rib: 'inet.0' }], actions: [{ target: 'accept' }] }
+    ]
+  }.freeze
+  POLICY_PASS_ALL = {
+    name: 'pass-all',
+    default: { actions: [{ target: 'accept' }] }
+  }.freeze
+  POLICY_PASS_ALL_LP200 = {
+    name: 'pass-all-lp200',
+    default: { actions: [{ local_preference: 200 }, { target: 'accept' }] }
+  }.freeze
+  DEFAULT_POLICIES = [POLICY_ADV_ALL_PREFIXES, POLICY_PASS_ALL, POLICY_PASS_ALL_LP200].freeze
+
   # @param [Symbol] as_type (enum: [source_as, :dest_as])
   # @param [String] params_file Params file path
   # @param [String] flow_data_file Flow data file path
@@ -58,7 +75,7 @@ class BgpProcDataBuilder < Layer3DataBuilder
       peer_item[:bgp_proc][:node] = bgp_proc_node # memo
       bgp_proc_node.attribute = {
         router_id: loopback_ip_str,
-        flags: ['ext-bgp-speaker'] # flag for external-AS BGP speaker
+        policies: DEFAULT_POLICIES
       }
       bgp_proc_node.supports.push([@layer3_nw.name, layer3_node.name])
 
@@ -77,9 +94,12 @@ class BgpProcDataBuilder < Layer3DataBuilder
       if preferred_peer
         layer3_ebgp_peer_flag = "ebgp-peer=#{preferred_peer['node']}[#{preferred_peer['interface']}]"
         if layer3_tp.attribute[:flags].include?(layer3_ebgp_peer_flag)
-          warn "Warn: set preferred flag: #{@as_state[:type]}, #{bgp_proc_node.name}[#{bgp_proc_tp.name}]"
-          bgp_proc_tp.attribute[:flags].push('ext-bgp-speaker-preferred')
+          warn "Warn: set preferred: #{@as_state[:type]}, #{bgp_proc_node.name}[#{bgp_proc_tp.name}]"
+          bgp_proc_tp.attribute[:import_policies] = [POLICY_PASS_ALL_LP200[:name]]
+        else
+          bgp_proc_tp.attribute[:import_policies] = [POLICY_PASS_ALL[:name]]
         end
+        bgp_proc_tp.attribute[:export_policies] = [POLICY_ADV_ALL_PREFIXES[:name]]
       end
 
       # next loopback_ip
@@ -120,7 +140,9 @@ class BgpProcDataBuilder < Layer3DataBuilder
       local_as: @as_state[:ext_asn],
       local_ip: local_ip,
       remote_as: @as_state[:ext_asn], # iBGP
-      remote_ip: remote_ip
+      remote_ip: remote_ip,
+      import_policies: [POLICY_PASS_ALL[:name]],
+      export_policies: [POLICY_ADV_ALL_PREFIXES[:name]]
     }
   end
 
@@ -164,7 +186,7 @@ class BgpProcDataBuilder < Layer3DataBuilder
     bgp_proc_core_node = @bgp_proc_nw.node(loopback_ip_str)
     bgp_proc_core_node.attribute = {
       router_id: loopback_ip_str,
-      flags: ['ext-bgp-speaker'] # flag for external-AS BGP speaker
+      policies: DEFAULT_POLICIES
     }
     bgp_proc_core_node.supports.push([@layer3_nw.name, layer3_router_name('core')])
     @ipam.count_loopback
@@ -180,7 +202,11 @@ class BgpProcDataBuilder < Layer3DataBuilder
     # the node is NOT ebgp-speaker. (will be configured manually in emulated-env instance)
     #   -> it has only iBGP peer term-point as bgp-proc node (in bgp-proc network)
     bgp_proc_node = @bgp_proc_nw.node(loopback_ip_str)
-    bgp_proc_node.attribute = { router_id: loopback_ip_str, flags: %w[ext-bgp-speaker ebgp-candidate-router] }
+    bgp_proc_node.attribute = {
+      router_id: loopback_ip_str,
+      policies: DEFAULT_POLICIES,
+      flags: %w[ebgp-candidate-router]
+    }
     bgp_proc_node.supports.push([@layer3_nw.name, layer3_ebgp_candidate_router.name])
 
     @ipam.count_loopback
