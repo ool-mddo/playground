@@ -3,11 +3,11 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
-if [[ ! "$NETWORK_NAME" =~ $BGP_NETWORK_PATTERN ]]; then
-  echo "Network:$NETWORK_NAME is not BGP network (Nothing to do in step1-2)"
-  exit 0
+if use_bgp_proc "$NETWORK_NAME" original_asis ; then
+  echo "Network:$NETWORK_NAME uses BGP, expand external-AS network and splice it into topology data"
 else
-  echo "# Network:$NETWORK_NAME is specified as BGP network, expand external-AS network and splice it into topology data"
+  echo "Network:$NETWORK_NAME does not use BGP (Nothing to do in step1-2)"
+  exit 0
 fi
 
 # bgp-policy data handling
@@ -22,8 +22,15 @@ curl -s -X POST -H "Content-Type: application/json" \
   "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/topology"
 
 # generate external-AS topology
+external_as_topology_dir="${USECASE_COMMON_DIR}/external_as_topology"
+if [ ! -e "$external_as_topology_dir" ]; then
+  external_as_topology_dir="${USECASE_DIR}/external_as_topology"
+fi
+external_as_script="${external_as_topology_dir}/main.rb"
 external_as_json="${USECASE_CONFIGS_DIR}/external_as_topology.json"
-ruby "${USECASE_DIR}/external_as_topology/main.rb" -p "${USECASE_DIR}/params.yaml" > "$external_as_json"
+params_file="${USECASE_DIR}/params.yaml"
+flowdata_file="${USECASE_DIR}/flowdata.csv"
+ruby "$external_as_script" -p "$params_file" -f "$flowdata_file"  > "$external_as_json"
 # splice external-AS topology to original_asis (overwrite)
 curl -s -X POST -H "Content-Type: application/json" \
   -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \

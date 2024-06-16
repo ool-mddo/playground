@@ -5,9 +5,6 @@ source_as:
   allowed_peers:
     - 172.16.0.5
     - 172.16.1.9
-  preferred_peer:
-    node: edge-tk01
-    interface: ge-0/0/3.0
   add_links:
     - node: edge-tk03
       interface: GigabitEthernet0/0/0/2
