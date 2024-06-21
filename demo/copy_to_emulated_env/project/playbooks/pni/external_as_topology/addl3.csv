@@ -1,2 +1,0 @@
-srcrouter,srcif,srcaddress,peeraddress,netmask,peeras,srcas
-edge-tk03,GigabitEthernet0/0/0/2,172.16.1.18,172.16.1.17,30,65550,65518
