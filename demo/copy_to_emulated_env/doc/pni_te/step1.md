@@ -9,7 +9,7 @@ mddo-bgp コンフィグを使用します。ユースケースによって微�
 git checkout v0.2.0-pni_te
 ```
 
-## パラメタ設定(デモ全体)
+## デモ用パラメタ設定(デモ全体)
 
 デモ用パラメタを設定します。(ファイルは `demo_vars`)
 
@@ -34,6 +34,34 @@ PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 # all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
 USECASE_NAME="pni_te"
+```
+
+## ユースケース用パラメタの設定
+
+ユースケース用パラメタを設定します。(ファイルは `project/playbooks/pni_te/params.yaml`)
+* パラメタ詳細については[ユースケース別パラメタの設定](../pni/provision.md#ユースケース別パラメタの設定)を参照してください。
+* pni_te ユースケースでは、AS間のトラフィック流量の制御を模擬します。ユースケースの初期状態として、`preferred_peer` を設定し、外部AS(PNI, Source AS)からのトラフィックが edge-tk01 側に寄せられている状態を仮定します。
+
+`params.yaml` ファイル
+
+```yaml
+---
+source_as:
+  asn: 65550
+  subnet: 169.254.0.0/23
+  allowed_peers:
+    - 172.16.0.5
+    - 172.16.1.9
+  preferred_peer:
+    node: edge-tk01
+    interface: ge-0/0/3.0
+dest_as:
+  asn: 65520
+  subnet: 169.254.2.0/23
+  allowed_peers:
+    - 192.168.0.10
+    - 192.168.0.14
+    - 192.168.0.18
 ```
 
 # Step1

@@ -64,10 +64,9 @@ cd playground/demo/copy_to_emulated_env/
   + project/playbook           デモ用 ansible playbook/script 等のディレクトリ
     + configs                  実行中のデモシナリオの一時データ格納用
     + pni                      pniユースケース共通のもの
+      + external_as_topology   pniユースケース用 外部ASトポロジ生成スクリプト
     + pni_adddlink             pni_addlink ユースケース固有のもの
-      + external_as_topology     pni_addlink ユースケース用 外部ASトポロジ定義スクリプト
     + pni_te                   pni_te ユースケース固有のもの
-      + external_as_topology     pni_te ユースケース用 外部ASトポロジ定義スクリプト
 ```
 
 ### トラフィック可視化ツール(Grafana)画面の準備
@@ -128,3 +127,64 @@ pni ユースケースでは指定されたフローデータをもとにトラ�
 # 再起動
 ./demo_step2-2.sh -r
 ```
+
+### ユースケース別パラメタの設定
+
+ユースケースディレクトリ (`project/playbook/<usecase>/params.yaml`) に各ユースケースで使用するパラメタを設定します。これらのパラメタは主に外部ASトポロジの生成に使用されます。
+
+設定項目の意味は以下のようになります。
+* `source_as`, `dest_as`: 自ASに対して、送信元AS・送信先ASの2つのASを設定します。各ASには以下の内容を設定できます。
+  * `asn` : AS番号 (必須)
+  * `subnet` : 外部AS内部で使用するIPアドレス (必須)
+    * /23より大きなアドレスブロックを設定してください。
+    * 指定されたアドレスブロックのうち最初の /24 を loopback IP アドレス用・残りのブロックをリンク用に使用します。
+  * `allowed_peers` : 外部AS側に設定するエッジルータのIPアドレス (必須)
+    * 許可(allowed)リスト形式です。指定されたIPアドレスの BGP peer のみ外部AS側ノードとして作成されます。
+    * アドレスは自AS側から見た対向側ルータのIPアドレス (BGP peer のIPアドレス) を指定します。
+  * `add_links` : リンク増設を模擬するためのオプション (addlink ユースケース)
+    * リンク増設では初期状態ではBGPピアを設定しません。そのままだとBGPコンフィグがないため対向のエッジルータを生成しません。このオプションが設定されている場合、ユースケース中でBGPピアとして設定可能な(L3のみ設定された)対向のエッジルータを作成します。
+    * 自AS側でBGPピアとなるルータのルータ名・インタフェース名(L3)・IPアドレスを指定してください。(netmask はルータL3設定をもとに補完されます)
+  * `preferred_peer` : 外部AS側の優先経路設定
+    * 自AS側のエッジルータ・回線(インタフェース)を指定します。その対向側エッジルータで対象回線を優先するBGPポリシ(優先するlocal preference)が設定されます。
+
+`params.yaml` 設定例
+
+```yaml
+---
+source_as:
+  asn: 65550
+  subnet: 169.254.0.0/23
+  allowed_peers:
+    - 172.16.0.5
+    - 172.16.1.9
+  add_links:
+    - node: edge-tk03
+      interface: GigabitEthernet0/0/0/2
+      remote_ip: 172.16.1.17
+  preferred_peer:
+    node: edge-tk01
+    interface: ge-0/0/3.0
+dest_as:
+  asn: 65520
+  subnet: 169.254.2.0/23
+  allowed_peers:
+    - 192.168.0.10
+    - 192.168.0.14
+    - 192.168.0.18
+```
+
+# 補足
+## 外部ASトポロジ自動生成の基本動作
+
+PNIユースケースでは以下のルールに基づいて外部ASトポロジを自動生成します。
+
+* 自ASに対して、送信元(source)AS・送信先(destination)ASを作成する
+* 各外部ASに対して、外部ASに対する自ASのpeer情報を検索し、1ピアにたいして1つのエッジルータを作成する
+  * 外部ASに対して一部のBGPピアのみを再現したいケースのために、BGPピア指定は allowed list 方式をとります
+* 外部AS内にはエッジルータを集約するコアルータを置く
+* 外部AS内のルータはフルメッシュ接続とする (iBGP設定のため)
+  * 現状ルートリフレクタや IGP は設定しません
+* コアルータに、AS間トラフィックを生成するための endpoint を接続する
+  * endpoint の数やIPアドレスはユースケースごとに設定される flowdata.csv から決められます
+
+こうして生成される外部ASトポロジに対して、ユースケース別のオプションを設定できます。([ユースケース別パラメタの設定](#ユースケース別パラメタの設定) 参照)

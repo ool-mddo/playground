@@ -10,7 +10,7 @@ mddo-bgp コンフィグを使用します。ユースケースによって微�
 git checkout v0.2.0-pni_addlink
 ```
 
-## パラメタ設定
+## デモ用パラメタ設定
 
 デモ用パラメタを設定します。(ファイルは `demo_vars`)
 
@@ -29,6 +29,35 @@ PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 # all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
 USECASE_NAME="pni_addlink"
+```
+
+## ユースケース用パラメタ設定
+
+ユースケース用パラメタを設定します。(ファイルは `project/playbooks/pni_addlink/params.yaml`)
+* パラメタ詳細については[ユースケース別パラメタの設定](../pni/provision.md#ユースケース別パラメタの設定)を参照してください。
+* pni_addlink ユースケースでは、AS間回線の増設を模擬します。そのため、L3として接続されているもののBGPの設定はまだ行われていない外部AS側のエッジルータを置きます。これは `add_links` パラメタで設定できます。
+
+`params.yaml` ファイル
+
+```yaml
+---
+source_as:
+  asn: 65550
+  subnet: 169.254.0.0/23
+  allowed_peers:
+    - 172.16.0.5
+    - 172.16.1.9
+  add_links:
+    - node: edge-tk03
+      interface: GigabitEthernet0/0/0/2
+      remote_ip: 172.16.1.17
+dest_as:
+  asn: 65520
+  subnet: 169.254.2.0/23
+  allowed_peers:
+    - 192.168.0.10
+    - 192.168.0.14
+    - 192.168.0.18
 ```
 
 # Step1
