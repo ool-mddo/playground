@@ -16,6 +16,13 @@ PNIユースケースでは、ネットワーク = mddo-bgp, スナップショ�
 
 ## デモ準備
 
+### 入力データ(物理トポロジデータ)
+
+コンフィグファイルから物理(L1)トポロジデータを生成して用意しておく必要がありますが、ここでは割愛します。
+
+- [物理トポロジデータの生成](../../../layer1_topology/doc/operation.md) を参照してください
+- 物理トポロジデータは `playground/configs/mddo-bgp/original_asis/batfish/layer1_topology.json` です
+
 ### docker compose 環境変数の設定とデモシステムの起動
 
 PNIユースケース (pni_te/addlink) ではトラフィック流量を確認するために grafana/prometheus を追加で使用します。
@@ -65,7 +72,10 @@ cd playground/demo/copy_to_emulated_env/
 
 ### トラフィック可視化ツール(Grafana)画面の準備
 
-PNIユースケース (pni_te/addlink) では、仮想環境内でのトラフィック生成や経路制御を行います。トラフィック流量を可視化するためにGrafanaを使用するため、先に準備しておきます。(grafanaの設定については `playground/assets/visualize/grafana/grafana.ini` を参照してください)
+PNIユースケース (pni_te/addlink) では、仮想環境内でのトラフィック生成や経路制御を行います。トラフィック流量を可視化するためにGrafanaを使用するため、先に準備しておきます。
+
+* grafanaの設定については `playground/assets/visualize/grafana/grafana.ini` を参照してください
+* データ取得は step2-2 実施後から可能になります。
 
 `http://localhost:23000` にアクセス
 
@@ -104,13 +114,6 @@ ls playground/configs/mddo-bgp/original_asis/configs/
 $ ls playground/configs/mddo-bgp/original_asis/configs/
 Core-TK01  Core-TK02  Edge-TK01  Edge-TK02  Edge-TK03  SW-TK01
 ```
-
-### 入力データ(物理トポロジデータ)
-
-コンフィグファイルから物理(L1)トポロジデータを生成して用意しておく必要がありますが、ここでは割愛します。
-
-- [物理トポロジデータの生成](../../../layer1_topology/doc/operation.md) を参照してください
-- 物理トポロジデータは `playground/configs/mddo-bgp/original_asis/batfish/layer1_topology.json` です
 
 ### (optional) トラフィックの再生成・環境再起動
 
