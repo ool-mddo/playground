@@ -47,15 +47,15 @@ policy-options {
 {%   endfor %}
 {%   for policy in attrs["policy"] %}
     policy-statement {{ policy["name"] }} {
-{%     if not policy["statements"] %}
+{%     if "none" in  policy["statements"] %}
         then {
 {%       for action in policy["default"]["actions"] %}
 {%         for key, value in action.items() %}
 {# shoud be same in above "then" #}
-{%           if key in ["action", "target"] %}
+{%           if key == "action" %}
             {{ value }};
-{%           elif key in ["local-preference"] %}
-            {{ key }} {{ value }};
+{%           elif key == "target" %}
+            {{ value }};
 {%           else %}
             ERROR in default-then
 {%           endif %}
@@ -124,10 +124,10 @@ policy-options {
 {%         for action in policy["default"]["actions"] %}
 {%           for key, value in action.items() %}
 {# shoud be same in above "then" #}
-{%             if key == "action" %}
+{%             if key in ["action", "target"] %}
             {{ value }};
-{%             elif key == "target" %}
-            {{ value }};
+{%             elif key in ["local-preference"] %}
+            {{ key }} {{ value }};
 {%             else %}
             ERROR in default-then
 {%             endif %}
