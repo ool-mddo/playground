@@ -62,7 +62,7 @@ protocols {
 {%          endif %}
             neighbor {{ attrs["remote-ip"] }} {
                 local-address {{ attrs["local-ip"] }};
-{# insert default policies on external-AS routers, they don't have "peer-group", so only here #}
+
 {%     if attrs["import-policy"] | length != 0 %}
 {%       if attrs["import-policy"] | length == 1 %}
                 import {{ attrs["import-policy"][0] }};
