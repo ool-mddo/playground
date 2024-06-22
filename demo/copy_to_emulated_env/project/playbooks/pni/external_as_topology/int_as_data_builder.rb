@@ -62,11 +62,35 @@ class IntASDataBuilder
     layer3_tp.attribute.ip_addrs[0]
   end
 
-  # @param [Netomox::Topology::MddoBgpProcTPAttribute] tp_attr An attribute of internal-AS eBGP term-point
+  # @param [Netomox::Topology::TermPoint] bgp_proc_tp Internal-AS eBGP term-point
   # @param [Integer] remote_asn Remote ASN
   # @return [Boolean] true if target eBGP edge
-  def target_ebgp_peer?(tp_attr, remote_asn)
+  def target_ebgp_peer?(bgp_proc_tp, remote_asn)
+    tp_attr = bgp_proc_tp.attribute
     tp_attr.remote_as == remote_asn && @params['allowed_peers'].include?(tp_attr.remote_ip)
+  end
+
+  # @param [Netomox::Topology::Node] bgp_proc_node Internal-AS eBGP node
+  # @param [Netomox::Topology::TermPoint] bgp_proc_tp Internal-AS eBGP term-point
+  # @return [Hash] peer_item
+  def make_peer_item(bgp_proc_node, bgp_proc_tp)
+    tp_attr = bgp_proc_tp.attribute
+    layer3_ref = bgp_proc_tp.supports.find { |s| s.ref_network == 'layer3' }
+    {
+      bgp_proc: {
+        node_name: bgp_proc_node.name,
+        tp_name: bgp_proc_tp.name,
+        local_as: tp_attr.confederation.negative? ? tp_attr.local_as : tp_attr.confederation,
+        local_ip: tp_attr.local_ip,
+        remote_as: tp_attr.remote_as,
+        remote_ip: tp_attr.remote_ip
+      },
+      layer3: {
+        node_name: layer3_ref.ref_node,
+        tp_name: layer3_ref.ref_tp,
+        ip_addr: find_layer3_tp_ip_addr(layer3_ref.ref_node, layer3_ref.ref_tp)
+      }
+    }
   end
 
   # @param [Integer] remote_asn Remote ASN
@@ -76,26 +100,9 @@ class IntASDataBuilder
     bgp_proc_nw = @int_as_topology.find_network('bgp_proc')
     bgp_proc_nw.nodes.each do |bgp_proc_node|
       bgp_proc_node.termination_points.each do |bgp_proc_tp|
-        tp_attr = bgp_proc_tp.attribute
-        next unless target_ebgp_peer?(tp_attr, remote_asn)
+        next unless target_ebgp_peer?(bgp_proc_tp, remote_asn)
 
-        layer3_ref = bgp_proc_tp.supports.find { |s| s.ref_network == 'layer3' }
-        peer_item = {
-          bgp_proc: {
-            node_name: bgp_proc_node.name,
-            tp_name: bgp_proc_tp.name,
-            local_as: tp_attr.confederation.negative? ? tp_attr.local_as : tp_attr.confederation,
-            local_ip: tp_attr.local_ip,
-            remote_as: tp_attr.remote_as,
-            remote_ip: tp_attr.remote_ip
-          },
-          layer3: {
-            node_name: layer3_ref.ref_node,
-            tp_name: layer3_ref.ref_tp,
-            ip_addr: find_layer3_tp_ip_addr(layer3_ref.ref_node, layer3_ref.ref_tp)
-          }
-        }
-        peer_list.push(peer_item)
+        peer_list.push(make_peer_item(bgp_proc_node, bgp_proc_tp))
       end
     end
     # [                                   ... peer_list
