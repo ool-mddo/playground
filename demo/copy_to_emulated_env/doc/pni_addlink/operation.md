@@ -82,12 +82,12 @@ show | compare
 commit
 ```
 
-## PNI03(AS65550ADD)のBGP設定
+## as65550-edge03のBGP設定
 
-操作のため AS65550ADD CLI にはいります。
+操作のため as65550-edge03 CLI にはいります。
 
 ```bash
-docker exec -it clab-emulated-AS65550ADD cli
+docker exec -it clab-emulated-as65550-edge03 cli
 configure
 ```
 Edge-TK03へのebgpピアの設定を入れるため以下のコンフィグを投入します。
@@ -106,7 +106,6 @@ set protocols bgp group 172.16.1.18 neighbor 172.16.1.18 export advertise-all-pr
 show | compare
 commit
 ```
-
 
 ## Edge-TK01のBGP設定を投入
 操作のため edge-tk01 CLI にはいります。

@@ -68,7 +68,7 @@
       when:
         with_clab == "true"
 
-    - name: create static-route.yaml (as input for generate_iperf_coomand.py)
+    - name: create static-route.yaml (as input for generate_iperf_command.py)
       copy:
         dest: "{{ ansible_runner_dir }}/project/playbooks/configs/static-route.yaml"
         content: "{{ iperf_list | to_yaml }}"

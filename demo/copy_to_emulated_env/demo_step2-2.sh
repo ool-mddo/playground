@@ -46,11 +46,11 @@ while getopts drh option; do
   esac
 done
 
-if [[ ! "$NETWORK_NAME" =~ $BGP_NETWORK_PATTERN ]]; then
-  echo "Network:$NETWORK_NAME is not BGP network (Nothing to do in step2-2)"
-  exit 0
+if use_bgp_proc "$NETWORK_NAME" original_asis ; then
+  echo "Network:$NETWORK_NAME uses BGP, generate traffic between PNI and POI"
 else
-  echo "# Network:$NETWORK_NAME is specified as BGP network, generate traffic between PNI and POI"
+  echo "Network:$NETWORK_NAME does not use BGP (Nothing to do in step1-2)"
+  exit 0
 fi
 
 # configure iperf client/server

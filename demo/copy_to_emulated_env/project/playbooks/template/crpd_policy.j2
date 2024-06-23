@@ -1,23 +1,4 @@
 {% set attrs = item["mddo-topology:bgp-proc-node-attributes"] %}
-{% if "ext-bgp-speaker" in attrs["flag"] %}
-policy-options {
-    policy-statement advertise-all-prefixes {
-        term 10 {
-            from rib inet.0;
-            then accept;
-        }
-    }
-    policy-statement pass-all {
-        then accept;
-    }
-    policy-statement pass-all-lp200 {
-        then {
-            local-preference 200;
-            accept;
-        }
-    }
-}
-{% else %}
 policy-options {
 {%   for prefix in attrs["prefix-set"] %}
     prefix-list {{ prefix["name"] }} {
@@ -55,7 +36,7 @@ policy-options {
     community {{ community["name"] }} members {{ community["communities"][0]["community"] }};
 {%     else %}
     community {{ community["name"] }} members [
-{%-      for member in community["communities"] %} 
+{%-      for member in community["communities"] %}
 {%-        if not "[" in member["community"] %}
 {#         workaround of skipping range community from XR, such as [1000..1999] #}
         {{ member["community"] }}
@@ -143,10 +124,10 @@ policy-options {
 {%         for action in policy["default"]["actions"] %}
 {%           for key, value in action.items() %}
 {# shoud be same in above "then" #}
-{%             if key == "action" %}
+{%             if key in ["action", "target"] %}
             {{ value }};
-{%             elif key == "target" %}
-            {{ value }};
+{%             elif key in ["local-preference"] %}
+            {{ key }} {{ value }};
 {%             else %}
             ERROR in default-then
 {%             endif %}
@@ -158,4 +139,3 @@ policy-options {
     }
 {%   endfor %}
 }
-{% endif %}

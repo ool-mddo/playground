@@ -1,9 +1,18 @@
 ---
-source_as: 65550
-dest_as: 65520
-subnet: 169.254.0.0/16
-# subnet: 100.0.0.0/8
-preferred_node: NONE
-# preferred_node: edge-tk01
-redundant_node: NONE
-# redundant_node: edge-tk03
+source_as:
+  asn: 65550
+  subnet: 169.254.0.0/23
+  allowed_peers:
+    - 172.16.0.5
+    - 172.16.1.9
+  add_links:
+    - node: edge-tk03
+      interface: GigabitEthernet0/0/0/2
+      remote_ip: 172.16.1.17
+dest_as:
+  asn: 65520
+  subnet: 169.254.2.0/23
+  allowed_peers:
+    - 192.168.0.10
+    - 192.168.0.14
+    - 192.168.0.18

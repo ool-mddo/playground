@@ -21,5 +21,12 @@ USECASE_COMMON_NAME=$(echo "$USECASE_NAME" | cut -d_ -f1)
 USECASE_COMMON_DIR="${ANSIBLE_PLAYBOOK_DIR}/${USECASE_COMMON_NAME}"
 USECASE_DIR="${ANSIBLE_PLAYBOOK_DIR}/${USECASE_NAME}"
 
-# step1-2: define network-name regexp (to merge bgp-policy data/external-as topology)
-BGP_NETWORK_PATTERN="^(biglobe|mddo-bgp).*$"
+# step1-2, 2-2: check if the network has bgp(_proc) layer
+function use_bgp_proc() {
+  network_name=$1
+  snapshot_name=$2
+  curl -s "http://${API_PROXY}/topologies/${network_name}/${snapshot_name}/topology" \
+    | jq '."ietf-network:networks".network[] | ."network-types" | keys[0]' \
+    | grep -q mddo-topology:bgp-proc-network
+  return $?
+}
