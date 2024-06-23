@@ -23,8 +23,8 @@ class Layer3DataBuilder < IntASDataBuilder
     flow_data = read_flow_data_file(flow_data_file)
     @flow_prefixes = column_items_from_flows(flow_data)
 
-    @ipam = IPAddrManagement.instance # singleton
-    @ipam.assign_base_prefix(@params['subnet'])
+    ipam = IPAddrManagement.instance # singleton
+    ipam.assign_base_prefix(@params['subnet'])
 
     # target external-AS topology (empty)
     @ext_as_topology = Netomox::PseudoDSL::PNetworks.new
@@ -37,37 +37,50 @@ class Layer3DataBuilder < IntASDataBuilder
     make_layer3_topology!
   end
 
-  protected
-
-  # @param [String] suffix Router-name suffix
-  # @return [String] Router-name
-  def layer3_router_name(suffix)
-    "as#{@as_state[:ext_asn]}-#{suffix}"
-  end
-
-  # @return [Array<Netomox::PseudoDSL::PNode>] ebgp-candidate-routers
-  def find_all_layer3_ebgp_candidate_routers
-    @layer3_nw.nodes.find_all do |node|
-      node.attribute.key?(:flags) && node.attribute[:flags].include?('ebgp-candidate-router')
-    end
-  end
-
   private
 
+  # @yield Operations using same link address
+  # @yieldparam [String] current_link_ip_str Current link (segment) ip address
+  # @yieldparam [Array(String, String)] current_link_intf_ip_str_pair Interface ip address pair of the link
+  # @yieldreturn [void]
+  # @return [void]
+  def ipam_link_scope
+    ipam = IPAddrManagement.instance # singleton
+    yield(ipam.current_link_ip_str, ipam.current_link_intf_ip_str_pair) if block_given?
+    # next link-ip
+    ipam.count_link
+  end
+
+  # @yield Operations using same loopback address
+  # @yieldparam [String] current_loopback_ip_str Current loopback ip address
+  # @yieldreturn [void]
+  # @return [void]
+  def ipam_loopback_scope
+    ipam = IPAddrManagement.instance # singleton
+    yield(ipam.current_loopback_ip_str) if block_given?
+    # next loopback-ip
+    ipam.count_loopback
+  end
+
+  # add link bidirectional
   # @param [Netomox::Topology::Node, Netomox::PseudoDSL::PNode] node1
   # @param [Netomox::Topology::TermPoint, Netomox::PseudoDSL::PTermPoint] tp1
   # @param [Netomox::Topology::Node, Netomox::PseudoDSL::PNode] node2
   # @param [Netomox::Topology::TermPoint, Netomox::PseudoDSL::PTermPoint] tp2
   # @return [void]
-  def add_layer3_link(node1, tp1, node2, tp2)
+  def add_layer3_bdlink(node1, tp1, node2, tp2)
     @layer3_nw.link(node1.name, tp1.name, node2.name, tp2.name)
     @layer3_nw.link(node2.name, tp2.name, node1.name, tp1.name)
   end
 
-  # @param [IPAddr] ipaddr
-  # @return [String] ip/prefix format tstring (e.g. "a.b.c.d/nn")
-  def ipaddr_to_full_str(ipaddr)
-    "#{ipaddr}/#{ipaddr.prefix}"
+  # @param [Netomox::PseudoDSL::PNode] layer3_core_node Core of external-AS
+  # @return [Array<Array(Hash, Hash)>] peer_list pair to connected ibgp (full-mesh)
+  def layer3_ibgp_router_pairs(layer3_core_node)
+    @peer_list.map { |peer_item| peer_item[:layer3] }
+              .append({ node_name: layer3_core_node.name, node: layer3_core_node })
+              .concat(find_all_layer3_ebgp_candidate_routers.map { |node| { node_name: node.name, node: node } })
+              .combination(2)
+              .to_a
   end
 
   # @return [void]
@@ -81,7 +94,7 @@ class Layer3DataBuilder < IntASDataBuilder
 
     # iBGP mesh
     # router [] -- [tp1] Seg_x.x.x.x [tp2] -- [] router
-    ibgp_router_pairs(layer3_core_node).each do |peer_item_l3_pair|
+    layer3_ibgp_router_pairs(layer3_core_node).each do |peer_item_l3_pair|
       add_layer3_ibgp_links(peer_item_l3_pair)
     end
 

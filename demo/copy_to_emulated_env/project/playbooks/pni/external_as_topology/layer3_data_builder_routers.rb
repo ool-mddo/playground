@@ -2,12 +2,45 @@
 
 # Layer3 network data builder
 class Layer3DataBuilder < IntASDataBuilder
+  # Loopback interface name
+  LOOPBACK_INTF_NAME = 'lo0.0'.freeze
+
+  protected
+
+  # @param [String] suffix Router-name suffix
+  # @return [String] Router-name
+  def layer3_router_name(suffix)
+    "as#{@as_state[:ext_asn]}-#{suffix}"
+  end
+
   private
+
+  # @param [IPAddr] ipaddr
+  # @return [String] ip/prefix format string (e.g. "a.b.c.d/nn")
+  def ipaddr_to_full_str(ipaddr)
+    "#{ipaddr}/#{ipaddr.prefix}"
+  end
+
+  # @param [Netomox::PseudoDSL::PNode] layer3_node Layer3 node
+  # @return [void]
+  def add_loopback_to_layer3_node(layer3_node)
+    ipam_loopback_scope do |loopback_ip_str|
+      layer3_core_tp = layer3_node.term_point(LOOPBACK_INTF_NAME)
+      layer3_core_tp.attribute = { ip_addrs: [loopback_ip_str], flags: ['loopback'] }
+      # add node_prefix
+      layer3_node.attribute[:prefixes] = [] unless layer3_node.attribute[:prefixes]
+      layer3_node.attribute[:prefixes].unshift({ prefix: loopback_ip_str, metric: 0, flags: ['connected'] })
+    end
+  end
 
   # @return [Netomox::PseudoDSL::PNode] layer3 core router node
   def add_layer3_core_router
+    # node
     layer3_core_node = @layer3_nw.node(layer3_router_name('core'))
     layer3_core_node.attribute = { node_type: 'node' }
+    # term-point (loopback)
+    add_loopback_to_layer3_node(layer3_core_node)
+
     layer3_core_node
   end
 
@@ -23,7 +56,9 @@ class Layer3DataBuilder < IntASDataBuilder
       node_type: 'node',
       prefixes: [{ prefix: "#{segment_ip}/#{segment_ip.prefix}", metric: 0, flags: ['connected'] }]
     }
-    # term-point
+    # term-point (loopback)
+    add_loopback_to_layer3_node(layer3_node)
+    # term-point (eBGP interface)
     layer3_tp = layer3_node.term_point('Ethernet0')
     layer3_tp.attribute = {
       ip_addrs: ["#{peer_item[:bgp_proc][:remote_ip]}/#{segment_ip.prefix}"],
@@ -57,7 +92,9 @@ class Layer3DataBuilder < IntASDataBuilder
       prefixes: [{ prefix: ipaddr_to_full_str(link_segment_ip), metric: 0, flags: ['connected'] }],
       flags: ['ebgp-candidate-router']
     }
-    # term-point
+    # term-point (loopback)
+    add_loopback_to_layer3_node(layer3_ext_node)
+    # term-point (eBGP interface)
     layer3_ext_tp = layer3_ext_node.term_point("Ethernet#{layer3_ext_node.tps.length}")
     layer3_ext_tp.attribute = {
       ip_addrs: ["#{add_link['remote_ip']}/#{link_segment_ip.prefix}"],
@@ -127,9 +164,9 @@ class Layer3DataBuilder < IntASDataBuilder
     tp2_name = "#{layer3_ext_node.name}_#{layer3_ext_tp.name}"
     seg_node, seg_tp1, seg_tp2 = add_layer3_inter_as_seg_node_tp(tp1_name, tp2_name, link_segment_ip)
     # int-as-edge -- seg
-    add_layer3_link(layer3_int_node, layer3_int_tp, seg_node, seg_tp1)
+    add_layer3_bdlink(layer3_int_node, layer3_int_tp, seg_node, seg_tp1)
     # seg -- ext-as-edge
-    add_layer3_link(seg_node, seg_tp2, layer3_ext_node, layer3_ext_tp)
+    add_layer3_bdlink(seg_node, seg_tp2, layer3_ext_node, layer3_ext_tp)
   end
 
   # @param [Hash] add_link A link info to add (internal-AS edge interface)

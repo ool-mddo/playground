@@ -100,8 +100,8 @@ class Layer3DataBuilder < IntASDataBuilder
     layer3_seg_node, layer3_seg_tp1, layer3_seg_tp2 = add_layer3_inter_endpoint_seg_node_tp(tp1_name, tp2_name, addrs)
 
     # core-seg link (bidirectional)
-    add_layer3_link(layer3_core_node, layer3_core_tp, layer3_seg_node, layer3_seg_tp1)
+    add_layer3_bdlink(layer3_core_node, layer3_core_tp, layer3_seg_node, layer3_seg_tp1)
     # seg-endpoint link (bidirectional)
-    add_layer3_link(layer3_seg_node, layer3_seg_tp2, layer3_ep_node, layer3_ep_tp)
+    add_layer3_bdlink(layer3_seg_node, layer3_seg_tp2, layer3_ep_node, layer3_ep_tp)
   end
 end
