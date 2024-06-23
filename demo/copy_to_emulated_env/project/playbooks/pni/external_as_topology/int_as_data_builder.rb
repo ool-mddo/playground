@@ -70,6 +70,8 @@ class IntASDataBuilder
     tp_attr.remote_as == remote_asn && @params['allowed_peers'].include?(tp_attr.remote_ip)
   end
 
+  # rubocop:disable Metrics/AbcSize
+
   # @param [Netomox::Topology::Node] bgp_proc_node Internal-AS eBGP node
   # @param [Netomox::Topology::TermPoint] bgp_proc_tp Internal-AS eBGP term-point
   # @return [Hash] peer_item
@@ -92,6 +94,7 @@ class IntASDataBuilder
       }
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
   # @param [Integer] remote_asn Remote ASN
   # @return [Array<Hash>] peer list

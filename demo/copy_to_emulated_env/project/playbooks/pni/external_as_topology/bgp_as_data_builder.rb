@@ -55,53 +55,118 @@ class BgpASDataBuilder
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-  # @return [void]
-  def make_bgp_as_topology!
+  # @return [Netomox::PseudoDSL::PNode] Added internal-AS bgp-as node
+  def add_int_bgp_as_node
     int_asn = @src_topo_builder.as_state[:int_asn]
-    ext_asn_list = [@src_topo_builder.as_state[:ext_asn], @dst_topo_builder.as_state[:ext_asn]].map(&:to_i)
-
-    # internal-AS node
     int_bgp_as_node = @bgp_as_nw.node("as#{int_asn}")
     int_bgp_as_node.attribute = { as_number: int_asn }
     int_bgp_proc_nw = @int_as_topology.find_network('bgp_proc')
     int_bgp_as_node.supports = int_bgp_proc_nw.nodes.map { |node| ['bgp_proc', node.name] }
+    int_bgp_as_node
+  end
+
+  # @return [Array<Integer>] External-AS number list (src/dst asn)
+  def ext_asn_list
+    [@src_topo_builder.as_state[:ext_asn], @dst_topo_builder.as_state[:ext_asn]].map(&:to_i)
+  end
+
+  # @param [Integer] ext_asn External-AS number
+  # @param [Array<Netomox::PseudoDSL::PNode>] support_bgp_proc_nodes Underlay(bgp-proc) nodes in the ASN
+  # @return [Netomox::PseudoDSL::PNode] Added external-AS bgp-as node
+  def add_ext_bgp_as_node(ext_asn, support_bgp_proc_nodes)
+    ext_bgp_as_node = @bgp_as_nw.node("as#{ext_asn}")
+    ext_bgp_as_node.attribute = { as_number: ext_asn }
+    ext_bgp_as_node.supports = support_bgp_proc_nodes.map { |node| ['bgp_proc', node.name] }
+    ext_bgp_as_node
+  end
+
+  # @param [Netomox::PseudoDSL::PTermPoint] ext_bgp_proc_tp External-AS bgp-proc term-point
+  # @return [String, nil] ebgp-peer flag if found
+  def find_bgp_proc_tp_ebgp_flag(ext_bgp_proc_tp)
+    ext_bgp_proc_tp.attribute[:flags].find { |f| f =~ /^ebgp-peer=.+$/ }
+  end
+
+  # @param [Netomox::PseudoDSL::PTermPoint] ext_bgp_proc_tp External-AS bgp-proc term-point
+  # @return [Boolean] true if the term-point is eBGP peer
+  def ebgp_peer_bgp_proc_tp?(ext_bgp_proc_tp)
+    ext_bgp_proc_tp.attribute.key?(:flags) && !find_bgp_proc_tp_ebgp_flag(ext_bgp_proc_tp).nil?
+  end
+
+  # extract peer node/tp name from ebgp-peer flag (string)
+  # @param [Netomox::PseudoDSL::PTermPoint] ext_bgp_proc_tp External-AS bgp-proc term-point
+  # @return [Array(String, String)] peer node/tp name
+  def peer_int_node_tp(ext_bgp_proc_tp)
+    peer_flag = find_bgp_proc_tp_ebgp_flag(ext_bgp_proc_tp)
+    match = peer_flag.split('=')[-1].match(/(?<node>.+)\[(?<tp>.+)\]/)
+
+    [match[:node], match[:tp]]
+  end
+
+  # add link bidirectional
+  # @param [Netomox::PseudoDSL::PNode] node1
+  # @param [Netomox::PseudoDSL::PTermPoint] tp1
+  # @param [Netomox::PseudoDSL::PNode] node2
+  # @param [Netomox::PseudoDSL::PTermPoint] tp2
+  # @return [void]
+  def add_bgp_as_bdlink(node1, tp1, node2, tp2)
+    @bgp_as_nw.link(node1.name, tp1.name, node2.name, tp2.name)
+    @bgp_as_nw.link(node2.name, tp2.name, node1.name, tp1.name)
+  end
+
+  # @param [Netomox::PseudoDSL::PNode] ext_bgp_as_node External-AS bgp-as node (target)
+  # @param [Netomox::PseudoDSL::PNode] ext_bgp_proc_node External-AS bgp-proc node (underlay node)
+  # @param [Netomox::PseudoDSL::PTermPoint] ext_bgp_proc_tp External-AS bgp-proc term-point (underlay tp)
+  # @return [Array(Netomox::PseudoDSL::PNode, Netomox::PseudoDSL::PTermPoint)] Added node/tp
+  def add_ext_bgp_as_tp(ext_bgp_as_node, ext_bgp_proc_node, ext_bgp_proc_tp)
+    ext_bgp_as_tp = ext_bgp_as_node.term_point(ext_bgp_proc_tp.name)
+    ext_bgp_as_tp.supports.push(['bgp_proc', ext_bgp_proc_node.name, ext_bgp_proc_tp.name])
+
+    [ext_bgp_as_node, ext_bgp_as_tp]
+  end
+
+  # @param [Netomox::PseudoDSL::PNode] int_bgp_as_node Internal-AS bgp-as node (target)
+  # @param [Netomox::PseudoDSL::PTermPoint] ext_bgp_proc_tp External-AS bgp-proc term-point (underlay tp)
+  # @return [Array(Netomox::PseudoDSL::PNode, Netomox::PseudoDSL::PTermPoint)] Added node/tp
+  def add_int_bgp_as_tp(int_bgp_as_node, ext_bgp_proc_tp)
+    peer_int_node, peer_int_tp = peer_int_node_tp(ext_bgp_proc_tp)
+    int_bgp_as_tp = int_bgp_as_node.term_point(peer_int_tp)
+    int_bgp_as_tp.supports.push(['bgp_proc', peer_int_node, peer_int_tp])
+
+    [int_bgp_as_node, int_bgp_as_tp]
+  end
+
+  # @param [Netomox::PseudoDSL::PNode] int_bgp_as_node Internal-AS bgp-as node
+  # @param [Netomox::PseudoDSL::PNode] ext_bgp_as_node External-AS bgp-as node
+  # @param [Array<Netomox::PseudoDSL::PNode>] support_bgp_proc_nodes Underlay(bgp-proc) nodes in the ASN
+  # @return [void]
+  def add_ext_bgp_link_tp(int_bgp_as_node, ext_bgp_as_node, support_bgp_proc_nodes)
+    # inter-as-node (inter-AS) links
+    # (no links between ext-ext, there are only ext-int links)
+    support_bgp_proc_nodes.each do |ext_bgp_proc_node|
+      ext_bgp_proc_node.tps.each do |ext_bgp_proc_tp|
+        next unless ebgp_peer_bgp_proc_tp?(ext_bgp_proc_tp)
+
+        # term-point
+        _, ext_bgp_as_tp = add_ext_bgp_as_tp(ext_bgp_as_node, ext_bgp_proc_node, ext_bgp_proc_tp)
+        _, int_bgp_as_tp = add_int_bgp_as_tp(int_bgp_as_node, ext_bgp_proc_tp)
+
+        # link (bidirectional)
+        add_bgp_as_bdlink(int_bgp_as_node, int_bgp_as_tp, ext_bgp_as_node, ext_bgp_as_tp)
+      end
+    end
+  end
+
+  # @return [void]
+  def make_bgp_as_topology!
+    # internal-AS node
+    int_bgp_as_node = add_int_bgp_as_node
 
     # external-AS node
     ext_bgp_proc_nw = @ext_as_topology.network('bgp_proc')
     ext_asn_list.each do |ext_asn|
-      ext_bgp_as_node = @bgp_as_nw.node("as#{ext_asn}")
-      ext_bgp_as_node.attribute = { as_number: ext_asn }
-
       support_bgp_proc_nodes = ext_bgp_proc_nw.nodes.filter { |node| node.tps[0].attribute[:local_as] == ext_asn }
-      ext_bgp_as_node.supports = support_bgp_proc_nodes.map { |node| ['bgp_proc', node.name] }
-
-      # inter-as-node (inter-AS) links
-      # (no links between ext-ext, there are only ext-int links)
-      support_bgp_proc_nodes.each do |ext_bgp_proc_node|
-        ext_bgp_proc_node.tps.each do |ext_bgp_proc_tp|
-          next unless ext_bgp_proc_tp.attribute.key?(:flags)
-
-          peer_flag = ext_bgp_proc_tp.attribute[:flags].find { |f| f =~ /^ebgp-peer=.+$/ }
-          next unless peer_flag
-
-          match = peer_flag.split('=')[-1].match(/(?<node>.+)\[(?<tp>.+)\]/)
-          peer_int_node = match[:node]
-          peer_int_tp = match[:tp]
-
-          # term-point
-          ext_bgp_as_tp = ext_bgp_as_node.term_point(ext_bgp_proc_tp.name)
-          ext_bgp_as_tp.supports.push(['bgp_proc', ext_bgp_proc_node.name, ext_bgp_proc_tp.name])
-          int_bgp_as_tp = int_bgp_as_node.term_point(peer_int_tp)
-          int_bgp_as_tp.supports.push(['bgp_proc', peer_int_node, peer_int_tp])
-
-          # link (bidirectional)
-          @bgp_as_nw.link(int_bgp_as_node.name, int_bgp_as_tp.name, ext_bgp_as_node.name, ext_bgp_as_tp.name)
-          @bgp_as_nw.link(ext_bgp_as_node.name, ext_bgp_as_tp.name, int_bgp_as_node.name, int_bgp_as_tp.name)
-        end
-      end
+      ext_bgp_as_node = add_ext_bgp_as_node(ext_asn, support_bgp_proc_nodes)
+      add_ext_bgp_link_tp(int_bgp_as_node, ext_bgp_as_node, support_bgp_proc_nodes)
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

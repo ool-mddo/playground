@@ -5,7 +5,7 @@ require 'ipaddr'
 require 'netomox'
 
 require_relative 'int_as_data_builder'
-require_relative 'ip_addr_management'
+require_relative 'tiny_ipam'
 require_relative 'layer3_data_builder_routers'
 require_relative 'layer3_data_builder_ibgp_links'
 require_relative 'layer3_data_builder_endpoint'
@@ -23,7 +23,7 @@ class Layer3DataBuilder < IntASDataBuilder
     flow_data = read_flow_data_file(flow_data_file)
     @flow_prefixes = column_items_from_flows(flow_data)
 
-    ipam = IPAddrManagement.instance # singleton
+    ipam = TinyIPAM.instance # singleton
     ipam.assign_base_prefix(@params['subnet'])
 
     # target external-AS topology (empty)
@@ -45,7 +45,7 @@ class Layer3DataBuilder < IntASDataBuilder
   # @yieldreturn [void]
   # @return [void]
   def ipam_link_scope
-    ipam = IPAddrManagement.instance # singleton
+    ipam = TinyIPAM.instance # singleton
     yield(ipam.current_link_ip_str, ipam.current_link_intf_ip_str_pair) if block_given?
     # next link-ip
     ipam.count_link
@@ -56,7 +56,7 @@ class Layer3DataBuilder < IntASDataBuilder
   # @yieldreturn [void]
   # @return [void]
   def ipam_loopback_scope
-    ipam = IPAddrManagement.instance # singleton
+    ipam = TinyIPAM.instance # singleton
     yield(ipam.current_loopback_ip_str) if block_given?
     # next loopback-ip
     ipam.count_loopback

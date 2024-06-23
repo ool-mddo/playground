@@ -3,7 +3,7 @@
 # Layer3 network data builder
 class Layer3DataBuilder < IntASDataBuilder
   # Loopback interface name
-  LOOPBACK_INTF_NAME = 'lo0.0'.freeze
+  LOOPBACK_INTF_NAME = 'lo0.0'
 
   protected
 
@@ -44,6 +44,8 @@ class Layer3DataBuilder < IntASDataBuilder
     layer3_core_node
   end
 
+  # rubocop:disable Metrics/AbcSize
+
   # @param [Hash] peer_item Peer-item
   # @param [Integer] peer_index
   # @param [IPAddr] segment_ip IP address of eBGP (inter-AS) link segment
@@ -68,6 +70,7 @@ class Layer3DataBuilder < IntASDataBuilder
     # memo to peer_item
     peer_item[:layer3][:node] = layer3_node
   end
+  # rubocop:enable Metrics/AbcSize
 
   # @param [Hash] peer_item Peer-item
   # @param [Integer] peer_index
@@ -171,7 +174,6 @@ class Layer3DataBuilder < IntASDataBuilder
 
   # @param [Hash] add_link A link info to add (internal-AS edge interface)
   # @return [void]
-  # @raise [StandardError] add-link node/tp is not found
   def add_layer3_ebgp_candidate_router(add_link)
     layer3_int_node, layer3_int_tp = find_layer3_int_as_edge_node_tp(add_link)
     link_segment_ip = inter_as_link_segment_ip(layer3_int_node, layer3_int_tp, add_link)

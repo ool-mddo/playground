@@ -6,7 +6,7 @@ module Netomox
   module PseudoDSL
     # pseudo network
     class PNetwork
-      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
       # @param [String] node1 Node1 name
       # @param [String] node2 Node2 name
@@ -31,7 +31,7 @@ module Netomox
           PLink.new(link1.src, link2.dst)
         end
       end
-      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
       # @param [PNode] node (upper layer node)
       # @return [PNode, nil] supported node

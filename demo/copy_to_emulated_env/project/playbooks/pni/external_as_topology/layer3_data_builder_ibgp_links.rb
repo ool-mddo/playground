@@ -56,6 +56,8 @@ class Layer3DataBuilder < IntASDataBuilder
     [layer3_seg_node, layer3_seg_tp1, layer3_seg_tp2]
   end
 
+  # rubocop:disable Metrics/AbcSize
+
   # @param [Array<Hash>] peer_item_l3_pair Peer item (layer3 part)
   # @return [void]
   def add_layer3_ibgp_links(peer_item_l3_pair)
@@ -81,4 +83,5 @@ class Layer3DataBuilder < IntASDataBuilder
       add_layer3_bdlink(layer3_seg_node, layer3_seg_tp2, layer3_node2, layer3_tp2)
     end
   end
+  # rubocop:enable Metrics/AbcSize
 end

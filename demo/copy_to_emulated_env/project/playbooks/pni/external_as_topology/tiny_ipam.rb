@@ -3,8 +3,8 @@
 require 'ipaddr'
 require 'singleton'
 
-# External-AS IP-address Management
-class IPAddrManagement
+# External-AS IP-Address Management
+class TinyIPAM
   attr_reader :link_count, :loopback_count
 
   include Singleton
@@ -59,6 +59,8 @@ class IPAddrManagement
     ip
   end
 
+  # rubocop:disable Metrics/AbcSize
+
   # @param [Integer] index Link number (n-th link, n=0,1,...)
   # @return [IPAddr] link (segment) ip addr
   # @raise [StandardError] link addr block overflow
@@ -74,6 +76,7 @@ class IPAddrManagement
     ip.prefix = 30
     ip
   end
+  # rubocop:enable Metrics/AbcSize
 
   # @return [Integer] loopback counter
   def count_loopback

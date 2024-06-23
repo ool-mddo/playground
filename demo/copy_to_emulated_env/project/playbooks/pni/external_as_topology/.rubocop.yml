@@ -7,10 +7,6 @@ AllCops:
 
 # disable several metrics for hand-made models
 
-Metrics/AbcSize:
-  Exclude:
-    - '*.rb'
-
 Metrics/MethodLength:
   Exclude:
     - '*.rb'

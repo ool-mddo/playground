@@ -60,6 +60,8 @@ class BgpProcDataBuilder < Layer3DataBuilder
     }
   end
 
+  # rubocop:disable Metrics/AbcSize
+
   # @param [Hash] peer_item Peer item
   # @param [Netomox::PseudoDSL::PNode] layer3_node Layer3 node
   # @param [Netomox::PseudoDSL::PTermPoint] layer3_tp layer3 term-point (ebgp peer)
@@ -81,6 +83,7 @@ class BgpProcDataBuilder < Layer3DataBuilder
 
     [bgp_proc_node, bgp_proc_tp]
   end
+  # rubocop:enable Metrics/AbcSize
 
   # @param [Hash] peer_item Peer-item
   # @return [void]

@@ -13,6 +13,8 @@ class BgpProcDataBuilder < Layer3DataBuilder
 
   private
 
+  # rubocop:disable Metrics/AbcSize
+
   # @param [Netomox::PseudoDSL::PNode] bgp_proc_node1 bgp-proc node
   # @param [Netomox::PseudoDSL::PNode] bgp_proc_node2 bgp-proc node
   # @return [Hash] Node/tp object to connect link
@@ -31,6 +33,7 @@ class BgpProcDataBuilder < Layer3DataBuilder
       raise StandardError, "Layer3 link not found between: #{link_str}"
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   # @param [String] local_ip
   # @param [String] remote_ip
@@ -71,6 +74,8 @@ class BgpProcDataBuilder < Layer3DataBuilder
     @bgp_proc_nw.link(node2.name, tp2.name, node1.name, tp1.name)
   end
 
+  # rubocop:disable Metrics/AbcSize
+
   # @param [Array<Hash>] peer_item_bgp_proc_pair Peer item (bgp_proc part)
   # @return [void]
   def add_bgp_proc_ibgp_links(peer_item_bgp_proc_pair)
@@ -97,4 +102,5 @@ class BgpProcDataBuilder < Layer3DataBuilder
     # core-edge link (bidirectional)
     add_bgp_proc_bdlink(bgp_proc_node1, bgp_proc_tp1, bgp_proc_node2, bgp_proc_tp2)
   end
+  # rubocop:enable Metrics/AbcSize
 end
