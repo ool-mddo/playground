@@ -30,7 +30,7 @@ external_as_script="${external_as_topology_dir}/main.rb"
 external_as_json="${USECASE_CONFIGS_DIR}/external_as_topology.json"
 params_file="${USECASE_DIR}/params.yaml"
 flowdata_file="${USECASE_DIR}/flowdata.csv"
-ruby "$external_as_script" -p "$params_file" -f "$flowdata_file"  > "$external_as_json"
+ruby "$external_as_script" -n "$NETWORK_NAME" -p "$params_file" -f "$flowdata_file"  > "$external_as_json"
 # splice external-AS topology to original_asis (overwrite)
 curl -s -X POST -H "Content-Type: application/json" \
   -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
