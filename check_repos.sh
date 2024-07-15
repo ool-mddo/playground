@@ -15,7 +15,43 @@ function target_branch () {
     eval "echo \$$repository_tag_var"
 }
 
-function output_csv () {
+function is_branch_up_to_date () {
+    current_branch=$1
+    if [[ -n $current_branch ]]; then
+        git fetch -q
+        if git status -uno | grep -q behind; then
+            echo "NO!"
+        else
+            echo "yes"
+        fi
+    fi
+}
+
+function output_playground_csv () {
+    repository_name="playground"
+    current_branch=$(git branch --show-current)
+    current_tag=$(git describe --tags --exact-match 2>/dev/null)
+    target_branch="NONE"
+    is_up_to_date=$(is_branch_up_to_date "$current_branch")
+    echo "$repository_name, $current_branch, $current_tag, $target_branch, $is_up_to_date"
+}
+
+function output_repos_csv () {
+    for repo in repos/*; do
+        pushd "$repo" > /dev/null || exit 2
+
+        current_branch=$(git branch --show-current)
+        current_tag=$(git describe --tags --exact-match 2>/dev/null)
+        target_branch=$(target_branch "$repo")
+        is_up_to_date=$(is_branch_up_to_date "$current_branch")
+        # record
+        echo "$repo, $current_branch, $current_tag, $target_branch, $is_up_to_date"
+
+        popd > /dev/null || exit 2
+    done
+}
+
+function output_all_csv () {
     SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
     # shellcheck disable=SC1091
     source .env
@@ -25,26 +61,10 @@ function output_csv () {
     # header
     echo "repository, current-branch, current-tag, target-branch/tag, up-to-date?"
 
-    for repo in repos/*; do
-        cd "$repo" || exit 2
-
-        current_branch=$(git branch --show-current)
-        current_tag=$(git describe --tags --exact-match 2>/dev/null)
-        target_branch=$(target_branch "$repo")
-        is_up_to_date=""
-        if [[ -n $current_branch ]]; then
-            git fetch -q
-            if git status -uno | grep -q behind; then
-                is_up_to_date="NO!"
-            else
-                is_up_to_date="yes"
-            fi
-        fi
-        # record
-        echo "$repo, $current_branch, $current_tag, $target_branch, $is_up_to_date"
-
-        cd "$SCRIPT_DIR" || exit 2
-    done
+    # playground dir
+    output_playground_csv "$SCRIPT_DIR"
+    # repos
+    output_repos_csv
 }
 
 # argument processing
@@ -55,7 +75,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         -r|--raw)
-            output_csv
+            output_all_csv
             exit 0
             ;;
         *)
@@ -66,4 +86,4 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-output_csv | column -s, -t
+output_all_csv | column -s, -t
