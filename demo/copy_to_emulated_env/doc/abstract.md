@@ -42,7 +42,12 @@ ref. [プロジェクトの位置づけ](../../../doc/project_positioning.md)
 
 ![translate](./fig/translate.png)
 
+# 環境設定
+
+* [copy_to_emulated_env共通環境準備](provision.md)
+
 # デモシナリオ (ユースケース)
+
 * [セグメント移転](move_seg/introduction.md)
 * PNIユースケース
     * [PNI トラフィック制御](pni_te/introduction.md)
