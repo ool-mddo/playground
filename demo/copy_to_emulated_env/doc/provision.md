@@ -92,12 +92,12 @@ USECASE_DIR="${ANSIBLE_PLAYBOOK_DIR}/${USECASE_NAME}"
 
 対象にするコンフィグリポジトリ (Batfishに入力するネットワーク) に合わせてトポロジ可視化ツール(netoviz)用のインデックスファイルを用意します。
 
-* ネットワーク、スナップショットについては[デモシステムの構造と設計 - Batfish周辺の設計](../../../../doc/system_architecture.md#batfish周辺の設計)を参照してください。
-* 可視化ツール(netoviz)インデックスファイルは、複数のスナップショット情報の定義を束ねたリストになっています。スナップショット情報の定義については[デモシステムの構造と設計 - model-info](../../../../doc/system_architecture.md#model-info) を参照してください。
+* ネットワーク、スナップショットについては[デモシステムの構造と設計 - Batfish周辺の設計](../../../doc/system_architecture.md#batfish周辺の設計)を参照してください。
+* 可視化ツール(netoviz)インデックスファイルは、複数のスナップショット情報の定義を束ねたリストになっています。スナップショット情報の定義については[デモシステムの構造と設計 - model-info](../../../doc/system_architecture.md#model-info) を参照してください。
 
-デモ用のインデックスファイル: [network_index/mddo-ospf.json](../../network_index/mddo-ospf.json)
+デモ用のインデックスファイル: [network_index/mddo-ospf.json](../network_index/mddo-ospf.json)
 * デモでは original_asis, emulated_asis, emulated_tobe, original_asis の4つのスナップショットを作成するので、それぞれのスナップショットに対する情報を定義します。
-* 4つのスナップショットについては [デモシステムの構造と設計 - 名前空間の変換と変換処理](../../../../doc/system_architecture.md#名前空間の変換と変換処理) を参照してください。
+* 4つのスナップショットについては [デモシステムの構造と設計 - 名前空間の変換と変換処理](../../../doc/system_architecture.md#名前空間の変換と変換処理) を参照してください。
 
 ```json
 [
