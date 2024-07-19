@@ -50,8 +50,8 @@ services:
       - type: bind
         source: ./.git
         target: ${MDDO_DIR}/.git  # git dir of under CONFIGS_DIR submodules
-      - type: bind
-        source: ${SHARED_CONFIGS_DIR}
+      - type: volume
+        source: configs
         target: ${MDDO_CONFIGS_DIR}
       - type: volume
         source: queries
@@ -75,8 +75,8 @@ services:
       PYTHONUNBUFFERED: 1
     volumes:
       # data dirs
-      - type: bind
-        source: ${SHARED_CONFIGS_DIR}
+      - type: volume
+        source: configs
         target: ${MDDO_CONFIGS_DIR}
         read_only: true
       - type: volume
@@ -191,9 +191,27 @@ networks:
       config:
         - subnet: 172.16.254.0/24
 volumes:
+  configs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_CONFIGS_DIR}
   queries:
-    name: $SHARED_QUERIES_DIR
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_QUERIES_DIR}
   toplogies:
-    name: $SHARED_TOPOLOGIES_DIR
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_TOPOLOGIES_DIR}
   ttp:
-    name: $SHARED_TTP_DIR
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_TTP_DIR}

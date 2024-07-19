@@ -8,10 +8,7 @@
 # data directories
 configs/nttcom-trial-*/
 configs/biglobe*/
-queries
 demo/layer1_topology/inet-henge/*
-topologies
-ttp
 # tools
 .ansible
 # demo
