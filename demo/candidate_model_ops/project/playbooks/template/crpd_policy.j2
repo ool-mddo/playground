@@ -1,0 +1,141 @@
+{% set attrs = item["mddo-topology:bgp-proc-node-attributes"] %}
+policy-options {
+{%   for prefix in attrs["prefix-set"] %}
+    prefix-list {{ prefix["name"] }} {
+{%     for prefix in prefix["prefixes"] %}
+        {{ prefix["prefix"] }};
+{%     endfor %}
+    }
+{%   endfor %}
+{%   for path in attrs["as-path-set"] %}
+    as-path-group {{ path["group-name"] }} {
+{%     if not path["as-path"].__class__.__name__ == 'list' %}
+{%       if "pattern" in path["as-path"] %}
+        as-path {{ path["as-path"]["name"] }} "{{ path["as-path"]["pattern"] }}";
+{%       elif "length" in path["as-path"] and "min" in path["as-path"]["length"] %}
+        as-path {{ path["as-path"]["name"] }} ".{% raw %}{{% endraw %}{{path["as-path"]["length"]["min"]}}{% raw %},}{% endraw %}";
+{%       else %}
+{#       workaround of empty as-path from XR #}
+        as-path any "'.*'";
+{%       endif %}
+{%     else %}
+{%       for aspath in path["as-path"]%}
+{%         if "pattern" in aspath %}
+        as-path {{ aspath["name"] }} "{{ aspath["pattern"] }}";
+{%         elif "length" in aspath and "min" in as-path["length"] %}
+        as-path {{ aspath["name"] }} ".{% raw %}{{% endraw %}{{aspath["length"]["min"]}}{% raw %},}{% endraw %}";
+{%         else %}
+        ERROR in as-path-group
+{%         endif %}
+{%       endfor %}
+{%     endif %}
+    }
+{%   endfor %}
+{%   for community in attrs["community-set"] %}
+{%     if community["communities"] | length == 1 %}
+    community {{ community["name"] }} members {{ community["communities"][0]["community"] }};
+{%     else %}
+    community {{ community["name"] }} members [
+{%-      for member in community["communities"] %}
+{%-        if not "[" in member["community"] %}
+{#         workaround of skipping range community from XR, such as [1000..1999] #}
+        {{ member["community"] }}
+{%-        endif%}
+{%-      endfor %}
+ ];
+{%     endif %}
+{%   endfor %}
+{%   for policy in attrs["policy"] %}
+    policy-statement {{ policy["name"] }} {
+{%     if "none" in  policy["statements"] %}
+        then {
+{%       for action in policy["default"]["actions"] %}
+{%         for key, value in action.items() %}
+{# shoud be same in above "then" #}
+{%           if key == "action" %}
+            {{ value }};
+{%           elif key == "target" %}
+            {{ value }};
+{%           else %}
+            ERROR in default-then
+{%           endif %}
+{%         endfor %}
+{%       endfor %}
+        }
+{%     else  %}
+{%       for term in policy["statements"] %}
+        term {{ term["name"] }} {
+            from {
+{%         for cond in term["conditions"] %}
+{%           for key, value in cond.items() %}
+{%             if key in ["policy", "as-path-group", "protocol", "prefix-list", "rib"] %}
+                {{ key }} {{ value }};
+{%             elif key == "community" %}
+                community [ {% for com in value %} {{ com }}{% endfor %} ];
+{%             elif key == "route-filter" %}
+{%               if value["match-type"] == "exact" %}
+                route-filter {{ value["prefix"] }} exact;
+{%               elif value["match-type"] == "prefix-length-range" %}
+                route-filter {{ value["prefix"] }} prefix-length-range /{{ value["length"]["min"] }}-/{{ value["length"]["max"] }};
+{%               elif value["match-type"] == "upto" %}
+{#               workaround of parse error in "max" #}
+                route-filter {{ value["prefix"] }} upto /{{ value["length"]["max"] | regex_replace(',', '') }};
+{%               else %}
+                ERROR in route-filter
+{%               endif %}
+{%             elif key == "prefix-list-filter" %}
+{%               if value["match-type"] == "exact" %}
+                prefix-list-filter {{ value["prefix-list"] }} exact;
+{%               elif value["match-type"] == "orlonger" %}
+                prefix-list-filter {{ value["prefix-list"] }} orlonger;
+{%               else %}
+                ERROR in prefix-list-filter
+{%               endif %}
+{%             else %}
+{#                ERROR in from #}
+{%             endif %}
+{%           endfor %}
+{%         endfor %}
+            }
+            then {
+{%         for action in term["actions"] %}
+{%           for key, value in action.items() %}
+{%             if key in ["metric", "local-preference", "next-hop"] %}
+                {{ key }} {{ value }};
+{%             elif key == "community" %}
+                community {{ value["action"] }} {{ value["name"] }};
+{%             elif key == "target" %}
+                {{ value }};
+{%             elif key == "as-path-prepend" %}
+                {{ key }} {{ value.asn[0] }};
+{%             elif key == "apply" %}
+{# ToDo how to express "apply" in junos #}
+{%             else %}
+                ERROR in then
+{%             endif %}
+{%           endfor %}
+{%         endfor %}
+            }
+        }
+{%       endfor %}
+{#       when default action is existed #}
+{%       if policy["default"]["actions"] | length != 0 %}
+        then {
+{%         for action in policy["default"]["actions"] %}
+{%           for key, value in action.items() %}
+{# shoud be same in above "then" #}
+{%             if key in ["action", "target"] %}
+            {{ value }};
+{%             elif key in ["local-preference"] %}
+            {{ key }} {{ value }};
+{%             else %}
+            ERROR in default-then
+{%             endif %}
+{%           endfor %}
+{%         endfor %}
+        }
+{%       endif %}
+{%     endif %}
+    }
+{%   endfor %}
+}

@@ -1,0 +1,2 @@
+process_isolation_executable: docker
+process_isolation: true
