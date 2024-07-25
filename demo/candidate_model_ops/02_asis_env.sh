@@ -35,6 +35,10 @@ while getopts dh option; do
   esac
 done
 
+# cache sudo credential
+echo "Please enter your sudo password:"
+sudo -v
+
 # at first: prepare emulated_asis topology data
 target_original_snapshot="original_asis"
 # convert namespace from original_asis to emulated_asis

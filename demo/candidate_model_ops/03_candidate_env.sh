@@ -35,9 +35,12 @@ while getopts dh option; do
   esac
 done
 
-original_candidate_list="${USECASE_CONFIGS_DIR}/original_candidate_list.json"
+# cache sudo credential
+echo "Please enter your sudo password:"
+sudo -v
 
 # at first: prepare each emulated_candidate topology data
+original_candidate_list="${USECASE_CONFIGS_DIR}/original_candidate_list.json"
 for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
   # convert namespace from original_candidate_i to emulated_candidate_i
