@@ -38,24 +38,20 @@ done
 original_candidate_list="${USECASE_CONFIGS_DIR}/original_candidate_list.json"
 
 # at first: prepare each emulated_candidate topology data
-for original_candidate_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
   # convert namespace from original_candidate_i to emulated_candidate_i
-  target_emulated_snapshot="${original_candidate_snapshot/original/emulated}"
-  echo "Convert to: $target_emulated_snapshot"
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d '{ "table_origin": "'"$original_candidate_snapshot"'" }' \
-    "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/original_asis/${target_emulated_snapshot}"
+  convert_namespace "$target_original_snapshot"
 done
 
 # update netoviz index
-netoviz_original_asis_index="${USECASE_CONFIGS_DIR}/netoviz_original_asis_index.json"
+netoviz_asis_index="${USECASE_CONFIGS_DIR}/netoviz_asis_index.json"
 netoviz_original_candidates_index="${USECASE_CONFIGS_DIR}/netoviz_original_candidates_index.json"
 netoviz_emulated_candidate_index="${USECASE_CONFIGS_DIR}/netoviz_emulated_candidate_index.json"
 filter='map(.snapshot |= sub("original"; "emulated") | . + {label: ("MDDO-BGP (" + .snapshot + ")"), file: "topology.json"})'
 jq "$filter" "$original_candidate_list" > "$netoviz_emulated_candidate_index"
 netoviz_index="${USECASE_CONFIGS_DIR}/netoviz_index.json"
-jq -s '.[0] + .[1] + .[2]' "$netoviz_original_asis_index" "$netoviz_original_candidates_index" "$netoviz_emulated_candidate_index" \
+jq -s '.[0] + .[1] + .[2]' "$netoviz_asis_index" "$netoviz_original_candidates_index" "$netoviz_emulated_candidate_index" \
   > "$netoviz_index"
 
 curl -s -X POST -H 'Content-Type: application/json' \
@@ -63,7 +59,7 @@ curl -s -X POST -H 'Content-Type: application/json' \
   "http://${API_PROXY}/topologies/index"
 
 # up each emulated env
-for original_candidate_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
-  up_emulated_env "$original_candidate_snapshot"
+  up_emulated_env "$target_original_snapshot"
 done

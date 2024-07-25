@@ -35,5 +35,21 @@ while getopts dh option; do
   esac
 done
 
+# at first: prepare emulated_asis topology data
+target_original_snapshot="original_asis"
+# convert namespace from original_asis to emulated_asis
+convert_namespace "$target_original_snapshot"
+
+# Add netoviz index
+netoviz_asis_index="${USECASE_CONFIGS_DIR}/netoviz_asis_index.json"
+jq '.[0:2]' "$NETWORK_INDEX" > "$netoviz_asis_index"
+netoviz_original_candidates_index="${USECASE_CONFIGS_DIR}/netoviz_original_candidates_index.json"
+netoviz_index="${USECASE_CONFIGS_DIR}/netoviz_index.json"
+jq -s '.[0] + .[1]' "$netoviz_asis_index" "$netoviz_original_candidates_index" > "$netoviz_index"
+
+curl -s -X POST -H 'Content-Type: application/json' \
+  -d @<(jq '{ "index_data": . }' "$netoviz_index") \
+  "http://${API_PROXY}/topologies/index"
+
 # up original_asis env
-up_emulated_env original_asis
+up_emulated_env "$target_original_snapshot"

@@ -48,13 +48,13 @@ curl -s -X POST -H 'Content-Type: application/json' \
   > "$original_candidate_list"
 
 # Add netoviz index
-netoviz_original_asis_index="${USECASE_CONFIGS_DIR}/netoviz_original_asis_index.json"
-jq '.[0:1]' "$NETWORK_INDEX" > "$netoviz_original_asis_index"
+netoviz_asis_index="${USECASE_CONFIGS_DIR}/netoviz_asis_index.json"
+jq '.[0:1]' "$NETWORK_INDEX" > "$netoviz_asis_index"
 netoviz_original_candidates_index="${USECASE_CONFIGS_DIR}/netoviz_original_candidates_index.json"
 filter='map(. + {label: ( "\(.network | ascii_upcase) (\(.snapshot))"), file: "topology.json"})'
 jq "$filter" "$original_candidate_list" > "$netoviz_original_candidates_index"
 netoviz_index="${USECASE_CONFIGS_DIR}/netoviz_index.json"
-jq -s '.[0] + .[1]' "$netoviz_original_asis_index" "$netoviz_original_candidates_index" > "$netoviz_index"
+jq -s '.[0] + .[1]' "$netoviz_asis_index" "$netoviz_original_candidates_index" > "$netoviz_index"
 
 curl -s -X POST -H 'Content-Type: application/json' \
   -d @<(jq '{ "index_data": . }' "$netoviz_index") \
