@@ -1,16 +1,14 @@
 #!/usr/bin/bash
 
-# check user id
-if [ "$EUID" -ne 0 ]; then
-  echo "Please run as root (sudo)"
-  exit 1
-fi
+# cache sudo credential
+echo "Please enter your sudo password:"
+sudo -v
 
 # shellcheck disable=SC1091
 source ./demo_vars
 
 # delete files and containers related to containerlab
-rm -f "${USECASE_CONFIGS_DIR}"/*.conf
+sudo rm -f "${USECASE_CONFIGS_DIR}"/*.conf
 sudo containerlab destroy --topo "${ANSIBLE_RUNNER_DIR}/clab/clab-topo.yaml" --cleanup
 sudo rm -f "${ANSIBLE_RUNNER_DIR}/clab"/*.conf
 sudo rm -f "${ANSIBLE_RUNNER_DIR}/clab/clab-topo.yaml"
