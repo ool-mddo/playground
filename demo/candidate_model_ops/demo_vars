@@ -21,7 +21,6 @@ USECASE_CONFIGS_DIR="${ANSIBLE_PLAYBOOK_DIR}/configs"
 USECASE_COMMON_NAME=$(echo "$USECASE_NAME" | cut -d_ -f1)
 USECASE_COMMON_DIR="${ANSIBLE_PLAYBOOK_DIR}/${USECASE_COMMON_NAME}"
 USECASE_DIR="${ANSIBLE_PLAYBOOK_DIR}/${USECASE_NAME}"
-ARTIFACT_DIR="${ANSIBLE_RUNNER_DIR}/artifacts"
 
 # step1-2, 2-2: check if the network has bgp(_proc) layer
 function use_bgp_proc() {
