@@ -8,7 +8,7 @@ function convert_namespace() {
 
   curl -s -X POST -H 'Content-Type: application/json' \
     -d '{ "table_origin": "'"$target_original_snapshot"'" }' \
-    "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/original_asis/${target_emulated_snapshot}"
+    "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/${target_original_snapshot}/${target_emulated_snapshot}"
 }
 
 function up_emulated_env() {
