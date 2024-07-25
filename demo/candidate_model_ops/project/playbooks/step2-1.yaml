@@ -6,7 +6,7 @@
   tasks:
   - name: "get convert table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/emulated_asis/topology/layer3/config_params"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
       method: "GET"
       body_format: json
     register: node_list
@@ -20,14 +20,14 @@
 
   - name: "get ospf table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/emulated_asis/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
       method: "GET"
       body_format: json
     register: ospf_list
 
   - name: "get whole topology"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/emulated_asis/topology"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology"
       method: "GET"
       body_format: json
     register: topology
@@ -129,7 +129,7 @@
     include_role:
       name: uploadconfig
     vars:
-      url: "http://api-proxy/configs/{{ network_name }}/emulated_asis/"
+      url: "http://api-proxy/configs/{{ network_name }}/{{ snapshot_name }}/"
       filepath: "configs/{{ item.agent_name }}.conf"
     loop: "{{ node_list.json }}"
 
@@ -144,7 +144,7 @@
   tasks:
     - name: "get convert table"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology/layer3/config_params"
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
         method: "GET"
         body_format: json
       register: node_list
@@ -157,7 +157,7 @@
 
     - name: "get clab topo yaml"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"
         method: "GET"
         body_format: json
       register: containerlab

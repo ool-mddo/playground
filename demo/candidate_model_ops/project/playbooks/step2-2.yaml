@@ -32,7 +32,7 @@
 
     - name: "get converted topology"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/emulated_asis/topology"
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology"
         method: "GET"
         body_format: json
       register: topology
