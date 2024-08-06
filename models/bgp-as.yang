@@ -1,0 +1,82 @@
+module bgp-as {
+    namespace "http://example.com/bgp-as";
+    prefix "bgp-as";
+
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
+    import ietf-yang-types {
+        prefix "yang";
+    }
+
+    list node {
+        key "node-id";
+        leaf node-id {
+            type string;
+        }
+        list ietf-network-topology:termination-point {
+            key "tp-id";
+            leaf tp-id {
+                type string;
+            }
+            container mddo-topology:bgp-as-termination-point-attributes {
+                leaf description {
+                    type string;
+                }
+                # todo: "flag"
+            }
+            list supporting-termination-point {
+                key "network-ref" "node-ref" "tp-ref";
+                leaf network-ref {
+                    type leafref {
+                        path "/network/network-id";
+                    }
+                }
+                leaf node-ref {
+                    type leafref {
+                        path "/network/node/node-id";
+                    }
+                }
+                leaf tp-ref {
+                    type leafref {
+                        path "/network/node/ietf-network-topology:termination-point/tp-id";
+                    }
+                }
+            }
+        }
+        container mddo-topology:bgp-as-node-attributes {
+            leaf as-number {
+                type uint32;
+            }
+            # todo: "flag"
+        }
+        list supporting-node {
+            key "network-ref" "node-ref";
+            leaf network-ref {
+                type leafref {
+                    path "/network/network-id";
+                }
+            }
+            leaf node-ref {
+                type leafref {
+                    path "/network/node/node-id";
+                }
+            }
+        }
+    }
+
+    list ietf-network-topology:link {
+        use "ietf-network-topology:link";
+        # todo
+    }
+
+    list supporting-netwrok {
+        key "network-ref";
+        leaf network-ref {
+            type leafref {
+                path "/network/network-id";
+            }
+        }
+    }
+}

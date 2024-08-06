@@ -1,0 +1,203 @@
+module bgp-proc {
+    namespace "http://example.com/bgp-proc";
+    prefix "bgp-proc";
+
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
+    import ietf-yang-types {
+        prefix "yang";
+    }
+
+    list node {
+        key "node-id";
+        leaf node-id {
+            type string;
+        }
+        list ietf-network-topology:termination-point {
+            key "tp-id";
+            leaf tp-id {
+                type string;
+            }
+            container mddo-topology:bgp-proc-termination-point-attributes {
+                leaf local-as {
+                    type uint32;
+                }
+                leaf local-ip {
+                    type inet:ip-address;
+                }
+                leaf remote-as {
+                    type uint32;
+                }
+                leaf remote-ip {
+                    type inet:ip-address;
+                }
+                leaf description {
+                    type string;
+                }
+                leaf confederation {
+                    type uint32;
+                }
+                leaf route-reflector-client {
+                    type boolean;
+                }
+                leaf cluster-id {
+                    type inet:ip-address;
+                }
+                leaf peer-group {
+                    type string;
+                }
+                leaf import-policy {
+                    type string;
+                    # todo: leafref / condition
+                }
+                leaf export-policy {
+                    type string;
+                    # todo: leafref / condition
+                }
+                container timer {
+                    leaf connect-retry {
+                        type uint32;
+                    }
+                    leaf hold-time {
+                        type uint32;
+                    }
+                    leaf keepalive-interval {
+                        type uint32;
+                    }
+                    leaf minimum-advertisement-interval {
+                        type uint32;
+                    }
+                    leaf restart-time {
+                        type uint32;
+                    }
+                }
+                # todo: "flag"
+            }
+            list supporting-termination-point {
+                key "network-ref" "node-ref" "tp-ref";
+                leaf network-ref {
+                    type leafref {
+                        path "/network/network-id";
+                    }
+                }
+                leaf node-ref {
+                    type leafref {
+                        path "/network/node/node-id";
+                    }
+                }
+                leaf tp-ref {
+                    type leafref {
+                        path "/network/node/ietf-network-topology:termination-point/tp-id";
+                    }
+                }
+            }
+        }
+        container mddo-topology:bgp-proc-node-attributes {
+            leaf router-id {
+                type inet:ip-address;
+            }
+            leaf confederation-id {
+                type uint32;
+            }
+            leaf-list confederation-member {
+                type uint32;
+            }
+            leaf route-reflector {
+                type boolean;
+            }
+            leaf-list peer-group {
+                type string;
+            }
+            list policy {
+                key "name";
+                leaf name {
+                    type string;
+                }
+                list statements {
+                    key "name";
+                    leaf name {
+                        type string;
+                    }
+                    leaf if {
+                        type string;
+                    }
+                    list conditions {} # todo
+                    list actions {} # todo
+                }
+                container default {
+                    list actions {} # todo
+                }
+            }
+            list prefix-set {
+                key "name";
+                leaf name {
+                    type string;
+                }
+                list prefixes {
+                    key "prefix";
+                    leaf prefix {
+                        type inet:ip-prefix;
+                    }
+                }
+            }
+            list as-path-set {
+                key "group-name";
+                leaf group-name {
+                    type string;
+                }
+                list as-path {
+                    key "name";
+                    leaf name {
+                        type string;
+                    }
+                    leaf pattern {
+                        type string;
+                    }
+                }
+            }
+            list community-set {
+                key "name";
+                leaf name {
+                    type string;
+                }
+                list communities {
+                    key "community";
+                    leaf community {
+                        type string;
+                    }
+                }
+            }
+            list redistribute {}  # todo
+            # todo: "flag"
+        }
+        list supporting-node {
+            key "network-ref" "node-ref";
+            leaf network-ref {
+                type leafref {
+                    path "/network/network-id";
+                }
+            }
+            leaf node-ref {
+                type leafref {
+                    path "/network/node/node-id";
+                }
+            }
+        }
+    }
+
+    list ietf-network-topology:link {
+        use "ietf-network-topology:link";
+        # todo
+    }
+
+    list supporting-netwrok {
+        key "network-ref";
+        leaf network-ref {
+            type leafref {
+                path "/network/network-id";
+            }
+        }
+    }
+}
