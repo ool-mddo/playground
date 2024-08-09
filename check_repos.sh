@@ -19,7 +19,7 @@ function is_branch_up_to_date () {
     current_branch=$1
     if [[ -n $current_branch ]]; then
         git fetch -q
-        if git status -uno | grep -q behind; then
+        if LANG=C git status -uno | grep -q behind; then
             echo "NO!"
         else
             echo "yes"
