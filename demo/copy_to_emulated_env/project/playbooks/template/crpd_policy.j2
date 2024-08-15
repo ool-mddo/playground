@@ -98,8 +98,10 @@ policy-options {
 {%         endfor %}
             }
             then {
+{%         set ns = namespace()  %}
 {%         for action in term["actions"] %}
 {%           for key, value in action.items() %}
+{%           set ns.aspath_phrase = "" %}
 {%             if key in ["metric", "local-preference", "next-hop"] %}
                 {{ key }} {{ value }};
 {%             elif key == "community" %}
@@ -107,7 +109,12 @@ policy-options {
 {%             elif key == "target" %}
                 {{ value }};
 {%             elif key == "as-path-prepend" %}
-                {{ key }} {{ value.asn[0] }};
+{%               for aspath_repeat in value %}
+{%                 for i in range(aspath_repeat.repeat) %}
+{%                   set ns.aspath_phrase = ns.aspath_phrase ~ " " ~ aspath_repeat.asn %}
+{%                 endfor %}
+{%               endfor %}
+                {{ key }} {{ ns.aspath_phrase }};
 {%             elif key == "apply" %}
 {# ToDo how to express "apply" in junos #}
 {%             else %}
