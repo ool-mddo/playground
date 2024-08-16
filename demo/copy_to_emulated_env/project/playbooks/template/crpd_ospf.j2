@@ -3,7 +3,9 @@ protocols {
         area {{ item.0.attribute.identifier }} {
 {% for interface in item.1.interfaces %}
             interface {{ interface.alias.l1_principal }} {
+{% if interface.attribute.metric > 0 %}
                 metric {{ interface.attribute.metric }};
+{% endif %}
 {% if interface.attribute.passive %}
                 passive;
 {% endif %}

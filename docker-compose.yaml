@@ -16,11 +16,12 @@ services:
       MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
     volumes:
       # data dirs
-      - type: bind
-        source: ${SHARED_QUERIES_DIR}
+      - type: volume
+        source: queries
         target: ${MDDO_QUERIES_DIR}
-      - type: bind
-        source: ${SHARED_TOPOLOGIES_DIR}
+        read_only: true
+      - type: volume
+        source: toplogies
         target: ${MDDO_TOPOLOGIES_DIR}
       # for development
       - type: bind
@@ -49,11 +50,11 @@ services:
       - type: bind
         source: ./.git
         target: ${MDDO_DIR}/.git  # git dir of under CONFIGS_DIR submodules
-      - type: bind
-        source: ${SHARED_CONFIGS_DIR}
+      - type: volume
+        source: configs
         target: ${MDDO_CONFIGS_DIR}
-      - type: bind
-        source: ${SHARED_QUERIES_DIR}
+      - type: volume
+        source: queries
         target: ${MDDO_QUERIES_DIR}
       # for development
       - type: bind
@@ -74,14 +75,16 @@ services:
       PYTHONUNBUFFERED: 1
     volumes:
       # data dirs
-      - type: bind
-        source: ${SHARED_CONFIGS_DIR}
+      - type: volume
+        source: configs
         target: ${MDDO_CONFIGS_DIR}
-      - type: bind
-        source: ${SHARED_QUERIES_DIR}
+        read_only: true
+      - type: volume
+        source: queries
         target: ${MDDO_QUERIES_DIR}
-      - type: bind
-        source: ${SHARED_TTP_DIR}
+        read_only: true
+      - type: volume
+        source: ttp
         target: ${MDDO_TTP_DIR}
       # for development
       - type: bind
@@ -131,8 +134,8 @@ services:
       MDDO_TOPOLOGIES_DIR: /netoviz/static/model
     volumes:
       # data dirs
-      - type: bind
-        source: ${SHARED_TOPOLOGIES_DIR}
+      - type: volume
+        source: toplogies
         target: /netoviz/static/model
       # for development
       - type: bind
@@ -169,9 +172,6 @@ services:
         source: ./repos/fish-tracer/components
         target: /fish-tracer/components
       - type: bind
-        source: ./repos/fish-tracer/layouts
-        target: /fish-tracer/layouts
-      - type: bind
         source: ./repos/fish-tracer/nuxt.config.js
         target: /fish-tracer/nuxt.config.js
       - type: bind
@@ -190,3 +190,28 @@ networks:
     ipam:
       config:
         - subnet: 172.16.254.0/24
+volumes:
+  configs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_CONFIGS_DIR}
+  queries:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_QUERIES_DIR}
+  toplogies:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_TOPOLOGIES_DIR}
+  ttp:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_TTP_DIR}

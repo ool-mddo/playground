@@ -3,6 +3,7 @@
 ## Main scenario
 
 * [デモ概要](./doc/abstract.md)
+* [copy_to_emulated_env共通環境準備](./doc/provision.md)
 * ユースケース (デモシナリオ)
   * [セグメント移転](./doc/move_seg/introduction.md)
   * PNIユースケース

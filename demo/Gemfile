@@ -4,6 +4,6 @@ source 'https://rubygems.org'
 
 source "https://rubygems.pkg.github.com/ool-mddo" do
   gem "mddo-toolbox-cli", ">= 1.2.1"
-  gem "netomox", ">= 0.9.1"
+  gem "netomox", ">= 0.10.0"
 end
 
