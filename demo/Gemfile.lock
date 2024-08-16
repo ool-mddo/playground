@@ -23,7 +23,7 @@ GEM
     rake (13.2.1)
     reline (0.5.9)
       io-console (~> 0.5)
-    rexml (3.3.4)
+    rexml (3.3.5)
       strscan
     rubyzip (2.3.2)
     strscan (3.1.0)
@@ -41,7 +41,7 @@ GEM
       netomox (>= 0.9.1)
       test-unit (~> 3.5)
       thor (~> 1.2)
-    netomox (0.10.0.pre9)
+    netomox (0.10.0)
       hashdiff (~> 1.0.1)
       jsonpath (~> 1.1.2)
       neography (~> 1.8.0)
@@ -54,7 +54,7 @@ PLATFORMS
 
 DEPENDENCIES
   mddo-toolbox-cli (>= 1.2.1)!
-  netomox (>= 0.10.0.pre9)!
+  netomox (>= 0.10.0)!
 
 BUNDLED WITH
    2.4.12
