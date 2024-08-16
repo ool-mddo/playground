@@ -22,7 +22,7 @@ policy-options {
 {%       for aspath in path["as-path"]%}
 {%         if "pattern" in aspath %}
         as-path {{ aspath["name"] }} "{{ aspath["pattern"] }}";
-{%         elif "length" in aspath and "min" in as-path["length"] %}
+{%         elif "length" in aspath and "min" in aspath["length"] %}
         as-path {{ aspath["name"] }} ".{% raw %}{{% endraw %}{{aspath["length"]["min"]}}{% raw %},}{% endraw %}";
 {%         else %}
         ERROR in as-path-group
