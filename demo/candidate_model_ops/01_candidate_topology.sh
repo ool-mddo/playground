@@ -3,7 +3,7 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
-# original as-is Create topology data
+# Create original as-is topology data
 curl -s -X DELETE "http://${API_PROXY}/conduct/${NETWORK_NAME}"
 curl -s -X POST -H 'Content-Type: application/json' \
   -d '{ "label": "OSPF model (original_asis)", "phy_ss_only": true }' \
@@ -32,7 +32,8 @@ if use_bgp_proc "$NETWORK_NAME" original_asis ; then
   external_as_json="${USECASE_CONFIGS_DIR}/external_as_topology.json"
   params_file="${USECASE_DIR}/params.yaml"
   flowdata_file="${USECASE_DIR}/flowdata.csv"
-  ruby "$external_as_script" -p "$params_file" -f "$flowdata_file"  > "$external_as_json"
+  ruby "$external_as_script" -n "$NETWORK_NAME" -p "$params_file" -f "$flowdata_file"  > "$external_as_json"
+
   # splice external-AS topology to original_asis (overwrite)
   curl -s -X POST -H "Content-Type: application/json" \
     -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \

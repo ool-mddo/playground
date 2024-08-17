@@ -11,8 +11,8 @@ protocols {
                 unicast;
             }
             peer-as {{ attrs["remote-as"] }};
-            local-as {{ attrs["local-as"] }};
 {%     if attrs["remote-as"] == attrs["local-as"] %}
+            local-as {{ attrs["local-as"] }};
             type internal;
 {%     else %}
             type external;
@@ -50,8 +50,8 @@ protocols {
                 unicast;
             }
             peer-as {{ attrs["remote-as"] }};
-            local-as {{ attrs["local-as"] }};
 {%     if attrs["remote-as"] == attrs["local-as"] %}
+            local-as {{ attrs["local-as"] }};
             type internal;
 {%     else %}
             type external;
