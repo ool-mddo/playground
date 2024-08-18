@@ -6,7 +6,7 @@ source ./demo_vars
 # Create original as-is topology data
 curl -s -X DELETE "http://${API_PROXY}/conduct/${NETWORK_NAME}"
 curl -s -X POST -H 'Content-Type: application/json' \
-  -d '{ "label": "OSPF model (original_asis)", "phy_ss_only": true }' \
+  -d '{ "label": "original_asis", "phy_ss_only": true }' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/topology"
 
 if use_bgp_proc "$NETWORK_NAME" original_asis ; then
@@ -42,9 +42,18 @@ if use_bgp_proc "$NETWORK_NAME" original_asis ; then
 fi
 
 # Generate candidate configs
+params_json=$(ruby convert2json.rb -y "${USECASE_DIR}/params.yaml")
+flow_data_json=$(ruby convert2json.rb -c "${USECASE_DIR}/flowdata.csv")
 original_candidate_list="${USECASE_CONFIGS_DIR}/original_candidate_list.json"
 curl -s -X POST -H 'Content-Type: application/json' \
-  -d '{ "candidate_number": "'"$CANDIDATE_NUM"'", "usecase": "'"$USECASE_NAME"'"}' \
+  -d '{
+    "candidate_number": "'"$CANDIDATE_NUM"'",
+    "usecase": {
+      "name": "'"$USECASE_NAME"'",
+      "params": '"$params_json"',
+      "flow_data": '"$flow_data_json"'
+    }
+  }' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/candidate_topology" \
   > "$original_candidate_list"
 
