@@ -67,6 +67,18 @@ services:
       - cadvisor
       - netomox-exp
 
+  state-conductor:
+    image: ${STATE_CONDUCTOR_IMAGE}:${STATE_CONDUCTOR_IMAGE_TAG}
+    environment:
+      STATE_CONDUCTOR_LOG_LEVEL: ${STATE_CONDUCTOR_LOG_LEVEL}
+    volumes:
+      # for development
+      - type: bind
+        source: ./repos/state-conductor
+        target: /state-conductor
+    depends_on:
+      - prometheus
+
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.38.6
     ports:
