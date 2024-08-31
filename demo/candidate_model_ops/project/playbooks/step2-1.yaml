@@ -9,69 +9,69 @@
       url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
       method: "GET"
       body_format: json
-    register: node_list
+    register: layer3_convert_table
 
   - name: generate config
     template:
       src: template/crpd.j2
       dest: "configs/{{ item.name }}.conf"
     when: '"segment" not in item.type'
-    loop: "{{ node_list.json }}"
+    loop: "{{ layer3_convert_table.json }}"
 
-  - name: "get ospf table"
+  - name: "get ospf node table (select ospf_proc node)"
     uri:
       url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
       method: "GET"
       body_format: json
-    register: ospf_list
+    register: ospf_nodes
 
-  - name: "get layer3 topology (reject segment node)"
+  - name: "get layer3 node table (reject segment node)"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3?exc_node_type=segment"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/nodes?exc_node_type=segment"
       method: "GET"
       body_format: json
-    register: layer3_topology
+    register: layer3_nodes
 
-  - name: "get bgp_proc topology"
+  - name: "get bgp_proc node table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/bgp_proc"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/bgp_proc/interfaces"
       method: "GET"
       body_format: json
-    register: bgp_proc_topology
+    register: bgp_proc_nodes
 
   ## layer3 (static-route) ##
 
   - name: generate static-route config
     template:
       src: template/crpd_static.j2
-      dest: "configs/{{ item['node-id'] }}_routing-options.conf"
-    loop: "{{ layer3_topology.json | json_query('node[*]') }}"
+      dest: "configs/{{ item.node }}_routing-options.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge static-route config
-    shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf ; rm configs/{{ item['node-id'] }}_routing-options.conf"
-    loop: "{{ layer3_topology.json | json_query('node[*]') }}"
+    shell: "cat configs/{{ item.node }}_routing-options.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   ## bgp_proc, bgp policy and peer ##
 
   - name: generate policy config
     template:
       src: template/crpd_policy.j2
-      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf"
-    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
+      dest: "configs/{{ item['supports'][0]['node-ref'] }}_policy.conf"
+    loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge policy config
-    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf"
-    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
+    shell: "cat configs/{{ item['supports'][0]['node-ref'] }}_policy.conf >> configs/{{ item['supports'][0]['node-ref'] }}.conf ; rm configs/{{ item['supports'][0]['node-ref'] }}_policy.conf"
+    loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate bgp peer config
     template:
       src: template/crpd_bgp.j2
-      dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
-    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
+      dest: "configs/{{ item['supports'][0]['node-ref'] }}_bgp.conf"
+    loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge bgp peer config
-    shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
-    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
+    shell: "cat configs/{{ item['supports'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supports'][0]['node-ref'] }}.conf ; rm configs/{{ item['supports'][0]['node-ref'] }}_bgp.conf"
+    loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   ## ospf ##
 
@@ -79,15 +79,17 @@
     template:
       src: template/crpd_ospf.j2
       dest: "configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
+    loop: "{{ ospf_nodes.json | subelements('nodes', skip_missing=True) }}"
 
   - name: merge ospf config
     shell: "cat configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf >> configs/{{ item.1.node }}.conf ; rm configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
-    loop: "{{ ospf_list.json | subelements('nodes', skip_missing=True) }}"
+    loop: "{{ ospf_nodes.json | subelements('nodes', skip_missing=True) }}"
+
+  ## bridge ##
 
   - name: generate bridge data
     set_fact:
-      bridgedata: "{{ bridgedata | default([])  + [ data ] }}"
+      bridge_data: "{{ bridge_data | default([])  + [ data ] }}"
     vars:
       data:
         name: "{{ item.agent_name }}"
@@ -100,21 +102,21 @@
           {%- endif -%}
           {%- endfor -%}
     when: '"segment" in item.type'
-    loop: "{{ node_list.json }}"
+    loop: "{{ layer3_convert_table.json }}"
 
-  - name: generate config
+  - name: generate bridge config
     template:
       src: template/ceos.j2
       dest: "configs/{{ item.name }}.conf"
-    loop: "{{ bridgedata }}"
+    loop: "{{ bridge_data }}"
 
   - name: upload generated config
     include_role:
-      name: uploadconfig
+      name: upload_config
     vars:
       url: "http://api-proxy/configs/{{ network_name }}/{{ snapshot_name }}/"
       filepath: "configs/{{ item.agent_name }}.conf"
-    loop: "{{ node_list.json }}"
+    loop: "{{ layer3_convert_table.json }}"
 
 - hosts: docker-host
   gather_facts: false
@@ -130,12 +132,12 @@
         url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
         method: "GET"
         body_format: json
-      register: node_list
+      register: layer3_convert_table
 
     - copy:
         src: "configs/{{ item.agent_name }}.conf"
         dest: "{{ ansible_runner_dir }}/clab/{{ item.agent_name }}.conf"
-      loop: "{{ node_list.json }}"
+      loop: "{{ layer3_convert_table.json }}"
       ignore_errors: true
 
     - name: "get clab topo yaml"

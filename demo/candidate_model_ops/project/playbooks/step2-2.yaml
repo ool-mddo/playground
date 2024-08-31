@@ -32,15 +32,15 @@
 
     - name: "get layer3 topology (select endpoint node)"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3?node_type=endpoint"
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/interfaces?node_type=endpoint"
         method: "GET"
         body_format: json
-      register: layer3_topology
+      register: layer3_nodes
 
     - name: generate iperf endpoint static-route info
       set_fact:
         iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
-      loop: "{{ layer3_topology.json | json_query('node[*]') }}"
+      loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
     - name: setting eth1 & default routing
       shell:
@@ -49,9 +49,9 @@
         chdir: "{{ ansible_runner_dir }}/clab"
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node-id'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
-        add_eth1_ip: 'ip addr add {{ item["ietf-network-topology:termination-point"][0]["mddo-topology:l3-termination-point-attributes"]["ip-address"][0] }} dev eth1 '
+        add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '
         del_default_route: "ip route del default via 172.20.20.1"
-        add_default_route: 'ip route add default via {{ item["mddo-topology:l3-node-attributes"]["static-route"][0]["next-hop"] }}'
+        add_default_route: 'ip route add default via {{ item["attribute"]["static-route"][0]["next-hop"] }}'
       loop: "{{ iperf_list }}"
       ignore_errors: true
       when:

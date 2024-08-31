@@ -73,7 +73,6 @@ function up_emulated_env() {
   #   -d '{"network_name": "'"$NETWORK_NAME"'"}' \
   #   http://localhost:15000/relabel/network
 
-
   ##############
   # post-clean #
   ##############

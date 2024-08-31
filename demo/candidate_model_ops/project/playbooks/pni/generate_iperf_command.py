@@ -9,20 +9,21 @@ source,dest,rate
 10.0.2.0/24,10.110.0.0/21,468.14
 
 static-route.yaml
-- ietf-network-topology:termination-point:
-  - mddo-topology:l3-termination-point-attributes:
+---
+- interfaces:
+  - attribute:
       description: to_Seg-10.0.1.0-24_Ethernet2
       flag: []
       ip-address: [10.0.1.100/24]
     tp-id: eth1.0
-  mddo-topology:l3-node-attributes:
+  attribute:
     flag: []
     node-type: endpoint
     prefix: []
     static-route:
     - {description: default, interface: dynamic, metric: 10, next-hop: 10.0.1.1, preference: 1,
       prefix: 0.0.0.0/0}
-  node-id: endpoint01-iperf1
+  node: endpoint01-iperf1
 """
 
 import argparse
@@ -33,8 +34,8 @@ from ipaddress import ip_network
 
 
 # constant (alias)
-TP_KEY = "ietf-network-topology:termination-point"
-L3TP_ATTR_KEY = "mddo-topology:l3-termination-point-attributes"
+TP_KEY = "interfaces"
+L3TP_ATTR_KEY = "attribute"
 
 
 def read_flow_data_file(file_path: str) -> list:
@@ -60,7 +61,7 @@ def l3tp_in_subnet(l3tp_data: dict, subnet_addr: str) -> bool:
 
 
 def extract_l3tp_data(l3tp_data: dict) -> dict:
-    return {"id": l3tp_data["node-id"], "ip_addr": ip_addr_from_l3tp_data(l3tp_data)}
+    return {"id": l3tp_data["node"], "ip_addr": ip_addr_from_l3tp_data(l3tp_data)}
 
 
 def find_l3tp_by_flow(l3tp_data_list: list, subnet_addr: str) -> dict:
@@ -159,7 +160,8 @@ root@endpoint01-iperf1:/# iperf3 -c 10.100.1.100 -b 100K -u -p 5201-52XX
 # server(dst) iperf command:
 root@endpoint02-iperf1:/# iperf3 -s -p 5201-52XX
 
-output 
+output
+---
 - "server_node": "endpoint02-iperf1"
   "clients":
      - "server_port": 5201
