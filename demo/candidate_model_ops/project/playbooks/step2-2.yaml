@@ -30,28 +30,17 @@
       when:
         with_clab == "true"
 
-    - name: "get converted topology"
+    - name: "get layer3 topology (select endpoint node)"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology"
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3?node_type=endpoint"
         method: "GET"
         body_format: json
-      register: topology
-
-    - name: search L3 network index
-      set_fact:
-        layer3index: "{{ l3_index }}"
-      when: item['network-id'] == "layer3"
-      loop: "{{ topology.json | json_query('*.network[]') }}"
-      loop_control:
-        index_var: l3_index
+      register: layer3_topology
 
     - name: generate iperf endpoint static-route info
       set_fact:
         iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
-      vars:
-        query: '*.network[{{ layer3index }}].node[*]'
-      when: item["mddo-topology:l3-node-attributes"]["node-type"] == 'endpoint'
-      loop: "{{ topology.json | json_query(query) | flatten }}"
+      loop: "{{ layer3_topology.json | json_query('node[*]') }}"
 
     - name: setting eth1 & default routing
       shell:

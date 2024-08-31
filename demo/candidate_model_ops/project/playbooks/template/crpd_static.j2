@@ -16,13 +16,14 @@ routing-options {
         }
     }
 {% endif %}
+{# ospf_list contains only nodes that node_type is ospf_proc #}
 {% for ospf_node in ospf_list["json"][0]["nodes"] %}
-{% if ospf_node["node"] == item["node-id"] and "Seg" not in item["node-id"] %}
+{% if ospf_node["node"] == item["node-id"] %}
     router-id {{ ospf_node["attribute"]["router-id"] }};
 {% endif %}
 {% endfor  %}
 {# search bgp node which has node-ref with item["node-id"] #}
-{% for bgp_node in topology.json["ietf-network:networks"]["network"][bgpindex]["node"] %}
+{% for bgp_node in bgp_proc_topology.json["node"] %}
 {% if bgp_node["supporting-node"][0]["node-ref"] == item["node-id"] and "mddo-topology:bgp-proc-node-attributes" in bgp_node%}
     autonomous-system {{ bgp_node["ietf-network-topology:termination-point"][0]["mddo-topology:bgp-proc-termination-point-attributes"]["local-as"] }};
 {% if bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-member"] | length != 0 %}

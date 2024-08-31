@@ -25,72 +25,55 @@
       body_format: json
     register: ospf_list
 
-  - name: "get whole topology"
+  - name: "get layer3 topology (reject segment node)"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3?exc_node_type=segment"
       method: "GET"
       body_format: json
-    register: topology
+    register: layer3_topology
 
-  - name: search L3 network index
-    set_fact:
-      layer3index: "{{ l3_index }}"
-    when: item['network-id'] == "layer3"
-    loop: "{{ topology.json | json_query('*.network[]') }}"
-    loop_control:
-      index_var: l3_index
+  - name: "get bgp_proc topology"
+    uri:
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/bgp_proc"
+      method: "GET"
+      body_format: json
+    register: bgp_proc_topology
 
-  - name: search bgp_proc network index
-    set_fact:
-      bgpindex: "{{ bgp_proc_index }}"
-    when: item['network-id'] == "bgp_proc"
-    loop: "{{ topology.json | json_query('*.network[]') }}"
-    loop_control:
-      index_var: bgp_proc_index
+  ## layer3 (static-route) ##
 
   - name: generate static-route config
     template:
       src: template/crpd_static.j2
       dest: "configs/{{ item['node-id'] }}_routing-options.conf"
-    vars:
-      query: '*.network[{{ layer3index }}].node[*]'
-    when: '"Seg" not in item["node-id"]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
+    loop: "{{ layer3_topology.json | json_query('node[*]') }}"
 
   - name: merge static-route config
     shell: "cat configs/{{ item['node-id'] }}_routing-options.conf >>  configs/{{ item['node-id'] }}.conf ; rm configs/{{ item['node-id'] }}_routing-options.conf"
-    vars:
-      query: '*.network[{{ layer3index }}].node[*]'
-    when: '"Seg" not in item["node-id"]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
+    loop: "{{ layer3_topology.json | json_query('node[*]') }}"
+
+  ## bgp_proc, bgp policy and peer ##
 
   - name: generate policy config
     template:
       src: template/crpd_policy.j2
       dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
+    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
 
   - name: merge policy config
     shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_policy.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
+    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
 
   - name: generate bgp peer config
     template:
       src: template/crpd_bgp.j2
       dest: "configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
+    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
 
   - name: merge bgp peer config
     shell: "cat configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supporting-node'][0]['node-ref'] }}.conf ; rm configs/{{ item['supporting-node'][0]['node-ref'] }}_bgp.conf"
-    vars:
-      query: '*.network[{{ bgpindex }}].node[*]'
-    loop: "{{ topology.json | json_query(query) | flatten }}"
+    loop: "{{ bgp_proc_topology.json | json_query('node[*]') }}"
+
+  ## ospf ##
 
   - name: generate ospf config
     template:

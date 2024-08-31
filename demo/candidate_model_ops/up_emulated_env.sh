@@ -17,6 +17,11 @@ function up_emulated_env() {
 
   echo "Target original snapshot: $target_original_snapshot"
 
+  #############
+  # pre-clean #
+  #############
+  sudo ./pre_clean.sh
+
   ######################
   # configuration part #
   ######################
@@ -69,8 +74,8 @@ function up_emulated_env() {
   #   http://localhost:15000/relabel/network
 
 
-  ############
-  # clean-up #
-  ############
-  sudo ./demo_remove.sh
+  ##############
+  # post-clean #
+  ##############
+  sudo ./post_clean.sh
 }
