@@ -37,16 +37,13 @@ if use_bgp_proc "$NETWORK_NAME" original_asis ; then
 fi
 
 # Generate candidate configs
-params_json=$(curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/params")
-flow_data_json=$(curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/flow_data")
 original_candidate_list="${USECASE_CONFIGS_DIR}/original_candidate_list.json"
 curl -s -X POST -H 'Content-Type: application/json' \
   -d '{
     "candidate_number": "'"$CANDIDATE_NUM"'",
     "usecase": {
       "name": "'"$USECASE_NAME"'",
-      "params": '"$params_json"',
-      "flow_data": '"$flow_data_json"'
+      "sources": ["params", "flow_data"]
     }
   }' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/candidate_topology" \
