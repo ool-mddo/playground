@@ -5,11 +5,9 @@
   vars:
     ansible_user: "{{ login_user }}"
     ansible_python_interpreter: /usr/bin/python3
-    gen_iperf_command: project/playbooks/{{ usecase_common_name }}/generate_iperf_command.py
-    flow_data: project/playbooks/{{ usecase_name }}/flowdata.csv
-    static_route_data: project/playbooks/configs/static-route.yaml
-    iperf_params_data_runner: configs/iperf_params.json  # in runner container path (origin: this playbook dir)
-    iperf_params_data: project/playbooks/configs/iperf_params.json  # in remote host path
+    static_route_file: project/playbooks/configs/static-route.json
+    iperf_params_file_in_runner: configs/iperf_params.json  # in runner container path (origin: this playbook dir)
+    iperf_params_file: project/playbooks/configs/iperf_params.json  # in remote host path
     with_clab: "{{ with_clab }}"
     clab_restart: "{{ clab_restart }}"
 
@@ -57,16 +55,29 @@
       when:
         with_clab == "true"
 
-    - name: create static-route.yaml (as input for generate_iperf_command.py)
-      copy:
-        dest: "{{ ansible_runner_dir }}/project/playbooks/configs/static-route.yaml"
-        content: "{{ iperf_list | to_yaml }}"
+    - name: push static-route data (as input for generate_iperf_command.py)
+      uri:
+        url: "http://localhost:15000/usecases/{{ usecase_name }}/static_routes"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body_format: json
+        body: {"static_routes": "{{ iperf_list }}"}
+        return_content: false
+        status_code: [200, 201]
 
     - name: generate iperf command parameter
-      shell:
-        cmd: "python3 {{ gen_iperf_command }} -f {{ flow_data }} -s {{ static_route_data }} > {{ iperf_params_data }}"
-      args:
-        chdir: "{{ ansible_runner_dir }}"
+      uri:
+        url: "http://localhost:15000/usecases/{{ usecase_name }}/iperf_commands"
+        method: GET
+        body_format: json
+      register:
+        iperf_commands
+
+    - name: Save iperf commands data to a file
+      copy:
+        content: "{{ iperf_commands.json }}"
+        dest: "{{ ansible_runner_dir }}/{{ iperf_params_file }}"
 
     - name: iperf server command (debug)
       debug:
@@ -74,7 +85,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
 
     - name: iperf server command
@@ -83,7 +94,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
       when:
         with_clab == "true"
@@ -94,7 +105,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
 
     - name: iperf client command
@@ -103,7 +114,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
       when:
         with_clab == "true"

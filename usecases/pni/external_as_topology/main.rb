@@ -10,7 +10,7 @@ require_relative 'bgp_as_data_builder'
 
 # Hash to store the options
 options = {
-  api_proxy: ENV['API_PROXY'] || 'localhost:15000',
+  api_proxy: ENV['API_PROXY'] || 'localhost:9292',
   network_name: ENV['NETWORK_NAME'] || 'mddo-bgp',
   param_file: Pathname.new(__FILE__).dirname.parent.join('params.yaml'),
   flow_data_file: Pathname.new(__FILE__).dirname.parent.join('flowdata.csv')

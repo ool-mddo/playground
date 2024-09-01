@@ -29,7 +29,6 @@ static-route.yaml
 import argparse
 import csv
 import json
-import yaml
 from ipaddress import ip_network
 
 
@@ -45,8 +44,8 @@ def read_flow_data_file(file_path: str) -> list:
 
 
 def read_static_route_data_file(file_path: str) -> list:
-    with open(file_path) as file:
-        return yaml.safe_load(file.read())
+    with open(file_path, "r") as file:
+        return json.load(file)
 
 
 def ip_addr_from_l3tp_data(l3tp_data: dict) -> str:
