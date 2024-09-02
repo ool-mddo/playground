@@ -48,7 +48,6 @@ services:
       BATFISH_WRAPPER_LOG_LEVEL: ${BATFISH_WRAPPER_LOG_LEVEL}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
-      MDDO_USECASES_DIR: ${MDDO_USECASES_DIR}
       MDDO_GIT_ALLOWED_CONFIGS_REPOSITORY: ${MDDO_CONFIGS_DIR}/pushed_configs
       PYTHONUNBUFFERED: 1
     volumes:
@@ -62,9 +61,6 @@ services:
       - type: volume
         source: queries
         target: ${MDDO_QUERIES_DIR}
-      - type: volume
-        source: usecases
-        target: ${MDDO_USECASES_DIR}
       # for development
       - type: bind
         source: ./repos/batfish-wrapper

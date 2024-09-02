@@ -55,20 +55,9 @@
       when:
         with_clab == "true"
 
-    - name: push static-route data (as input for generate_iperf_command.py)
-      uri:
-        url: "http://localhost:15000/usecases/{{ usecase_name }}/static_routes"
-        method: POST
-        headers:
-          Content-Type: "application/json"
-        body_format: json
-        body: {"static_routes": "{{ iperf_list }}"}
-        return_content: false
-        status_code: [200, 201]
-
     - name: generate iperf command parameter
       uri:
-        url: "http://localhost:15000/usecases/{{ usecase_name }}/iperf_commands"
+        url: "http://localhost:15000/usecases/{{ usecase_name }}/iperf_commands?network={{ network_name }}&snapshot={{ snapshot_name }}"
         method: GET
         body_format: json
       register:
