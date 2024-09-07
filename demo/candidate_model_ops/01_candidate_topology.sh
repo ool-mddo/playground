@@ -25,7 +25,7 @@ if use_bgp_proc "$NETWORK_NAME" original_asis ; then
     "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/topology"
 
   # generate external-AS topology
-  external_as_json="${USECASE_CONFIGS_DIR}/external_as_topology.json"
+  external_as_json="${USECASE_SESSION_DIR}/external_as_topology.json"
   curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/external_as_topology?network=${NETWORK_NAME}" \
     > "$external_as_json"
 
@@ -36,8 +36,8 @@ if use_bgp_proc "$NETWORK_NAME" original_asis ; then
     > /dev/null # ignore echo-back (topology json)
 fi
 
-# Generate candidate configs
-original_candidate_list="${USECASE_CONFIGS_DIR}/original_candidate_list.json"
+# Generate candidate topologies
+original_candidate_list="${USECASE_SESSION_DIR}/original_candidate_list.json"
 curl -s -X POST -H 'Content-Type: application/json' \
   -d '{
     "candidate_number": "'"$CANDIDATE_NUM"'",
@@ -50,12 +50,12 @@ curl -s -X POST -H 'Content-Type: application/json' \
   > "$original_candidate_list"
 
 # Add netoviz index
-netoviz_asis_index="${USECASE_CONFIGS_DIR}/netoviz_asis_index.json"
+netoviz_asis_index="${USECASE_SESSION_DIR}/netoviz_asis_index.json"
 jq '.[0:1]' "$NETWORK_INDEX" > "$netoviz_asis_index"
-netoviz_original_candidates_index="${USECASE_CONFIGS_DIR}/netoviz_original_candidates_index.json"
+netoviz_original_candidates_index="${USECASE_SESSION_DIR}/netoviz_original_candidates_index.json"
 filter='map(. + {label: ( "\(.network | ascii_upcase) (\(.snapshot))"), file: "topology.json"})'
 jq "$filter" "$original_candidate_list" > "$netoviz_original_candidates_index"
-netoviz_index="${USECASE_CONFIGS_DIR}/netoviz_index.json"
+netoviz_index="${USECASE_SESSION_DIR}/netoviz_index.json"
 jq -s '.[0] + .[1]' "$netoviz_asis_index" "$netoviz_original_candidates_index" > "$netoviz_index"
 
 curl -s -X POST -H 'Content-Type: application/json' \

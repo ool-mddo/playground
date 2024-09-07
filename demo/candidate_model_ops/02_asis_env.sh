@@ -45,10 +45,10 @@ target_original_snapshot="original_asis"
 convert_namespace "$target_original_snapshot"
 
 # Add netoviz index
-netoviz_asis_index="${USECASE_CONFIGS_DIR}/netoviz_asis_index.json"
+netoviz_asis_index="${USECASE_SESSION_DIR}/netoviz_asis_index.json"
 jq '.[0:2]' "$NETWORK_INDEX" > "$netoviz_asis_index"
-netoviz_original_candidates_index="${USECASE_CONFIGS_DIR}/netoviz_original_candidates_index.json"
-netoviz_index="${USECASE_CONFIGS_DIR}/netoviz_index.json"
+netoviz_original_candidates_index="${USECASE_SESSION_DIR}/netoviz_original_candidates_index.json"
+netoviz_index="${USECASE_SESSION_DIR}/netoviz_index.json"
 jq -s '.[0] + .[1]' "$netoviz_asis_index" "$netoviz_original_candidates_index" > "$netoviz_index"
 
 curl -s -X POST -H 'Content-Type: application/json' \

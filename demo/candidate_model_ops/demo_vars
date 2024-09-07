@@ -18,6 +18,7 @@ NETWORK_INDEX="network_index/${NETWORK_NAME}.json"
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/candidate_model_ops"
 ANSIBLE_PLAYBOOK_DIR="${ANSIBLE_RUNNER_DIR}/project/playbooks"
 USECASE_CONFIGS_DIR="${ANSIBLE_PLAYBOOK_DIR}/configs"
+USECASE_SESSION_DIR="${ANSIBLE_PLAYBOOK_DIR}/session"
 
 # step1-2, 2-2: check if the network has bgp(_proc) layer
 function use_bgp_proc() {

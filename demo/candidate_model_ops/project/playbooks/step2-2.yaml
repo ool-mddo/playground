@@ -40,13 +40,23 @@
         iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
       loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
+    - name: setting eth1 & default routing (debug)
+      debug:
+        msg: "{{ exec_container }} {{ add_eth1_ip }}; {{ exec_container }} {{ del_default_route }}; {{ exec_container }} {{ add_default_route }}"
+      vars:
+        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '
+        del_default_route: "ip route del default via 172.20.20.1"
+        add_default_route: 'ip route add default via {{ item["attribute"]["static-route"][0]["next-hop"] }}'
+      loop: "{{ iperf_list }}"
+
     - name: setting eth1 & default routing
       shell:
         cmd: "{{ exec_container }} {{ add_eth1_ip }}; {{ exec_container }} {{ del_default_route }}; {{ exec_container }} {{ add_default_route }}"
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node-id'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
         add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '
         del_default_route: "ip route del default via 172.20.20.1"
         add_default_route: 'ip route add default via {{ item["attribute"]["static-route"][0]["next-hop"] }}'
