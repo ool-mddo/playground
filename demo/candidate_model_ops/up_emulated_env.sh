@@ -72,7 +72,7 @@ function up_emulated_env() {
   # set network name into namespace-relabeler
   curl -s -X POST -H 'Content-Type: application/json' \
     -d '{"network_name": "'"$NETWORK_NAME"'"}' \
-    http://localhost:15000/relabel/network
+    "http://${API_PROXY}/relabel/network"
 
   # NOTE: will be rewrited codes that routers are ready to use
   # wait to boot environment

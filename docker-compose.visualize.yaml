@@ -76,6 +76,7 @@ services:
     image: ${STATE_CONDUCTOR_IMAGE}:${STATE_CONDUCTOR_IMAGE_TAG}
     environment:
       STATE_CONDUCTOR_LOG_LEVEL: ${STATE_CONDUCTOR_LOG_LEVEL}
+      PROMETHEUS_URL: http://prometheus:9090
     volumes:
       # for development
       - type: bind
