@@ -40,7 +40,7 @@ echo "Please enter your sudo password:"
 sudo -v
 
 # at first: prepare each emulated_candidate topology data
-original_candidate_list="${USECASE_CONFIGS_DIR}/original_candidate_list.json"
+original_candidate_list="${USECASE_SESSION_DIR}/original_candidate_list.json"
 for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
   # convert namespace from original_candidate_i to emulated_candidate_i
@@ -48,12 +48,12 @@ do
 done
 
 # update netoviz index
-netoviz_asis_index="${USECASE_CONFIGS_DIR}/netoviz_asis_index.json"
-netoviz_original_candidates_index="${USECASE_CONFIGS_DIR}/netoviz_original_candidates_index.json"
-netoviz_emulated_candidate_index="${USECASE_CONFIGS_DIR}/netoviz_emulated_candidate_index.json"
+netoviz_asis_index="${USECASE_SESSION_DIR}/netoviz_asis_index.json"
+netoviz_original_candidates_index="${USECASE_SESSION_DIR}/netoviz_original_candidates_index.json"
+netoviz_emulated_candidate_index="${USECASE_SESSION_DIR}/netoviz_emulated_candidate_index.json"
 filter='map(.snapshot |= sub("original"; "emulated") | . + {label: ("MDDO-BGP (" + .snapshot + ")"), file: "topology.json"})'
 jq "$filter" "$original_candidate_list" > "$netoviz_emulated_candidate_index"
-netoviz_index="${USECASE_CONFIGS_DIR}/netoviz_index.json"
+netoviz_index="${USECASE_SESSION_DIR}/netoviz_index.json"
 jq -s '.[0] + .[1] + .[2]' "$netoviz_asis_index" "$netoviz_original_candidates_index" "$netoviz_emulated_candidate_index" \
   > "$netoviz_index"
 

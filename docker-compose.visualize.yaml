@@ -1,5 +1,10 @@
 ---
 services:
+  api-proxy:
+    depends_on:
+      - namespace-relabeler
+      - state-conductor
+
   grafana:
     image: grafana/grafana-oss:10.0.3
     ports:
@@ -66,6 +71,19 @@ services:
     depends_on:
       - cadvisor
       - netomox-exp
+
+  state-conductor:
+    image: ${STATE_CONDUCTOR_IMAGE}:${STATE_CONDUCTOR_IMAGE_TAG}
+    environment:
+      STATE_CONDUCTOR_LOG_LEVEL: ${STATE_CONDUCTOR_LOG_LEVEL}
+      PROMETHEUS_URL: http://prometheus:9090
+    volumes:
+      # for development
+      - type: bind
+        source: ./repos/state-conductor
+        target: /state-conductor
+    depends_on:
+      - prometheus
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.38.6

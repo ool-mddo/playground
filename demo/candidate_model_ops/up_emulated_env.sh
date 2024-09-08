@@ -9,6 +9,8 @@ function convert_namespace() {
   curl -s -X POST -H 'Content-Type: application/json' \
     -d '{ "table_origin": "'"$target_original_snapshot"'" }' \
     "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/${target_original_snapshot}/${target_emulated_snapshot}"
+
+  echo # newline
 }
 
 function up_emulated_env() {
@@ -16,6 +18,11 @@ function up_emulated_env() {
   target_emulated_snapshot="${target_original_snapshot/original/emulated}"
 
   echo "Target original snapshot: $target_original_snapshot"
+
+  #############
+  # pre-clean #
+  #############
+  sudo ./pre_clean.sh
 
   ######################
   # configuration part #
@@ -59,18 +66,44 @@ function up_emulated_env() {
               -k -K"
 
   ###############
-  # satate part #
+  # state part #
   ###############
 
   # set network name into namespace-relabeler
-  echo "# TODO: push network/snapshot info into namespace-relabeler"
-  # curl -s -X POST -H 'Content-Type: application/json' \
-  #   -d '{"network_name": "'"$NETWORK_NAME"'"}' \
-  #   http://localhost:15000/relabel/network
+  curl -s -X POST -H 'Content-Type: application/json' \
+    -d '{"network_name": "'"$NETWORK_NAME"'"}' \
+    "http://${API_PROXY}/relabel/network"
 
+  # NOTE: will be rewrited codes that routers are ready to use
+  # wait to boot environment
+  echo # newline
+  echo "Wait env:${NETWORK_NAME}/${target_emulated_snapshot} be ready..."
+  sleep 60
 
-  ############
-  # clean-up #
-  ############
-  sudo ./demo_remove.sh
+  # begin measurement
+  echo "begin measurement"
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{ "action": "begin" }' \
+    "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${target_emulated_snapshot}/sampling"
+
+  # keep traffic
+  echo "keep measurement"
+  sleep 60s
+
+  # end measurement
+  echo "end measurement"
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{ "action": "end" }' \
+    "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${target_emulated_snapshot}/sampling"
+
+  # get environment state
+  echo "Result state of env:${NETWORK_NAME}/${target_emulated_snapshot}"
+  state_json="${USECASE_SESSION_DIR}/state_${target_emulated_snapshot}.json"
+  curl -s -X GET "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${target_emulated_snapshot}/state" \
+    | tee "$state_json"
+
+  ##############
+  # post-clean #
+  ##############
+  sudo ./post_clean.sh
 }

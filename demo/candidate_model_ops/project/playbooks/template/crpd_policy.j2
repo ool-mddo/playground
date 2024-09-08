@@ -1,4 +1,5 @@
-{% set attrs = item["mddo-topology:bgp-proc-node-attributes"] %}
+{# item = bgp_proc node data #}
+{% set attrs = item["attribute"] %}
 policy-options {
 {%   for prefix in attrs["prefix-set"] %}
     prefix-list {{ prefix["name"] }} {

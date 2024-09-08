@@ -5,11 +5,9 @@
   vars:
     ansible_user: "{{ login_user }}"
     ansible_python_interpreter: /usr/bin/python3
-    gen_iperf_command: project/playbooks/{{ usecase_common_name }}/generate_iperf_command.py
-    flow_data: project/playbooks/{{ usecase_name }}/flowdata.csv
-    static_route_data: project/playbooks/configs/static-route.yaml
-    iperf_params_data_runner: configs/iperf_params.json  # in runner container path (origin: this playbook dir)
-    iperf_params_data: project/playbooks/configs/iperf_params.json  # in remote host path
+    static_route_file: project/playbooks/configs/static-route.json
+    iperf_params_file_in_runner: configs/iperf_params.json  # in runner container path (origin: this playbook dir)
+    iperf_params_file: project/playbooks/configs/iperf_params.json  # in remote host path
     with_clab: "{{ with_clab }}"
     clab_restart: "{{ clab_restart }}"
 
@@ -30,28 +28,27 @@
       when:
         with_clab == "true"
 
-    - name: "get converted topology"
+    - name: "get layer3 topology (select endpoint node)"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology"
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/interfaces?node_type=endpoint"
         method: "GET"
         body_format: json
-      register: topology
-
-    - name: search L3 network index
-      set_fact:
-        layer3index: "{{ l3_index }}"
-      when: item['network-id'] == "layer3"
-      loop: "{{ topology.json | json_query('*.network[]') }}"
-      loop_control:
-        index_var: l3_index
+      register: layer3_nodes
 
     - name: generate iperf endpoint static-route info
       set_fact:
         iperf_list: "{{ iperf_list | default([]) + [ item ] }}"
+      loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+    - name: setting eth1 & default routing (debug)
+      debug:
+        msg: "{{ exec_container }} {{ add_eth1_ip }}; {{ exec_container }} {{ del_default_route }}; {{ exec_container }} {{ add_default_route }}"
       vars:
-        query: '*.network[{{ layer3index }}].node[*]'
-      when: item["mddo-topology:l3-node-attributes"]["node-type"] == 'endpoint'
-      loop: "{{ topology.json | json_query(query) | flatten }}"
+        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '
+        del_default_route: "ip route del default via 172.20.20.1"
+        add_default_route: 'ip route add default via {{ item["attribute"]["static-route"][0]["next-hop"] }}'
+      loop: "{{ iperf_list }}"
 
     - name: setting eth1 & default routing
       shell:
@@ -59,25 +56,27 @@
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node-id'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
-        add_eth1_ip: 'ip addr add {{ item["ietf-network-topology:termination-point"][0]["mddo-topology:l3-termination-point-attributes"]["ip-address"][0] }} dev eth1 '
+        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '
         del_default_route: "ip route del default via 172.20.20.1"
-        add_default_route: 'ip route add default via {{ item["mddo-topology:l3-node-attributes"]["static-route"][0]["next-hop"] }}'
+        add_default_route: 'ip route add default via {{ item["attribute"]["static-route"][0]["next-hop"] }}'
       loop: "{{ iperf_list }}"
       ignore_errors: true
       when:
         with_clab == "true"
 
-    - name: create static-route.yaml (as input for generate_iperf_command.py)
-      copy:
-        dest: "{{ ansible_runner_dir }}/project/playbooks/configs/static-route.yaml"
-        content: "{{ iperf_list | to_yaml }}"
-
     - name: generate iperf command parameter
-      shell:
-        cmd: "python3 {{ gen_iperf_command }} -f {{ flow_data }} -s {{ static_route_data }} > {{ iperf_params_data }}"
-      args:
-        chdir: "{{ ansible_runner_dir }}"
+      uri:
+        url: "http://localhost:15000/usecases/{{ usecase_name }}/iperf_commands?network={{ network_name }}&snapshot={{ snapshot_name }}"
+        method: GET
+        body_format: json
+      register:
+        iperf_commands
+
+    - name: Save iperf commands data to a file
+      copy:
+        content: "{{ iperf_commands.json }}"
+        dest: "{{ ansible_runner_dir }}/{{ iperf_params_file }}"
 
     - name: iperf server command (debug)
       debug:
@@ -85,7 +84,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
 
     - name: iperf server command
@@ -94,7 +93,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
       when:
         with_clab == "true"
@@ -105,7 +104,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
 
     - name: iperf client command
@@ -114,7 +113,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_data_runner) }}"
+        - "{{ lookup('file', iperf_params_file_in_runner) }}"
         - clients
       when:
         with_clab == "true"
