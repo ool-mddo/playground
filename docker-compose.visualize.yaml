@@ -1,5 +1,10 @@
 ---
 services:
+  api-proxy:
+    depends_on:
+      - namespace-relabeler
+      - state-conductor
+
   grafana:
     image: grafana/grafana-oss:10.0.3
     ports:
