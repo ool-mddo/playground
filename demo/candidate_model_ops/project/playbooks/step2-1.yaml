@@ -40,15 +40,35 @@
     register: bgp_proc_nodes
 
   ## layer3 (static-route) ##
-
+  ## crpd_routingoption_asn.j2       crpd_routingoption_routerid.j2  crpd_routingoption_static.j2
   - name: generate static-route config
     template:
-      src: template/crpd_static.j2
-      dest: "configs/{{ item.node }}_routing-options.conf"
+      src: template/crpd_routing-option-static.j2
+      dest: "configs/{{ item.node }}_routing-options-static.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge static-route config
-    shell: "cat configs/{{ item.node }}_routing-options.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options.conf"
+    shell: "cat configs/{{ item.node }}_routing-options-static.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-static.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: generate router-id config
+    template:
+      src: template/crpd_routing-option-routerid.j2
+      dest: "configs/{{ item.node }}_routing-options-routerid.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: merge router-id config
+    shell: "cat configs/{{ item.node }}_routing-options-routerid.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-routerid.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: generate asn config
+    template:
+      src: template/crpd_routing-option-asn.j2
+      dest: "configs/{{ item.node }}_routing-options-asn.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: merge asn config
+    shell: "cat configs/{{ item.node }}_routing-options-asn.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-asn.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   ## bgp_proc, bgp policy and peer ##
