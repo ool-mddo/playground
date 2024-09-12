@@ -40,7 +40,6 @@
     register: bgp_proc_nodes
 
   ## layer3 (static-route) ##
-  ## crpd_routingoption_asn.j2       crpd_routingoption_routerid.j2  crpd_routingoption_static.j2
   - name: generate static-route config
     template:
       src: template/crpd_routing-option-static.j2
