@@ -13,7 +13,7 @@
 
   - name: generate config
     template:
-      src: template/crpd.j2
+      src: template/crpd/common/crpd.j2
       dest: "configs/{{ item.name }}.conf"
     when: '"segment" not in item.type'
     loop: "{{ layer3_convert_table.json }}"
@@ -40,9 +40,10 @@
     register: bgp_proc_nodes
 
   ## layer3 (static-route) ##
+  ## crpd_routingoption_asn.j2       crpd_routingoption_routerid.j2  crpd_routingoption_static.j2
   - name: generate static-route config
     template:
-      src: template/crpd_routing-option-static.j2
+      src: template/crpd/layer3/crpd_routing-option-static.j2
       dest: "configs/{{ item.node }}_routing-options-static.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
@@ -50,9 +51,19 @@
     shell: "cat configs/{{ item.node }}_routing-options-static.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-static.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
-  - name: generate router-id config
+  - name: generate router-id config (bgp)
     template:
-      src: template/crpd_routing-option-routerid.j2
+      src: template/crpd/bgp/crpd_routing-option-routerid.j2
+      dest: "configs/{{ item.node }}_routing-options-routerid.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: merge router-id config
+    shell: "cat configs/{{ item.node }}_routing-options-routerid.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-routerid.conf"
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: generate router-id config (ospf)
+    template:
+      src: template/crpd/ospf/crpd_routing-option-routerid.j2
       dest: "configs/{{ item.node }}_routing-options-routerid.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
@@ -62,7 +73,7 @@
 
   - name: generate asn config
     template:
-      src: template/crpd_routing-option-asn.j2
+      src: template/crpd/bgp/crpd_routing-option-asn.j2
       dest: "configs/{{ item.node }}_routing-options-asn.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
@@ -74,7 +85,7 @@
 
   - name: generate policy config
     template:
-      src: template/crpd_policy.j2
+      src: template/crpd/common/crpd_policy.j2
       dest: "configs/{{ item['supports'][0]['node-ref'] }}_policy.conf"
     loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
@@ -84,7 +95,7 @@
 
   - name: generate bgp peer config
     template:
-      src: template/crpd_bgp.j2
+      src: template/crpd/bgp/crpd_bgp.j2
       dest: "configs/{{ item['supports'][0]['node-ref'] }}_bgp.conf"
     loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
@@ -96,7 +107,7 @@
 
   - name: generate ospf config
     template:
-      src: template/crpd_ospf.j2
+      src: template/crpd/ospf/crpd_ospf.j2
       dest: "configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
     loop: "{{ ospf_nodes.json | subelements('nodes', skip_missing=True) }}"
 
@@ -125,7 +136,7 @@
 
   - name: generate bridge config
     template:
-      src: template/ceos.j2
+      src: template/ceos/layer3/ceos.j2
       dest: "configs/{{ item.name }}.conf"
     loop: "{{ bridge_data }}"
 
