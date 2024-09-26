@@ -1,0 +1,52 @@
+{
+  "$id": "/bgp-proc/node-attributes/prefix-set",
+  "title": "bgp-proc-node-attributes-prefix-set",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": ""
+      },
+      "prefixes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "prefix": {
+              "type": "string",
+              "description": "prefixの指定 TODO: CIDR型を検証する"
+            },
+            "length": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "max": {
+                  "type": "string",
+                  "description": "prefixの最大長"
+                },
+                "min": {
+                  "type": "string",
+                  "description": "prefixの最小長"
+                }
+              },
+              "description": "prefixの長さの指定"
+            },
+            "match-type": {
+              "type": "enum",
+              "enum": [
+                "prefix-length-range",
+                "exact",
+                "orlonger"
+              ],
+              "description": "prefixのmatch条件 TODO: この条件によって各プロパティの必須項目が変わるのをif文で書く。exactの時もminとmaxが入ってる？ TODO: policy.jsonにも同じ項目があるので、共通化できるかも"
+            }
+          }
+        }
+      }
+    }
+  }
+}

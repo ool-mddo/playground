@@ -1,0 +1,28 @@
+{
+  "$id": "/bgp-proc/node-attributes/community-set",
+  "title": "bgp-proc-node-attributes-community-set",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": ""
+      },
+      "communities": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "community": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      }
+    }
+  }
+}

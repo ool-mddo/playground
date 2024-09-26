@@ -1,0 +1,43 @@
+{
+  "$id": "/bgp-proc/node-attributes/as-path-set",
+  "title": "bgp-proc-node-attributes-as-path-set",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "group-name": {
+        "type": "string",
+        "description": ""
+      },
+      "as-path": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": ""
+          },
+          "pattern": {
+            "type": "string",
+            "description": "TODO: lengthと排他？"
+          },
+          "length": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "max": {
+                "type": "string",
+                "description": "maxある？"
+              },
+              "min": {
+                "type": "string",
+                "description": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

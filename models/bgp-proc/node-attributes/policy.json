@@ -1,0 +1,197 @@
+{
+  "$id": "/bgp-proc/node-attributes/policy",
+  "title": "bgp-proc-node-attributes-policy",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Name of the policy, such as `policy-statement XXXX` in Junos or `route-policy XXXX` in IOS-XR"
+      },
+      "statements": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the statement, such as `term XXXX` in Junos. In IOS-XR, this field is automatically generated with 10, 20, 30..."
+            },
+            "if": {
+              "type": "enum",
+              "enum": [
+                "if",
+                "else-if"
+              ],
+              "description": "TODO: if以外見かけない？"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            },
+            "actions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/action"
+              }
+            }
+          }
+        }
+      },
+      "default": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/action"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "各termのアクション。TODO: 網羅性を確かめる",
+      "properties": {
+        "target": {
+          "type": "enum",
+          "enum": [
+            "accept",
+            "reject",
+            "next term"
+          ],
+          "description": "accept(junos)=pass(ios-xr), reject(junos)=drop(ios-xr), next term(junos) TODO: XR特有のなにかがあったような"
+        },
+        "community": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "type": "enum",
+              "enum": [
+                "set",
+                "delete"
+              ],
+              "description": "communityの追加/削除"
+            },
+            "name": {
+              "type": "string",
+              "description": "community名"
+            }
+          },
+          "description": "community操作"
+        },
+        "apply": {
+          "type": "string",
+          "description": "適用するpolicyの指定"
+        },
+        "metric": {
+          "type": "string",
+          "description": "metricの指定"
+        },
+        "next-hop": {
+          "type": "string",
+          "description": "next-hopの指定"
+        },
+        "local-preference": {
+          "type": "string",
+          "description": "local-preferenceの指定"
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "各termのマッチ条件。TODO: 網羅性を確かめる",
+      "properties": {
+        "policy": {
+          "type": "string",
+          "description": "他のpolicyでmatchするときに指定"
+        },
+        "as-path-group": {
+          "type": "string",
+          "description": "as-path-groupでmatchするときに指定"
+        },
+        "community": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "マッチ対象のcommunityを羅列"
+        },
+        "protocol": {
+          "type": "string",
+          "description": "マッチ対象のprotocolを指定"
+        },
+        "route-filter": {
+          "description": "route-filterでmatchするときに指定",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "prefix": {
+              "type": "string",
+              "description": "prefixの指定 TODO: CIDR型を検証する"
+            },
+            "length": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "max": {
+                  "type": "string",
+                  "description": "prefixの最大長"
+                },
+                "min": {
+                  "type": "string",
+                  "description": "prefixの最小長"
+                }
+              },
+              "description": "prefixの長さの指定"
+            },
+            "match-type": {
+              "type": "enum",
+              "enum": [
+                "prefix-length-range",
+                "exact",
+                "orlonger"
+              ],
+              "description": "prefixのmatch条件 TODO: この条件によって各プロパティの必須項目が変わるのをif文で書く。exactの時もminとmaxが入ってる？"
+            }
+          }
+        },
+        "prefix-list-filter": {
+          "description": "prefix-list-filterでmatchするときに指定",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "prefix-list": {
+              "type": "string",
+              "description": "prefix-listの指定"
+            },
+            "match-type": {
+              "type": "enum",
+              "enum": [
+                "exact",
+                "orlonger"
+              ],
+              "description": "prefix-listのmatch条件 TODO: この条件によって各プロパティの必須項目が変わるのをif文で書く"
+            }
+          }
+        },
+        "prefix-list": {
+          "type": "string",
+          "description": "prefix-listの指定"
+        }
+      }
+    }
+  }
+}
