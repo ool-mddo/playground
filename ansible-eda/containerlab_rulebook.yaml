@@ -1,0 +1,21 @@
+---
+- name: deploycontainerlab
+  hosts: localhost
+
+  sources:
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 48090
+
+  rules:
+    - name: clab
+      condition: event.payload.message == "clab"
+      action:
+        run_playbook:
+          name: "/home/mddo/playground/demo/candidate_model_ops/project/playbooks/containerlab.yaml"
+          extra_vars:
+            with_clab: "true"
+            crpd_image: "crpd:23.4R1.9"
+            network_name: "mddo-bgp"
+            snapshot_name: "original_asis"
+            ansible_runner_dir: /home/mddo/playground/demo/candidate_model_ops  

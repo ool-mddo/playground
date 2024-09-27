@@ -1,0 +1,55 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: true
+  vars:
+    ansible_user: "{{ login_user}}"
+    ansible_python_interpreter: /usr/bin/python3
+    with_clab: "{{ with_clab }}"
+
+  tasks:
+    - name: "get convert table"
+      uri:
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
+        method: "GET"
+        body_format: json
+      register: layer3_convert_table
+
+    - copy:
+        src: "/home/ubuntu/playground/configs/mddo-bgp/original_asis/configs/{{ item.agent_name }}.conf"
+        dest: "{{ ansible_runner_dir }}/clab/{{ item.agent_name }}.conf"
+      loop: "{{ layer3_convert_table.json }}"
+      ignore_errors: true
+
+    - name: "get clab topo yaml"
+      uri:
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"
+        method: "GET"
+        body_format: json
+      register: containerlab
+
+    - name: Creating clab-topo.yaml
+      copy:
+        dest: "{{ ansible_runner_dir }}/clab/clab-topo.yaml"
+        content: "{{ containerlab.json | to_yaml }}"
+
+    - name: "delete ovs-br {{ item.key }}"
+      shell: "ovs-vsctl del-br {{ item.key }}"
+      when: with_clab == "true" and "ovs" in item.value.kind
+      loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
+      ignore_errors: true
+
+    - name: "create ovs-br {{ item.key }}"
+      shell: "ovs-vsctl add-br {{ item.key }}"
+      when: with_clab == "true" and "ovs" in item.value.kind
+      loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
+      ignore_errors: true
+
+    - name: deploy containerlab
+      shell:
+        cmd: "containerlab deploy --topo clab-topo.yaml --reconfigure"
+      args:
+        chdir: "{{ ansible_runner_dir }}/clab"
+      when: with_clab == "true"
+
+

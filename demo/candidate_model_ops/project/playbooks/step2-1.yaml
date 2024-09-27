@@ -14,7 +14,7 @@
   - name: generate config
     template:
       src: template/crpd/common/crpd.j2
-      dest: "configs/{{ item.name }}.conf"
+      dest: "/app/{{ item.name }}.conf"
     when: '"segment" not in item.type'
     loop: "{{ layer3_convert_table.json }}"
 
@@ -44,41 +44,41 @@
   - name: generate static-route config
     template:
       src: template/crpd/layer3/crpd_routing-option-static.j2
-      dest: "configs/{{ item.node }}_routing-options-static.conf"
+      dest: "/app/{{ item.node }}_routing-options-static.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge static-route config
-    shell: "cat configs/{{ item.node }}_routing-options-static.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-static.conf"
+    shell: "cat /app/{{ item.node }}_routing-options-static.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-static.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate router-id config (bgp)
     template:
       src: template/crpd/bgp/crpd_routing-option-routerid.j2
-      dest: "configs/{{ item.node }}_routing-options-routerid.conf"
+      dest: "/app/{{ item.node }}_routing-options-routerid.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge router-id config
-    shell: "cat configs/{{ item.node }}_routing-options-routerid.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-routerid.conf"
+    shell: "cat /app/{{ item.node }}_routing-options-routerid.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-routerid.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate router-id config (ospf)
     template:
       src: template/crpd/ospf/crpd_routing-option-routerid.j2
-      dest: "configs/{{ item.node }}_routing-options-routerid.conf"
+      dest: "/app/{{ item.node }}_routing-options-routerid.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge router-id config
-    shell: "cat configs/{{ item.node }}_routing-options-routerid.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-routerid.conf"
+    shell: "cat /app/{{ item.node }}_routing-options-routerid.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-routerid.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate asn config
     template:
       src: template/crpd/bgp/crpd_routing-option-asn.j2
-      dest: "configs/{{ item.node }}_routing-options-asn.conf"
+      dest: "/app/{{ item.node }}_routing-options-asn.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge asn config
-    shell: "cat configs/{{ item.node }}_routing-options-asn.conf >>  configs/{{ item.node }}.conf ; rm configs/{{ item.node }}_routing-options-asn.conf"
+    shell: "cat /app/{{ item.node }}_routing-options-asn.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-asn.conf"
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   ## bgp_proc, bgp policy and peer ##
@@ -86,21 +86,21 @@
   - name: generate policy config
     template:
       src: template/crpd/common/crpd_policy.j2
-      dest: "configs/{{ item['supports'][0]['node-ref'] }}_policy.conf"
+      dest: "/app/{{ item['supports'][0]['node-ref'] }}_policy.conf"
     loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge policy config
-    shell: "cat configs/{{ item['supports'][0]['node-ref'] }}_policy.conf >> configs/{{ item['supports'][0]['node-ref'] }}.conf ; rm configs/{{ item['supports'][0]['node-ref'] }}_policy.conf"
+    shell: "cat /app/{{ item['supports'][0]['node-ref'] }}_policy.conf >> /app/{{ item['supports'][0]['node-ref'] }}.conf ; rm /app/{{ item['supports'][0]['node-ref'] }}_policy.conf"
     loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate bgp peer config
     template:
       src: template/crpd/bgp/crpd_bgp.j2
-      dest: "configs/{{ item['supports'][0]['node-ref'] }}_bgp.conf"
+      dest: "/app/{{ item['supports'][0]['node-ref'] }}_bgp.conf"
     loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge bgp peer config
-    shell: "cat configs/{{ item['supports'][0]['node-ref'] }}_bgp.conf >> configs/{{ item['supports'][0]['node-ref'] }}.conf ; rm configs/{{ item['supports'][0]['node-ref'] }}_bgp.conf"
+    shell: "cat /app/{{ item['supports'][0]['node-ref'] }}_bgp.conf >> /app/{{ item['supports'][0]['node-ref'] }}.conf ; rm /app/{{ item['supports'][0]['node-ref'] }}_bgp.conf"
     loop: "{{ bgp_proc_nodes.json | json_query('nodes[*]') }}"
 
   ## ospf ##
@@ -108,11 +108,11 @@
   - name: generate ospf config
     template:
       src: template/crpd/ospf/crpd_ospf.j2
-      dest: "configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
+      dest: "/app/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
     loop: "{{ ospf_nodes.json | subelements('nodes', skip_missing=True) }}"
 
   - name: merge ospf config
-    shell: "cat configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf >> configs/{{ item.1.node }}.conf ; rm configs/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
+    shell: "cat /app/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf >> /app/{{ item.1.node }}.conf ; rm /app/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
     loop: "{{ ospf_nodes.json | subelements('nodes', skip_missing=True) }}"
 
   ## bridge ##
@@ -137,7 +137,7 @@
   - name: generate bridge config
     template:
       src: template/ceos/layer3/ceos.j2
-      dest: "configs/{{ item.name }}.conf"
+      dest: "/app/{{ item.name }}.conf"
     loop: "{{ bridge_data }}"
 
   - name: upload generated config
@@ -145,58 +145,6 @@
       name: upload_config
     vars:
       url: "http://api-proxy/configs/{{ network_name }}/{{ snapshot_name }}/"
-      filepath: "configs/{{ item.agent_name }}.conf"
+      filepath: "/app/{{ item.agent_name }}.conf"
     loop: "{{ layer3_convert_table.json }}"
 
-- hosts: docker-host
-  gather_facts: false
-  become: true
-  vars:
-    ansible_user: "{{ login_user}}"
-    ansible_python_interpreter: /usr/bin/python3
-    with_clab: "{{ with_clab }}"
-
-  tasks:
-    - name: "get convert table"
-      uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
-        method: "GET"
-        body_format: json
-      register: layer3_convert_table
-
-    - copy:
-        src: "configs/{{ item.agent_name }}.conf"
-        dest: "{{ ansible_runner_dir }}/clab/{{ item.agent_name }}.conf"
-      loop: "{{ layer3_convert_table.json }}"
-      ignore_errors: true
-
-    - name: "get clab topo yaml"
-      uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"
-        method: "GET"
-        body_format: json
-      register: containerlab
-
-    - name: Creating clab-topo.yaml
-      copy:
-        dest: "{{ ansible_runner_dir }}/clab/clab-topo.yaml"
-        content: "{{ containerlab.json | to_yaml }}"
-
-    - name: "delete ovs-br {{ item.key }}"
-      shell: "ovs-vsctl del-br {{ item.key }}"
-      when: with_clab == "true" and "ovs" in item.value.kind
-      loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
-      ignore_errors: true
-
-    - name: "create ovs-br {{ item.key }}"
-      shell: "ovs-vsctl add-br {{ item.key }}"
-      when: with_clab == "true" and "ovs" in item.value.kind
-      loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
-      ignore_errors: true
-
-    - name: deploy containerlab
-      shell:
-        cmd: "containerlab deploy --topo clab-topo.yaml --reconfigure"
-      args:
-        chdir: "{{ ansible_runner_dir }}/clab"
-      when: with_clab == "true"

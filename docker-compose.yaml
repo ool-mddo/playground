@@ -1,5 +1,21 @@
 ---
 services:
+  ansible-eda:
+    build:
+      context: ansible-eda
+      dockerfile: Dockerfile
+    ports:
+      - target: 48080
+        published: 48081
+    volumes:
+      - type: bind
+        source: ./demo/candidate_model_ops/project/playbooks
+        target: /playbooks
+      - type: bind
+        source: ./ansible-eda
+        target: /eda
+    command: ["ansible-rulebook","-r","/eda/rulebook.yaml","-i","/eda/hosts","-vvvv"]
+
   api-proxy:
     image: ${API_PROXY_IMAGE}:${API_PROXY_IMAGE_TAG}
     volumes:

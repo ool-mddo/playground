@@ -1,0 +1,18 @@
+---
+- name: Hello Events
+  hosts: localhost
+
+  sources:
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 48080
+
+  rules:
+    - name: playground
+      condition: event.payload.message == "step2"
+      action:
+        run_playbook:
+          name: /playbooks/step2-1.yaml
+          extra_vars:
+            network_name: "mddo-bgp"  
+            snapshot_name: "original_asis"  
