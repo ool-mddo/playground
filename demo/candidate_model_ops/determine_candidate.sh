@@ -16,6 +16,6 @@ function determine_candidate() {
     > "$diff_with_asis_and_candidate"
 
   echo "Result state diff between ${src_ss} and ${dst_ss} (with names in original namespace)"
-  cat "$diff_with_asis_and_candidate"
+  python3 diff2csv.py -j "$diff_with_asis_and_candidate" | column -s, -t
 }
 

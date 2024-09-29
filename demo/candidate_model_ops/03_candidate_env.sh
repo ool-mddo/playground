@@ -69,3 +69,9 @@ do
   up_emulated_env "$target_original_snapshot"
   determine_candidate "$target_original_snapshot"
 done
+
+# summary
+for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+do
+  determine_candidate "$target_original_snapshot" | grep -v "Target" | grep -v "Result"
+done
