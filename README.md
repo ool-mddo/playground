@@ -66,3 +66,7 @@
   * デモ動画: [ISPネットワークのモデルベース再現とBGP運用シミュレーション - YouTube](https://www.youtube.com/watch?v=kdPh17xdPiM)
 * JANOG 53 Meeting (2024/01/17-19)
   * [BIGLOBE AS2518をまるごと仮想環境へ”コピー”してみた - JANOG53 Meeting in Hakata](https://www.janog.gr.jp/meeting/janog53/as2518/)
+* ITRC meet55 (2024/05/16-17)
+  * [ISP機器設定ファイルをもとにトポロジモデルを抽出し仮想検証環境構築と運用手順確認に利用する手法](https://www.itrc.net/meet/meet55-program/)
+* 電子情報通信学会 ソサイエティ大会 (2024/09/10-13)
+  * [コンテナを用いたISPネットワーク検証システムとトラヒックシミュレーションによる作業事前検証の実施](https://pub.confit.atlas.jp/ja/event/society2024/session/31-20408-11)
