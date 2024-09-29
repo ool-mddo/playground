@@ -4,6 +4,8 @@
 source ./demo_vars
 # shellcheck disable=SC1091
 source ./up_emulated_env.sh
+# shellcheck disable=SC1091
+source ./determine_candidate.sh
 
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
@@ -65,4 +67,5 @@ curl -s -X POST -H 'Content-Type: application/json' \
 for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
   up_emulated_env "$target_original_snapshot"
+  determine_candidate "$target_original_snapshot"
 done

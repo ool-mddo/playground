@@ -60,7 +60,6 @@ function up_emulated_env() {
               -e network_name=${NETWORK_NAME} \
               -e snapshot_name=${target_emulated_snapshot} \
               -e usecase_name=${USECASE_NAME} \
-              -e usecase_common_name=${USECASE_COMMON_NAME} \
               -e with_clab=${WITH_CLAB} \
               -e clab_restart=false \
               -k -K"
