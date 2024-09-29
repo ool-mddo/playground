@@ -71,6 +71,8 @@ do
 done
 
 # summary
+echo # newline
+echo "Summary"
 for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
   determine_candidate "$target_original_snapshot" | grep -v "Target" | grep -v "Result"
