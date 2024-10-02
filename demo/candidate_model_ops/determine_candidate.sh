@@ -12,7 +12,7 @@ function determine_candidate() {
   params=$(curl -s "http://$API_PROXY/usecases/${USECASE_NAME}/${NETWORK_NAME}/params")
   node=$(echo "$params" | jq -r ".expected_traffic.original_targets[0].node")
   interface=$(echo "$params" | jq -r ".expected_traffic.original_targets[0].interface")
-  curl -s "http://${API_PROXY}/state-conductor/${NETWORK_NAME}/snapshot_diff/${src_ss}/${dst_ss}?interface=${interface}&device=${node}" \
+  curl -s "http://${API_PROXY}/state-conductor/${USECASE_NAME}/${NETWORK_NAME}/snapshot_diff/${src_ss}/${dst_ss}?interface=${interface}&node=${node}" \
     > "$diff_with_asis_and_candidate"
 
   echo "Result state diff between ${src_ss} and ${dst_ss} (with names in original namespace)"
