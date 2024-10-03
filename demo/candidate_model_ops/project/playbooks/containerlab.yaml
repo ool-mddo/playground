@@ -3,7 +3,6 @@
   gather_facts: false
   become: true
   vars:
-    ansible_user: "{{ login_user}}"
     ansible_python_interpreter: /usr/bin/python3
     with_clab: "{{ with_clab }}"
 
@@ -14,12 +13,6 @@
         method: "GET"
         body_format: json
       register: layer3_convert_table
-
-    - copy:
-        src: "/home/ubuntu/playground/configs/mddo-bgp/original_asis/configs/{{ item.agent_name }}.conf"
-        dest: "{{ ansible_runner_dir }}/clab/{{ item.agent_name }}.conf"
-      loop: "{{ layer3_convert_table.json }}"
-      ignore_errors: true
 
     - name: "get clab topo yaml"
       uri:

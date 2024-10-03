@@ -14,6 +14,9 @@ services:
       - type: bind
         source: ./ansible-eda
         target: /eda
+      - type: bind
+        source: ./demo/candidate_model_ops/clab
+        target: /clab
     command: ["ansible-rulebook","-r","/eda/rulebook.yaml","-i","/eda/hosts","-vvvv"]
 
   api-proxy:
