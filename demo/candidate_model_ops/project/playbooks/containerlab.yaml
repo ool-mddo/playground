@@ -14,6 +14,20 @@
         method: "GET"
         body_format: json
       register: layer3_convert_table
+    
+    - name: download generated config
+      shell: "curl {{ url }}/{{ item.agent_name }}.conf | jq -r .text > {{ filepath }}"
+      vars:
+        url: "http://localhost:15000/configs/{{ network_name }}/{{ snapshot_name }}"
+        filepath: "{{ ansible_runner_dir }}/clab/{{ item.agent_name }}.conf"
+      loop: "{{ layer3_convert_table.json }}"
+
+    - name: "get convert table"
+      uri:
+        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
+        method: "GET"
+        body_format: json
+      register: layer3_convert_table
 
     - name: "get clab topo yaml"
       uri:

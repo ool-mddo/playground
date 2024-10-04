@@ -36,11 +36,48 @@ function up_emulated_env() {
   curl -H 'Content-Type: application/json' -d "{\"message\": \"step2\",\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\"}" localhost:48081/endpoint
 
   echo "wait deploy"
+  sleep 180s
+
+  ###############
+  # state part #
+  ###############
+
+  # set network name into namespace-relabeler
+  curl -s -X POST -H 'Content-Type: application/json' \
+    -d '{"network_name": "'"$NETWORK_NAME"'"}' \
+    "http://${API_PROXY}/relabel/network"
+
+  # NOTE: will be rewrited codes that routers are ready to use
+  # wait to boot environment
+  echo # newline
+  echo "Wait env:${NETWORK_NAME}/${target_emulated_snapshot} be ready..."
+  sleep 60
+
+  # begin measurement
+  echo "begin measurement"
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{ "action": "begin" }' \
+    "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${target_emulated_snapshot}/sampling"
+
+  # keep traffic
+  echo "keep measurement"
   sleep 60s
-  #            -e login_user=${LOCALSERVER_USER} \
-  #            -e network_name=${NETWORK_NAME} \
-  #            -e snapshot_name=${target_emulated_snapshot} \
-  #            -e usecase_name=${USECASE_NAME} \
-  #            -e usecase_common_name=${USECASE_COMMON_NAME} \
-  #            -e with_clab=${WITH_CLAB} \
+
+  # end measurement
+  echo "end measurement"
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{ "action": "end" }' \
+    "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${target_emulated_snapshot}/sampling"
+
+  # get environment state
+  echo "Result state of env:${NETWORK_NAME}/${target_emulated_snapshot}"
+  state_json="${USECASE_SESSION_DIR}/state_${target_emulated_snapshot}.json"
+  curl -s -X GET "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${target_emulated_snapshot}/state" \
+    | tee "$state_json"
+
+  ##############
+  # post-clean #
+  ##############
+  sudo ./post_clean.sh
+  
 }
