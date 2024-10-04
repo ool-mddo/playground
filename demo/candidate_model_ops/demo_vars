@@ -10,7 +10,7 @@ PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 
 # all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
-USECASE_NAME="pni_te" # "pni_addlink" or "pni_te" for mddo-bgp network
+USECASE_NAME="pni_addlink" # "pni_addlink" or "pni_te" for mddo-bgp network
 CANDIDATE_NUM=3
 
 # constants

@@ -1,0 +1,4 @@
+---
+- name: download config
+  shell: "curl http://localhost:15000/configs/mddo-bgp/emulated_asis/as65550-core.conf | jq -r .text "
+
