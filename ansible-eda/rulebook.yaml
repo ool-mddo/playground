@@ -14,5 +14,8 @@
         run_playbook:
           name: /playbooks/step2-1.yaml
           extra_vars:
-            network_name: "mddo-bgp"  
-            snapshot_name: "original_asis"  
+            network_name: "{{ event.payload.network_name }}"
+            crpd_image: "{{ event.payload.crpd_image }}"
+            ansible_runner_dir: "{{ event.payload.ansible_runner_dir }}"
+            snapshot_name: "emulated_asis"
+            usecase_name: "{{ event.payload.usecase_name }}"

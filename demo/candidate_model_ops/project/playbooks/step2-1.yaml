@@ -148,7 +148,7 @@
       filepath: "/clab/{{ item.agent_name }}.conf"
     loop: "{{ layer3_convert_table.json }}"
 
-  - name: "get ospf node table (select ospf_proc node)"
+  - name: "deploy containerlab"
     uri:
       url: "http://172.16.254.1:48090/endpoint"
       method: "POST"
@@ -157,3 +157,7 @@
       body_format: json
       body:
         message: clab
+        usecase_name: "{{ usecase_name }}"
+        network_name: "{{ network_name }}"
+        crpd_image: "{{ crpd_image }}"
+        ansible_runner_dir: "{{ ansible_runner_dir }}"
