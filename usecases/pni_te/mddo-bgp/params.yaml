@@ -5,7 +5,7 @@ expected_traffic:
       interface: ge-0/0/3.0
       expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
   emulated_traffic:
-    scale: 1e-3 # 1Gbps to 1Mbps
+    scale: 1e-2 # 1Gbps to 10Mbps
 source_as:
   asn: 65550
   allowed_peers:

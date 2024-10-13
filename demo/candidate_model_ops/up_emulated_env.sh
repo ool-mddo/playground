@@ -77,7 +77,7 @@ function up_emulated_env() {
   # wait to boot environment
   echo # newline
   echo "Wait env:${NETWORK_NAME}/${target_emulated_snapshot} be ready..."
-  sleep 60
+  sleep 90s 
 
   # begin measurement
   echo "begin measurement"
@@ -87,7 +87,7 @@ function up_emulated_env() {
 
   # keep traffic
   echo "keep measurement"
-  sleep 60s
+  sleep 90s
 
   # end measurement
   echo "end measurement"
