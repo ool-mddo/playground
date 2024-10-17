@@ -26,7 +26,7 @@ GrafanaとPrometheus起動後、上記のGrafanaのポートにアクセスす�
 
 # ディレクトリ構造
 
-GrafanaとPrometheus用の設定ファイルは `playground/assets/visualize` にあります。
+GrafanaとPrometheus用の設定ファイルは `playground/assets/{grafana,prometheus}` にあります。
 それぞれ`grafana`と`prometheus`で管理しています。
 
 - `grafana`: Grafanaの設定ファイルを格納したディレクトリ

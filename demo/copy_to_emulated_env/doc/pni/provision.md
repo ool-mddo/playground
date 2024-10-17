@@ -29,7 +29,7 @@ PNIユースケースでは、ネットワーク = mddo-bgp, スナップショ�
 ### docker compose 環境変数の設定とデモシステムの起動
 
 PNIユースケース (pni_te/addlink) ではトラフィック流量を確認するために grafana/prometheus を追加で使用します。
-これらのツールはコンテナで起動しますが、通常使用するデモシステムとは docker compose 設定ファイルを分離しています。(可視化ツール類については [assets/visualize README](../../../../assets/visualize/README.md)を参照)
+これらのツールはコンテナで起動しますが、通常使用するデモシステムとは docker compose 設定ファイルを分離しています。(可視化ツール類については [トラフィック可視化](visualize.md)を参照)
 
 - playground
   - docker-compose.yaml : デモシステムとして通常利用するコンテナの定義
@@ -76,7 +76,7 @@ cd playground/demo/copy_to_emulated_env/
 
 PNIユースケース (pni_te/addlink) では、仮想環境内でのトラフィック生成や経路制御を行います。トラフィック流量を可視化するためにGrafanaを使用するため、先に準備しておきます。
 
-* grafanaの設定については `playground/assets/visualize/grafana/grafana.ini` を参照してください
+* grafanaの設定については `playground/assets/grafana/grafana.ini` を参照してください
 * データ取得は step2-2 実施後から可能になります。
 
 `http://localhost:23000` にアクセス
