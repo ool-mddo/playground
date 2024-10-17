@@ -140,7 +140,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum (irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\".*edge.*\", interface=~\"(ge-|Gigabit).*\"}[$__interval]) * 8 ) by (name, interface)",
+          "expr": "sum (irate(container_network_receive_bytes_total{instance=~\"$host\", interface=~\"eth.*\", name=~\".*edge.*\"}[$__interval]) * 8 ) by (name, interface)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}}: {{interface}}-in",
@@ -242,7 +242,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_receive_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(Ethernet|ge-|Gigabit).*\"}[$__interval]) * 8",
+          "expr": "irate(container_network_receive_bytes_total{instance=~\"$host\", interface=~\"eth.*\", name=~\"$container\"}[$__interval]) * 8",
           "hide": false,
           "interval": "",
           "legendFormat": "{{interface}}-in",
@@ -255,7 +255,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_transmit_bytes_total{instance=~\"$host\",name=~\"$container\", interface=~\"(Ethernet|ge-|Gigabit).*\"}[$__interval]) * -8 ",
+          "expr": "irate(container_network_transmit_bytes_total{instance=~\"$host\", interface=~\"eth.*\", name=~\"$container\"}[$__interval]) * -8 ",
           "hide": false,
           "instant": false,
           "legendFormat": "{{interface}}-out",
@@ -276,7 +276,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 72
       },
       "id": 8,
       "panels": [
@@ -325,7 +325,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -341,7 +342,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 73
           },
           "id": 15,
           "options": {
@@ -399,7 +400,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 73
       },
       "id": 11,
       "panels": [
@@ -418,7 +419,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 81
           },
           "hiddenSeries": false,
           "id": 9,
@@ -508,7 +509,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 81
           },
           "hiddenSeries": false,
           "id": 14,
@@ -606,7 +607,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 74
       },
       "id": 19,
       "panels": [
@@ -630,7 +631,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -687,7 +689,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 90
           },
           "id": 17,
           "options": {
@@ -779,8 +781,8 @@
         "allValue": ".*",
         "current": {
           "selected": true,
-          "text": "namespace-relabeler:5000",
-          "value": "namespace-relabeler:5000"
+          "text": "cadvisor:8080",
+          "value": "cadvisor:8080"
         },
         "datasource": {
           "type": "prometheus",
