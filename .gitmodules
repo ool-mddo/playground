@@ -28,9 +28,6 @@
 [submodule "configs/mddo-bgp"]
 	path = configs/mddo-bgp
 	url = https://github.com/ool-mddo/mddo-bgp.git
-[submodule "repos/namespace-relabeler"]
-	path = repos/namespace-relabeler
-	url = https://github.com/ool-mddo/namespace-relabeler.git
 [submodule "repos/state-conductor"]
 	path = repos/state-conductor
 	url = https://github.com/ool-mddo/state-conductor.git

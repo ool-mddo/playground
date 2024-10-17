@@ -2,7 +2,6 @@
 services:
   api-proxy:
     depends_on:
-      - namespace-relabeler
       - state-conductor
 
   grafana:
@@ -15,15 +14,15 @@ services:
     volumes:
       # Grafanaの設定ファイル
       - type: bind
-        source: ./assets/visualize/grafana/grafana.ini
+        source: ./assets/grafana/grafana.ini
         target: /etc/grafana/grafana.ini
       # データソースのprovisioning
       - type: bind
-        source: ./assets/visualize/grafana/datasources
+        source: ./assets/grafana/datasources
         target: /etc/grafana/provisioning/datasources
       # ダッシュボードのprovisioning
       - type: bind
-        source: ./assets/visualize/grafana/dashboards
+        source: ./assets/grafana/dashboards
         target: /etc/grafana/provisioning/dashboards
     restart: always
     logging:
@@ -40,7 +39,7 @@ services:
     volumes:
       # ./prometheus配下に存在する設定ファイルのマウント
       - type: bind
-        source: ./assets/visualize/prometheus/
+        source: ./assets/prometheus/
         target: /etc/prometheus/
     command:
       # コンフィグファイルのパスの指定
@@ -51,26 +50,7 @@ services:
       options:
         max-size: 50m
     depends_on:
-      - namespace-relabeler
-
-  namespace-relabeler:
-    image: ${NAMESPACE_RELABELER_IMAGE}:${NAMESPACE_RELABELER_IMAGE_TAG}
-    environment:
-      NAMESPACE_RELABELER_LOG_LEVEL: ${NAMESPACE_RELABELER_LOG_LEVEL}
-      NETOMOX_EXP_HOST: netomox-exp:${NETOMOX_EXP_PORT}
-      CADVISOR_URL: http://cadvisor:8080/metrics
-    volumes:
-      # for development
-      - type: bind
-        source: ./repos/namespace-relabeler/src
-        target: /opt/namespace-relabeler
-    logging:
-      options:
-        max-size: 50m
-    stop_signal: SIGINT
-    depends_on:
       - cadvisor
-      - netomox-exp
 
   state-conductor:
     image: ${STATE_CONDUCTOR_IMAGE}:${STATE_CONDUCTOR_IMAGE_TAG}
