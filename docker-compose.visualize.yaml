@@ -2,7 +2,6 @@
 services:
   api-proxy:
     depends_on:
-      - namespace-relabeler
       - state-conductor
 
   grafana:
@@ -50,27 +49,6 @@ services:
     logging:
       options:
         max-size: 50m
-    depends_on:
-      - namespace-relabeler
-
-  namespace-relabeler:
-    image: ${NAMESPACE_RELABELER_IMAGE}:${NAMESPACE_RELABELER_IMAGE_TAG}
-    environment:
-      NAMESPACE_RELABELER_LOG_LEVEL: ${NAMESPACE_RELABELER_LOG_LEVEL}
-      NETOMOX_EXP_HOST: netomox-exp:${NETOMOX_EXP_PORT}
-      CADVISOR_URL: http://cadvisor:8080/metrics
-    volumes:
-      # for development
-      - type: bind
-        source: ./repos/namespace-relabeler/src
-        target: /opt/namespace-relabeler
-    logging:
-      options:
-        max-size: 50m
-    stop_signal: SIGINT
-    depends_on:
-      - cadvisor
-      - netomox-exp
 
   state-conductor:
     image: ${STATE_CONDUCTOR_IMAGE}:${STATE_CONDUCTOR_IMAGE_TAG}
