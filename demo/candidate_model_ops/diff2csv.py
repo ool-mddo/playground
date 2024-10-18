@@ -4,25 +4,35 @@ import argparse
 import sys
 import math
 
-def json_to_csv(json_file):
-    with open(json_file, 'r') as f:
-        data = json.load(f)
+def json_to_csv(param_json_file, diff_json_file):
+    with open(param_json_file, 'r') as f:
+        param_data = json.load(f)
+    with open(diff_json_file, 'r') as f:
+        diff_data = json.load(f)
+
+    # interfaces to check
+    target_interfaces = param_data["expected_traffic"]["original_targets"]
 
     # Process each node and interface
     rows = []
-    for node, interfaces in data['diff'].items():
+    for node, interfaces in diff_data['diff'].items():
         row = {
-            # "network": data["network"],
-            "src_ss": data["source_snapshot"],
-            "dst_ss": data["destination_snapshot"],
+            # "network": diff_data["network"],
+            "src_ss": diff_data["source_snapshot"],
+            "dst_ss": diff_data["destination_snapshot"],
             "node": node
         }
         for interface, metrics in interfaces.items():
             row["interface"] = interface
             for metric, values in metrics.items():
                 row[f"{metric}-cnt"] = math.ceil(values["counter"] * 100) / 100  # decimal places: 2
-                row[f"{metric}-%"] = math.ceil(values["ratio"] * 1000) / 10  # decimal places: 1 [%]
-    rows.append(row)
+                if values["ratio"] is None:
+                    row[f"{metric}-%"] = None
+                else:
+                    row[f"{metric}-%"] = math.ceil(values["ratio"] * 1000) / 10  # decimal places: 1 [%]
+        # filter: append rows only if the row matched a target interface
+        if next((t for t in target_interfaces if t["node"] == row["node"] and t["interface"] == row["interface"]), None):
+            rows.append(row)
 
     # CSV writer (outputs to stdout)
     writer = csv.writer(sys.stdout)
@@ -35,10 +45,11 @@ def json_to_csv(json_file):
 
 def main():
     parser = argparse.ArgumentParser(description="Convert JSON to CSV.")
-    parser.add_argument('-j', '--json', required=True, help='Path to the JSON file.')
+    parser.add_argument('-p', '--param', required=True, help="Path to usecase PARAM json")
+    parser.add_argument('-d', '--diff', required=True, help='Path to state DIFF json.')
     args = parser.parse_args()
 
-    json_to_csv(args.json)
+    json_to_csv(args.param, args.diff)
 
 if __name__ == '__main__':
     main()
