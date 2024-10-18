@@ -68,16 +68,11 @@ function up_emulated_env() {
   # state part #
   ###############
 
-  # set network name into namespace-relabeler
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d '{"network_name": "'"$NETWORK_NAME"'"}' \
-    "http://${API_PROXY}/relabel/network"
-
   # NOTE: will be rewrited codes that routers are ready to use
   # wait to boot environment
   echo # newline
   echo "Wait env:${NETWORK_NAME}/${target_emulated_snapshot} be ready..."
-  sleep 90s 
+  sleep 90s
 
   # begin measurement
   echo "begin measurement"

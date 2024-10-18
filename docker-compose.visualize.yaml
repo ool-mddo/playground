@@ -14,15 +14,15 @@ services:
     volumes:
       # Grafanaの設定ファイル
       - type: bind
-        source: ./assets/visualize/grafana/grafana.ini
+        source: ./assets/grafana/grafana.ini
         target: /etc/grafana/grafana.ini
       # データソースのprovisioning
       - type: bind
-        source: ./assets/visualize/grafana/datasources
+        source: ./assets/grafana/datasources
         target: /etc/grafana/provisioning/datasources
       # ダッシュボードのprovisioning
       - type: bind
-        source: ./assets/visualize/grafana/dashboards
+        source: ./assets/grafana/dashboards
         target: /etc/grafana/provisioning/dashboards
     restart: always
     logging:
@@ -39,7 +39,7 @@ services:
     volumes:
       # ./prometheus配下に存在する設定ファイルのマウント
       - type: bind
-        source: ./assets/visualize/prometheus/
+        source: ./assets/prometheus/
         target: /etc/prometheus/
     command:
       # コンフィグファイルのパスの指定
@@ -49,6 +49,8 @@ services:
     logging:
       options:
         max-size: 50m
+    depends_on:
+      - cadvisor
 
   state-conductor:
     image: ${STATE_CONDUCTOR_IMAGE}:${STATE_CONDUCTOR_IMAGE_TAG}
