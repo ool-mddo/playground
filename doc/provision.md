@@ -13,7 +13,7 @@
 > [!NOTE]
 > - デモ環境には Linux を使用します。(開発側では Ubuntu22 で動作確認しています)
 > - デモシステムはスクリプト ([ool-mddo/playground リポジトリ](https://github.com/ool-mddo/playground)) とコンテナイメージで提供されています。
-> - [環境コピー](../demo/copy_to_emulated_env/README.md) デモで使用する grafana/prometheus についてはデモシステムとは定義(compose file)を分けてあります。詳細は[トラフィック可視化](../assets/visualize/README.md), [PNIユースケース/環境準備](../demo/copy_to_emulated_env/doc/pni/provision.md) ドキュメントを参照してください。
+> - [環境コピー](../demo/copy_to_emulated_env/README.md) デモで使用する grafana/prometheus についてはデモシステムとは定義(compose file)を分けてあります。詳細は[トラフィック可視化](../demo/copy_to_emulated_env/doc/pni/visualize.md), [PNIユースケース/環境準備](../demo/copy_to_emulated_env/doc/pni/provision.md) ドキュメントを参照してください。
 
 # デモシステムのセットアップ(デモ共通)
 

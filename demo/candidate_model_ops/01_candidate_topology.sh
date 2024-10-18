@@ -26,7 +26,7 @@ if use_bgp_proc "$NETWORK_NAME" original_asis ; then
 
   # generate external-AS topology
   external_as_json="${USECASE_SESSION_DIR}/external_as_topology.json"
-  curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/external_as_topology?network=${NETWORK_NAME}" \
+  curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/original_asis/external_as_topology?flow_data=event" \
     > "$external_as_json"
 
   # splice external-AS topology to original_asis (overwrite)
@@ -43,7 +43,7 @@ curl -s -X POST -H 'Content-Type: application/json' \
     "candidate_number": "'"$CANDIDATE_NUM"'",
     "usecase": {
       "name": "'"$USECASE_NAME"'",
-      "sources": ["params", "flow_data"]
+      "sources": ["params", "flows/event"]
     }
   }' \
   "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/candidate_topology" \

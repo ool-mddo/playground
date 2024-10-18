@@ -1,7 +1,13 @@
 ---
+expected_traffic:
+  original_targets:
+    - node: edge-tk01
+      interface: ge-0/0/3.0
+      expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
+  emulated_traffic:
+    scale: 1e-3 # 1Gbps to 1Mbps
 source_as:
   asn: 65550
-  subnet: 169.254.0.0/23
   allowed_peers:
     - 172.16.0.5
     - 172.16.1.9
@@ -10,7 +16,6 @@ source_as:
     interface: ge-0/0/3.0
 dest_as:
   asn: 65520
-  subnet: 169.254.2.0/23
   allowed_peers:
     - 192.168.0.10
     - 192.168.0.14
