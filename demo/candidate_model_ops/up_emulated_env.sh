@@ -1,18 +1,5 @@
 #!/usr/bin/bash
 
-function convert_namespace() {
-  target_original_snapshot=$1
-  target_emulated_snapshot="${target_original_snapshot/original/emulated}"
-
-  echo "Convert namespace from:$target_original_snapshot to:$target_emulated_snapshot"
-
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d '{ "table_origin": "'"$target_original_snapshot"'" }' \
-    "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/${target_original_snapshot}/${target_emulated_snapshot}"
-
-  echo # newline
-}
-
 function up_emulated_env() {
   target_original_snapshot=$1
   target_emulated_snapshot="${target_original_snapshot/original/emulated}"
@@ -67,6 +54,11 @@ function up_emulated_env() {
   ###############
   # state part #
   ###############
+
+  if [ "$WITH_CLAB" != true ]; then
+    echo "# skip state measurement of the emulated environment, because WITH_CLAB=$WITH_CLAB"
+    return 0
+  fi
 
   # NOTE: will be rewrited codes that routers are ready to use
   # wait to boot environment

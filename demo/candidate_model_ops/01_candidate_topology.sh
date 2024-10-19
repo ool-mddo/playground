@@ -2,64 +2,70 @@
 
 # shellcheck disable=SC1091
 source ./demo_vars
+# shellcheck disable=SC1091
+source ./orig_ns_topology.sh
 
-# Create original as-is topology data
-curl -s -X DELETE "http://${API_PROXY}/conduct/${NETWORK_NAME}"
-curl -s -X POST -H 'Content-Type: application/json' \
-  -d '{ "label": "original_asis", "phy_ss_only": true }' \
-  "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/topology"
+print_usage() {
+  echo "Usage: $(basename "$0") [options]"
+  echo "Options:"
+  echo "  -b     Benchmark topology name (default: original_asis)"
+  echo "  -c     Number of candidate topology to generate (default: 2)"
+  echo "  -p     Phase number (default: 1)"
+  echo "  -h     Display this help message"
+}
 
-if use_bgp_proc "$NETWORK_NAME" original_asis ; then
-  echo # newline
-  echo "Network:$NETWORK_NAME uses BGP, expand external-AS network and splice it into topology data"
+# option check
+# defaults
+benchmark_topology=original_asis
+candidate_num=2
+phase=1
+while getopts b:c:p:h option; do
+  case $option in
+  b)
+    benchmark_topology="$OPTARG"
+    ;;
+  c)
+    candidate_num="$OPTARG"
+    ;;
+  p)
+    phase="$OPTARG"
+    ;;
+  h)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown option detected, -$OPTARG" >&2
+    print_usage
+    exit 1
+    ;;
+  esac
+done
 
-  # bgp-policy data handling
-  # parse configuration files with TTP
-  curl -s -X POST -H "Content-Type: application/json" \
-    -d '{}' \
-    "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/parsed_result"
+echo # newline
+echo "# check: phase = $phase"
+echo "# check: benchmark topology = $benchmark_topology"
+echo "# check: candidate number = $candidate_num"
+echo # newline
 
-  # post bgp policy data to model-conductor to merge it with topology data
-  curl -s -X POST -H "Content-Type: application/json" \
-    -d '{}' \
-    "http://${API_PROXY}/bgp_policy/${NETWORK_NAME}/original_asis/topology"
+if [ "$phase" -eq 1 ] && [ "$benchmark_topology" == "original_asis" ]; then
+  # Create original as-is topology data
+  generate_original_asis_topology "$NETWORK_NAME"
 
-  # generate external-AS topology
-  external_as_json="${USECASE_SESSION_DIR}/external_as_topology.json"
-  curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/original_asis/external_as_topology?flow_data=event" \
-    > "$external_as_json"
+  # Splice external-AS topology to original as-is topology
+  splice_external_as_topology "$USECASE_NAME" "$NETWORK_NAME"
+fi
 
-  # splice external-AS topology to original_asis (overwrite)
-  curl -s -X POST -H "Content-Type: application/json" \
-    -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
-    "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/splice_topology" \
-    > /dev/null # ignore echo-back (topology json)
+# convert benchmark snapshot name if specified emulated namespace topology
+if [[ $phase -ge 2 && $benchmark_topology == emulated_* ]]; then
+  benchmark_topology=$(reverse_snapshot_name "$benchmark_topology")
+  echo "# check: (reverse) benchmark topology = $benchmark_topology"
 fi
 
 # Generate candidate topologies
-original_candidate_list="${USECASE_SESSION_DIR}/original_candidate_list.json"
-curl -s -X POST -H 'Content-Type: application/json' \
-  -d '{
-    "candidate_number": "'"$CANDIDATE_NUM"'",
-    "usecase": {
-      "name": "'"$USECASE_NAME"'",
-      "sources": ["params", "flows/event"]
-    }
-  }' \
-  "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/candidate_topology" \
-  > "$original_candidate_list"
+generate_original_candidate_topologies "$USECASE_NAME" "$NETWORK_NAME" "$benchmark_topology" "$phase" "$candidate_num"
 
 # Add netoviz index
-netoviz_asis_index="${USECASE_SESSION_DIR}/netoviz_asis_index.json"
-jq '.[0:1]' "$NETWORK_INDEX" > "$netoviz_asis_index"
-netoviz_original_candidates_index="${USECASE_SESSION_DIR}/netoviz_original_candidates_index.json"
-filter='map(. + {label: ( "\(.network | ascii_upcase) (\(.snapshot))"), file: "topology.json"})'
-jq "$filter" "$original_candidate_list" > "$netoviz_original_candidates_index"
-netoviz_index="${USECASE_SESSION_DIR}/netoviz_index.json"
-jq -s '.[0] + .[1]' "$netoviz_asis_index" "$netoviz_original_candidates_index" > "$netoviz_index"
-
-curl -s -X POST -H 'Content-Type: application/json' \
-  -d @<(jq '{ "index_data": . }' "$netoviz_index") \
-  "http://${API_PROXY}/topologies/index"
+generate_netoviz_index "$phase" 1
 
 echo # newline
