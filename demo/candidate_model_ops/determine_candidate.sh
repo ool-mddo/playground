@@ -10,14 +10,14 @@ function get_usecase_params() {
 function get_state_diff() {
   src_ss=$1
   dst_ss=$2
-  curl -s "http://${API_PROXY}/state-conductor/${USECASE_NAME}/${NETWORK_NAME}/topology_diff/${src_ss}/${dst_ss}"
+  curl -s "http://${API_PROXY}/state-conductor/${USECASE_NAME}/${NETWORK_NAME}/snapshot_diff/${src_ss}/${dst_ss}"
 }
 
 function determine_candidate() {
   original_benchmark_topology=$1
   original_candidate_topology=$2
-  emulated_benchmark_topology=$(reverse_topology_name "$original_benchmark_topology")
-  emulated_candidate_topology=$(reverse_topology_name "$original_candidate_topology")
+  emulated_benchmark_topology=$(reverse_snapshot_name "$original_benchmark_topology")
+  emulated_candidate_topology=$(reverse_snapshot_name "$original_candidate_topology")
 
   echo "Target original topology: $original_candidate_topology"
 
