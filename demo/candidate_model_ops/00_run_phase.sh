@@ -52,7 +52,9 @@ echo "# check: with_clab = $WITH_CLAB"
 echo # newline
 
 # pre-clean (phase/session data)
-bash phase_pre_clean.sh
+if [ "$phase" -eq 1 ]; then
+  bash phase_pre_clean.sh
+fi
 
 # generate candidate topologies
 bash 01_candidate_topology.sh -p "$phase" -c "$candidate_num" -b "$original_benchmark_topology"
