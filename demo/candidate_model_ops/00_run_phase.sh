@@ -12,14 +12,14 @@ print_usage() {
 
 # option check
 # defaults
-benchmark_topology=original_asis
+WITH_CLAB=true
+original_benchmark_topology=original_asis
 candidate_num=2
 phase=1
-WITH_CLAB=true
 while getopts b:c:dp:h option; do
   case $option in
   b)
-    benchmark_topology="$OPTARG"
+    original_benchmark_topology="$OPTARG"
     ;;
   c)
     candidate_num="$OPTARG"
@@ -46,26 +46,29 @@ done
 
 echo # newline
 echo "# check: phase = $phase"
-echo "# check: benchmark topology = $benchmark_topology"
+echo "# check: benchmark topology = $original_benchmark_topology"
 echo "# check: candidate number = $candidate_num"
 echo "# check: with_clab = $WITH_CLAB"
 echo # newline
 
-# generate candidate topologies
-bash 01_candidate_topology.sh -p "$phase" -c "$candidate_num" -b "$benchmark_topology"
+# pre-clean (phase/session data)
+bash phase_pre_clean.sh
 
-# Boot emulated env of benchmark snapshot (usually phase 1 and for original_asis only)
+# generate candidate topologies
+bash 01_candidate_topology.sh -p "$phase" -c "$candidate_num" -b "$original_benchmark_topology"
+
+# Boot emulated env of benchmark topology (usually phase 1 and for original_asis only)
 if [ "$phase" -lt 2 ]; then
   if [ "$WITH_CLAB" == true ]; then
-    bash 02_asis_env.sh -p "$phase" -b "$benchmark_topology"
+    bash 02_benchmark_env.sh -p "$phase" -b "$original_benchmark_topology"
   else
-    bash 02_asis_env.sh -p "$phase" -b "$benchmark_topology" -d # debug
+    bash 02_benchmark_env.sh -p "$phase" -b "$original_benchmark_topology" -d # debug
   fi
 fi
 
-# Boot each emulated env for candidate snapshot
+# Boot each emulated env for candidate topology
 if [ "$WITH_CLAB" == true ]; then
-  bash 03_candidate_env.sh -p "$phase"
+  bash 03_candidate_env.sh -p "$phase" -b "$original_benchmark_topology"
 else
-  bash 03_candidate_env.sh -p "$phase" -d # debug
+  bash 03_candidate_env.sh -p "$phase" -b "$original_benchmark_topology" -d # debug
 fi

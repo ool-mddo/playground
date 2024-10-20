@@ -3,14 +3,14 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 
-INIT_SNAPSHOT=false
+INITIALIZE_TOPOLOGY=false
 MAKE_EXT_AS_JSON=false
 SPLICE_TOPOLOGY=false
 while getopts eish option; do
   case $option in
   i)
-    INIT_SNAPSHOT=true
-    echo "# initialize snapshot" 1>&2
+    INITIALIZE_TOPOLOGY=true
+    echo "# initialize topology" 1>&2
     ;;
   e)
     MAKE_EXT_AS_JSON=true
@@ -21,7 +21,7 @@ while getopts eish option; do
     echo "# splice topology" 1>&2
     ;;
   h)
-    echo "# usage: specify -i to initialize snapshot"
+    echo "# usage: specify -i to initialize topology"
     exit 0
     ;;
   *)
@@ -29,7 +29,7 @@ while getopts eish option; do
   esac
 done
 
-if [ "$INIT_SNAPSHOT" = true ]; then
+if [ "$INITIALIZE_TOPOLOGY" = true ]; then
   curl -s -X DELETE "http://${API_PROXY}/conduct/${NETWORK_NAME}"
   curl -s -X POST -H 'Content-Type: application/json' \
     -d '{ "label": "original_asis", "phy_ss_only": true }' \

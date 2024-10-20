@@ -53,7 +53,7 @@ function splice_external_as_topology() {
 function generate_original_candidate_topologies() {
   usecase_name=$1
   network_name=$2
-  benchmark_snapshot=$3
+  original_benchmark_topology=$3
   phase=$4
   candidate_num=$5
 
@@ -68,6 +68,6 @@ function generate_original_candidate_topologies() {
         "sources": ["params", "flows/event"]
       }
     }' \
-    "http://${API_PROXY}/conduct/${network_name}/${benchmark_snapshot}/candidate_topology" \
+    "http://${API_PROXY}/conduct/${network_name}/${original_benchmark_topology}/candidate_topology" \
     > "$original_candidate_list"
 }

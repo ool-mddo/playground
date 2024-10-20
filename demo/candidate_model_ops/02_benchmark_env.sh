@@ -19,12 +19,12 @@ print_usage() {
 # option check
 # defaults
 WITH_CLAB=true
-benchmark_topology=original_asis
+original_benchmark_topology=original_asis
 phase=1
 while getopts b:dp:h option; do
   case $option in
   b)
-    benchmark_topology="$OPTARG"
+    original_benchmark_topology="$OPTARG"
     ;;
   d)
     # data check, debug
@@ -48,6 +48,7 @@ done
 
 echo # newline
 echo "# check: phase = $phase"
+echo "# check: benchmark topology = $original_benchmark_topology"
 echo "# check: with_clab = $WITH_CLAB"
 echo # newline
 
@@ -57,10 +58,10 @@ sudo -v
 
 # at first: prepare emulated_asis topology data
 # convert namespace from original namespace to emulated namespace
-convert_namespace "$benchmark_topology"
+convert_namespace "$original_benchmark_topology"
 
 # Add netoviz index
 generate_netoviz_index "$phase" 2
 
 # up original_asis env
-up_emulated_env "$benchmark_topology"
+up_emulated_env "$original_benchmark_topology"

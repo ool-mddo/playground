@@ -1,20 +1,34 @@
 #!/usr/bin/bash
 
+# shellcheck disable=SC1091
+source ./util.sh
+
+function get_usecase_params() {
+  curl -s "http://$API_PROXY/usecases/${USECASE_NAME}/${NETWORK_NAME}/params"
+}
+
+function get_state_diff() {
+  src_ss=$1
+  dst_ss=$2
+  curl -s "http://${API_PROXY}/state-conductor/${USECASE_NAME}/${NETWORK_NAME}/topology_diff/${src_ss}/${dst_ss}"
+}
+
 function determine_candidate() {
-  target_original_snapshot=$1
-  target_emulated_snapshot="${target_original_snapshot/original/emulated}"
+  original_benchmark_topology=$1
+  original_candidate_topology=$2
+  emulated_benchmark_topology=$(reverse_topology_name "$original_benchmark_topology")
+  emulated_candidate_topology=$(reverse_topology_name "$original_candidate_topology")
 
-  echo "Target original snapshot: $target_original_snapshot"
+  echo "Target original topology: $original_candidate_topology"
 
+  # save usecase params
   usecase_params="${USECASE_SESSION_DIR}/params.json"
-  curl -s "http://$API_PROXY/usecases/${USECASE_NAME}/${NETWORK_NAME}/params" \
-    > "$usecase_params"
-  diff_with_asis_and_candidate="${USECASE_SESSION_DIR}/diff_${target_emulated_snapshot}.json"
-  src_ss="emulated_asis"
-  dst_ss="$target_emulated_snapshot"
-  curl -s "http://${API_PROXY}/state-conductor/${USECASE_NAME}/${NETWORK_NAME}/snapshot_diff/${src_ss}/${dst_ss}" \
-    > "$diff_with_asis_and_candidate"
+  get_usecase_params > "$usecase_params"
 
-  echo "Result state diff between ${src_ss} and ${dst_ss} (with names in original namespace)"
+  # save state diff
+  diff_with_asis_and_candidate="${USECASE_SESSION_DIR}/diff_${emulated_candidate_topology}.json"
+  get_state_diff "$emulated_benchmark_topology" "$emulated_candidate_topology" > "$diff_with_asis_and_candidate"
+
+  echo "Result state diff between $emulated_benchmark_topology and $emulated_candidate_topology (with names in original namespace)"
   python3 diff2csv.py -p "$usecase_params" -d "$diff_with_asis_and_candidate" | column -s, -t
 }

@@ -16,13 +16,13 @@ print_usage() {
 
 # option check
 # defaults
-benchmark_topology=original_asis
+original_benchmark_topology=original_asis
 candidate_num=2
 phase=1
 while getopts b:c:p:h option; do
   case $option in
   b)
-    benchmark_topology="$OPTARG"
+    original_benchmark_topology="$OPTARG"
     ;;
   c)
     candidate_num="$OPTARG"
@@ -44,11 +44,11 @@ done
 
 echo # newline
 echo "# check: phase = $phase"
-echo "# check: benchmark topology = $benchmark_topology"
+echo "# check: benchmark topology = $original_benchmark_topology"
 echo "# check: candidate number = $candidate_num"
 echo # newline
 
-if [ "$phase" -eq 1 ] && [ "$benchmark_topology" == "original_asis" ]; then
+if [ "$phase" -eq 1 ] && [ "$original_benchmark_topology" == "original_asis" ]; then
   # Create original as-is topology data
   generate_original_asis_topology "$NETWORK_NAME"
 
@@ -56,14 +56,14 @@ if [ "$phase" -eq 1 ] && [ "$benchmark_topology" == "original_asis" ]; then
   splice_external_as_topology "$USECASE_NAME" "$NETWORK_NAME"
 fi
 
-# convert benchmark snapshot name if specified emulated namespace topology
-if [[ $phase -ge 2 && $benchmark_topology == emulated_* ]]; then
-  benchmark_topology=$(reverse_snapshot_name "$benchmark_topology")
-  echo "# check: (reverse) benchmark topology = $benchmark_topology"
+# convert benchmark topology name if specified emulated namespace topology
+if [[ $phase -ge 2 && $original_benchmark_topology == emulated_* ]]; then
+  original_benchmark_topology=$(reverse_snapshot_name "$original_benchmark_topology")
+  echo "# check: (reverse) benchmark topology = $original_benchmark_topology"
 fi
 
 # Generate candidate topologies
-generate_original_candidate_topologies "$USECASE_NAME" "$NETWORK_NAME" "$benchmark_topology" "$phase" "$candidate_num"
+generate_original_candidate_topologies "$USECASE_NAME" "$NETWORK_NAME" "$original_benchmark_topology" "$phase" "$candidate_num"
 
 # Add netoviz index
 generate_netoviz_index "$phase" 1
