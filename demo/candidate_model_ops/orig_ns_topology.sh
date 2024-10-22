@@ -65,7 +65,7 @@ function generate_original_candidate_topologies() {
       "candidate_number": "'"$candidate_num"'",
       "usecase": {
         "name": "'"$usecase_name"'",
-        "sources": ["params", "flows/event"]
+        "sources": ["params", "phase_candidate_opts"]
       }
     }' \
     "http://${API_PROXY}/conduct/${network_name}/${original_benchmark_topology}/candidate_topology" \
