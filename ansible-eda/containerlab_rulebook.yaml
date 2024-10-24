@@ -8,7 +8,7 @@
         port: 48090
 
   rules:
-    - name: clab
+    - name: clab deploy
       condition: event.payload.message == "clab"
       action:
         run_playbook:
@@ -20,3 +20,17 @@
             snapshot_name: "emulated_asis"
             usecase_name: "{{ event.payload.usecase_name }}"
             with_clab: "true"
+            remote_address: "{{ event.payload.remote_address }}"
+    - name: clab destory
+      condition: event.payload.message == "destroy"
+      action:
+        run_playbook:
+          name: "{{ event.payload.ansible_runner_dir }}/project/playbooks/destroy.yaml"
+          extra_vars:
+            network_name: "{{ event.payload.network_name }}"
+            crpd_image: "{{ event.payload.crpd_image }}"
+            ansible_runner_dir: "{{ event.payload.ansible_runner_dir }}"
+            snapshot_name: "emulated_asis"
+            usecase_name: "{{ event.payload.usecase_name }}"
+            with_clab: "true"
+            remote_address: "{{ event.payload.remote_address }}"

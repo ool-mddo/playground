@@ -6,11 +6,13 @@
     ansible_python_interpreter: /usr/bin/python3
     with_clab: "{{ with_clab }}"
     iperf_params_file:  "{{ ansible_runner_dir }}/project/playbooks/configs/iperf_params.json"  # in remote host path
+    remote_address: localhost
+    conductor_address: "{{ remote_address }}:15000"
 
   tasks:
     - name: "get convert table"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
+        url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
         method: "GET"
         body_format: json
       register: layer3_convert_table
@@ -18,20 +20,20 @@
     - name: download generated config
       shell: "curl {{ url }}/{{ item.agent_name }}.conf | jq -r .text > {{ filepath }}"
       vars:
-        url: "http://localhost:15000/configs/{{ network_name }}/{{ snapshot_name }}"
+        url: "http://{{ conductor_address }}/configs/{{ network_name }}/{{ snapshot_name }}"
         filepath: "{{ ansible_runner_dir }}/clab/{{ item.agent_name }}.conf"
       loop: "{{ layer3_convert_table.json }}"
 
     - name: "get convert table"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
+        url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
         method: "GET"
         body_format: json
       register: layer3_convert_table
 
     - name: "get clab topo yaml"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"
+        url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"
         method: "GET"
         body_format: json
       register: containerlab
@@ -70,7 +72,7 @@
 
     - name: "get layer3 topology (select endpoint node)"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/interfaces?node_type=endpoint"
+        url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/interfaces?node_type=endpoint"
         method: "GET"
         body_format: json
       register: layer3_nodes
@@ -107,7 +109,7 @@
 
     - name: generate iperf command parameter
       uri:
-        url: "http://localhost:15000/usecases/{{ usecase_name }}/iperf_commands?network={{ network_name }}&snapshot={{ snapshot_name }}"
+        url: "http://{{ conductor_address }}/usecases/{{ usecase_name }}/iperf_commands?network={{ network_name }}&snapshot={{ snapshot_name }}"
         method: GET
         body_format: json
       register:

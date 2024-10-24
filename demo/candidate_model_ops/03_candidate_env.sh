@@ -2,6 +2,7 @@
 
 # shellcheck disable=SC1091
 source ./demo_vars
+IFS=',' read -r -a remotenode <<< $WORKER_ADDRESS
 # shellcheck disable=SC1091
 source ./up_emulated_env.sh
 
@@ -62,7 +63,15 @@ curl -s -X POST -H 'Content-Type: application/json' \
   "http://${API_PROXY}/topologies/index"
 
 # up each emulated env
+loopindex=1
 for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
-  up_emulated_env "$target_original_snapshot"
+  if [ ${#remotenode[@]} -eq 1 ]; then
+    up_emulated_env "$target_original_snapshot" "$remotenode"
+    let loopindex++
+  else
+    nodeindex=$((${loopindex}%${#remotenode[@]}))
+    up_emulated_env "$target_original_snapshot" "$remotenode[$nodeindex]"
+    let loopindex++
+  fi
 done

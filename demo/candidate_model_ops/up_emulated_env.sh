@@ -16,6 +16,7 @@ function convert_namespace() {
 function up_emulated_env() {
   target_original_snapshot=$1
   target_emulated_snapshot="${target_original_snapshot/original/emulated}"
+  worker_node_address=$2
 
   echo "Target original snapshot: $target_original_snapshot"
 
@@ -33,7 +34,7 @@ function up_emulated_env() {
 
   # generate emulated_candidate configs from emulated_candidate topology
   echo "Exec ansible to generate $target_emulated_snapshot configs"
-  curl -H 'Content-Type: application/json' -d "{\"message\": \"step2\",\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\"}" localhost:48081/endpoint
+  curl -H 'Content-Type: application/json' -d "{\"message\": \"step2\",\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\", \"worker_node_address\": \"${worker_node_address}\", \"remote_address\": \"${CONTOROLLER_ADDRESS}\"}" localhost:48081/endpoint
 
   echo "wait deploy"
   sleep 180s
@@ -78,6 +79,6 @@ function up_emulated_env() {
   ##############
   # post-clean #
   ##############
-  sudo ./post_clean.sh
+  sudo ./post_clean.sh $2
   
 }
