@@ -57,7 +57,12 @@ services:
     environment:
       STATE_CONDUCTOR_LOG_LEVEL: ${STATE_CONDUCTOR_LOG_LEVEL}
       PROMETHEUS_URL: http://prometheus:9090
+      MDDO_STATES_DIR: ${MDDO_STATES_DIR}
     volumes:
+      # for data dir
+      - type: volume
+        source: states
+        target: ${MDDO_STATES_DIR}
       # for development
       - type: bind
         source: ./repos/state-conductor
@@ -86,3 +91,11 @@ services:
         source: /var/lib/docker/
         target: /var/lib/docker
         read_only: true
+
+volumes:
+  states:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_STATES_DIR}
