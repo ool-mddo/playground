@@ -2,7 +2,7 @@
 expected_traffic:
   original_targets:
     - node: edge-tk01
-      interface: ge-0/0/3.0
+      interface: ge-0/0/1.0
       expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
   emulated_traffic:
     scale: 1e-2 # 1Gbps to 10Mbps
@@ -16,11 +16,11 @@ source_ases:
         allowed_peers:
           - peer: 172.16.0.5 # edge-tk01
             type: pni
-          # - peer: 172.16.1.x # edge-tk02/vlan shared
-          #   type: ix
+          - peer: 172.16.0.9 # edge-tk02/vlan shared (vlan100)
+            type: ix
     preferred_peer:
       node: edge-tk01
-      interface: ge-0/0/3.0
+      interface: ge-0/0/1.0
   - asn: 65560
     regions:
       - region: tokyo
@@ -28,13 +28,13 @@ source_ases:
           - 10.0.3.0/24
           - 10.0.4.0/24
         allowed_peers:
-          - peer: 172.16.1.9 # edge-tk02/vlan shared
+          - peer: 172.16.1.9 # edge-tk02/vlan shared (vlan200)
             type: ix
-          # - peer: 172.16.x.x # edge-tk03
-          #   type: pni
+          - peer: 172.16.1.13 # edge-tk03
+            type: pni
     preferred_peer:
       node: edge-tk02
-      interface: ge-0/0/3.0
+      interface: GigabitEthernet0/0/0/1.200
 dest_as:
   asn: 65520
   allowed_peers:
