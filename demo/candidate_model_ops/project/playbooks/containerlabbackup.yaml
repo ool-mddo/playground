@@ -10,7 +10,6 @@
     conductor_address: "{{ remote_address }}:15000"
 
   tasks:
-    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
     - name: "get convert table"
       uri:
         url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
@@ -44,10 +43,6 @@
         dest: "{{ ansible_runner_dir }}/clab/clab-topo.yaml"
         content: "{{ containerlab.json | to_yaml }}"
 
-    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
-
-    - shell: 'echo "job_status{jobname=\"Setting_ovs-br\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
-
     - name: "delete ovs-br {{ item.key }}"
       shell: "ovs-vsctl del-br {{ item.key }}"
       when: with_clab == "true" and "ovs" in item.value.kind
@@ -59,10 +54,6 @@
       when: with_clab == "true" and "ovs" in item.value.kind
       loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
       ignore_errors: true
-
-    - shell: 'echo "job_status{jobname=\"Setting_ovs-br\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
-
-    - shell: 'echo "job_status{jobname=\"Deploying_Containerlab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
     - name: deploy containerlab
       shell:
@@ -78,10 +69,6 @@
         chdir: "{{ ansible_runner_dir }}/clab"
       when:
         with_clab == "true"
-
-    - shell: 'echo "job_status{jobname=\"Deploying_Containerlab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
-
-    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
     - name: "get layer3 topology (select endpoint node)"
       uri:
@@ -132,9 +119,6 @@
       copy:
         content: "{{ iperf_commands.json }}"
         dest: "{{ iperf_params_file }}"
-    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
-
-    - shell: 'echo "job_status{jobname=\"Execute_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
     - name: iperf server command (debug)
       debug:
@@ -176,12 +160,3 @@
       when:
         with_clab == "true"
 
-    - shell: 'echo "job_status{jobname=\"Execute_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
-
-    - shell: 'echo "job_status{jobname=\"AllJob_Complete\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
-
-    - name: pause
-      pause:
-        seconds: 10
-
-    - shell: 'echo "job_status{jobname=\"AllJob_Complete\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'

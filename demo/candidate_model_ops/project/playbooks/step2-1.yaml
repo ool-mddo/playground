@@ -160,6 +160,7 @@
         usecase_name: "{{ usecase_name }}"
         network_name: "{{ network_name }}"
         crpd_image: "{{ crpd_image }}"
+        snapshot_name: "{{ snapshot_name }}"
         ansible_runner_dir: "{{ ansible_runner_dir }}"
         remote_address: "{{ remote_address }}"
 
