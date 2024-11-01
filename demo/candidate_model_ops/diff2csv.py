@@ -17,13 +17,13 @@ def json_to_csv(param_json_file, diff_json_file):
     # Process each node and interface
     rows = []
     for node, interfaces in diff_data["diff"].items():
-        row = {
-            # "network": diff_data["network"],
-            "src_ss": diff_data["source_snapshot"],
-            "dst_ss": diff_data["destination_snapshot"],
-            "node": node,
-        }
         for interface, metrics in interfaces.items():
+            row = {
+                # "network": diff_data["network"],
+                "src_ss": diff_data["source_snapshot"],
+                "dst_ss": diff_data["destination_snapshot"],
+                "node": node,
+            }
             row["interface"] = interface
             for metric, values in metrics.items():
                 row[f"{metric}-cnt"] = (
@@ -35,16 +35,17 @@ def json_to_csv(param_json_file, diff_json_file):
                     row[f"{metric}-%"] = (
                         math.ceil(values["ratio"] * 1000) / 10
                     )  # decimal places: 1 [%]
-        # filter: append rows only if the row matched a target interface
-        if next(
-            (
-                t
-                for t in target_interfaces
-                if t["node"] == row["node"] and t["interface"] == row["interface"]
-            ),
-            None,
-        ):
-            rows.append(row)
+
+            # filter: append rows only if the row matched a target interface
+            if next(
+                (
+                    t
+                    for t in target_interfaces
+                    if t["node"] == row["node"] and t["interface"] == row["interface"]
+                ),
+                None,
+            ):
+                rows.append(row)
 
     # CSV writer (outputs to stdout)
     writer = csv.writer(sys.stdout)
