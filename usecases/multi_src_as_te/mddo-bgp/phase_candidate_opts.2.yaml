@@ -1,0 +1,5 @@
+---
+peer_asn: 65560
+node: edge-tk02
+interface: GigabitEthernet0/0/0/1.200
+

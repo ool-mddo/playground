@@ -3,6 +3,8 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
+source ./util.sh
+# shellcheck disable=SC1091
 source ./up_emulated_env.sh
 # shellcheck disable=SC1091
 source ./determine_candidate.sh
@@ -10,20 +12,29 @@ source ./determine_candidate.sh
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
   echo "Options:"
+  echo "  -b     Benchmark topology name (default: original_asis)"
   echo "  -d     Debug/data check, without executing ansible-runner (clab)"
+  echo "  -p     Phase number (default: 1)"
   echo "  -h     Display this help message"
 }
 
 # option check
 # defaults
 WITH_CLAB=true
-while getopts dh option; do
+original_benchmark_topology=original_asis
+phase=1
+while getopts b:dp:h option; do
   case $option in
+  b)
+    original_benchmark_topology="$OPTARG"
+    ;;
   d)
     # data check, debug
     # -> without container lab; does not build emulated-env
     WITH_CLAB=false
-    echo "# Check: with_clab = $WITH_CLAB"
+    ;;
+  p)
+    phase="$OPTARG"
     ;;
   h)
     print_usage
@@ -37,43 +48,47 @@ while getopts dh option; do
   esac
 done
 
+echo # newline
+echo "# check: phase = $phase"
+echo "# check: benchmark topology = $original_benchmark_topology"
+echo "# check: with_clab = $WITH_CLAB"
+echo # newline
+
 # cache sudo credential
 echo "Please enter your sudo password:"
 sudo -v
 
 # at first: prepare each emulated_candidate topology data
-original_candidate_list="${USECASE_SESSION_DIR}/original_candidate_list.json"
-for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+original_candidate_list=$(original_candidate_list_path "$phase")
+for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
   # convert namespace from original_candidate_i to emulated_candidate_i
-  convert_namespace "$target_original_snapshot"
+  convert_namespace "$original_candidate_topology"
 done
 
 # update netoviz index
-netoviz_asis_index="${USECASE_SESSION_DIR}/netoviz_asis_index.json"
-netoviz_original_candidates_index="${USECASE_SESSION_DIR}/netoviz_original_candidates_index.json"
-netoviz_emulated_candidate_index="${USECASE_SESSION_DIR}/netoviz_emulated_candidate_index.json"
-filter='map(.snapshot |= sub("original"; "emulated") | . + {label: ("MDDO-BGP (" + .snapshot + ")"), file: "topology.json"})'
-jq "$filter" "$original_candidate_list" > "$netoviz_emulated_candidate_index"
-netoviz_index="${USECASE_SESSION_DIR}/netoviz_index.json"
-jq -s '.[0] + .[1] + .[2]' "$netoviz_asis_index" "$netoviz_original_candidates_index" "$netoviz_emulated_candidate_index" \
-  > "$netoviz_index"
-
-curl -s -X POST -H 'Content-Type: application/json' \
-  -d @<(jq '{ "index_data": . }' "$netoviz_index") \
-  "http://${API_PROXY}/topologies/index"
+generate_netoviz_index "$phase" 3
 
 # up each emulated env
-for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
-  up_emulated_env "$target_original_snapshot"
-  determine_candidate "$target_original_snapshot"
+  up_emulated_env "$original_candidate_topology"
+  if [ "$WITH_CLAB" == true ]; then
+    determine_candidate "$original_benchmark_topology" "$original_candidate_topology"
+  else
+    echo "# skip state diff, because WITH_CLAB=$WITH_CLAB"
+  fi
 done
 
 # summary
-echo # newline
-echo "Summary"
-for target_original_snapshot in $(jq -r ".[] | .snapshot" "$original_candidate_list")
-do
-  determine_candidate "$target_original_snapshot" | grep -v "Target" | grep -v "Result"
-done
+if [ "$WITH_CLAB" == true ]; then
+  echo # newline
+  echo "Summary"
+  for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+  do
+    determine_candidate "$original_benchmark_topology" "$original_candidate_topology" \
+      | grep -v "Target" | grep -v "Result"
+  done
+else
+  echo "# skip state diff summary, because WITH_CLAB=$WITH_CLAB"
+fi
