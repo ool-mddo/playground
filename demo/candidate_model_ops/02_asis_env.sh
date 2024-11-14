@@ -60,5 +60,5 @@ curl -s -X POST -H 'Content-Type: application/json' \
 if [ ${#remotenode[@]} -eq 1 ]; then
   up_emulated_env "$target_original_snapshot" "$remotenode"
 else
-  up_emulated_env "$target_original_snapshot" "$remotenode[0]"
+  up_emulated_env "$target_original_snapshot" "${remotenode[0]}"
 fi
