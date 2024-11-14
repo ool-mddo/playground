@@ -34,7 +34,7 @@ function up_emulated_env() {
 
   # generate emulated_candidate configs from emulated_candidate topology
   echo "Exec ansible to generate $target_emulated_snapshot configs"
-  curl -H 'Content-Type: application/json' -d "{\"message\": \"step2\",\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\", \"worker_node_address\": \"${worker_node_address}\", \"remote_address\": \"${CONTOROLLER_ADDRESS}\", \"snapshot_name\":\"${target_emulated_snapshot}\"}" localhost:48081/endpoint
+  curl -H 'Content-Type: application/json' -d "{\"message\": \"step2\",\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\", \"worker_node_address\": \"${worker_node_address}\", \"remote_address\": \"${CONTROLLER_ADDRESS}\", \"snapshot_name\":\"${target_emulated_snapshot}\"}" localhost:48081/endpoint
 
   while :; do
     msg=`curl -s http://${worker_node_address}:9100/metrics | grep job`
