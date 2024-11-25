@@ -22,5 +22,29 @@
     "network": "mddo-bgp",
     "snapshot": "original_tobe",
     "file": "topology.json"
+  },
+  {
+    "label": "MDDO-BGP (original_candidate_11)",
+    "network": "mddo-bgp",
+    "snapshot": "original_candidate_11",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-BGP (original_candidate_12)",
+    "network": "mddo-bgp",
+    "snapshot": "original_candidate_12",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-BGP (original_candidate_21)",
+    "network": "mddo-bgp",
+    "snapshot": "original_candidate_21",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-BGP (original_candidate_22)",
+    "network": "mddo-bgp",
+    "snapshot": "original_candidate_22",
+    "file": "topology.json"
   }
 ]

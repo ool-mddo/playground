@@ -1,5 +1,5 @@
 ---
-peer_asn: 65550
-node: edge-tk01
-interface: ge-0/0/1.0
-flow_data: flows/event # csv
+peer_asn: 65560
+node: edge-tk02
+interface: GigabitEthernet0/0/0/1.200
+
