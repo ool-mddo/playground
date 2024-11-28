@@ -61,5 +61,5 @@ jq -s '.[0] + .[1]' "$netoviz_asis_index" "$netoviz_original_candidates_index" >
 curl -s -X POST -H 'Content-Type: application/json' \
   -d @<(jq '{ "index_data": . }' "$netoviz_index") \
   "http://${API_PROXY}/topologies/index"
-
+bash generate_scrape.sh
 echo # newline

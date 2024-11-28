@@ -42,10 +42,14 @@ services:
       - type: bind
         source: ./assets/visualize/prometheus/
         target: /etc/prometheus/
+      - type: bind
+        source: ./demo/
+        target: /etc/prometheus/demo/
     command:
       # コンフィグファイルのパスの指定
       - --config.file=/etc/prometheus/prometheus.yaml
       - --log.level=${PROMETHEUS_LOG_LEVEL}
+      - --web.enable-lifecycle
     restart: always
     logging:
       options:
