@@ -28,17 +28,15 @@ output_file="../../assets/visualize/prometheus/prometheus.yaml"
 echo -n "$yaml_template_cadvisor" > "$output_file"
 
 # targetsセクションを生成して追記
-echo -e "        -" >> "$output_file"
 for remoteip in "${remotenode[@]}"; do
-  echo -e "          $remoteip:$cadvisor_port" >> "$output_file"
+  echo -e "        -  $remoteip:$cadvisor_port" >> "$output_file"
 done
 
 echo -n "$yaml_template_node_exporter" >> "$output_file"
 
 # targetsセクションを生成して追記
-echo -e "        -" >> "$output_file"
 for remoteip in "${remotenode[@]}"; do
-  echo -e "          $remoteip:$nodeexporter_port" >> "$output_file"
+  echo -e "        - $remoteip:$nodeexporter_port" >> "$output_file"
 done
 
 
