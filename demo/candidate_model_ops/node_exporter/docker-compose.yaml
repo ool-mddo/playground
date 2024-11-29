@@ -16,3 +16,4 @@ services:
     volumes:
       - '/:/host:ro,rslave'
       - './prom:/data'
+        
