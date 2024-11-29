@@ -10,6 +10,8 @@
     conductor_address: "{{ remote_address }}:15000"
 
   tasks:
+    - shell: 'echo "job_status{jobname=\"\",network_name=\"\",snapshot_name=\"\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+
     - name: "get clab topo yaml"
       uri:
         url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/containerlab_topology?image={{ crpd_image }}&bind_license=license.key:/tmp/license.key:ro"

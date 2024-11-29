@@ -71,7 +71,7 @@
         dest: "{{ iperf_params_file }}"
     - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
-    - shell: 'echo "job_status{jobname=\"Execute_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
     - name: iperf server command (debug)
       debug:
@@ -113,7 +113,7 @@
       when:
         with_clab == "true"
 
-    - shell: 'echo "job_status{jobname=\"Execute_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
     - shell: 'echo "job_status{jobname=\"AllJob_Complete\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
@@ -121,4 +121,4 @@
       pause:
         seconds: 10
 
-    - shell: 'echo "job_status{jobname=\"AllJob_Complete\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Iperf Executing\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
