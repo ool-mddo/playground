@@ -71,7 +71,7 @@ do
     let loopindex++
   else
     nodeindex=$((${loopindex}%${#remotenode[@]}))
-    up_emulated_env "$target_original_snapshot" "$remotenode[$nodeindex]"
+    up_emulated_env "$target_original_snapshot" "${remotenode[$nodeindex]}"
     let loopindex++
   fi
 done
