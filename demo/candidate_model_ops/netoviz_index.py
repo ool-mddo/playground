@@ -7,7 +7,6 @@ import sys
 
 def open_json(json_file):
     with open(json_file, "r", encoding="utf-8") as f:
-        print (json_file)
         return json.load(f)
 
 
