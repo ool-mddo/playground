@@ -70,3 +70,9 @@
   * [ISP機器設定ファイルをもとにトポロジモデルを抽出し仮想検証環境構築と運用手順確認に利用する手法](https://www.itrc.net/meet/meet55-program/)
 * 電子情報通信学会 ソサイエティ大会 (2024/09/10-13)
   * [コンテナを用いたISPネットワーク検証システムとトラヒックシミュレーションによる作業事前検証の実施](https://pub.confit.atlas.jp/ja/event/society2024/session/31-20408-11)
+
+### FY2024
+* Okinawa Open Days 2024 (2024/12/04-06)
+  * [『運用者の試行錯誤を想定した NWモデル上での並列検証システム』萩原 学 / 田島 照久](https://www.okinawaopendays.com/post/1206-03)
+  * [運用者の試行錯誤を想定したNWモデル上での並列検証システム / ood2024 - Speaker Deck](https://speakerdeck.com/corestate55/ood2024)
+  * デモ動画: [OOD2024 運用者の試行錯誤を想定したNWモデル上での並列検証システム デモ動画 - YouTube](https://www.youtube.com/watch?v=jO3bj1aNNeA)
