@@ -38,6 +38,7 @@ function splice_external_as_topology() {
 
   # generate external-AS topology
   external_as_json="${USECASE_SESSION_DIR}/external_as_topology.json"
+  echo "$external_as_json"
   curl -s "http://${API_PROXY}/usecases/${usecase_name}/${network_name}/original_asis/external_as_topology?flow_data=event" \
     > "$external_as_json"
 

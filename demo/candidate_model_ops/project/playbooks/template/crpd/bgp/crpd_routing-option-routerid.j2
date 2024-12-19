@@ -1,0 +1,12 @@
+routing-options {
+{# search bgp node which has node-ref with item["node"] #}
+{% for bgp_proc_node in bgp_proc_nodes.json["nodes"] %}
+{%   if bgp_proc_node["supports"][0]["node-ref"] == item["node"] and "attribute" in bgp_proc_node%}
+{%     if bgp_proc_node["attribute"]["router-id"] | length != 0 %}
+    router-id {{ bgp_proc_node["attribute"]["router-id"] }};
+{%     endif %}
+{%   endif %}
+{% endfor %}
+{# end of routing-options #}
+}
+

@@ -1,0 +1,19 @@
+routing-options {
+{% if item["attribute"]["static-route"] %}
+    rib inet.0 {
+        static {
+{%   for route in item["attribute"]["static-route"] %}
+            route {{ route.prefix }} {
+{%     if "discard" in route["next-hop"]  %}
+                discard;
+{%     else %}
+                next-hop {{ route["next-hop"] }};
+{%     endif %}
+                preference {{ route["preference"] }};
+                metric {{ route["metric"] }};
+            }
+{%   endfor  %}
+        }
+    }
+{% endif %}
+}

@@ -2,6 +2,7 @@
 
 # shellcheck disable=SC1091
 source ./demo_vars
+IFS=',' read -r -a remotenode <<< $WORKER_ADDRESS
 # shellcheck disable=SC1091
 source ./util.sh
 # shellcheck disable=SC1091

@@ -1,36 +1,28 @@
----
-- hosts: docker-host
+- hosts: localhost
+  connection: local
   gather_facts: false
   become: true
   vars:
-    ansible_user: "{{ login_user }}"
     ansible_python_interpreter: /usr/bin/python3
-    static_route_file: project/playbooks/configs/static-route.json
-    iperf_params_file_in_runner: configs/iperf_params.json  # in runner container path (origin: this playbook dir)
-    iperf_params_file: project/playbooks/configs/iperf_params.json  # in remote host path
     with_clab: "{{ with_clab }}"
-    clab_restart: "{{ clab_restart }}"
+    iperf_params_file:  "{{ ansible_runner_dir }}/project/playbooks/configs/iperf_params.json"  # in remote host path
+    remote_address: localhost
+    conductor_address: "{{ remote_address }}:15000"
 
   tasks:
-    - name: deploy containerlab
-      shell:
-        cmd: "containerlab deploy --topo clab-topo.yaml --reconfigure"
-      args:
-        chdir: "{{ ansible_runner_dir }}/clab"
-      when:
-        with_clab == "true" and clab_restart == "true"
+    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - name: "get convert table"
+      uri:
+        url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
+        method: "GET"
+        body_format: json
+      register: layer3_convert_table
 
-    - name: enable bgp license
-      shell:
-        cmd: "sudo containerlab exec --topo clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'"
-      args:
-        chdir: "{{ ansible_runner_dir }}/clab"
-      when:
-        with_clab == "true"
+    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
     - name: "get layer3 topology (select endpoint node)"
       uri:
-        url: "http://localhost:15000/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/interfaces?node_type=endpoint"
+        url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/interfaces?node_type=endpoint"
         method: "GET"
         body_format: json
       register: layer3_nodes
@@ -67,7 +59,7 @@
 
     - name: generate iperf command parameter
       uri:
-        url: "http://localhost:15000/usecases/{{ usecase_name }}/{{ network_name }}/{{ snapshot_name }}/iperf_commands?flow_data=event"
+        url: "http://{{ conductor_address }}/usecases/{{ usecase_name }}/iperf_commands?network={{ network_name }}&snapshot={{ snapshot_name }}"
         method: GET
         body_format: json
       register:
@@ -76,7 +68,10 @@
     - name: Save iperf commands data to a file
       copy:
         content: "{{ iperf_commands.json }}"
-        dest: "{{ ansible_runner_dir }}/{{ iperf_params_file }}"
+        dest: "{{ iperf_params_file }}"
+    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+
+    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
 
     - name: iperf server command (debug)
       debug:
@@ -84,7 +79,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_file_in_runner) }}"
+        - "{{ lookup('file', iperf_params_file) }}"
         - clients
 
     - name: iperf server command
@@ -93,7 +88,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_file_in_runner) }}"
+        - "{{ lookup('file', iperf_params_file) }}"
         - clients
       when:
         with_clab == "true"
@@ -104,7 +99,7 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_file_in_runner) }}"
+        - "{{ lookup('file', iperf_params_file) }}"
         - clients
 
     - name: iperf client command
@@ -113,7 +108,17 @@
       vars:
         exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
-        - "{{ lookup('file', iperf_params_file_in_runner) }}"
+        - "{{ lookup('file', iperf_params_file) }}"
         - clients
       when:
         with_clab == "true"
+
+    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+
+    - shell: 'echo "job_status{jobname=\"AllJob_Complete\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+
+    - name: pause
+      pause:
+        seconds: 10
+
+    - shell: 'echo "job_status{jobname=\"Iperf Executing\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'

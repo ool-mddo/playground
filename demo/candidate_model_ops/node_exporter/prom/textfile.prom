@@ -1,0 +1,2 @@
+job_status{jobname="Preparing_Deploy_Clab",network_name="mddo-bgp",snapshot_name="emulated_asis"} 1
+job_status{jobname="Preparing_IperfNode",network_name="mddo-bgp",snapshot_name="emulated_asis"} 1

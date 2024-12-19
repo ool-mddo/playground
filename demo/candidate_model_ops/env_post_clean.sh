@@ -8,9 +8,5 @@ sudo -v
 source ./demo_vars
 
 # delete containers related to containerlab
-sudo containerlab destroy --topo "${ANSIBLE_RUNNER_DIR}/clab/clab-topo.yaml" --cleanup
-
 # delete ovs bridges
-curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/emulated_asis/topology/layer3/nodes?node_type=segment" \
-  | jq '.nodes[].alias.l1_principal' \
-  | xargs -I@ sudo ovs-vsctl del-br @
+curl -H 'Content-Type: application/json' -d "{\"message\": \"destroy\",\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\", \"remote_address\": \"${CONTROLLER_ADDRESS}\", \"snapshot_name\":\"$1\"}" $2:48090/endpoint
