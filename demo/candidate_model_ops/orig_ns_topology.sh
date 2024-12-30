@@ -71,3 +71,36 @@ function generate_original_candidate_topologies() {
     "http://${API_PROXY}/conduct/${network_name}/${original_benchmark_topology}/candidate_topology" \
     > "$original_candidate_list"
 }
+
+function get_topology_diff() {
+  network_name=$1
+  src_ss=$2
+  dst_ss=$3
+
+  curl -s "http://${API_PROXY}/conduct/${network_name}/snapshot_diff/${src_ss}/${dst_ss}"
+}
+
+function save_topology() {
+  network_name=$1
+  snapshot_name=$2
+  topology_file=$3
+
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d @<(jq '{"topology_data": . }' "$topology_file") \
+    "http://${API_PROXY}/topologies/${network_name}/${snapshot_name}/topology"
+}
+
+function diff_benchmark_and_candidate_topologies() {
+  network_name=$1
+  original_benchmark_topology=$2
+  phase=$3
+
+  original_candidate_list=$(original_candidate_list_path "$phase")
+
+  for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+  do
+    topology_diff_json="${USECASE_SESSION_DIR}/_topology_diff.json"
+    get_topology_diff "$network_name" "$original_benchmark_topology" "$original_candidate_topology" > "$topology_diff_json"
+    save_topology "$network_name" "$original_candidate_topology" "$topology_diff_json" > /dev/null # cancel echo-back
+  done
+}

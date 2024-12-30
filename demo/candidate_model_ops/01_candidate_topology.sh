@@ -64,6 +64,8 @@ fi
 
 # Generate candidate topologies
 generate_original_candidate_topologies "$USECASE_NAME" "$NETWORK_NAME" "$original_benchmark_topology" "$phase" "$candidate_num"
+# Take diff and overwrite
+diff_benchmark_and_candidate_topologies "$NETWORK_NAME" "$original_benchmark_topology" "$phase"
 
 # Add netoviz index
 generate_netoviz_index "$phase" 1
