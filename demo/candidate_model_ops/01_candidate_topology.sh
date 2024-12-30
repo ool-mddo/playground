@@ -50,10 +50,10 @@ echo # newline
 
 if [ "$phase" -eq 1 ] && [ "$original_benchmark_topology" == "original_asis" ]; then
   # Create original as-is topology data
-  generate_original_asis_topology "$NETWORK_NAME"
+  generate_original_asis_topology
 
   # Splice external-AS topology to original as-is topology
-  splice_external_as_topology "$USECASE_NAME" "$NETWORK_NAME"
+  splice_external_as_topology
 fi
 
 # convert benchmark topology name if specified emulated namespace topology
@@ -63,9 +63,9 @@ if [[ $phase -ge 2 && $original_benchmark_topology == emulated_* ]]; then
 fi
 
 # Generate candidate topologies
-generate_original_candidate_topologies "$USECASE_NAME" "$NETWORK_NAME" "$original_benchmark_topology" "$phase" "$candidate_num"
+generate_original_candidate_topologies "$original_benchmark_topology" "$phase" "$candidate_num"
 # Take diff and overwrite
-diff_benchmark_and_candidate_topologies "$NETWORK_NAME" "$original_benchmark_topology" "$phase"
+diff_benchmark_and_candidate_topologies "$original_benchmark_topology" "$phase"
 
 # Add netoviz index
 generate_netoviz_index "$phase" 1

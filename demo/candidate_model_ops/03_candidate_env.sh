@@ -63,6 +63,8 @@ original_candidate_list=$(original_candidate_list_path "$phase")
 for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
   # convert namespace from original_candidate_i to emulated_candidate_i
   convert_namespace "$original_candidate_topology"
+  # take diff and overwrite
+  diff_emulated_topologies "$original_benchmark_topology" "$original_candidate_topology"
 done
 
 # update netoviz index
@@ -71,6 +73,9 @@ generate_netoviz_index "$phase" 3
 # up each emulated env
 for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
   up_emulated_env "$original_candidate_topology"
+  # take diff and overwrite (in up_emulated_env, re-entry ns-convert and overwrite it without diff)
+  diff_emulated_topologies "$original_benchmark_topology" "$original_candidate_topology"
+
   if [ "$WITH_CLAB" == true ]; then
     determine_candidate "$original_benchmark_topology" "$original_candidate_topology"
   else
