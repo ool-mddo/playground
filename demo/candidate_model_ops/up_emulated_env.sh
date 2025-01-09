@@ -75,5 +75,6 @@ function up_emulated_env() {
   ##############
   # post-clean #
   ##############
-  sudo bash env_post_clean.sh ${emulated_topology} $2
+  echo "destroy ${emulated_topology} on $2"
+  bash env_post_clean.sh ${emulated_topology} $2
 }

@@ -69,11 +69,20 @@ done
 
 # update netoviz index
 generate_netoviz_index "$phase" 3
-
+loopindex=1
 # up each emulated env
 for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
-  up_emulated_env "$original_candidate_topology"
+  echo "testdebug: ${#remotenode[@]}"
+  if [ ${#remotenode[@]} -eq 1 ]; then
+    echo "execute up emulated"
+    up_emulated_env "$original_candidate_topology" "$remotenode"
+    let loopindex++
+  else
+    nodeindex=$((${loopindex}%${#remotenode[@]}))
+    up_emulated_env "$original_candidate_topology" "${remotenode[$nodeindex]}"
+    let loopindex++
+  fi
   if [ "$WITH_CLAB" == true ]; then
     determine_candidate "$original_benchmark_topology" "$original_candidate_topology"
   else

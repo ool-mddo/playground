@@ -59,7 +59,7 @@
 
     - name: generate iperf command parameter
       uri:
-        url: "http://{{ conductor_address }}/usecases/{{ usecase_name }}/iperf_commands?network={{ network_name }}&snapshot={{ snapshot_name }}"
+        url: "http://{{ conductor_address }}/usecases/{{ usecase_name }}/{{ network_name }}/{{ snapshot_name }}/iperf_commands?flow_data=event"
         method: GET
         body_format: json
       register:
