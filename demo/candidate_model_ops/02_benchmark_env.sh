@@ -5,7 +5,7 @@ source ./demo_vars
 # shellcheck disable=SC1091
 source ./util.sh
 # shellcheck disable=SC1091
-FS=',' read -r -a remotenode <<< $WORKER_ADDRESS
+IFS=',' read -r -a remotenode <<< $WORKER_ADDRESS
 source ./up_emulated_env.sh 
 
 print_usage() {

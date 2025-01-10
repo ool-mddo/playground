@@ -16,3 +16,46 @@ services:
     volumes:
       - '/:/host:ro,rslave'
       - './prom:/data'
+    image: gcr.io/cadvisor/cadvisor:v0.38.6
+    ports:
+      - target: 8080
+        published: 20080
+    volumes:
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+      - type: bind
+        source: /var/run
+        target: /var/run
+      - type: bind
+        source: /sys
+        target: /sys
+        read_only: true
+      - type: bind
+        source: /var/lib/docker/
+        target: /var/lib/docker
+        read_only: true
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.38.6
+    ports:
+      - target: 8080
+        published: 20080
+    volumes:
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+      - type: bind
+        source: /var/run
+        target: /var/run
+      - type: bind
+        source: /sys
+        target: /sys
+        read_only: true
+      - type: bind
+        source: /var/lib/docker/
+        target: /var/lib/docker
+        read_only: true
+
+        

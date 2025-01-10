@@ -28,6 +28,7 @@ function up_emulated_env() {
 
 
   while :; do
+    echo ${worker_node_address}
     msg=`curl -s http://${worker_node_address}:9100/metrics | grep job`
     echo $msg
     breakjudge=`echo $msg | grep AllJob_Complete | grep '} 1' | wc -l`
