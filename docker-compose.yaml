@@ -1,6 +1,7 @@
 ---
 services:
   ansible-eda:
+    restart: on-failure
     build:
       context: ansible-eda
       dockerfile: Dockerfile
