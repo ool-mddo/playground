@@ -68,4 +68,5 @@ generate_original_candidate_topologies "$USECASE_NAME" "$NETWORK_NAME" "$origina
 # Add netoviz index
 generate_netoviz_index "$phase" 1
 
+bash generate_scrape.sh
 echo # newline
