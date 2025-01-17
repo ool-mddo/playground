@@ -25,10 +25,6 @@ class Cable:
             searched_cable = nb.dcim.cables.filter(termination_a_type="dcim.interface", termination_a_id=self.b.id, termination_b_type="dcim.interface", termination_b_id=self.a.id)
             if len(searched_cable) == 0:
                 if (self.a.id != self.b.id):
-                  print ("a: " + str(self.a.id) + ",b: " + str(self.b.id))
-                  print ("a: " + str(self.a.name) + ",b: " + str(self.b.name))
-                  print (str(nb.dcim.interfaces.filter(name=self.a.name)))
-                  print (str(nb.dcim.interfaces.filter(name=self.b.name)))
                   cable = nb.dcim.cables.create( 
                     a_terminations=[{
                         "object_type" : "dcim.interface",
@@ -39,7 +35,6 @@ class Cable:
                         "object_id" : self.b.id
                         }]
                   )
-                  #cable = nb.dcim.cables.create(termination_a_type="dcim.interface", termination_a_id=self.a.id, termination_b_type="dcim.interface", termination_b_id=self.b.id)
                   self.id = cable.id
             elif len(searched_cable) == 1:
                 self.id = list(searched_cable)[0].id
