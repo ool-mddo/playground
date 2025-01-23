@@ -88,8 +88,8 @@ function up_emulated_env() {
   # get environment state
   echo "Result state of env:${NETWORK_NAME}/${emulated_topology}"
   state_json="${USECASE_SESSION_DIR}/state_${emulated_topology}.json"
-  curl -s -X GET "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${emulated_topology}/state" \
-    | tee "$state_json"
+  curl -s -X GET "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${emulated_topology}/state" |
+    tee "$state_json"
 
   ##############
   # post-clean #

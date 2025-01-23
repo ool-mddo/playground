@@ -24,8 +24,7 @@ while getopts eish option; do
     echo "# usage: specify -i to initialize topology"
     exit 0
     ;;
-  *)
-    ;;
+  *) ;;
   esac
 done
 
@@ -50,7 +49,7 @@ if [ "$MAKE_EXT_AS_JSON" = true ]; then
   # generate external-AS topology
   external_as_json="${USECASE_SESSION_DIR}/external_as_topology.json"
   curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/original_asis/external_as_topology?flow_data=event" \
-    > "$external_as_json"
+    >"$external_as_json"
 fi
 
 if [ "$SPLICE_TOPOLOGY" = true ]; then

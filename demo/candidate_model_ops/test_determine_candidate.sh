@@ -41,7 +41,6 @@ done
 
 original_candidate_list=$(original_candidate_list_path "$phase")
 
-for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
-do
+for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
   determine_candidate "$original_benchmark_topology" "$original_candidate_topology" # | grep -v "Target" | grep -v "Result"
 done
