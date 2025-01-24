@@ -116,7 +116,7 @@ class Device:
             print(f"creating device named ``{self.lower_name}''")
             if not hasattr(self, "name"):
                 self.name = self.lower_name
-            res = nb.dcim.devices.create(name=self.name, device_type=self.device_type_id, device_role=self.device_role_id, site=self.site_id)
+            res = nb.dcim.devices.create(name=self.name, device_type=self.device_type_id, role=self.device_role_id, site=self.site_id)
             self.id = res.id
         elif len(searched_devices) > 1:
             for dev in list(searched_devices):
