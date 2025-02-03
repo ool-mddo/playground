@@ -25,8 +25,16 @@ class Cable:
             searched_cable = nb.dcim.cables.filter(termination_a_type="dcim.interface", termination_a_id=self.b.id, termination_b_type="dcim.interface", termination_b_id=self.a.id)
             if len(searched_cable) == 0:
                 if (self.a.id != self.b.id):
-                  print ("a: " + str(self.a.id) + ",b: " + str(self.b.id))
-                  cable = nb.dcim.cables.create(termination_a_type="dcim.interface", termination_a_id=self.a.id, termination_b_type="dcim.interface", termination_b_id=self.b.id)
+                  cable = nb.dcim.cables.create( 
+                    a_terminations=[{
+                        "object_type" : "dcim.interface",
+                        "object_id" : self.a.id
+                        }],
+                    b_terminations=[{
+                        "object_type" : "dcim.interface",
+                        "object_id" : self.b.id
+                        }]
+                  )
                   self.id = cable.id
             elif len(searched_cable) == 1:
                 self.id = list(searched_cable)[0].id
@@ -108,7 +116,7 @@ class Device:
             print(f"creating device named ``{self.lower_name}''")
             if not hasattr(self, "name"):
                 self.name = self.lower_name
-            res = nb.dcim.devices.create(name=self.name, device_type=self.device_type_id, device_role=self.device_role_id, site=self.site_id)
+            res = nb.dcim.devices.create(name=self.name, device_type=self.device_type_id, role=self.device_role_id, site=self.site_id)
             self.id = res.id
         elif len(searched_devices) > 1:
             for dev in list(searched_devices):

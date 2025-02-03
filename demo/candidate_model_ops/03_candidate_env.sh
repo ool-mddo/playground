@@ -61,16 +61,18 @@ sudo -v
 
 # at first: prepare each emulated_candidate topology data
 original_candidate_list=$(original_candidate_list_path "$phase")
-for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
-do
+for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
   # convert namespace from original_candidate_i to emulated_candidate_i
   convert_namespace "$original_candidate_topology"
+  # take diff and overwrite
+  diff_emulated_topologies "$original_benchmark_topology" "$original_candidate_topology"
 done
 
 # update netoviz index
 generate_netoviz_index "$phase" 3
 loopindex=1
 # up each emulated env
+<<<<<<< HEAD
 for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
   echo "testdebug: ${#remotenode[@]}"
@@ -83,6 +85,9 @@ do
     up_emulated_env "$original_candidate_topology" "${remotenode[$nodeindex]}"
     let loopindex++
   fi
+  # take diff and overwrite (in up_emulated_env, re-entry ns-convert and overwrite it without diff)
+  diff_emulated_topologies "$original_benchmark_topology" "$original_candidate_topology"
+
   if [ "$WITH_CLAB" == true ]; then
     determine_candidate "$original_benchmark_topology" "$original_candidate_topology"
   else
@@ -94,10 +99,9 @@ done
 if [ "$WITH_CLAB" == true ]; then
   echo # newline
   echo "Summary"
-  for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
-  do
-    determine_candidate "$original_benchmark_topology" "$original_candidate_topology" \
-      | grep -v "Target" | grep -v "Result"
+  for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
+    determine_candidate "$original_benchmark_topology" "$original_candidate_topology" |
+      grep -v "Target" | grep -v "Result"
   done
 else
   echo "# skip state diff summary, because WITH_CLAB=$WITH_CLAB"
