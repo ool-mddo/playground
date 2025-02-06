@@ -22,6 +22,7 @@ yaml_template_node_exporter="
 
 
 # 生成するYAMLファイル名
+
 output_file="../../assets/prometheus/prometheus.yaml"
 
 # YAMLテンプレートを出力

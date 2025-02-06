@@ -4,9 +4,8 @@
 source ./util.sh
 
 function up_emulated_env() {
-  original_topology=$1
-  emulated_topology=$(reverse_snapshot_name "$original_topology")
-  worker_node_address=$2
+  target_original_snapshot=$1
+  target_emulated_snapshot="${target_original_snapshot/original/emulated}"
 
   echo "Target original snapshot: $original_topology"
 
@@ -23,18 +22,38 @@ function up_emulated_env() {
   convert_namespace "$original_topology"
   echo "target :; $target_emulated_snapshot "
   # generate emulated_candidate configs from emulated_candidate topology
+  echo "Exec ansible to generate $target_emulated_snapshot configs"
+  ansible-runner run . -p /data/project/playbooks/step2-1.yaml \
+    --container-option="--net=${API_BRIDGE}" \
+    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
+    --container-volume-mount="$PWD:/data" \
+    --process-isolation \
+    --process-isolation-executable docker \
+    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
+              -e login_user=${LOCALSERVER_USER} \
+              -e network_name=${NETWORK_NAME} \
+              -e snapshot_name=${target_emulated_snapshot} \
+              -e crpd_image=${CRPD_IMAGE} \
+              -e with_clab=${WITH_CLAB} \
+              -k -K"
+
   # generate emulated_candidate environment from emulated_candidate topology/configs
-  curl -H 'Content-Type: application/json' -d "{\"message\": \"step2\" ,\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\", \"worker_node_address\": \"${worker_node_address}\", \"remote_address\": \"${CONTROLLER_ADDRESS}\", \"snapshot_name\":\"${emulated_topology}\"}" localhost:48081/endpoint
-
-
-  while :; do
-    echo ${worker_node_address}
-    msg=`curl -s http://${worker_node_address}:9100/metrics | grep job`
-    echo $msg
-    breakjudge=`echo $msg | grep AllJob_Complete | grep '} 1' | wc -l`
-    [[ $breakjudge -eq 1 ]] && break
-    sleep 5
-  done
+  echo "# Exec ansible to generate $target_emulated_snapshot clab env"
+  ansible-runner run . -p "/data/project/playbooks/step2-2.yaml" \
+    --container-option="--net=${API_BRIDGE}" \
+    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
+    --container-volume-mount="$PWD:/data" \
+    --process-isolation \
+    --process-isolation-executable docker \
+    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
+              -e login_user=${LOCALSERVER_USER} \
+              -e network_name=${NETWORK_NAME} \
+              -e snapshot_name=${target_emulated_snapshot} \
+              -e usecase_name=${USECASE_NAME} \
+              -e usecase_common_name=${USECASE_COMMON_NAME} \
+              -e with_clab=${WITH_CLAB} \
+              -e clab_restart=false \
+              -k -K"
 
   ###############
   # state part #
@@ -76,6 +95,5 @@ function up_emulated_env() {
   ##############
   # post-clean #
   ##############
-  echo "destroy ${emulated_topology} on $2"
-  bash env_post_clean.sh ${emulated_topology} $2
+  sudo ./post_clean.sh
 }
