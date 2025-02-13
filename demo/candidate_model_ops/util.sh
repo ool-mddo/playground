@@ -54,12 +54,7 @@ function generate_netoviz_index() {
 
   netoviz_index="${USECASE_SESSION_DIR}/netoviz_index.json"
   python3 netoviz_index.py -n "$NETWORK_NAME" -p "$phase" -s "$step" -i "$NETWORK_INDEX" -d "$USECASE_SESSION_DIR" \
-<<<<<<< HEAD
-    > "$netoviz_index"
-  echo "$netoviz_index"
-=======
     >"$netoviz_index"
->>>>>>> v2.0.0-conflict
   post_netoviz_index "$netoviz_index"
 }
 

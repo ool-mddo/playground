@@ -64,6 +64,7 @@ fi
 
 # generate candidate topologies
 if [ "$step_until" -ge 1 ]; then
+  echo "01"
   bash 01_candidate_topology.sh -p "$phase" -c "$candidate_num" -b "$original_benchmark_topology"
 fi
 
