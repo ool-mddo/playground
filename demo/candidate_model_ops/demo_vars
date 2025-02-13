@@ -14,8 +14,8 @@ PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 NETWORK_NAME="mddo-bgp"
 USECASE_NAME="multi_src_as_te" # one of [pni_addlink, pni_te, multi_region_te, multi_src_as_te] for mddo-bgp network
 CONTROLLER_ADDRESS="192.168.23.233"
-WORKER_ADDRESS="192.168.23.233"
-#WORKER_ADDRESS="192.168.23.34,192.168.23.35"
+#WORKER_ADDRESS="192.168.23.233"
+WORKER_ADDRESS="192.168.23.32,192.168.23.233"
 
 # constants
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/candidate_model_ops"
