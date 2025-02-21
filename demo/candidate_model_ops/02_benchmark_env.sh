@@ -5,8 +5,10 @@ source ./demo_vars
 # shellcheck disable=SC1091
 source ./util.sh
 # shellcheck disable=SC1091
-IFS=',' read -r -a remotenode <<< $WORKER_ADDRESS
-source ./up_emulated_env.sh 
+source ./up_emulated_env.sh
+
+# read worker addresses as array
+IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
 
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
@@ -66,8 +68,4 @@ convert_namespace "$original_benchmark_topology"
 generate_netoviz_index "$phase" 2
 
 # up original_asis env
-if [ ${#remotenode[@]} -eq 1 ]; then
-  up_emulated_env "$original_benchmark_topology" "$remotenode"
-else
-  up_emulated_env "$original_benchmark_topology" "${remotenode[0]}"
-fi
+up_emulated_env "$original_benchmark_topology" "${remote_nodes[0]}"

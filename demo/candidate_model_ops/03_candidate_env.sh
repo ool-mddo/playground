@@ -2,13 +2,15 @@
 
 # shellcheck disable=SC1091
 source ./demo_vars
-IFS=',' read -r -a remotenode <<< $WORKER_ADDRESS
 # shellcheck disable=SC1091
 source ./util.sh
 # shellcheck disable=SC1091
 source ./up_emulated_env.sh
 # shellcheck disable=SC1091
 source ./determine_candidate.sh
+
+# read worker addresses as array
+IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
 
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
@@ -69,20 +71,19 @@ done
 
 # update netoviz index
 generate_netoviz_index "$phase" 3
-loopindex=1
+
 # up each emulated env
+loop_index=1
+remote_nodes_num=${#remote_nodes[@]}
+echo "Number of remote_nodes: $remote_nodes_num"
 for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
 do
-  echo "testdebug: ${#remotenode[@]}"
-  if [ ${#remotenode[@]} -eq 1 ]; then
-    echo "execute up emulated"
-    up_emulated_env "$original_candidate_topology" "$remotenode"
-    let loopindex++
-  else
-    nodeindex=$((${loopindex}%${#remotenode[@]}))
-    up_emulated_env "$original_candidate_topology" "${remotenode[$nodeindex]}"
-    let loopindex++
-  fi
+  # select remote node (worker) by round-robin (if remote_nodes_num=1 then always 0)
+  node_index=$((loop_index % remote_nodes_num))
+  echo "execute up emulated, loop=$loop_index, remote=${remote_nodes[$node_index]} (node_index:$node_index)"
+  up_emulated_env "$original_candidate_topology" "${remote_nodes[$node_index]}"
+  ((loop_index++))
+
   if [ "$WITH_CLAB" == true ]; then
     determine_candidate "$original_benchmark_topology" "$original_candidate_topology"
   else
