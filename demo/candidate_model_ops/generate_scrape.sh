@@ -1,10 +1,11 @@
 #!/bin/bash
 
-source ./demo_vars
 # shellcheck disable=SC1091
-IFS=',' read -r -a remotenode <<< $WORKER_ADDRESS
-cadvisor_port=20080
-nodeexporter_port=9100
+source ./demo_vars
+
+# read worker address as array
+IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
+
 # YAMLテンプレート
 yaml_template_cadvisor="
 scrape_configs:
@@ -20,29 +21,26 @@ yaml_template_node_exporter="
       - targets:
 "
 
-
 # 生成するYAMLファイル名
-
 output_file="../../assets/prometheus/prometheus.yaml"
 
 # YAMLテンプレートを出力
 echo -n "$yaml_template_cadvisor" > "$output_file"
 
 # targetsセクションを生成して追記
-for remoteip in "${remotenode[@]}"; do
-  echo -e "        -  $remoteip:$cadvisor_port" >> "$output_file"
+for remote_ip in "${remote_nodes[@]}"; do
+  echo -e "        -  $remote_ip:$CADVISOR_PORT" >> "$output_file"
 done
 
 echo -n "$yaml_template_node_exporter" >> "$output_file"
 
 # targetsセクションを生成して追記
-for remoteip in "${remotenode[@]}"; do
-  echo -e "        - $remoteip:$nodeexporter_port" >> "$output_file"
+for remote_ip in "${remote_nodes[@]}"; do
+  echo -e "        - $remote_ip:$NODE_EXPORTER_PORT" >> "$output_file"
 done
-
-
 
 # YAMLの終端
 echo -e "      " >> "$output_file"
-curl -X POST http://localhost:9090/-/reload
 
+# reload prometheus
+curl -X POST "http://${PROMETHEUS}/-/reload"

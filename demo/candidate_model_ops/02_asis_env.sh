@@ -3,8 +3,10 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
-IFS=',' read -r -a remotenode <<< $WORKER_ADDRESS
-source ./up_emulated_env.sh 
+source ./up_emulated_env.sh
+
+# read worker addresses as array
+IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
 
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
@@ -57,8 +59,4 @@ curl -s -X POST -H 'Content-Type: application/json' \
   "http://${API_PROXY}/topologies/index"
 
 # up original_asis env
-if [ ${#remotenode[@]} -eq 1 ]; then
-  up_emulated_env "$target_original_snapshot" "$remotenode"
-else
-  up_emulated_env "$target_original_snapshot" "${remotenode[0]}"
-fi
+up_emulated_env "$target_original_snapshot" "${remote_nodes[0]}"

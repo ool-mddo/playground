@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 
 # shellcheck disable=SC1091
+source .demo_vars
+# shellcheck disable=SC1091
 source ./util.sh
 
 function up_emulated_env() {
@@ -9,6 +11,7 @@ function up_emulated_env() {
   worker_node_address=$2
 
   echo "Target original snapshot: $original_topology"
+  echo "Target emulated snapshot: $emulated_topology"
 
   #############
   # pre-clean #
@@ -21,18 +24,28 @@ function up_emulated_env() {
 
   # convert namespace from original to emulated
   convert_namespace "$original_topology"
-  echo "target :; $target_emulated_snapshot "
+
   # generate emulated_candidate configs from emulated_candidate topology
   # generate emulated_candidate environment from emulated_candidate topology/configs
-  curl -H 'Content-Type: application/json' -d "{\"message\": \"step2\" ,\"ansible_runner_dir\":\"${ANSIBLE_RUNNER_DIR}\",\"crpd_image\":\"${CRPD_IMAGE}\",\"network_name\":\"${NETWORK_NAME}\", \"usecase_name\": \"${USECASE_NAME}\", \"worker_node_address\": \"${worker_node_address}\", \"remote_address\": \"${CONTROLLER_ADDRESS}\", \"snapshot_name\":\"${emulated_topology}\"}" localhost:48081/endpoint
-
+  curl -H "Content-Type: application/json" \
+    -d '{
+          "message": "step2",
+          "ansible_runner_dir": "'"$ANSIBLE_RUNNER_DIR"'",
+          "crpd_image": "'"$CRPD_IMAGE"'",
+          "network_name": "'"$NETWORK_NAME"'",
+          "usecase_name": "'"$USECASE_NAME"'",
+          "worker_node_address": "'"$worker_node_address"'",
+          "remote_address": "'"$CONTROLLER_ADDRESS"'",
+          "snapshot_name": "'"$emulated_topology"'"
+        }' \
+    "http://${ANSIBLE_EDA}/endpoint"
 
   while :; do
-    echo ${worker_node_address}
-    msg=`curl -s http://${worker_node_address}:9100/metrics | grep job`
-    echo $msg
-    breakjudge=`echo $msg | grep AllJob_Complete | grep '} 1' | wc -l`
-    [[ $breakjudge -eq 1 ]] && break
+    echo "worker_node_address: $worker_node_address"
+    msg=$(curl -s "http://${worker_node_address}:${NODE_EXPORTER_PORT}/metrics" | grep job)
+    echo "message: $msg"
+    break_judge=$(echo "$msg" | grep AllJob_Complete | grep -c '} 1')
+    [[ $break_judge -eq 1 ]] && break
     sleep 5
   done
 
@@ -76,7 +89,7 @@ function up_emulated_env() {
   ##############
   # post-clean #
   ##############
-  echo "destroy ${emulated_topology} on $2"
-  bash env_post_clean.sh ${emulated_topology} $2
+  echo "destroy $emulated_topology on $worker_node_address"
+  bash env_post_clean.sh "$emulated_topology" "$worker_node_address"
 }
 
