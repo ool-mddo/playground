@@ -47,3 +47,9 @@
             usecase_name: "{{ event.payload.usecase_name }}"
             with_clab: "true"
             remote_address: "{{ event.payload.remote_address }}"
+    - name: shutdown webhook
+      condition: event.payload.message == "shutdown"
+      action:
+        shutdown:
+          delay: 15
+          message: "Shutting down"       
