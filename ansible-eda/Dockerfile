@@ -6,7 +6,9 @@ USER 0
 
 # python3.11 and python3.12 supported
 ARG PYTHON_BIN="python3.11"
-
+RUN curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo
+RUN sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/docker-ce.repo
+RUN dnf --enablerepo=docker-ce-stable -y install docker-ce
 RUN pip install paramiko \
     jmespath \
     netaddr \
@@ -21,8 +23,10 @@ RUN ansible-galaxy collection install ansible.netcommon \
     cisco.iosxr \
     arista.eos \
     community.general
-
-USER "$USER_ID"
+RUN dnf install jq -y 
+#RUN usermod -aG docker  $(getent passwd 1001 | cut -d: -f1)
+#RUN newgrp docker
+#USER "$USER_ID"
 ENV POETRY_VERSION="1.8.3" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

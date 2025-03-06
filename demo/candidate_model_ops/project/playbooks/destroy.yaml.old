@@ -20,7 +20,7 @@
       register: containerlab
 
     - name: "delete ovs-br {{ item.key }}"
-      shell: "docker exec -it mddo-clab-docker  ovs-vsctl del-br {{ item.key }}"
+      shell: "ovs-vsctl del-br {{ item.key }}"
       when: with_clab == "true" and "ovs" in item.value.kind
       loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
       ignore_errors: true
@@ -41,7 +41,7 @@
 
     - name: destroy containerlab
       shell:
-        cmd: "docker exec -it mddo-clab-docker containerlab destroy --topo clab-topo.yaml --cleanup"
+        cmd: "containerlab destroy --topo clab-topo.yaml --cleanup"
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
       when: with_clab == "true"

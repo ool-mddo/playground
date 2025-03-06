@@ -20,4 +20,4 @@ fi
 
 echo 'job_status{jobname="",network_name="",snapshot_name=""} 0' > ./node_exporter/prom/textfile.prom
 docker compose -f node_exporter/docker-compose.yaml up -d
-ansible-rulebook -i ../../ansible-eda/hosts --rulebook ../../ansible-eda/containerlab_rulebook.yaml -vvvv
+#ansible-rulebook -i ../../ansible-eda/hosts --rulebook ../../ansible-eda/containerlab_rulebook.yaml -vvvv

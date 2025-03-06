@@ -4,11 +4,11 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets:
-        -  192.168.23.233:20080
+        -  172.17.0.1:20080
 
   - job_name: node_exporter
     scrape_interval: 10s
     static_configs:
       - targets:
-        - 192.168.23.233:9100
+        - 172.17.0.1:9100
       

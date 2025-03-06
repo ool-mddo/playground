@@ -1,5 +1,34 @@
 ---
 services:
+  eda-worker:
+    privileged: true
+    restart: on-failure
+    build:
+      context: ../../../ansible-eda
+      dockerfile: Dockerfile
+    ports:
+      - target: 48090
+        published: 48090
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /var/run/netns
+        target: /var/run/netns
+      - type: bind
+        source: /etc/hosts
+        target: /etc/hosts
+      - type: bind
+        source: /var/lib/docker/containers
+        target: /var/lib/docker/containers
+      - type: bind
+        source: ../../../ansible-eda
+        target: /eda
+      - type: bind
+        source: ../
+        target: /data
+    command: ["ansible-rulebook","-r","/eda/containerlab_rulebook.yaml","-i","/eda/hosts","-vvvv"]
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
