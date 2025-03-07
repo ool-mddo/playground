@@ -1,3 +1,2 @@
 job_status{jobname="Setting_ovs-br",network_name="mddo-bgp",snapshot_name="emulated_asis"} 0
 job_status{jobname="Deploying_Containerlab",network_name="mddo-bgp",snapshot_name="emulated_asis"} 1
-job_status{jobname="Deploying_Containerlab",network_name="mddo-bgp",snapshot_name="emulated_asis"} 0

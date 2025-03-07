@@ -5,12 +5,12 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     with_clab: "{{ with_clab }}"
-    iperf_params_file:  "{{ ansible_runner_dir }}/project/playbooks/configs/iperf_params.json"  # in remote host path
+    iperf_params_file:  "/clab/iperf_params.json"  # in remote host path
     remote_address: localhost
     conductor_address: "{{ remote_address }}:15000"
 
   tasks:
-    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > /prom/textfile.prom'
     - name: "get convert table"
       uri:
         url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
@@ -18,7 +18,7 @@
         body_format: json
       register: layer3_convert_table
 
-    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> /prom/textfile.prom'
 
     - name: "get layer3 topology (select endpoint node)"
       uri:
@@ -36,7 +36,7 @@
       debug:
         msg: "{{ exec_container }} {{ add_eth1_ip }}; {{ exec_container }} {{ del_default_route }}; {{ exec_container }} {{ add_default_route }}"
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        exec_container: "docker exec  mddo-clab-docker containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
         add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '
         del_default_route: "ip route del default via 172.20.20.1"
         add_default_route: 'ip route add default via {{ item["attribute"]["static-route"][0]["next-hop"] }}'
@@ -48,7 +48,7 @@
       args:
         chdir: "{{ ansible_runner_dir }}/clab"
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        exec_container: "docker exec  mddo-clab-docker containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
         add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '
         del_default_route: "ip route del default via 172.20.20.1"
         add_default_route: 'ip route add default via {{ item["attribute"]["static-route"][0]["next-hop"] }}'
@@ -69,15 +69,15 @@
       copy:
         content: "{{ iperf_commands.json }}"
         dest: "{{ iperf_params_file }}"
-    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Preparing_IperfNode\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > /prom/textfile.prom'
 
-    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> /prom/textfile.prom'
 
     - name: iperf server command (debug)
       debug:
         msg: '{{ exec_container }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.server_port }} > out_{{ item.1.server_port }}.log &"'
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        exec_container: "docker exec  mddo-clab-docker containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
         - "{{ lookup('file', iperf_params_file) }}"
         - clients
@@ -86,7 +86,7 @@
       shell:
         cmd: '{{ exec_container }} /bin/bash -c "nohup iperf3 -s -p {{ item.1.server_port }} > out_{{ item.1.server_port }}.log 2>&1 &"'
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        exec_container: "docker exec  mddo-clab-docker containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.0['server_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
         - "{{ lookup('file', iperf_params_file) }}"
         - clients
@@ -97,7 +97,7 @@
       debug:
         msg: '{{ exec_container }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["server_address"] }} -b {{ item.1.rate | int }}K -p {{ item.1.server_port }} > out_{{ item.0.server_node }}.log &"'
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        exec_container: "docker exec  mddo-clab-docker containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
         - "{{ lookup('file', iperf_params_file) }}"
         - clients
@@ -106,19 +106,19 @@
       shell:
         cmd: '{{ exec_container }} /bin/bash -c "nohup iperf3 -t 0 -c {{ item.1["server_address"] }} -b {{ item.1.rate | int }}K -p {{ item.1.server_port }} > out_{{ item.0.server_node }}.log 2>&1 &"'
       vars:
-        exec_container: "sudo containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
+        exec_container: "docker exec  mddo-clab-docker containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item.1['client_node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
       with_subelements:
         - "{{ lookup('file', iperf_params_file) }}"
         - clients
       when:
         with_clab == "true"
 
-    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Start_Iperf\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > /prom/textfile.prom'
 
-    - shell: 'echo "job_status{jobname=\"AllJob_Complete\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"AllJob_Complete\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > /prom/textfile.prom'
 
     - name: pause
       pause:
         seconds: 10
 
-    - shell: 'echo "job_status{jobname=\"Iperf Executing\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Iperf Executing\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > /prom/textfile.prom'

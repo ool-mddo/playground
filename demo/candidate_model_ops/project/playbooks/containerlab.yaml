@@ -5,12 +5,12 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     with_clab: "{{ with_clab }}"
-    iperf_params_file:  "{{ ansible_runner_dir }}/project/playbooks/configs/iperf_params.json"  # in remote host path
+    iperf_params_file:  "/clab/iperf_params.json"  # in remote host path
     remote_address: localhost
     conductor_address: "{{ remote_address }}:15000"
 
   tasks:
-    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" > /prom/textfile.prom'
     - name: "get convert table"
       uri:
         url: "http://{{ conductor_address }}/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
@@ -22,7 +22,7 @@
       shell: "curl {{ url }}/{{ item.agent_name }}.conf | jq -r .text > {{ filepath }}"
       vars:
         url: "http://{{ conductor_address }}/configs/{{ network_name }}/{{ snapshot_name }}"
-        filepath: "{{ ansible_runner_dir }}/clab/{{ item.agent_name }}.conf"
+        filepath: "/clab/{{ item.agent_name }}.conf"
       loop: "{{ layer3_convert_table.json }}"
 
     - name: "get convert table"
@@ -41,12 +41,12 @@
 
     - name: Creating clab-topo.yaml
       copy:
-        dest: "{{ ansible_runner_dir }}/clab/clab-topo.yaml"
+        dest: "/clab/clab-topo.yaml"
         content: "{{ containerlab.json | to_yaml }}"
 
-    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Preparing_Deploy_Clab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > /prom/textfile.prom'
 
-    - shell: 'echo "job_status{jobname=\"Setting_ovs-br\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Setting_ovs-br\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> /prom/textfile.prom'
 
     - name: "delete ovs-br {{ item.key }}"
       shell: "docker exec  mddo-clab-docker ovs-vsctl del-br {{ item.key }}"
@@ -60,24 +60,20 @@
       loop: "{{ lookup( 'ansible.builtin.dict', containerlab.json.topology.nodes) }}"
       ignore_errors: true
 
-    - shell: 'echo "job_status{jobname=\"Setting_ovs-br\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Setting_ovs-br\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" > /prom/textfile.prom'
 
-    - shell: 'echo "job_status{jobname=\"Deploying_Containerlab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Deploying_Containerlab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 1" >> /prom/textfile.prom'
 
     - name: deploy containerlab
       shell:
-        cmd: "docker exec  mddo-clab-docker containerlab deploy --topo clab-topo.yaml --reconfigure"
-      #args:
-      #  chdir: "{{ ansible_runner_dir }}/clab"
+        cmd: "docker exec  mddo-clab-docker containerlab deploy --topo /workdir/clab-topo.yaml --reconfigure"
       when: with_clab == "true"
 
     - name: enable bgp license
       shell:
-        cmd: "docker exec  mddo-clab-docker containerlab exec --topo clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'"
-      #args:
-      #  chdir: "{{ ansible_runner_dir }}/clab"
+        cmd: "docker exec  mddo-clab-docker containerlab exec --topo /workdir/clab-topo.yaml --label clab-node-kind=juniper_crpd --cmd 'cli request system license add /tmp/license.key'"
       when:
         with_clab == "true"
 
-    - shell: 'echo "job_status{jobname=\"Deploying_Containerlab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" >> {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"Deploying_Containerlab\",network_name=\"{{ network_name }}\",snapshot_name=\"{{ snapshot_name }}\"} 0" >> /prom/textfile.prom'
 

@@ -12,7 +12,7 @@
       condition: event.payload.message == "clab"
       action:
         run_playbook:
-          name: "{{ event.payload.ansible_runner_dir }}/project/playbooks/containerlab.yaml"
+          name: "/playbooks/containerlab.yaml"
           extra_vars:
             network_name: "{{ event.payload.network_name }}"
             crpd_image: "{{ event.payload.crpd_image }}"
@@ -25,7 +25,7 @@
       condition: event.payload.message == "iperf"
       action:
         run_playbook:
-          name: "{{ event.payload.ansible_runner_dir }}/project/playbooks/iperf.yaml"
+          name: "/playbooks/iperf.yaml"
           extra_vars:
             network_name: "{{ event.payload.network_name }}"
             crpd_image: "{{ event.payload.crpd_image }}"
@@ -38,7 +38,7 @@
       condition: event.payload.message == "destroy"
       action:
         run_playbook:
-          name: "{{ event.payload.ansible_runner_dir }}/project/playbooks/destroy.yaml"
+          name: "/playbooks/destroy.yaml"
           extra_vars:
             network_name: "{{ event.payload.network_name }}"
             crpd_image: "{{ event.payload.crpd_image }}"

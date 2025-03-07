@@ -5,12 +5,12 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     with_clab: "{{ with_clab }}"
-    iperf_params_file:  "{{ ansible_runner_dir }}/project/playbooks/configs/iperf_params.json"  # in remote host path
+    iperf_params_file:  "/clab/iperf_params.json"  # in remote host path
     remote_address: localhost
     conductor_address: "{{ remote_address }}:15000"
 
   tasks:
-    - shell: 'echo "job_status{jobname=\"\",network_name=\"\",snapshot_name=\"\"} 0" > {{ ansible_runner_dir }}/node_exporter/prom/textfile.prom'
+    - shell: 'echo "job_status{jobname=\"\",network_name=\"\",snapshot_name=\"\"} 0" > /prom/textfile.prom'
 
     - name: "get clab topo yaml"
       uri:
@@ -29,13 +29,13 @@
       shell:
         cmd: "ls | grep clab-topo.yaml"
       args:
-        chdir: "{{ ansible_runner_dir }}/clab"
+        chdir: "/clab"
       register: exist_topo
       ignore_errors: true
 
     - name: Creating clab-topo.yaml
       copy:
-        dest: "{{ ansible_runner_dir }}/clab/clab-topo.yaml"
+        dest: "/clab/clab-topo.yaml"
         content: "{{ containerlab.json | to_yaml }}"
       when: "'clab-topo.yaml' not in exist_topo.stdout_lines"
 
@@ -43,6 +43,6 @@
       shell:
         cmd: "docker exec -it mddo-clab-docker containerlab destroy --topo clab-topo.yaml --cleanup"
       args:
-        chdir: "{{ ansible_runner_dir }}/clab"
+        chdir: "/clab"
       when: with_clab == "true"
 
