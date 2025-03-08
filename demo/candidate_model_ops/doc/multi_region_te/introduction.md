@@ -1,4 +1,4 @@
-# デモユースケース: 複数リージョン感トラフィック制御
+# デモユースケース: 複数リージョン間トラフィック制御
 
 ## 概要
 
@@ -7,7 +7,7 @@ copy_to_emulated_env, [PNIユースケース](./../../../copy_to_emulated_env/do
 * 送信元ASの内部を東京・大阪の2つのリージョンと捉えます
 
 > [!NOTE]
-> [multi_src_as_teユースケース](../multi_src_as_te/introduction.md)の前段に作成した実験的なユースケースです。
+> [multi_src_as_teユースケース](../multi_src_as_te/introduction.md)の前段に作成した実験用のユースケースです。
 
 ![situation](./fig/multi_region_usecase.drawio.svg)
 
