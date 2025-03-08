@@ -1,4 +1,4 @@
-# candidate_model_ops (候補モデルの生成と自動検証デモ)
+# candidate_model_ops (運用者の試行錯誤をモデル操作で実現する)
 
 ## Main scenario
 

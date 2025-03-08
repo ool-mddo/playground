@@ -24,6 +24,9 @@
   * PNIユースケース
     * [PNI トラフィック制御](./demo/copy_to_emulated_env/doc/pni_te/introduction.md)
     * [PNI リンク増設](./demo/copy_to_emulated_env/doc/pni_addlink/introduction.md)
+* [運用者の試行錯誤をモデル操作で実現する](./demo/candidate_model_ops/README.md)
+  * [(単一AS)複数リージョントラフィック制御](/demo/candidate_model_ops/doc/multi_region_te/introduction.md)
+  * [複数ASトラフィック制御](./demo/candidate_model_ops/doc/multi_src_as_te/introduction.md)
 
 ## Reference
 
