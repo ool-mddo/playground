@@ -2,8 +2,6 @@
 
 # shellcheck disable=SC1091
 source ./demo_vars
-# shellcheck disable=SC1091
-source ./util.sh
 
 echo ${ANSIBLE_EDA_CLAB}
 # stop ansible-eda if running
