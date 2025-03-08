@@ -70,4 +70,5 @@ diff_benchmark_and_candidate_topologies "$original_benchmark_topology" "$phase"
 # Add netoviz index
 generate_netoviz_index "$phase" 1
 
+bash generate_scrape.sh
 echo # newline

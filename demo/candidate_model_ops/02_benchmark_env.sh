@@ -7,6 +7,9 @@ source ./util.sh
 # shellcheck disable=SC1091
 source ./up_emulated_env.sh
 
+# read worker addresses as array
+IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
+
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
   echo "Options:"
@@ -52,16 +55,17 @@ echo "# check: benchmark topology = $original_benchmark_topology"
 echo "# check: with_clab = $WITH_CLAB"
 echo # newline
 
-# cache sudo credential
-echo "Please enter your sudo password:"
-sudo -v
+## cache sudo credential
+#echo "Please enter your sudo password:"
+#sudo -v
 
 # at first: prepare emulated_asis topology data
 # convert namespace from original namespace to emulated namespace
+echo "$original_benchmark_topology"
 convert_namespace "$original_benchmark_topology"
 
 # Add netoviz index
 generate_netoviz_index "$phase" 2
 
 # up original_asis env
-up_emulated_env "$original_benchmark_topology"
+up_emulated_env "$original_benchmark_topology" "${remote_nodes[0]}"

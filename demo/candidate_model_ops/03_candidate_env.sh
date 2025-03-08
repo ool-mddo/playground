@@ -9,6 +9,9 @@ source ./up_emulated_env.sh
 # shellcheck disable=SC1091
 source ./determine_candidate.sh
 
+# read worker addresses as array
+IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
+
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
   echo "Options:"
@@ -60,21 +63,26 @@ sudo -v
 
 # at first: prepare each emulated_candidate topology data
 original_candidate_list=$(original_candidate_list_path "$phase")
-for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
+for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+do
   # convert namespace from original_candidate_i to emulated_candidate_i
   convert_namespace "$original_candidate_topology"
-  # take diff and overwrite
-  diff_emulated_topologies "$original_benchmark_topology" "$original_candidate_topology"
 done
 
 # update netoviz index
 generate_netoviz_index "$phase" 3
 
 # up each emulated env
-for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
-  up_emulated_env "$original_candidate_topology"
-  # take diff and overwrite (in up_emulated_env, re-entry ns-convert and overwrite it without diff)
-  diff_emulated_topologies "$original_benchmark_topology" "$original_candidate_topology"
+loop_index=1
+remote_nodes_num=${#remote_nodes[@]}
+echo "Number of remote_nodes: $remote_nodes_num"
+for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+do
+  # select remote node (worker) by round-robin (if remote_nodes_num=1 then always 0)
+  node_index=$((loop_index % remote_nodes_num))
+  echo "execute up emulated, loop=$loop_index, remote=${remote_nodes[$node_index]} (node_index:$node_index)"
+  up_emulated_env "$original_candidate_topology" "${remote_nodes[$node_index]}"
+  ((loop_index++))
 
   if [ "$WITH_CLAB" == true ]; then
     determine_candidate "$original_benchmark_topology" "$original_candidate_topology"
@@ -87,9 +95,10 @@ done
 if [ "$WITH_CLAB" == true ]; then
   echo # newline
   echo "Summary"
-  for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list"); do
-    determine_candidate "$original_benchmark_topology" "$original_candidate_topology" |
-      grep -v "Target" | grep -v "Result"
+  for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
+  do
+    determine_candidate "$original_benchmark_topology" "$original_candidate_topology" \
+      | grep -v "Target" | grep -v "Result"
   done
 else
   echo "# skip state diff summary, because WITH_CLAB=$WITH_CLAB"

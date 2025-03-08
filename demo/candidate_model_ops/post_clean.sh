@@ -12,6 +12,7 @@ snapshot_name=$1
 worker_node_address=$2
 
 # delete containers related to containerlab
+
 # delete ovs bridges
 curl -H 'Content-Type: application/json' \
   -d '{
@@ -24,3 +25,4 @@ curl -H 'Content-Type: application/json' \
         "snapshot_name": "'"$snapshot_name"'"
       }' \
   "http://${worker_node_address}:48090/endpoint"
+ 

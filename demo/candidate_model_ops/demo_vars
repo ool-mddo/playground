@@ -4,6 +4,12 @@
 ANSIBLE_RUNNER_IMAGE="ghcr.io/ool-mddo/mddo-ansible-runner:v3.1.0"
 CRPD_IMAGE="crpd:23.4R1.9"
 API_PROXY="localhost:15000"
+ANSIBLE_EDA="localhost:48080"
+ANSIBLE_EDA_CLAB="localhost:48090"
+PROMETHEUS="localhost:9090"
+CADVISOR_PORT=20080
+NODE_EXPORTER_PORT=9100
+
 API_BRIDGE="playground_default"
 
 # all steps: demo user & directory
@@ -13,6 +19,8 @@ PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 # all steps: target network/usecase name
 NETWORK_NAME="mddo-bgp"
 USECASE_NAME="multi_src_as_te" # one of [pni_addlink, pni_te, multi_region_te, multi_src_as_te] for mddo-bgp network
+CONTROLLER_ADDRESS="192.168.23.33"
+WORKER_ADDRESS="192.168.23.33,192.168.23.34"
 
 # constants
 ANSIBLE_RUNNER_DIR="${PLAYGROUND_DIR}/demo/candidate_model_ops"
@@ -20,3 +28,13 @@ ANSIBLE_PLAYBOOK_DIR="${ANSIBLE_RUNNER_DIR}/project/playbooks"
 NETWORK_INDEX="${ANSIBLE_RUNNER_DIR}/network_index/${NETWORK_NAME}.json"
 USECASE_CONFIGS_DIR="${ANSIBLE_PLAYBOOK_DIR}/configs"
 USECASE_SESSION_DIR="${ANSIBLE_PLAYBOOK_DIR}/session"
+
+# step1-2, 2-2: check if the network has bgp(_proc) layer
+function use_bgp_proc() {
+  network_name=$1
+  snapshot_name=$2
+  curl -s "http://${API_PROXY}/topologies/${network_name}/${snapshot_name}/topology" \
+    | jq '."ietf-network:networks".network[] | ."network-types" | keys[0]' \
+    | grep -q mddo-topology:bgp-proc-network
+  return $?
+}

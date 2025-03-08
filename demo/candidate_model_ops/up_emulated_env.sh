@@ -1,13 +1,17 @@
 #!/usr/bin/bash
 
 # shellcheck disable=SC1091
+source ./demo_vars
+# shellcheck disable=SC1091
 source ./util.sh
 
 function up_emulated_env() {
   original_topology=$1
   emulated_topology=$(reverse_snapshot_name "$original_topology")
+  worker_node_address=$2
 
   echo "Target original snapshot: $original_topology"
+  echo "Target emulated snapshot: $emulated_topology"
 
   #############
   # pre-clean #
@@ -22,37 +26,28 @@ function up_emulated_env() {
   convert_namespace "$original_topology"
 
   # generate emulated_candidate configs from emulated_candidate topology
-  echo "Exec ansible to generate $emulated_topology configs"
-  ansible-runner run . -p /data/project/playbooks/step2-1.yaml \
-    --container-option="--net=${API_BRIDGE}" \
-    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
-    --container-volume-mount="$PWD:/data" \
-    --process-isolation \
-    --process-isolation-executable docker \
-    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
-              -e login_user=${LOCALSERVER_USER} \
-              -e network_name=${NETWORK_NAME} \
-              -e snapshot_name=${emulated_topology} \
-              -e crpd_image=${CRPD_IMAGE} \
-              -e with_clab=${WITH_CLAB} \
-              -k -K"
-
   # generate emulated_candidate environment from emulated_candidate topology/configs
-  echo "# Exec ansible to generate $emulated_topology clab env"
-  ansible-runner run . -p "/data/project/playbooks/step2-2.yaml" \
-    --container-option="--net=${API_BRIDGE}" \
-    --container-image="${ANSIBLE_RUNNER_IMAGE}" \
-    --container-volume-mount="$PWD:/data" \
-    --process-isolation \
-    --process-isolation-executable docker \
-    --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
-              -e login_user=${LOCALSERVER_USER} \
-              -e network_name=${NETWORK_NAME} \
-              -e snapshot_name=${emulated_topology} \
-              -e usecase_name=${USECASE_NAME} \
-              -e with_clab=${WITH_CLAB} \
-              -e clab_restart=false \
-              -k -K"
+  curl -H "Content-Type: application/json" \
+    -d '{
+          "message": "step2",
+          "ansible_runner_dir": "'"$ANSIBLE_RUNNER_DIR"'",
+          "crpd_image": "'"$CRPD_IMAGE"'",
+          "network_name": "'"$NETWORK_NAME"'",
+          "usecase_name": "'"$USECASE_NAME"'",
+          "worker_node_address": "'"$worker_node_address"'",
+          "remote_address": "'"$CONTROLLER_ADDRESS"'",
+          "snapshot_name": "'"$emulated_topology"'"
+        }' \
+    "http://${ANSIBLE_EDA}/endpoint"
+
+  while :; do
+    echo "worker_node_address: $worker_node_address"
+    msg=$(curl -s "http://${worker_node_address}:${NODE_EXPORTER_PORT}/metrics" | grep job)
+    echo "message: $msg"
+    break_judge=$(echo "$msg" | grep AllJob_Complete | grep -c '} 1')
+    [[ $break_judge -eq 1 ]] && break
+    sleep 5
+  done
 
   ###############
   # state part #
@@ -88,11 +83,13 @@ function up_emulated_env() {
   # get environment state
   echo "Result state of env:${NETWORK_NAME}/${emulated_topology}"
   state_json="${USECASE_SESSION_DIR}/state_${emulated_topology}.json"
-  curl -s -X GET "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${emulated_topology}/state" |
-    tee "$state_json"
+  curl -s -X GET "http://${API_PROXY}/state-conductor/environment/${NETWORK_NAME}/${emulated_topology}/state" \
+    | tee "$state_json"
 
   ##############
   # post-clean #
   ##############
-  sudo bash env_post_clean.sh
+  echo "destroy $emulated_topology on $worker_node_address"
+  bash env_post_clean.sh "$emulated_topology" "$worker_node_address"
 }
+
