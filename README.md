@@ -12,6 +12,7 @@
 * [ネットワークのモデル](./doc/network_model.md)
 * [デモ環境セットアップ](./doc/provision.md)
   * [開発用・開発者向け](./doc/development.md)
+* [デモ環境セットアップ(ワーカー分離)](./doc/provision_workers.md)
 
 ## Demonstration
 
