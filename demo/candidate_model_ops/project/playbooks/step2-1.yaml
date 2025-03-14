@@ -165,20 +165,20 @@
         remote_address: "{{ remote_address }}"
         ##ansible_runner_dir: "{{ ansible_runner_dir }}"
 
-#  - name: "setup iperf"
-#    uri:
-#      url: "http://{{ worker_node_address }}:48090/endpoint"
-#      method: "POST"
-#      headers:
-#        Content-Type: application/json
-#      body_format: json
-#      body:
-#        message: iperf
-#        usecase_name: "{{ usecase_name }}"
-#        network_name: "{{ network_name }}"
-#        crpd_image: "{{ crpd_image }}"
-#        snapshot_name: "{{ snapshot_name }}"
-#        ansible_runner_dir: "/data"
-#        remote_address: "{{ remote_address }}"
-#        #ansible_runner_dir: "{{ ansible_runner_dir }}"
+  - name: "setup iperf"
+    uri:
+      url: "http://{{ worker_node_address }}:48090/endpoint"
+      method: "POST"
+      headers:
+        Content-Type: application/json
+      body_format: json
+      body:
+        message: iperf
+        usecase_name: "{{ usecase_name }}"
+        network_name: "{{ network_name }}"
+        crpd_image: "{{ crpd_image }}"
+        snapshot_name: "{{ snapshot_name }}"
+        ansible_runner_dir: "/data"
+        remote_address: "{{ remote_address }}"
+        #ansible_runner_dir: "{{ ansible_runner_dir }}"
 

@@ -45,8 +45,6 @@
     - name: setting eth1 & default routing
       shell:
         cmd: "{{ exec_container }} {{ add_eth1_ip }}; {{ exec_container }} {{ del_default_route }}; {{ exec_container }} {{ add_default_route }}"
-      args:
-        chdir: "{{ ansible_runner_dir }}/clab"
       vars:
         exec_container: "docker exec  mddo-clab-docker containerlab inspect --all --format json | jq '.containers[] | select( .name | contains (\"{{ item['node'] }}\")) | .name' | xargs -ICONTAINER docker exec CONTAINER "
         add_eth1_ip: 'ip addr add {{ item["interfaces"][0]["attribute"]["ip-address"][0] }} dev eth1 '

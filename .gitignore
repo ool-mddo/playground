@@ -14,3 +14,5 @@ demo/layer1_topology/inet-henge/*
 # demo
 demo/**/passwords
 demo/**/artifacts/**
+# license
+license.key

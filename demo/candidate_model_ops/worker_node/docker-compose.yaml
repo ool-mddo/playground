@@ -4,9 +4,11 @@ services:
     container_name: mddo-clab-docker
     privileged: true
     pid: "host"
+    network_mode: "host"
     restart: on-failure
     image: ghcr.io/ool-mddo/mddo-clab-docker:main
-    working_dir: /workdir    
+    #working_dir: /home/mddo/playground/demo/candidate_model_ops/clab
+    working_dir: ${WORKERDIR}/clab
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -24,8 +26,10 @@ services:
         source: ../../../ansible-eda
         target: /eda
       - type: bind
-        source: ../clab
-        target: /workdir
+        source:  ${WORKERDIR}/clab
+        #source: ../clab
+        #target: /home/mddo/playground/demo/candidate_model_ops/clab
+        target:  ${WORKERDIR}/clab
   eda-worker:
     privileged: true
     restart: on-failure
@@ -53,7 +57,8 @@ services:
         source: ./prom
         target: /prom
       - type: bind
-        source: ../clab
+        source: ${WORKERDIR}/clab
+        #source: ../clab
         target: /clab
       - type: bind
         source: ../project/playbooks/
@@ -65,7 +70,6 @@ services:
     command:
       - '--path.rootfs=/host'
       - "--collector.textfile.directory=/data"
-    network_mode: host
     pid: host
     ports:
       - 9100:9100
@@ -73,3 +77,8 @@ services:
     volumes:
       - '/:/host:ro,rslave'
       - './prom:/data'
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.32.0.0/24        

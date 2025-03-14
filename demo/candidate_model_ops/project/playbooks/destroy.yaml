@@ -41,8 +41,6 @@
 
     - name: destroy containerlab
       shell:
-        cmd: "docker exec -it mddo-clab-docker containerlab destroy --topo clab-topo.yaml --cleanup"
-      args:
-        chdir: "/clab"
+        cmd: "docker exec mddo-clab-docker containerlab destroy --topo clab-topo.yaml --cleanup"
       when: with_clab == "true"
 
