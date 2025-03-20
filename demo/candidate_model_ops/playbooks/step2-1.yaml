@@ -150,7 +150,7 @@
 
   - name: "deploy containerlab"
     uri:
-      url: "http://{{ worker_node_address }}:48090/endpoint"
+      url: "http://{{ worker_node_address }}:{{ worker_port }}/endpoint"
       method: "POST"
       headers:
         Content-Type: application/json
@@ -163,11 +163,10 @@
         snapshot_name: "{{ snapshot_name }}"
         ansible_runner_dir: "/data"
         remote_address: "{{ remote_address }}"
-        ##ansible_runner_dir: "{{ ansible_runner_dir }}"
 
   - name: "setup iperf"
     uri:
-      url: "http://{{ worker_node_address }}:48090/endpoint"
+      url: "http://{{ worker_node_address }}:{{ worker_port }}/endpoint"
       method: "POST"
       headers:
         Content-Type: application/json
@@ -180,5 +179,4 @@
         snapshot_name: "{{ snapshot_name }}"
         ansible_runner_dir: "/data"
         remote_address: "{{ remote_address }}"
-        #ansible_runner_dir: "{{ ansible_runner_dir }}"
 

@@ -30,8 +30,8 @@ function up_emulated_env() {
   curl -H "Content-Type: application/json" \
     -d '{
           "message": "step2",
-          "ansible_runner_dir": "'"$ANSIBLE_RUNNER_DIR"'",
           "crpd_image": "'"$CRPD_IMAGE"'",
+          "worker_port": "'"$WORKER_PORT"'",
           "network_name": "'"$NETWORK_NAME"'",
           "usecase_name": "'"$USECASE_NAME"'",
           "worker_node_address": "'"$worker_node_address"'",
