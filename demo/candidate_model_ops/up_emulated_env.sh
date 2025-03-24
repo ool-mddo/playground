@@ -95,7 +95,7 @@ function up_emulated_env() {
     echo "worker_node_address: $worker_node_address"
     msg=$(curl -s "http://${worker_node_address}:${NODE_EXPORTER_PORT}/metrics" | grep job)
     echo "message: $msg"
-    break_judge=$(echo "$msg" | grep AllJob_Complete | grep -c '} 1')
+    break_judge=$(echo "$msg" | grep DestroyJob_Complete | grep -c '} 1')
     [[ $break_judge -eq 1 ]] && break
     sleep 5
   done
