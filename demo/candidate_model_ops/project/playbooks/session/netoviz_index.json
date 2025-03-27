@@ -1,1 +1,0 @@
-[{"label": "MDDO-BGP (original_asis)", "network": "mddo-bgp", "snapshot": "original_asis", "file": "topology.json"}, {"label": "MDDO-BGP (original_candidate_11)", "network": "mddo-bgp", "snapshot": "original_candidate_11", "file": "topology.json"}, {"label": "MDDO-BGP (emulated_asis)", "network": "mddo-bgp", "snapshot": "emulated_asis", "file": "topology.json"}]
