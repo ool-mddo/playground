@@ -12,6 +12,7 @@
 * [ネットワークのモデル](./doc/network_model.md)
 * [デモ環境セットアップ](./doc/provision.md)
   * [開発用・開発者向け](./doc/development.md)
+* [デモ環境セットアップ(ワーカー分離)](./doc/provision_workers.md)
 
 ## Demonstration
 
@@ -23,6 +24,9 @@
   * PNIユースケース
     * [PNI トラフィック制御](./demo/copy_to_emulated_env/doc/pni_te/introduction.md)
     * [PNI リンク増設](./demo/copy_to_emulated_env/doc/pni_addlink/introduction.md)
+* [運用者の試行錯誤をモデル操作で実現する](./demo/candidate_model_ops/README.md)
+  * [(単一AS)複数リージョントラフィック制御](/demo/candidate_model_ops/doc/multi_region_te/introduction.md)
+  * [複数ASトラフィック制御](./demo/candidate_model_ops/doc/multi_src_as_te/introduction.md)
 
 ## Reference
 
