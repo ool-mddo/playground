@@ -9,10 +9,10 @@
 
   rules:
     - name: playground
-      condition: event.payload.message == "step2"
+      condition: event.payload.message == "controller"
       action:
         run_playbook:
-          name: /playbooks/step2-1.yaml
+          name: /playbooks/controller.yaml
           extra_vars:
             network_name: "{{ event.payload.network_name }}"
             crpd_image: "{{ event.payload.crpd_image }}"

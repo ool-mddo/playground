@@ -9,7 +9,7 @@ IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
 # YAMLテンプレート
 yaml_template_cadvisor="
 scrape_configs:
-  - job_name: cadvisor
+  - job_name: worker_cadvisor
     scrape_interval: 5s
     static_configs:
       - targets:
@@ -23,6 +23,7 @@ yaml_template_node_exporter="
 
 # 生成するYAMLファイル名
 output_file="../../assets/prometheus/prometheus.yaml"
+cp ../../assets/prometheus/prometheus.yaml ../../assets/prometheus/orig.prometheus.yaml
 
 # YAMLテンプレートを出力
 echo -n "$yaml_template_cadvisor" > "$output_file"

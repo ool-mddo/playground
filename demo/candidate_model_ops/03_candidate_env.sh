@@ -103,3 +103,6 @@ if [ "$WITH_CLAB" == true ]; then
 else
   echo "# skip state diff summary, because WITH_CLAB=$WITH_CLAB"
 fi
+
+mv ../../assets/prometheus/orig.prometheus.yaml ../../assets/prometheus/prometheus.yaml
+

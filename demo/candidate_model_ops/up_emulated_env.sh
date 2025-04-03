@@ -29,7 +29,7 @@ function up_emulated_env() {
   # generate emulated_candidate environment from emulated_candidate topology/configs
   curl -H "Content-Type: application/json" \
     -d '{
-          "message": "step2",
+          "message": "controller",
           "crpd_image": "'"$CRPD_IMAGE"'",
           "worker_port": "'"$WORKER_PORT"'",
           "network_name": "'"$NETWORK_NAME"'",
