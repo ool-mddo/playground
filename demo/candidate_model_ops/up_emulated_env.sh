@@ -27,7 +27,7 @@ function up_emulated_env() {
 
   # generate emulated_candidate configs from emulated_candidate topology
   # generate emulated_candidate environment from emulated_candidate topology/configs
-  curl -H "Content-Type: application/json" \
+  curl -s -X POST -H "Content-Type: application/json" \
     -d '{
           "message": "controller",
           "crpd_image": "'"$CRPD_IMAGE"'",

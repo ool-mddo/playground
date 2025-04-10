@@ -13,7 +13,7 @@ worker_node_address=$2
 
 # delete containers related to containerlab
 # delete ovs bridges
-curl -H 'Content-Type: application/json' \
+curl -s -X POST -H 'Content-Type: application/json' \
   -d '{
         "message": "destroy",
         "crpd_image": "'"$CRPD_IMAGE"'",
