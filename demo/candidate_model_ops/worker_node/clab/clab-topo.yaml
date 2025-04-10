@@ -1,0 +1,175 @@
+name: emulated
+topology:
+  links:
+  - endpoints: ['br0:br0p0', 'core-tk01:eth1']
+  - endpoints: ['br0:br0p1', 'core-tk02:eth1']
+  - endpoints: ['br0:br0p2', 'edge-tk01:eth1']
+  - endpoints: ['br0:br0p3', 'edge-tk02:eth1']
+  - endpoints: ['br0:br0p4', 'edge-tk03:eth1']
+  - endpoints: ['br0:br0p5', 'edge-tk11:eth1']
+  - endpoints: ['as65550-core00:eth1', 'br1:br1p0']
+  - endpoints: ['br1:br1p1', 'as65550-edge01:eth2']
+  - endpoints: ['as65550-core00:eth2', 'br2:br2p0']
+  - endpoints: ['br2:br2p1', 'as65550-edge02:eth2']
+  - endpoints: ['as65550-core00:eth3', 'br3:br3p0']
+  - endpoints: ['br3:br3p1', 'as65550-core01:eth1']
+  - endpoints: ['as65550-core01:eth2', 'br4:br4p0']
+  - endpoints: ['br4:br4p1', 'as65550-endpoint00:eth1']
+  - endpoints: ['as65550-core01:eth3', 'br5:br5p0']
+  - endpoints: ['br5:br5p1', 'as65550-endpoint01:eth1']
+  - endpoints: ['as65550-core01:eth4', 'br6:br6p0']
+  - endpoints: ['br6:br6p1', 'as65550-endpoint02:eth1']
+  - endpoints: ['as65550-core01:eth5', 'br7:br7p0']
+  - endpoints: ['br7:br7p1', 'as65550-endpoint03:eth1']
+  - endpoints: ['as65560-core00:eth1', 'br8:br8p0']
+  - endpoints: ['br8:br8p1', 'as65560-edge01:eth2']
+  - endpoints: ['as65560-core00:eth2', 'br9:br9p0']
+  - endpoints: ['br9:br9p1', 'as65560-edge02:eth2']
+  - endpoints: ['as65560-core00:eth3', 'br10:br10p0']
+  - endpoints: ['br10:br10p1', 'as65560-core01:eth1']
+  - endpoints: ['as65560-core01:eth2', 'br11:br11p0']
+  - endpoints: ['br11:br11p1', 'as65560-endpoint00:eth1']
+  - endpoints: ['as65560-core01:eth3', 'br12:br12p0']
+  - endpoints: ['br12:br12p1', 'as65560-endpoint01:eth1']
+  - endpoints: ['as65560-core01:eth4', 'br13:br13p0']
+  - endpoints: ['br13:br13p1', 'as65560-endpoint02:eth1']
+  - endpoints: ['as65560-core01:eth5', 'br14:br14p0']
+  - endpoints: ['br14:br14p1', 'as65560-endpoint03:eth1']
+  - endpoints: ['as65520-edge01:eth2', 'br15:br15p0']
+  - endpoints: ['br15:br15p1', 'as65520-core00:eth1']
+  - endpoints: ['as65520-core00:eth2', 'br16:br16p0']
+  - endpoints: ['br16:br16p1', 'as65520-endpoint00:eth1']
+  - endpoints: ['as65520-core00:eth3', 'br17:br17p0']
+  - endpoints: ['br17:br17p1', 'as65520-endpoint01:eth1']
+  - endpoints: ['as65520-core00:eth4', 'br18:br18p0']
+  - endpoints: ['br18:br18p1', 'as65520-endpoint02:eth1']
+  - endpoints: ['as65520-core00:eth5', 'br19:br19p0']
+  - endpoints: ['br19:br19p1', 'as65520-endpoint03:eth1']
+  - endpoints: ['edge-tk01:eth2', 'br20:br20p0']
+  - endpoints: ['br20:br20p1', 'as65550-edge01:eth1']
+  - endpoints: ['edge-tk02:eth3', 'br21:br21p0']
+  - endpoints: ['br21:br21p1', 'as65550-edge02:eth1']
+  - endpoints: ['edge-tk02:eth2', 'br22:br22p0']
+  - endpoints: ['br22:br22p1', 'as65560-edge01:eth1']
+  - endpoints: ['edge-tk03:eth2', 'br23:br23p0']
+  - endpoints: ['br23:br23p1', 'as65560-edge02:eth1']
+  - endpoints: ['edge-tk11:eth2', 'br24:br24p0']
+  - endpoints: ['br24:br24p1', 'as65520-edge01:eth1']
+  nodes:
+    as65520-core00:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65520-core00.conf
+    as65520-edge01:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65520-edge01.conf
+    as65520-endpoint00: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65520-endpoint01: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65520-endpoint02: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65520-endpoint03: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65550-core00:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65550-core00.conf
+    as65550-core01:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65550-core01.conf
+    as65550-edge01:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65550-edge01.conf
+    as65550-edge02:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65550-edge02.conf
+    as65550-endpoint00: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65550-endpoint01: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65550-endpoint02: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65550-endpoint03: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65560-core00:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65560-core00.conf
+    as65560-core01:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65560-core01.conf
+    as65560-edge01:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65560-edge01.conf
+    as65560-edge02:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: as65560-edge02.conf
+    as65560-endpoint00: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65560-endpoint01: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65560-endpoint02: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    as65560-endpoint03: {image: 'ghcr.io/ool-mddo/ool-iperf:main', kind: linux}
+    br0: {kind: ovs-bridge}
+    br1: {kind: ovs-bridge}
+    br10: {kind: ovs-bridge}
+    br11: {kind: ovs-bridge}
+    br12: {kind: ovs-bridge}
+    br13: {kind: ovs-bridge}
+    br14: {kind: ovs-bridge}
+    br15: {kind: ovs-bridge}
+    br16: {kind: ovs-bridge}
+    br17: {kind: ovs-bridge}
+    br18: {kind: ovs-bridge}
+    br19: {kind: ovs-bridge}
+    br2: {kind: ovs-bridge}
+    br20: {kind: ovs-bridge}
+    br21: {kind: ovs-bridge}
+    br22: {kind: ovs-bridge}
+    br23: {kind: ovs-bridge}
+    br24: {kind: ovs-bridge}
+    br3: {kind: ovs-bridge}
+    br4: {kind: ovs-bridge}
+    br5: {kind: ovs-bridge}
+    br6: {kind: ovs-bridge}
+    br7: {kind: ovs-bridge}
+    br8: {kind: ovs-bridge}
+    br9: {kind: ovs-bridge}
+    core-tk01:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: core-tk01.conf
+    core-tk02:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: core-tk02.conf
+    edge-tk01:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: edge-tk01.conf
+    edge-tk02:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: edge-tk02.conf
+    edge-tk03:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: edge-tk03.conf
+    edge-tk11:
+      binds: ['license.key:/tmp/license.key:ro']
+      image: crpd:23.4R1.9
+      kind: juniper_crpd
+      startup-config: edge-tk11.conf
