@@ -1,1 +1,0 @@
-[{"network":"mddo-bgp","benchmark_snapshot":"original_asis","snapshot":"original_candidate_11","candidate_condition":{"prefixes":["10.130.0.0/21"],"rate":2401.75,"diff":1601.75}}]
