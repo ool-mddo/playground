@@ -9,15 +9,15 @@
 
   rules:
     - name: playground
-      condition: event.payload.message == "step2"
+      condition: event.payload.message == "controller"
       action:
         run_playbook:
-          name: /playbooks/step2-1.yaml
+          name: /playbooks/controller.yaml
           extra_vars:
             network_name: "{{ event.payload.network_name }}"
             crpd_image: "{{ event.payload.crpd_image }}"
-            ansible_runner_dir: "{{ event.payload.ansible_runner_dir }}"
             snapshot_name: "{{ event.payload.snapshot_name }}"
             usecase_name: "{{ event.payload.usecase_name }}"
+            worker_port: "{{ event.payload.worker_port }}"
             worker_node_address: "{{ event.payload.worker_node_address }}"
             remote_address: "{{ event.payload.remote_address }}"

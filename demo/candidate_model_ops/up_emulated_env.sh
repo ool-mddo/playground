@@ -27,11 +27,11 @@ function up_emulated_env() {
 
   # generate emulated_candidate configs from emulated_candidate topology
   # generate emulated_candidate environment from emulated_candidate topology/configs
-  curl -H "Content-Type: application/json" \
+  curl -s -X POST -H "Content-Type: application/json" \
     -d '{
-          "message": "step2",
-          "ansible_runner_dir": "'"$ANSIBLE_RUNNER_DIR"'",
+          "message": "controller",
           "crpd_image": "'"$CRPD_IMAGE"'",
+          "worker_port": "'"$WORKER_PORT"'",
           "network_name": "'"$NETWORK_NAME"'",
           "usecase_name": "'"$USECASE_NAME"'",
           "worker_node_address": "'"$worker_node_address"'",
@@ -91,5 +91,13 @@ function up_emulated_env() {
   ##############
   echo "destroy $emulated_topology on $worker_node_address"
   bash env_post_clean.sh "$emulated_topology" "$worker_node_address"
+  while :; do
+    echo "worker_node_address: $worker_node_address"
+    msg=$(curl -s "http://${worker_node_address}:${NODE_EXPORTER_PORT}/metrics" | grep job)
+    echo "message: $msg"
+    break_judge=$(echo "$msg" | grep DestroyJob_Complete | grep -c '} 1')
+    [[ $break_judge -eq 1 ]] && break
+    sleep 5
+  done
 }
 

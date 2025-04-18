@@ -31,3 +31,6 @@
 [submodule "repos/state-conductor"]
 	path = repos/state-conductor
 	url = https://github.com/ool-mddo/state-conductor.git
+[submodule "repos/mddo-worker"]
+	path = repos/mddo-worker
+	url = https://github.com/ool-mddo/mddo-worker.git

@@ -1,1 +1,0 @@
--e ansible_runner_dir=/home/hagiwara/ool-mddo/playground/demo/candidate_model_ops               -e login_user=hagiwara               -e network_name=mddo-bgp               -e snapshot_name=emulated_asis               -e crpd_image=crpd:23.4R1.9               -e with_clab=true               -k -K

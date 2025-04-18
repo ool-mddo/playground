@@ -1,0 +1,86 @@
+protocols {
+    bgp {
+        family inet {
+            unicast;
+        }
+{# item = bgp_proc node data #}
+{% for peer in item["interfaces"] %}
+{%   set attrs = peer["attribute"] %}
+{%   if "attribute" in peer and peer["attribute"]["peer-group"] != "" %}
+        group {{ attrs["peer-group"] }} {
+            family inet {
+                unicast;
+            }
+            peer-as {{ attrs["remote-as"] }};
+{%     if attrs["remote-as"] == attrs["local-as"] %}
+            local-as {{ attrs["local-as"] }};
+            type internal;
+{%     else %}
+            type external;
+{%     endif %}
+            hold-time {{ attrs["timer"]["hold-time"] }};
+{%     for group_peer in item["interfaces"] %}
+{%       if group_peer["attribute"]["peer-group"] and group_peer["attribute"]["peer-group"] == attrs["peer-group"] %}
+{%          if  group_peer["attribute"]["route-reflector-client"] %}
+            cluster {{ group_peer["attribute"]["cluster-id"] }};
+{%          endif %}
+            neighbor {{ group_peer["attribute"]["remote-ip"] }} {
+                local-address {{ group_peer["attribute"]["local-ip"] }};
+{%         if group_peer["attribute"]["import-policy"] | length != 0 %}
+{%           if group_peer["attribute"]["import-policy"] | length == 1 %}
+                import {{ group_peer["attribute"]["import-policy"][0] }};
+{%           else %}
+                import [{% for name in group_peer["attribute"]["import-policy"] %} {{ name }}{% endfor %} ];
+{%           endif %}
+{%         endif %}
+{%         if group_peer["attribute"]["export-policy"] | length != 0 %}
+{%           if group_peer["attribute"]["export-policy"] | length == 1 %}
+                export {{ group_peer["attribute"]["export-policy"][0] }};
+{%           else %}
+                export [{% for name in group_peer["attribute"]["export-policy"] %} {{ name }}{% endfor %} ];
+{%           endif %}
+{%         endif %}
+            }
+{%       endif %}
+{%     endfor %}
+        }
+{%   else %}
+{# if peer-group is not set, use remote-ip instead of it, because usually remote-ip is public-ip and it is unique #}
+        group {{ attrs["remote-ip"] }} {
+            family inet {
+                unicast;
+            }
+            peer-as {{ attrs["remote-as"] }};
+{%     if attrs["remote-as"] == attrs["local-as"] %}
+            local-as {{ attrs["local-as"] }};
+            type internal;
+{%     else %}
+            type external;
+{%     endif %}
+            hold-time {{ attrs["timer"]["hold-time"] }};
+{%          if attrs["route-reflector-client"] %}
+            cluster {{ attrs["cluster-id"] }};
+{%          endif %}
+            neighbor {{ attrs["remote-ip"] }} {
+                local-address {{ attrs["local-ip"] }};
+
+{%     if attrs["import-policy"] | length != 0 %}
+{%       if attrs["import-policy"] | length == 1 %}
+                import {{ attrs["import-policy"][0] }};
+{%       else %}
+                import [{% for name in attrs["import-policy"] %} {{ name }}{% endfor %} ];
+{%       endif %}
+{%     endif %}
+{%     if attrs["export-policy"] | length != 0 %}
+{%       if attrs["export-policy"] | length == 1 %}
+                export {{ attrs["export-policy"][0] }};
+{%       else %}
+                export [{% for name in attrs["export-policy"] %} {{ name }}{% endfor %} ];
+{%       endif %}
+{%     endif %}
+            }
+        }
+{%   endif %}
+{% endfor %}
+    }
+}

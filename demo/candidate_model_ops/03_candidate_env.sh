@@ -8,7 +8,6 @@ source ./util.sh
 source ./up_emulated_env.sh
 # shellcheck disable=SC1091
 source ./determine_candidate.sh
-
 # read worker addresses as array
 IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
 
@@ -67,6 +66,8 @@ for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidat
 do
   # convert namespace from original_candidate_i to emulated_candidate_i
   convert_namespace "$original_candidate_topology"
+  # take diff and overwrite
+  diff_emulated_topologies "$original_benchmark_topology" "$original_candidate_topology"
 done
 
 # update netoviz index
@@ -97,9 +98,10 @@ if [ "$WITH_CLAB" == true ]; then
   echo "Summary"
   for original_candidate_topology in $(jq -r ".[] | .snapshot" "$original_candidate_list")
   do
-    determine_candidate "$original_benchmark_topology" "$original_candidate_topology" \
-      | grep -v "Target" | grep -v "Result"
+    determine_candidate "$original_benchmark_topology" "$original_candidate_topology" |
+      grep -v "Target" | grep -v "Result"
   done
 else
   echo "# skip state diff summary, because WITH_CLAB=$WITH_CLAB"
 fi
+mv ../../assets/prometheus/orig.prometheus.yaml ../../assets/prometheus/prometheus.yaml

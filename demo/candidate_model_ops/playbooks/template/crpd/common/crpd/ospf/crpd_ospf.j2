@@ -1,0 +1,33 @@
+protocols {
+    ospf {
+        area {{ item.0.attribute.identifier }} {
+{% for interface in item.1.interfaces %}
+            interface {{ interface.alias.l1_principal }} {
+{% if interface.attribute.metric > 0 %}
+                metric {{ interface.attribute.metric }};
+{% endif %}
+{% if interface.attribute.passive %}
+                passive;
+{% endif %}
+{% if "POINT_TO_POINT" in interface.attribute["network-type"] %}
+                interface-type p2p;
+{% endif %}
+                priority {{ interface.attribute.priority }};
+                hello-interval {{ interface.attribute.timer["hello-interval"] }};
+                dead-interval {{ interface.attribute.timer["dead-interval"] }};
+            }
+{% endfor  %}
+        }
+{% if  item.1.attribute.redistribute | length != 0 %}
+        export ospf-redistribute;
+{% endif %}
+    }
+}
+{% if  item.1.attribute.redistribute | length != 0 %}
+policy-options {
+    policy-statement ospf-redistribute {
+        from protocol [ {{ item.1.attribute.redistribute | json_query('[*].protocol') | join(' ') | regex_replace('connected', 'direct') }} ];
+        then accept;
+    }
+}
+{% endif %}
