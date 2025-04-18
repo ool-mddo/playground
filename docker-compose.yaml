@@ -3,7 +3,6 @@ services:
   ansible-eda:
     restart: on-failure
     image: ${ANSIBLE_EDA_IMAGE}:${ANSIBLE_EDA_IMAGE_TAG}
-    #image: ghcr.io/ool-mddo/mddo-ansible-eda:main
     ports:
       - target: 48080
         published: 48080
@@ -12,7 +11,7 @@ services:
         source: ./demo/candidate_model_ops/playbooks
         target: /playbooks
       - type: bind
-        source: ./ansible-eda
+        source: ./assets/ansible-eda
         target: /eda
     command: ["ansible-rulebook","-r","/eda/rulebook.yaml","-i","/eda/hosts","-vvvv"]
   api-proxy:
