@@ -23,3 +23,4 @@ curl -s -X POST -H 'Content-Type: application/json' \
         "snapshot_name": "'"$snapshot_name"'"
       }' \
   "http://${worker_node_address}:$WORKER_PORT/endpoint"
+

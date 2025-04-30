@@ -76,3 +76,4 @@ function diff_benchmark_and_candidate_topologies() {
     diff_topologies "$original_benchmark_topology" "$original_candidate_topology"
   done
 }
+

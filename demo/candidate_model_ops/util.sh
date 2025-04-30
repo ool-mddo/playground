@@ -91,3 +91,4 @@ function diff_emulated_topologies() {
 
   diff_topologies "$emul_src_ss" "$emul_dst_ss"
 }
+
