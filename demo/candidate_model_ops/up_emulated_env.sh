@@ -13,11 +13,6 @@ function up_emulated_env() {
   echo "Target original snapshot: $original_topology"
   echo "Target emulated snapshot: $emulated_topology"
 
-  #############
-  # pre-clean #
-  #############
-  sudo bash env_pre_clean.sh
-
   ######################
   # configuration part #
   ######################
