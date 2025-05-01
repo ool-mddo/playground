@@ -22,8 +22,9 @@ yaml_template_node_exporter="
 "
 
 # 生成するYAMLファイル名
-output_file="../../assets/prometheus/prometheus.yaml"
-cp ../../assets/prometheus/prometheus.yaml ../../assets/prometheus/orig.prometheus.yaml
+output_file="${PLAYGROUND_DIR}/assets/prometheus/prometheus.yaml"
+# backup
+cp "$output_file" "${PLAYGROUND_DIR}/assets/prometheus/orig.prometheus.yaml"
 
 # YAMLテンプレートを出力
 echo -n "$yaml_template_cadvisor" > "$output_file"
@@ -45,3 +46,4 @@ echo -e "      " >> "$output_file"
 
 # reload prometheus
 curl -X POST "http://${PROMETHEUS}/-/reload"
+
