@@ -9,7 +9,7 @@ LOCALSERVER_USER=mddo
 PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
 
 # all steps: target network/usecase name
-NETWORK_NAME="mddo-bgp"
+NETWORK_NAME="mddo-mregnw"
 USECASE_NAME="pni_addlink" # "pni_addlink" or "pni_te" for mddo-bgp network
 
 # constants

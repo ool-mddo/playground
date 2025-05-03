@@ -1,0 +1,26 @@
+[
+  {
+    "label": "mddo-mregnw (original_asis)",
+    "network": "mddo-mregnw",
+    "snapshot": "original_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "mddo-mregnw (emulated_asis)",
+    "network": "mddo-mregnw",
+    "snapshot": "emulated_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "mddo-mregnw (emulated_tobe)",
+    "network": "mddo-mregnw",
+    "snapshot": "emulated_tobe",
+    "file": "topology.json"
+  },
+  {
+    "label": "mddo-mregnw (original_tobe)",
+    "network": "mddo-mregnw",
+    "snapshot": "original_tobe",
+    "file": "topology.json"
+  }
+]

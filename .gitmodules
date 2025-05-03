@@ -34,3 +34,6 @@
 [submodule "repos/mddo-worker"]
 	path = repos/mddo-worker
 	url = https://github.com/ool-mddo/mddo-worker.git
+[submodule "configs/mddo-mregnw"]
+	path = configs/mddo-mregnw
+	url = https://github.com/ool-mddo/mddo-mregnw.git

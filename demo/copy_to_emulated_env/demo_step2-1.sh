@@ -55,7 +55,6 @@ ansible-runner run . -p /data/project/playbooks/step2-1.yaml \
   --cmdline "-e ansible_runner_dir=${ANSIBLE_RUNNER_DIR} \
              -e login_user=${LOCALSERVER_USER} \
              -e network_name=${NETWORK_NAME} \
-             -e crpd_image=${CRPD_IMAGE} \
              -e with_clab=${WITH_CLAB} \
              -k -K"
 

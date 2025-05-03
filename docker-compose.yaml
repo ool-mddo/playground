@@ -53,7 +53,7 @@ services:
         target: ${MDDO_QUERIES_DIR}
         read_only: true
       - type: volume
-        source: toplogies
+        source: topologies
         target: ${MDDO_TOPOLOGIES_DIR}
       - type: volume
         source: usecases
@@ -231,7 +231,7 @@ volumes:
       type: none
       o: bind
       device: ./${SHARED_QUERIES_DIR}
-  toplogies:
+  topologies:
     driver: local
     driver_opts:
       type: none
