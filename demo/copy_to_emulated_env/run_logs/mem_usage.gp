@@ -31,15 +31,19 @@ scripts_num = words(join(scripts, ' '))
 
 # グラフ設定
 set title "Memory Usage Over Time - " . TARGET_DIR
+# epoch time -> human readable string
 # set xdata time
 # set timefmt "%s"
 # set format x "%H:%M:%S"
 # set xlabel "Time"
+
+# use relative time (elapsed time)
 set xrange [0:]
-set xlabel "Erapsed Time [s]"
+set xlabel "Elapsed Time [s]"
 set yrange [0:]
 set ylabel "Memory Usage (%)"
 set grid
+set key left top
 
 # 最初の時刻（epoch）を取得（例：最初のCSVファイルの2行目のtimestamp）
 start_epoch = system("awk -F',' 'NR==2 {print $1}' " . file_name(scripts[1]))
