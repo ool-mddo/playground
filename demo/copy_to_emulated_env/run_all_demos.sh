@@ -43,6 +43,9 @@ run_script_with_monitoring() {
   start_time=$(date +%s)
 
   if [[ "$script" == "demo_remove.sh" ]]; then
+    # backup clab-topo.yaml before destroy
+    cp clab/clab-topo.yaml "${RUN_LOG_ROOT}/${branch}"
+    # destroy
     sudo bash "$script" "$branch" 2>&1 | tee "$log_file" &
   else
     bash "$script" "$branch" 2>&1 | tee "$log_file" &
