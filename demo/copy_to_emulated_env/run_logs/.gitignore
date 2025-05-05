@@ -2,3 +2,4 @@
 *
 # except below files
 !*.gp
+!*.py

@@ -20,7 +20,7 @@ head_epoch_in_file(file_path) = system("awk -F',' 'NR==2 {print $1}' " . file_pa
 tail_epoch_in_file(file_path) = system("awk -F',' 'END {print $1}' " . file_path)
 
 # targets
-array branches = split(system(sprintf("ls %s | sort -n", DATA_DIR)))
+array branches = split(system(sprintf("ls %s | grep -v csv | sort -n", DATA_DIR)))
 branches_len = arr_len(branches)
 array scripts = ["demo_step1-1", "demo_step1-2", "demo_step2-1", "demo_step2-2", "demo_wait", "demo_task"]
 scripts_len = arr_len(scripts)
@@ -33,6 +33,9 @@ last_branch_name = branches[branches_len]
 last_branch_start = head_epoch_in_file(file_full_path(last_branch_name, scripts[1]))
 last_branch_end = tail_epoch_in_file(file_full_path(last_branch_name, scripts[scripts_len]))
 max_xrange = last_branch_end - last_branch_start
+
+# use csv
+set datafile separator ","
 
 do for [b=1:branches_len] {
     # 引数からターゲットディレクトリを取得
