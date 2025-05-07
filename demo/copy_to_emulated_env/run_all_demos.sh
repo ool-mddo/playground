@@ -26,7 +26,7 @@ monitor_resources() {
     cpu=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}')
 
     # free -m の出力から各メモリ値(MB)を取得
-    read mem_total mem_used mem_free mem_shared mem_buff_cache mem_available < <(free -m | awk '/^Mem:/ {print $2, $3, $4, $5, $6, $7}')
+    read -r mem_total mem_used mem_free mem_shared mem_buff_cache mem_available < <(free -m | awk '/^Mem:/ {print $2, $3, $4, $5, $6, $7}')
 
     echo "$timestamp, $cpu, $mem_total, $mem_used, $mem_free, $mem_shared, $mem_buff_cache, $mem_available" >> "$log_file"
     sleep 1
