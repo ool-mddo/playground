@@ -24,22 +24,22 @@ set grid
 ###############
 # graph 1 (mem)
 
-set title "Memory Usage (Maximum)"
+set title "Memory usage (maximum)"
 set yrange [0:]
-set ylabel "Maximum Memory Used [MB]"
+set ylabel "Maximum memory used [MB]"
 
 # fitting (mem)
 set fit logfile "fitting_mem.log"
 g(x) = p*x + q
 fit [0:40][:] g(x) DATA_FILE using 2:4 via p,q
 
-plot DATA_FILE using 2:($4/10**6) with points linetype 1 linewidth 4 pointsize 3 pointtype 2 title "Max Mem used", \
-    [2:40] g(x)/10**6 with lines linetype 1 linewidth 2 title "Fit: Mem used"
+plot DATA_FILE using 2:($4/10**6) with points linetype 1 linewidth 4 pointsize 3 pointtype 2 title "Max mem used", \
+    [2:40] g(x)/10**6 with lines linetype 1 linewidth 2 title "Fit: Max mem used"
 
 ###############
 # graph 2 (deploy time)
 
-set title "Elapsed time and Memory Usage"
+set title "Elapsed time and memory usage"
 set yrange [0:]
 set ylabel "Elapsed time [s]"
 

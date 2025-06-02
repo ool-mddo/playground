@@ -31,9 +31,9 @@ set grid
 ###############
 # graph 1 (mem)
 
-set title "Memory Usage (Average)"
+set title "Memory usage (average)"
 set yrange [0:]
-set ylabel "Memory Used [MB]"
+set ylabel "Memory used [MB]"
 
 # fitting (mem)
 set fit logfile "fitting_mem.log"
@@ -46,16 +46,16 @@ plot DATA_FILE using 2:4 with points linetype 1 linewidth 4 pointsize 3 pointtyp
 ###############
 # graph 2 (deploy time)
 
-set title "Deploy required time"
+set title "Time required for deployment"
 set yrange [0:]
-set ylabel "Deploy required time [s]"
+set ylabel "Time [s]"
 
 # fitting (time)
 set fit logfile "fitting_time.log"
 g(x) = c*x + d
 fit [0:20][:] g(x) DATA_FILE using 2:3 via c,d
 
-plot DATA_FILE using 2:3 with points linetype 2 linewidth 4 pointsize 3 pointtype 2 title "Deploy required time", \
-    [2:20] g(x) with lines linetype 2 linewidth 2 title "Fit: Deploy required time"
+plot DATA_FILE using 2:3 with points linetype 2 linewidth 4 pointsize 3 pointtype 2 title "Time required for deployment", \
+    [2:20] g(x) with lines linetype 2 linewidth 2 title "Fit: Time required for deployment"
 
 unset multiplot
