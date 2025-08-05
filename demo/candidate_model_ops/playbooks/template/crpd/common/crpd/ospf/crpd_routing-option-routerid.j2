@@ -1,9 +1,0 @@
-routing-options {
-{# ospf_area_nodes is per area, ospf_proc node list, ospf_area_nodes #}
-{% for ospf_area_node in ospf_nodes.json[0]["nodes"] %}
-{%   if ospf_area_node["node"] == item["node"] %}
-    router-id {{ ospf_area_node["attribute"]["router-id"] }};
-{%   endif %}
-{% endfor  %}
-}
-
