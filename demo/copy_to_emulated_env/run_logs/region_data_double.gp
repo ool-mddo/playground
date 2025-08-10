@@ -5,7 +5,7 @@ reset
 # 引数チェック
 print "check args, ARGC:" . ARGC . ", arg1:" . ARG1
 if (ARGC != 1) {
-    print "Usage: gnuplot mem_usage.gp <date_dir>"
+    print "Usage: gnuplot region_data_double.gp <date_dir>"
     exit
 }
 DATA_DIR = ARG1
@@ -18,7 +18,7 @@ set datafile separator ","
 # set terminal x11 size 1050,350
 # output (eps)
 set term postscript enhanced eps color font ",20" size 9, 3 # size=inch
-set output "region_data_" . DATA_DIR . ".eps"
+set output "region_data_double_" . DATA_DIR . ".eps"
 
 set multiplot layout 1,2
 
