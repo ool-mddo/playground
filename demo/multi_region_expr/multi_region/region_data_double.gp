@@ -11,7 +11,7 @@ set datafile separator ","
 # set terminal x11 size 1050,350
 # output (eps)
 set term postscript enhanced eps color font ",20" size 9, 3 # size=inch
-set output "region_data.eps"
+set output "region_data_double.eps"
 
 set multiplot layout 1,2
 
@@ -39,7 +39,7 @@ plot DATA_FILE using 2:($4/10**6) with points linetype 1 linewidth 4 pointsize 3
 ###############
 # graph 2 (deploy time)
 
-set title "Elapsed time and memory usage"
+set title "Elapsed time"
 set yrange [0:]
 set ylabel "Elapsed time [s]"
 
