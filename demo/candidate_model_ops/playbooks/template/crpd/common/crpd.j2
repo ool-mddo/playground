@@ -34,3 +34,11 @@ interfaces {
     }
 {% endfor %}
 }
+routing-instances {
+    mgmt {
+        instance-type vrf;
+        interface eth0;
+        route-distinguisher 65000:1;
+        vrf-target target:65000:1;
+    }
+}
