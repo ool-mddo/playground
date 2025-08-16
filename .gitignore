@@ -5,6 +5,10 @@
 *.tmp
 *.temp
 *.bak
+*.bkp
+# temprary files (for research paper)
+*.eps
+*.tar.gz
 # data directories
 configs/nttcom-trial-*/
 configs/biglobe*/
