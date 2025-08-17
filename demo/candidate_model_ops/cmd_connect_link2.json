@@ -1,0 +1,15 @@
+{
+    "command": "connect_link",
+    "args": {
+        "link": {
+            "source": {
+                "node": "edge-tk12",
+                "tp": "ge-0/0/1.0"
+            },
+            "destination": {
+                "node": "core-tk01",
+                "tp": "ge-0/0/0.0"
+            }
+        }
+    }
+}
