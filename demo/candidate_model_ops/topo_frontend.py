@@ -23,7 +23,7 @@ def parse_node_tp(value: str) -> Tuple[str, str]:
     return m.group("node").strip(), m.group("tp").strip()
 
 
-def build_payload(cmd: str, dry_run: bool, src: Tuple[str, str], dst: Tuple[str, str]) -> Dict:
+def build_payload(cmd: str, src: Tuple[str, str], dst: Tuple[str, str]) -> Dict:
     """
     Build the JSON payload according to the required schema.
     """
@@ -31,7 +31,6 @@ def build_payload(cmd: str, dry_run: bool, src: Tuple[str, str], dst: Tuple[str,
     (dst_node, dst_tp) = dst
     return {
         "command": cmd,
-        "dry_run": bool(dry_run),
         "args": {
             "link": {
                 "source": {"node": src_node, "tp": src_tp},
@@ -76,9 +75,9 @@ def main() -> int:
     )
     parser.add_argument(
         "--cmd",
-        required=True,
+        default="connect_link",
         choices=["connect_link"],
-        help="Command to execute.",
+        help='Command to execute (default: "connect_link").',
     )
     parser.add_argument(
         "--src",
