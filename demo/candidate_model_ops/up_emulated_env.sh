@@ -26,6 +26,7 @@ function up_emulated_env() {
     -d '{
           "message": "controller",
           "crpd_image": "'"$CRPD_IMAGE"'",
+          "endpoint_image": "'"$ENDPOINT_IMAGE"'",
           "worker_port": "'"$WORKER_PORT"'",
           "network_name": "'"$NETWORK_NAME"'",
           "usecase_name": "'"$USECASE_NAME"'",

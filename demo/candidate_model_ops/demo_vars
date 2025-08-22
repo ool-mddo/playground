@@ -2,6 +2,7 @@
 
 # runtime
 CRPD_IMAGE="crpd:23.4R1.9"
+ENDPOINT_IMAGE="ghcr.io/ool-mddo/ool-iperf:v0.0.2"
 # environment
 ANSIBLE_EDA="localhost:48080" # controller EDA
 API_PROXY="localhost:15000"
