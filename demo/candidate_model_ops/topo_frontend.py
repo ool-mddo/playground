@@ -89,8 +89,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="dry-run 指定（送信ペイロードには含めない・レスポンス処理で使用予定）",
     )
     parser.add_argument("--nw", required=True, help="Network name")
-    parser.add_argument("--ss", default="original_asis",
-                        help='Snapshot name (default: "original_asis")')
+    parser.add_argument("--ss", default="original_asis_preallocated",
+                        help='Snapshot name (default: "original_asis_preallocated")')
     parser.add_argument("--api", default="localhost:15000",
                         help='API host:port (default: "localhost:15000")')
 

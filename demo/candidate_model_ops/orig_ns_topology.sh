@@ -36,16 +36,32 @@ function splice_external_as_topology() {
   curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/original_asis/external_as_topology?flow_data=event" \
     >"$external_as_json"
 
+  # splice external-AS topology to original_asis (overwrite)
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d @<(jq '{ "overwrite": true, "ext_topology_data": . }' "$external_as_json") \
+    "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/splice_topology" \
+    >/dev/null # ignore echo-back (topology json)
+}
+
+function copy_original_asis_to_preallocated() {
+  curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis/topology" | \
+    jq '{ "topology_data": . }' - | \
+    curl -s -X POST  -H "Content-Type: application/json" -d @- \
+      "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis_preallocated/topology" \
+    >/dev/null # ignore echo-back (topology json)
+}
+
+function splice_preallocated_resources() {
   # generate layer3 empty resources
   l3e_resources_json="${USECASE_SESSION_DIR}/layer3_empty_resources.json"
-  curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/original_asis/layer3_empties" \
+  curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/original_asis_preallocated/layer3_empties" \
     >"$l3e_resources_json"
 
-  # splice external-AS topology to original_asis (overwrite)
-  jq -s '{ "overwrite": true, "l3_empty_resources": .[0], "ext_topology_data": .[1] }' "$l3e_resources_json" "$external_as_json" \
-    | curl -s -X POST -H "Content-Type: application/json" -d @- \
-      "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis/splice_topology" \
-      >/dev/null # ignore echo-back (topology json)
+  # splice pre-allocated resource topology to original_asis_preallocated (overwrite)
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d @<(jq '{ "overwrite": true, "l3_empty_resources": . }' "$l3e_resources_json") \
+    "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis_preallocated/splice_topology" \
+    >/dev/null # ignore echo-back (topology json)
 }
 
 # output: original_candidate_xx topology

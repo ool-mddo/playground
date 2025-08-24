@@ -4,74 +4,52 @@
 source ./demo_vars
 # shellcheck disable=SC1091
 source ./orig_ns_topology.sh
-
 # shellcheck disable=SC1091
 source ./util.sh
 # shellcheck disable=SC1091
 source ./up_emulated_env.sh
 
-print_usage() {
-  echo "Usage: $(basename "$0") [options]"
-  echo "Options:"
-  echo "  -b     Benchmark topology name (default: original_asis)"
-  echo "  -p     Phase number (default: 1)"
-  echo "  -h     Display this help message"
-}
-
-# option check
-# defaults
-original_benchmark_topology=original_asis
-phase=1
-while getopts b:p:h option; do
-  case $option in
-  b)
-    original_benchmark_topology="$OPTARG"
-    ;;
-  p)
-    phase="$OPTARG"
-    ;;
-  h)
-    print_usage
-    exit 0
-    ;;
-  *)
-    echo "Unknown option detected, -$OPTARG" >&2
-    print_usage
-    exit 1
-    ;;
-  esac
-done
-
-echo # newline
-echo "# check: phase = $phase"
-echo "# check: benchmark topology = $original_benchmark_topology"
 echo # newline
 
-if [ "$phase" -eq 1 ] && [ "$original_benchmark_topology" == "original_asis" ]; then
-  # Create original as-is topology data
-  generate_original_asis_topology
+# Create original as-is topology data
+generate_original_asis_topology
 
-  # Splice external-AS topology to original as-is topology
-  splice_external_as_topology
-fi
+# Splice external-AS topology to original as-is topology
+splice_external_as_topology
 
-# Add netoviz index
-generate_netoviz_index "$phase" 1
+# Copy original_asis to original_asis_preallocated
+copy_original_asis_to_preallocated
 
-echo # newline
+# Splice preallocated ("empty") resource topology to original_asis pre-allocated topology
+splice_preallocated_resources
 
-#######################################
+# save diff between original_asis and original_asis_preallocated (to preallocated)
+diff_topologies "original_asis" "original_asis_preallocated"
 
-# read worker addresses as array
-# IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
+# convert namespace (make emulated env topology data)
+convert_namespace "original_asis"
+convert_namespace "original_asis_preallocated"
+# NOTE:
+#   The conversion of pre-allocated snapshots must be placed at the end.
+#   This is because netomox-exp only retains the last conversion table.
 
-# at first: prepare emulated_asis topology data
-# convert namespace from original namespace to emulated namespace
-echo "$original_benchmark_topology"
-convert_namespace "$original_benchmark_topology"
+# save diff between emulated_asis and emulated_asis_preallocated (to preallocated)
+diff_topologies "emulated_asis" "emulated_asis_preallocated"
 
-# Add netoviz index
-generate_netoviz_index "$phase" 2
-
-# up original_asis env
-# up_emulated_env "$original_benchmark_topology" "${remote_nodes[0]}"
+# add netoviz index
+jq '[ .[]
+      | select(.snapshot=="original_asis") as $a
+      | [
+          $a,
+          ($a | .snapshot="original_asis_preallocated"
+              | .label |= gsub("original_asis"; "original_asis_preallocated")),
+          ($a | .snapshot |= gsub("original"; "emulated")
+              | .label |= gsub("original"; "emulated")),
+          ($a | .snapshot="original_asis_preallocated"
+              | .label |= gsub("original_asis"; "original_asis_preallocated")
+              | .snapshot |= gsub("original"; "emulated")
+              | .label |= gsub("original"; "emulated"))
+        ] | .[] ]' \
+  "network_index/${NETWORK_NAME}.json" | \
+  jq '{ "index_data": . }' | \
+  curl -X POST -H "Content-Type: application/json" -d@- "http://${API_PROXY}/topologies/index"
