@@ -53,13 +53,13 @@ function copy_original_asis_to_preallocated() {
 
 function splice_preallocated_resources() {
   # generate layer3 empty resources
-  l3e_resources_json="${USECASE_SESSION_DIR}/layer3_empty_resources.json"
-  curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/original_asis_preallocated/layer3_empties" \
+  l3e_resources_json="${USECASE_SESSION_DIR}/layer3_preallocated_resources.json"
+  curl -s "http://${API_PROXY}/usecases/${USECASE_NAME}/${NETWORK_NAME}/params/l3_preallocated_resources" \
     >"$l3e_resources_json"
 
   # splice pre-allocated resource topology to original_asis_preallocated (overwrite)
   curl -s -X POST -H "Content-Type: application/json" \
-    -d @<(jq '{ "overwrite": true, "l3_empty_resources": . }' "$l3e_resources_json") \
+    -d @<(jq '{ "overwrite": true, "l3_preallocated_resources": . }' "$l3e_resources_json") \
     "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis_preallocated/splice_topology" \
     >/dev/null # ignore echo-back (topology json)
 }
