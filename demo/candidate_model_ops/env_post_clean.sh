@@ -17,7 +17,7 @@ curl -s -X POST -H 'Content-Type: application/json' \
   -d '{
         "message": "destroy",
         "crpd_image": "'"$CRPD_IMAGE"'",
-        "endpoint_image: "'"$ENDPOINT_IMAGE"'",
+        "endpoint_image": "'"$ENDPOINT_IMAGE"'",
         "network_name": "'"$NETWORK_NAME"'",
         "usecase_name": "'"$USECASE_NAME"'",
         "remote_address": "'"$CONTROLLER_ADDRESS"'",
