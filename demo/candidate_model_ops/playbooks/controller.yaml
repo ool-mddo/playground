@@ -160,8 +160,18 @@
         usecase_name: "{{ usecase_name }}"
         network_name: "{{ network_name }}"
         crpd_image: "{{ crpd_image }}"
+        endpoint_image: "{{ endpoint_image }}"
         snapshot_name: "{{ snapshot_name }}"
         remote_address: "{{ remote_address }}"
+
+  - name: generate iperf command parameter
+    uri:
+      url: "http://api-proxy/usecases/{{ usecase_name }}/{{ network_name }}/{{ snapshot_name }}/iperf_commands?flow_data=event"
+      method: GET
+      body_format: json
+    register:
+      iperf_commands
+
 
   - name: "setup iperf"
     uri:
@@ -177,4 +187,4 @@
         crpd_image: "{{ crpd_image }}"
         snapshot_name: "{{ snapshot_name }}"
         remote_address: "{{ remote_address }}"
-
+        iperf_commands: "{{ iperf_commands.json }}"
