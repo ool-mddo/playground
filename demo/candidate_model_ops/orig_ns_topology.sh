@@ -47,7 +47,7 @@ function copy_original_asis_to_preallocated() {
   curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis/topology" | \
     jq '{ "topology_data": . }' - | \
     curl -s -X POST  -H "Content-Type: application/json" -d @- \
-      "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis_preallocated/topology" \
+      "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis_preallocated0/topology" \
     >/dev/null # ignore echo-back (topology json)
 }
 
@@ -60,7 +60,7 @@ function splice_preallocated_resources() {
   # splice pre-allocated resource topology to original_asis_preallocated (overwrite)
   curl -s -X POST -H "Content-Type: application/json" \
     -d @<(jq '{ "overwrite": true, "l3_preallocated_resources": . }' "$l3e_resources_json") \
-    "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis_preallocated/splice_topology" \
+    "http://${API_PROXY}/conduct/${NETWORK_NAME}/original_asis_preallocated0/splice_topology" \
     >/dev/null # ignore echo-back (topology json)
 }
 

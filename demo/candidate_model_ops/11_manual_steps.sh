@@ -24,29 +24,29 @@ copy_original_asis_to_preallocated
 splice_preallocated_resources
 
 # save diff between original_asis and original_asis_preallocated (to preallocated)
-diff_topologies "original_asis" "original_asis_preallocated"
+diff_topologies "original_asis" "original_asis_preallocated0"
 
 # convert namespace (make emulated env topology data)
 convert_namespace "original_asis"
-convert_namespace "original_asis_preallocated"
+convert_namespace "original_asis_preallocated0"
 # NOTE:
 #   The conversion of pre-allocated snapshots must be placed at the end.
 #   This is because netomox-exp only retains the last conversion table.
 
 # save diff between emulated_asis and emulated_asis_preallocated (to preallocated)
-diff_topologies "emulated_asis" "emulated_asis_preallocated"
+diff_topologies "emulated_asis" "emulated_asis_preallocated0"
 
 # add netoviz index
 jq '[ .[]
       | select(.snapshot=="original_asis") as $a
       | [
           $a,
-          ($a | .snapshot="original_asis_preallocated"
-              | .label |= gsub("original_asis"; "original_asis_preallocated")),
+          ($a | .snapshot="original_asis_preallocated0"
+              | .label |= gsub("original_asis"; "original_asis_preallocated0")),
           ($a | .snapshot |= gsub("original"; "emulated")
               | .label |= gsub("original"; "emulated")),
-          ($a | .snapshot="original_asis_preallocated"
-              | .label |= gsub("original_asis"; "original_asis_preallocated")
+          ($a | .snapshot="original_asis_preallocated0"
+              | .label |= gsub("original_asis"; "original_asis_preallocated0")
               | .snapshot |= gsub("original"; "emulated")
               | .label |= gsub("original"; "emulated"))
         ] | .[] ]' \
