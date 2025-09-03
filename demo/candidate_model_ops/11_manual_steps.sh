@@ -11,6 +11,9 @@ source ./up_emulated_env.sh
 
 echo # newline
 
+# clear all snapshots
+curl -X DELETE "http://${API_PROXY}/topologies/${NETWORK_NAME}"
+
 # Create original as-is topology data
 generate_original_asis_topology
 
