@@ -1,0 +1,71 @@
+---
+expected_traffic:
+  original_targets:
+    - node: edge-tk01
+      interface: ge-0/0/1.0
+      expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
+    - node: edge-tk02
+      interface: GigabitEthernet0/0/0/1.100
+      expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
+    - node: edge-tk02
+      interface: GigabitEthernet0/0/0/1.200
+      expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
+    - node: edge-tk03
+      interface: ge-0/0/1.0
+      expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
+  emulated_traffic:
+    scale: 1e-2 # 1Gbps to 10Mbps
+source_ases:
+  - asn: 65550
+    regions:
+      - region: tokyo
+        prefixes:
+          - 10.0.1.0/24
+          - 10.0.2.0/24
+          - 10.0.3.0/24
+          - 10.0.4.0/24
+        allowed_peers:
+          - peer: 172.16.0.5 # edge-tk01
+            type: pni
+          - peer: 172.16.0.9 # edge-tk02/vlan shared (vlan100)
+            type: ix
+    preferred_peer:
+      node: edge-tk01
+      interface: ge-0/0/1.0
+  - asn: 65560
+    regions:
+      - region: tokyo
+        prefixes:
+          - 10.0.101.0/24
+          - 10.0.102.0/24
+          - 10.0.103.0/24
+          - 10.0.104.0/24
+        allowed_peers:
+          - peer: 172.16.1.9 # edge-tk02/vlan shared (vlan200)
+            type: ix
+          - peer: 172.16.1.13 # edge-tk03
+            type: pni
+    preferred_peer:
+      node: edge-tk02
+      interface: GigabitEthernet0/0/0/1.200
+dest_as:
+  asn: 65520
+  allowed_peers:
+    - 192.168.0.18 # edge-tk03
+l3_preallocated_resources:
+  - type: node
+    name: as65550-edge01
+    asn: 65550
+    interfaces:
+      - Ethernet3
+  - type: node
+    name: edge-tk12
+    interfaces:
+      - ge-0/0/0.0
+      - ge-0/0/1.0
+  - type: segment
+    name: Seg_192.168.1.0/24
+    comment: will-be connect edge-tk12 to core-tk01
+  - type: segment
+    name: Seg_empty01
+    comment: will-be connect as65550-edge01 to edge-tk12
