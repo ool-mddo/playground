@@ -45,13 +45,14 @@ def build_link_payload(src: Tuple[str, str], dst: Tuple[str, str], dry_run: bool
     }
 
 
-def build_shut_payload(target: Tuple[str, str]) -> Dict:
+def build_shut_payload(target: Tuple[str, str], dry_run: bool = False) -> Dict:
     """
     Build the JSON payload according to the required schema. (for shutdown-interface operation)
     """
     (node, tp) = target
     return {
         "command": "shutdown_intf",
+        "dry_run": dry_run,
         "args": {
             "interface": {"node": node, "tp": tp},
         },
@@ -100,7 +101,6 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="dry-run 指定（送信ペイロードには含めない・レスポンス処理で使用予定）",
     )
-    parser.add_argument("--nw", required=True, help="Network name")
 
     # ---- サブコマンド ----
     subparsers = parser.add_subparsers(
@@ -140,7 +140,7 @@ def build_payload(args) -> Dict:
     if args.cmd == "link":
         return build_link_payload(args.src, args.dst, args.dry_run)
     if args.cmd == "shut":
-        return build_shut_payload(args.target)
+        return build_shut_payload(args.target, args.dry_run)
     return {}
 
 
@@ -186,10 +186,17 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
-    api_proxy_url = f"http://{os.getenv('API_PROXY')}/conduct/{args.nw}/topology_ops"
+    # env vars
+    api_proxy = os.getenv("API_PROXY", "localhost:15000")
+    network_name = os.getenv("NETWORK_NAME", "mddo-bgp")
     # candidate ops では WORKER_API を複数指定するようにしているけど、
     # manual_steps では1個だけ使う想定
-    worker_api_url = f"http://{os.getenv('WORKER_ADDRESS')}:{os.getenv('WORKER_PORT')}/endpoint"
+    worker_host = os.getenv("WORKER_ADDRESS", "localhost")
+    worker_port = os.getenv("WORKER_PORT", "48090")
+
+    # entry points
+    api_proxy_url = f"http://{api_proxy}/conduct/{network_name}/topology_ops"
+    worker_api_url = f"http://{worker_host}:{worker_port}/"
 
     payload = build_payload(args)
     worker_action = request_actions_for_worker(api_proxy_url, payload)
