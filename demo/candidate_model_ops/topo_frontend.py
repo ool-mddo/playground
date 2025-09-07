@@ -3,12 +3,16 @@
 
 import argparse
 import json
+import os
 import re
 import sys
+from dotenv import load_dotenv
 from typing import Dict, Tuple
 from urllib import request, error
 
+
 NODE_TP_PATTERN = re.compile(r'^(?P<node>[^\[\]]+)\[(?P<tp>[^\[\]]+)\]$')
+load_dotenv("demo_vars")
 
 
 def parse_node_tp(value: str) -> Tuple[str, str]:
@@ -89,8 +93,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="dry-run 指定（送信ペイロードには含めない・レスポンス処理で使用予定）",
     )
     parser.add_argument("--nw", required=True, help="Network name")
-    parser.add_argument("--api", default="localhost:15000",
-                        help='API host:port (default: "localhost:15000")')
 
     # ---- サブコマンド ----
     subparsers = parser.add_subparsers(
@@ -134,22 +136,52 @@ def build_payload(args) -> Dict:
     return {}
 
 
+def request_actions_for_worker(api_proxy_url: str, payload: Dict) -> dict | None:
+    """
+    post payload to backend and get a response which contains commands to do in worker
+    """
+    try:
+        return post_json(api_proxy_url, payload)
+    except Exception as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return None
+
+
+def post_actions_to_worker(worker_api_url: str, worker_action: Dict, dry_run: bool = False) -> list | None:
+    """
+    post actions (commands) to worker and change an emulated environment topology
+    """
+    action_pairs = worker_action["tobe_resource"]["command_list"]
+    try:
+        for action_pair in action_pairs:
+            for action in action_pair:
+                print(f"[POST] {action} to {worker_api_url}", file=sys.stderr)
+                if not dry_run:
+                    post_json(worker_api_url, action)
+        return action_pairs
+    except Exception as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return None
+
+
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
-    # 正規化した結果（このまま送信処理に渡せます）
-    api_url = f"http://{args.api}/conduct/{args.nw}/topology_ops"
+    api_proxy_url = f"http://{os.getenv('API_PROXY')}/conduct/{args.nw}/topology_ops"
+    # candidate ops では WORKER_API を複数指定するようにしているけど、
+    # manual_steps では1個だけ使う想定
+    worker_api_url = f"http://{os.getenv('WORKER_ADDRESS')}:{os.getenv('WORKER_PORT')}/"
 
     payload = build_payload(args)
-
-    try:
-        response = post_json(api_url, payload)
-    except Exception as e:
-        print(f"[ERROR] {e}", file=sys.stderr)
+    worker_action = request_actions_for_worker(api_proxy_url, payload)
+    if worker_action is None:
         return 1
 
-    print(json.dumps(response, ensure_ascii=False, indent=2))
+    print(json.dumps(worker_action, indent=2))
+
+    post_actions_to_worker(worker_api_url, worker_action, args.dry_run)
+
     return 0
 
 
