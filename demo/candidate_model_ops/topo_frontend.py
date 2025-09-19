@@ -72,7 +72,14 @@ def post_json(url: str, payload: Dict, timeout: int = 30) -> Dict:
     try:
         with request.urlopen(req, timeout=timeout) as resp:
             resp_body = resp.read().decode("utf-8")
-            return json.loads(resp_body)
+            if "endpoint" in resp_body:
+                print("Received Job From WorkerNode")
+                return {
+                    'status': 'OK',
+                    'body': resp_body
+                }
+            else: 
+                return json.loads(resp_body)
     except error.HTTPError as he:
         body = he.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"HTTPError {he.code} {he.reason}\n{body[:1000]}")
@@ -152,13 +159,23 @@ def post_actions_to_worker(worker_api_url: str, worker_action: Dict, dry_run: bo
     """
     post actions (commands) to worker and change an emulated environment topology
     """
+    print (str(worker_action["tobe_resource"]))
     action_pairs = worker_action["tobe_resource"]["command_list"]
     try:
         for action_pair in action_pairs:
             for action in action_pair:
-                print(f"[POST] {action} to {worker_api_url}", file=sys.stderr)
+                post_data = {
+                  "message": "ovs",
+                  "network_name": action["network"],
+                  "usecase_name": os.getenv('USECASE_NAME'),
+                  "operation": action["operation"],
+                  "bridge_name": action["bridge_name"],
+                  "port_name": action["port_name"],
+                  "snapshot_name": action["snapshot"]
+                }
+                print(f"[POST] {post_data} to {worker_api_url}", file=sys.stderr)
                 if not dry_run:
-                    post_json(worker_api_url, action)
+                    post_json(worker_api_url, post_data)                
         return action_pairs
     except Exception as e:
         print(f"[ERROR] {e}", file=sys.stderr)
@@ -172,7 +189,7 @@ def main() -> int:
     api_proxy_url = f"http://{os.getenv('API_PROXY')}/conduct/{args.nw}/topology_ops"
     # candidate ops では WORKER_API を複数指定するようにしているけど、
     # manual_steps では1個だけ使う想定
-    worker_api_url = f"http://{os.getenv('WORKER_ADDRESS')}:{os.getenv('WORKER_PORT')}/"
+    worker_api_url = f"http://{os.getenv('WORKER_ADDRESS')}:{os.getenv('WORKER_PORT')}/endpoint"
 
     payload = build_payload(args)
     worker_action = request_actions_for_worker(api_proxy_url, payload)
