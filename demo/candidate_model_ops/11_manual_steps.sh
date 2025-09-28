@@ -11,12 +11,15 @@ source ./up_emulated_env.sh
 
 echo # newline
 
+# read worker addresses as array
+IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
+
 # clear all snapshots
 curl -X DELETE "http://${API_PROXY}/topologies/${NETWORK_NAME}"
 
 # Create original as-is topology data
 generate_original_asis_topology
-
+original_benchmark_topology=original_asis_preallocated0
 # Splice external-AS topology to original as-is topology
 splice_external_as_topology
 
@@ -56,3 +59,7 @@ jq '[ .[]
   "network_index/${NETWORK_NAME}.json" | \
   jq '{ "index_data": . }' | \
   curl -X POST -H "Content-Type: application/json" -d@- "http://${API_PROXY}/topologies/index"
+
+# up original_asis env
+up_emulated_env "$original_benchmark_topology" "${remote_nodes[0]}"
+
