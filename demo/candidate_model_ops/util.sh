@@ -33,6 +33,7 @@ function convert_namespace() {
 
   echo "Convert namespace from:$src_ss to:$dst_ss"
 
+  # NOTE: it makes(overwrites) dst_ss snapshot topology data
   curl -s -X POST -H 'Content-Type: application/json' \
     -d '{ "table_origin": "'"$src_ss"'" }' \
     "http://${API_PROXY}/conduct/${NETWORK_NAME}/ns_convert/${src_ss}/${dst_ss}"
