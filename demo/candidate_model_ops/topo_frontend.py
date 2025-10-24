@@ -196,7 +196,7 @@ def main() -> int:
 
     # entry points
     api_proxy_url = f"http://{api_proxy}/conduct/{network_name}/topology_ops"
-    worker_api_url = f"http://{worker_host}:{worker_port}/"
+    worker_api_url = f"http://{worker_host}:{worker_port}/endpoint"
 
     payload = build_payload(args)
     worker_action = request_actions_for_worker(api_proxy_url, payload)
