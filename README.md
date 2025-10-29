@@ -10,6 +10,7 @@
 * [このプロジェクトの位置づけ](./doc/project_positioning.md)
 * [システムアーキテクチャ](./doc/system_architecture.md)
 * [ネットワークのモデル](./doc/network_model.md)
+  * [中間出力・トポロジデータのサンプル](https://github.com/ool-mddo/mddo-bgp-queries)
 * [デモ環境セットアップ](./doc/provision.md)
   * [開発用・開発者向け](./doc/development.md)
 * [デモ環境セットアップ(ワーカー分離)](./doc/provision_workers.md)
@@ -80,3 +81,8 @@
   * [『運用者の試行錯誤を想定した NWモデル上での並列検証システム』萩原 学 / 田島 照久](https://www.okinawaopendays.com/post/1206-03)
   * [運用者の試行錯誤を想定したNWモデル上での並列検証システム / ood2024 - Speaker Deck](https://speakerdeck.com/corestate55/ood2024)
   * デモ動画: [OOD2024 運用者の試行錯誤を想定したNWモデル上での並列検証システム デモ動画 - YouTube](https://www.youtube.com/watch?v=jO3bj1aNNeA)
+
+### FY2025
+* APNOMS 2025 (2025/09/22-24)
+  * Poster session
+  * [Proposal of Verification System Based on Network Models for Large-Scale Network Reproduction in Virtual Environments | IEEE Conference Publication | IEEE Xplore](https://ieeexplore.ieee.org/document/11181368)
