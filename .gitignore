@@ -6,6 +6,8 @@
 *.temp
 *.bak
 *.bkp
+# temporary files (drawio)
+.*.dtmp
 # temprary files (for research paper)
 *.eps
 *.tar.gz

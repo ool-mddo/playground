@@ -61,8 +61,25 @@ l3_preallocated_resources:
   - type: node
     name: edge-tk12
     interfaces:
-      - ge-0/0/0.0
-      - ge-0/0/1.0
+      - 1/1/c12/1
+      - 1/1/c21/1
+    emulated_params:
+      license: ./sros_license.txt
+      image: localhost/nokia/srsim:25.7.R1
+      kind: nokia_srsim
+      type: SR-2s
+      components:
+        - slot: A
+        - slot: B
+        - slot: 1
+          type: xcm-2s
+          sfm: sfm-2s
+          env:
+            NOKIA_SROS_CARD: xcm-2s
+            NOKIA_SROS_MDA_1: s36-100gb-qsfp28
+          mda:
+            - slot: 1
+              type: s36-100gb-qsfp28
   - type: segment
     name: Seg_192.168.1.0/24
     comment: will-be connect edge-tk12 to core-tk01
