@@ -86,3 +86,5 @@
 * APNOMS 2025 (2025/09/22-24)
   * Poster session
   * [Proposal of Verification System Based on Network Models for Large-Scale Network Reproduction in Virtual Environments | IEEE Conference Publication | IEEE Xplore](https://ieeexplore.ieee.org/document/11181368)
+* Okinawa Open Days 2025 (2025/12/03-05)
+  * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策 / 滝口 敏行・山口 大樹](https://www.okinawaopendays.com/post/1204-2)
