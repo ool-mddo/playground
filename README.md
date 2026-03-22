@@ -28,6 +28,7 @@
 * [運用者の試行錯誤をモデル操作で実現する](./demo/candidate_model_ops/README.md)
   * [(単一AS)複数リージョントラフィック制御](/demo/candidate_model_ops/doc/multi_region_te/introduction.md)
   * [複数ASトラフィック制御](./demo/candidate_model_ops/doc/multi_src_as_te/introduction.md)
+  * [過去障害の再現とトポロジ手動操作](./demo/candidate_model_ops/doc/manual_steps/introduction.md)
 
 ## Reference
 
