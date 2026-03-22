@@ -43,7 +43,8 @@ mddo-workerを通じたemulated envに対するリンク操作の概要は下の
 
 ![snapshots](fig/snapshots.drawio.svg)
 
-> [!WARNING] リンク操作に関しては、emulated env topology (topology file) を生成しません。
+> [!WARNING]
+> リンク操作に関しては、emulated env topology (topology file) を生成しません。
 > - 状態を維持するため。特定のリンクだけをターゲットにする必要があります。都度環境全体のデプロイすると状態が飛んでしまうため、emulated env topology 全体を作り直しても使用しません。
 > - 操作するリンクが特定できてその名前が変換できれば良いため。トポロジ全体は original topology 側で管理します。
 
@@ -109,7 +110,9 @@ sequenceDiagram
 Emulated env で実施すべきトポロジ変更操作(トポロジ変更のための作業計画)は、model-conductorがprealloc snapshot操作を行うのと合わせて生成されます。model-conductorはAPI: `/conduct/<nw>/topology_ops` の応答として、以下のようなデータを返します。
 
 * `command_list` : emulated envで実行すべきリンク操作コマンド(の列)
-> [!WARNING] どの環境の名前を使うかに注意
+
+> [!WARNING]
+> どの環境の名前を使うかに注意
 > - 操作対象は emulated env なので emulated env namespace の名前を使用する。(ただ、それだと original env namespace で環境操作を考える利用者にはわかりにくいのでコメント付き(#)で併記している。)
 
 ```json
