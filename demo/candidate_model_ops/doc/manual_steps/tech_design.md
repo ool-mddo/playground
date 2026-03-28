@@ -205,7 +205,7 @@ l3_preallocated_resources:
       image: localhost/nokia/srsim:25.7.R1
       kind: nokia_srsim
       type: SR-2s
-...
+```
 
 ## Containerlab MTU問題
 
