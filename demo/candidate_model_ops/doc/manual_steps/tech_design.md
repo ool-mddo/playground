@@ -206,3 +206,43 @@ l3_preallocated_resources:
       kind: nokia_srsim
       type: SR-2s
 ...
+
+## Containerlab MTU問題
+
+cRPD/cJunosEvo間の接続でMTUのミスマッチが発生する問題があります。
+
+```text
+root@edge-tk12> show ospf neighbor
+
+Address          Interface              State           ID               Pri  Dead
+192.168.1.101    et-0/0/2.0             ExStart         192.168.255.101   10    32
+192.168.1.3      et-0/0/2.0             2Way            192.168.255.3     10    32
+192.168.1.2      et-0/0/2.0             2Way            192.168.255.2     10    32
+192.168.1.1      et-0/0/2.0             2Way            192.168.255.1     10    32
+192.168.1.102    et-0/0/2.0             ExStart         192.168.255.102   10    39
+192.168.1.11     et-0/0/2.0             2Way            192.168.255.11    10    38
+```
+
+```text
+root@edge-tk12> show log ospf-debug | match MTU
+Mar 21 10:52:39.747040   options 0x52, i 1, m 1, ms 1, r 0, seq 0xc0a80a01, mtu 9500
+Mar 21 10:52:39.747176 OSPF packet ignored: MTU mismatch from 192.168.1.102 on intf et-0/0/2.0 area 0.0.0.0
+Mar 21 10:52:40.649736   options 0x52, i 1, m 1, ms 1, r 0, seq 0xc0a59082, mtu 9500
+Mar 21 10:52:40.649759 OSPF packet ignored: MTU mismatch from 192.168.1.101 on intf et-0/0/2.0 area 0.0.0.0
+Mar 21 10:52:41.836716   options 0x52, i 1, m 1, ms 1, r 0, seq 0xc0a04ee1, mtu 1500
+Mar 21 10:52:43.061037   options 0x52, i 1, m 1, ms 1, r 0, seq 0xc0a04d0c, mtu 1500
+```
+
+これは[cRPDの仕様](https://www.juniper.net/documentation/jp/ja/software/crpd/crpd-deployment/topics/task/configure-settings-on-crpd.html)によるものです。
+> cRPDはLinux MTU定義を使用しますが、MTU値はレイヤー3パケットサイズ(IPペイロード)のみを表し、イーサネットフレームオーバーヘッド(14バイトイーサネットヘッダー+4バイトFCS)は含まれません。これは、従来の Junos OS 実装とは異なります
+
+[Containerlabの仕様](https://zenn.dev/moatdrive/books/containerlab-manual/viewer/network#%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AEmtu)では以下の通りです。
+> vethリンクのMTUはデフォルトで9500Bに設定されているため、通常のジャンボ・フレームは問題なくリンクを通過できるはずです。MTUを変更する必要がある場合は、リンク定義でmtuプロパティを設定することで変更できます。
+
+そのため、ノード間のMTU仕様の違いによるミスマッチが発生します。
+この状況は、ContainerLabの設定ファイルでリンクのMTUを設定する、cRPDのコンフィグでMTUを設定する、どちらの方法でも対処できます。
+今回は[cRPDのコンフィグで回避します](../../playbooks/template/crpd/common/crpd.j2)。これには以下のようなトレードオフがあります。MTUに関する全てのケースは拾いきれないので、現状は実装できる範囲で回避策(workaround)としています。
+* ContainerLab側の設定でMTU1500に固定する(cRPDのコンフィグ上にMTUを明示的に出さないようにする)ことができる。作業者から見るとノード上のコンフィグにMTU設定は名には現れない。余計なノイズのないコンフィグにはメリットがある。
+* 元(original)のconfig上でMTUが指定されている場合は何らかの手段でL3トポロジに吸い上げる必要がある。ただし元のplatformによって”MTU”のconfigが指す意味が違うので誰かが解釈するロジックを持たなければいけない(処理の複雑さが増える)。
+* MTUを作業者から見えないところで固定してしまうと「MTUの不一致を検出する」というユースケースを排除してしまう副作用がある。作業する上ではノイズになりうるが、明文化してconfigを見せる方が、検証環境としては安全側に倒せる。元configが暗黙のMTU1500を採用していた場合、1500と明示的に外挿する必要がある。
+* clabとしては9500Byteのままで、cRPDのconfigで制限する。ユースケースとしてMTUを操作したい場合は、打ち消しconfigを入れて変更することで対応してもらう
