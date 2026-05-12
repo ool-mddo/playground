@@ -88,3 +88,7 @@
   * [Proposal of Verification System Based on Network Models for Large-Scale Network Reproduction in Virtual Environments | IEEE Conference Publication | IEEE Xplore](https://ieeexplore.ieee.org/document/11181368)
 * Okinawa Open Days 2025 (2025/12/03-05)
   * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策 / 滝口 敏行・山口 大樹](https://www.okinawaopendays.com/post/1204-2)
+* JANOG 57 Meeting (2026/02/11-13)
+  * [ネットワークのデジタルツインに求める要件は何ですか？～理想的な仮想環境への期待と現状～](https://www.janog.gr.jp/meeting/janog57/digital-twin/)
+* 2026年情報通信マネジメントワークショップ (2026/03/19)
+  * [過去の設計ミス再現を目的とした ログインして触れるネットワークのデジタルツイン構築](https://www.ieice.org/~icm/jpn/icmws/icmws202603.html)
