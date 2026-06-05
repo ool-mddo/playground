@@ -11,20 +11,30 @@ git switch -d v2.5.3-dev
 git branch
 git submodule update --init --recursive
 ```
+- [ ]  mddo-workerをv0.2.3の状態に同期する
+
+```jsx
+cd repos/mddo-worker/
+git pull origin main
+git fetch --tags
+git switch -d v0.2.3
+cd ../../
+```
+
     
 - [ ]  リポジトリ状況を確認
 
 ```jsx
 mddo@mddo-srv02:~/playground$ bash check_repos.sh
 repository                target-branch/tag   current-branch   current-tag   current-commit   up-to-date?
-playground                NONE                                 v2.5.2        8351a71
-repos/batfish-wrapper     update_readme       main                           a06b075          yes
-repos/bgp-policy-parser   v0.7.0              main             v0.7.0        d17fb75          yes
-repos/fish-tracer         v1.0.0              main             v1.0.0        a490fe8          yes
-repos/mddo-worker                                              v0.2.2        0222c63
+playground                NONE                v2.5.3-dev                     02a61ee          yes
+repos/batfish-wrapper     update_readme                                      a06b075
+repos/bgp-policy-parser   v0.7.0                               v0.7.0        d17fb75
+repos/fish-tracer         v1.0.0                               v1.0.0        a490fe8
+repos/mddo-worker                                              v0.2.3        e8ea055
 repos/model-conductor     v1.14.1                              v1.14.1       ae8a712
 repos/netomox-exp         v1.15.2                              v1.15.2       05f5e95
-repos/netoviz             v0.7.0              main             v0.7.0        aa489d6          yes
+repos/netoviz             v0.7.0                               v0.7.0        aa489d6
 repos/state-conductor     v1.0.0                               v1.0.0        7ac882b
 ```
 
@@ -58,7 +68,7 @@ expected_traffic:
       interface: ge-0/0/1.0
       expected_max_bandwidth: 0.8e9 # bps (e9=Gbps)
   emulated_traffic:
-    scale: 1e-3 # 1Gbps to 1Mbps
+    scale: 1e-4 # 1Gbps to 0.1Mbps
     #scale: 1e-2 # 1Gbps to 10Mbps
 source_ases:
   - asn: 65550
@@ -144,7 +154,7 @@ bash 11_manual_steps.sh
 - [ ]  トラフィック負荷
 
 ```jsx
-curl --header "Content-Type: application/json" --request POST --data '{"crpd_image":"crpd:23.4R1.9","iperf_commands":[{"clients":[{"client_node":"as65550-endpoint00","rate":8650.9,"server_address":"10.100.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":2539.1,"server_address":"10.100.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":14821.1,"server_address":"10.100.0.100","server_port":5203}],"server_node":"as65520-endpoint00"},{"clients":[{"client_node":"as65550-endpoint00","rate":3125.3,"server_address":"10.110.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":8615.8,"server_address":"10.110.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":13971.2,"server_address":"10.110.0.100","server_port":5203}],"server_node":"as65520-endpoint01"},{"clients":[{"client_node":"as65550-endpoint00","rate":18103.100000000002,"server_address":"10.120.0.100","server_port":5201},{"client_node":"as65550-endpoint02","rate":686.1,"server_address":"10.120.0.100","server_port":5202},{"client_node":"as65550-endpoint03","rate":995.1,"server_address":"10.120.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":33559.9,"server_address":"10.120.0.100","server_port":5204},{"client_node":"as65560-endpoint01","rate":659.5,"server_address":"10.120.0.100","server_port":5205},{"client_node":"as65560-endpoint02","rate":426.40000000000003,"server_address":"10.120.0.100","server_port":5206},{"client_node":"as65560-endpoint03","rate":182.5,"server_address":"10.120.0.100","server_port":5207}],"server_node":"as65520-endpoint02"},{"clients":[{"client_node":"as65550-endpoint00","rate":7017.0,"server_address":"10.130.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":1524.8,"server_address":"10.130.0.100","server_port":5202},{"client_node":"as65550-endpoint02","rate":304.2,"server_address":"10.130.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":15171.5,"server_address":"10.130.0.100","server_port":5204}],"server_node":"as65520-endpoint03"}],"message":"iperf","network_name":"mddo-bgp","remote_address":"172.17.0.1","snapshot_name":"emulated_asis_preallocated0","usecase_name":"manual_steps"}' http://localhost:48090//endpoint
+curl --header "Content-Type: application/json" --request POST --data '{"crpd_image":"crpd:23.4R1.9","iperf_commands":[{"clients":[{"client_node":"as65550-endpoint00","rate":86.509,"server_address":"10.100.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":25.391,"server_address":"10.100.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":148.211,"server_address":"10.100.0.100","server_port":5203}],"server_node":"as65520-endpoint00"},{"clients":[{"client_node":"as65550-endpoint00","rate":31.253,"server_address":"10.110.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":86.158,"server_address":"10.110.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":139.712,"server_address":"10.110.0.100","server_port":5203}],"server_node":"as65520-endpoint01"},{"clients":[{"client_node":"as65550-endpoint00","rate":181.03100000000002,"server_address":"10.120.0.100","server_port":5201},{"client_node":"as65550-endpoint02","rate":6.861,"server_address":"10.120.0.100","server_port":5202},{"client_node":"as65550-endpoint03","rate":9.951,"server_address":"10.120.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":335.599,"server_address":"10.120.0.100","server_port":5204},{"client_node":"as65560-endpoint01","rate":6.595,"server_address":"10.120.0.100","server_port":5205},{"client_node":"as65560-endpoint02","rate":4.2640000000000003,"server_address":"10.120.0.100","server_port":5206},{"client_node":"as65560-endpoint03","rate":1.825,"server_address":"10.120.0.100","server_port":5207}],"server_node":"as65520-endpoint02"},{"clients":[{"client_node":"as65550-endpoint00","rate":70.170,"server_address":"10.130.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":15.248,"server_address":"10.130.0.100","server_port":5202},{"client_node":"as65550-endpoint02","rate":3.042,"server_address":"10.130.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":151.715,"server_address":"10.130.0.100","server_port":5204}],"server_node":"as65520-endpoint03"}],"message":"iperf","network_name":"mddo-bgp","remote_address":"172.17.0.1","snapshot_name":"emulated_asis_preallocated0","usecase_name":"manual_steps"}' http://localhost:48090//endpoint
 ```
 
 - [ ]  bridgeの付け替え1
