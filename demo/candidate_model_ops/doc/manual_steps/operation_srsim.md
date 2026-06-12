@@ -178,7 +178,7 @@ curl --header "Content-Type: application/json" --request POST --data '{"crpd_ima
 - {{interface}}-in ⇒{{name}}: {{interface}}-in
 - {{interface}}-out⇒{{name}}: {{interface}}-out
 
-!image.png
+![srsim1](fig/srsim1.png)
 
 # [事前構築]対向側機器設定(core-tk01)
 
@@ -975,10 +975,11 @@ show router bgp neighbor 192.168.200.2 | match "Description|Export|Import""
 - [ ]  Import: [ POI-East_in ]
 
 - [ ]  トラフィック確認
-edge-tk12にはトラフィックがなれていないこと
-→流れていたので切り戻し実行
+edge-tk12にはトラフィックが流れていないこと
 
-!image.png
+# ！！流れていたので切り戻し実行！！
+
+![srsim2](fig/srsim2.png)
 
 # 切り戻し(eBGP)
 
@@ -1003,11 +1004,8 @@ commit
 ```
     
 - [ ]  トラフィックが戻っていることを確認
-- [ ]  ※原因特定できるなにかが必要そう
-originalとemulatedのトポロジーモデルのDIFFをみて
-loopback ifの値が違うことに気づくなど、、、
 
-!image.png
+![srsim3](fig/srsim3.png)
 
 # egde-tk12修正コンフィグ適応
 
@@ -1135,5 +1133,4 @@ show router bgp summary
 
 →edge-tk12のBGPピアが確立してもトラフィックは今までのままの通りになった。
 
-!image.png# デモ手順 (w/SR-SIM)
-TBA
+![srsim4](fig/srsim4.png)
