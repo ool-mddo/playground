@@ -947,6 +947,8 @@ show bgp neighbor 192.168.200.2 | match "Description|Export:|Import"
 edge-tk12にはトラフィックがなれていないこと
 →流れていたので切り戻し実行
 
+![crpd2](fig/crpd4.png)
+
 # 切り戻し(eBGP)
 
 ```
@@ -974,7 +976,7 @@ commit
 originalとemulatedのトポロジーモデルのDIFFをみて
 lo0の値が違うことに気づくなど、、、
 
-![crpd2](fig/crpd4.png)
+![crpd2](fig/crpd5.png)
 
 
 # egde-tk12修正コンフィグ適応
@@ -1058,11 +1060,9 @@ run show bgp summary
  run show bgp summary
 ```
 
-![crpd2](fig/crpd5.png)
-
 →edge-tk12のBGPピアが確立してもトラフィックは今までのままの通りになった。
 
 
-![crpd2](fig/crpd5.png)
+![crpd2](fig/crpd6.png)
 
 ↑edge-tk12のトラフィックが一時上がっても０に戻っていることがわかる。
