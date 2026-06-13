@@ -2,12 +2,12 @@
 
 # [事前構築]Clab環境デプロイ
 
-- [ ]  playgroundをv2.5.2の状態に同期する
+- [ ]  playgroundをv2.5.3の状態に同期する
 
 ```jsx
 cd playground
 git fetch --tags
-git switch -d v2.5.2
+git switch -d v2.5.3
 git branch
 git submodule update --init --recursive
 ```
@@ -15,13 +15,13 @@ git submodule update --init --recursive
 - [ ]  リポジトリ状況を確認
 
 ```jsx
-mddo@mddo-srv02:~/playground$ bash check_repos.sh
+mddo@mddo-srv02:~/playground$  bash check_repos.sh
 repository                target-branch/tag   current-branch   current-tag   current-commit   up-to-date?
-playground                NONE                                 v2.5.2        8351a71
+playground                NONE                v2.5.3-dev                     91bb663          yes
 repos/batfish-wrapper     update_readme       main                           a06b075          yes
 repos/bgp-policy-parser   v0.7.0              main             v0.7.0        d17fb75          yes
 repos/fish-tracer         v1.0.0              main             v1.0.0        a490fe8          yes
-repos/mddo-worker                                              v0.2.2        0222c63
+repos/mddo-worker                             v0.2.3-dev                     d4628c1          yes
 repos/model-conductor     v1.14.1                              v1.14.1       ae8a712
 repos/netomox-exp         v1.15.2                              v1.15.2       05f5e95
 repos/netoviz             v0.7.0              main             v0.7.0        aa489d6          yes
@@ -60,7 +60,7 @@ curl --header "Content-Type: application/json" --request POST --data '{"crpd_ima
 
 
 ```jsx
-mddo@mddo-srv02:~/playground/demo/candidate_model_ops$  ./topo_frontend.py link --src edge-tk12[ge-0/0/1.0] --dst core-tk01[ge-0/0/0.0]
+./topo_frontend.py link --src edge-tk12[ge-0/0/1.0] --dst core-tk01[ge-0/0/0.0]
 ```    
 
 # [事前構築]Grafana画面修正
@@ -1051,38 +1051,6 @@ exit
 ```bash
 run show bgp summary
 ```
-
-
-## 設定変更1(設定投入2)
-
-```
-set protocols bgp group 192.168.200.2 type external
-set protocols bgp group 192.168.200.2 hold-time 90
-set protocols bgp group 192.168.200.2 family inet unicast
-set protocols bgp group 192.168.200.2 peer-as 65520
-set protocols bgp group 192.168.200.2 neighbor 192.168.200.2 local-address 192.168.200.1
-set protocols bgp group 192.168.200.2 neighbor 192.168.200.2 import POI-East_in
-
-```
-
-## 設定作業2(commit前チェック)
-
-```
-show | compare | no-more
-commit check
-```
-
-- [ ]  設定投入箇所のみ出力されていること
-- [ ]  文法上のエラーが起こってないこと
-
-## 設定作業3(commit)
-
-```
-commit
-exit
-```
-
-- [ ]  異常なログが出ていないことを確認
 
 ## BGPの状態確認
 
