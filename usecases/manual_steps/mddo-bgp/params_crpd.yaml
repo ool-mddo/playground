@@ -61,13 +61,8 @@ l3_preallocated_resources:
   - type: node
     name: edge-tk12
     interfaces:
-      - et-0/0/1
-      - et-0/0/2
-    emulated_params:
-      kind: juniper_cjunosevolved
-      image: cjunosevolved:25.2R1.8-EVO
-      env:
-        CPTX_COSIM: "BT"
+      - ge-0/0/0.0
+      - ge-0/0/1.0
   - type: segment
     name: Seg_192.168.1.0/24
     comment: will-be connect edge-tk12 to core-tk01

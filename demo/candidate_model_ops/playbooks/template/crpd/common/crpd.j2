@@ -27,6 +27,7 @@ interfaces {
         description "{{ interface.description | regex_replace('"', '') }}"
 {% endif %}
         unit 0 {
+            mtu 1500
             family inet {
                 address {{ interface.ipv4 }};
             }

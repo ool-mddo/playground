@@ -28,6 +28,7 @@
 * [運用者の試行錯誤をモデル操作で実現する](./demo/candidate_model_ops/README.md)
   * [(単一AS)複数リージョントラフィック制御](/demo/candidate_model_ops/doc/multi_region_te/introduction.md)
   * [複数ASトラフィック制御](./demo/candidate_model_ops/doc/multi_src_as_te/introduction.md)
+  * [過去障害の再現とトポロジ手動操作](./demo/candidate_model_ops/doc/manual_steps/introduction.md)
 
 ## Reference
 
@@ -88,7 +89,10 @@
   * [Proposal of Verification System Based on Network Models for Large-Scale Network Reproduction in Virtual Environments | IEEE Conference Publication | IEEE Xplore](https://ieeexplore.ieee.org/document/11181368)
 * Okinawa Open Days 2025 (2025/12/03-05)
   * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策 / 滝口 敏行・山口 大樹](https://www.okinawaopendays.com/post/1204-2)
+  * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策/ood2025 - Speaker Deck](https://speakerdeck.com/corestate55/ood2025)
 * JANOG 57 Meeting (2026/02/11-13)
-  * [ネットワークのデジタルツインに求める要件は何ですか？～理想的な仮想環境への期待と現状～](https://www.janog.gr.jp/meeting/janog57/digital-twin/)
-* 2026年情報通信マネジメントワークショップ (2026/03/19)
+  * [ネットワークのデジタルツインに求める要件は何ですか？～理想的な仮想環境への期待と現状～ - JANOG57 Meeting in Osaka](https://www.janog.gr.jp/meeting/janog57/digital-twin/)
+  * [ネットワークのデジタルツインに求める要件は何ですか？/janog57 - Speaker Deck](https://speakerdeck.com/corestate55/janog57)
+* IEICE ICM研究会, 2026年情報通信マネジメントワークショップ (2026/03/19)
+  * [研究会 開催プログラム - 2026-03-ICM](https://ken.ieice.org/ken/program/index.php?tgs_regid=b35708c57ebd4e174df1d399aa23ab1cb4afb606453bd5c2fe93ef8bcc38ae0f&tgid=IEICE-ICM)
   * [過去の設計ミス再現を目的とした ログインして触れるネットワークのデジタルツイン構築](https://www.ieice.org/~icm/jpn/icmws/icmws202603.html)
