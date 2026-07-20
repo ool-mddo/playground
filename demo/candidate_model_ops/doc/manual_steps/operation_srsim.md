@@ -4,7 +4,7 @@
 
 - [ ]  playgroundをv2.5.3-devの状態に同期する
 
-```jsx
+```sh
 cd playground
 git fetch --tags
 git switch -d v2.5.3-dev
@@ -13,7 +13,7 @@ git submodule update --init --recursive
 ```
 - [ ]  mddo-workerをv0.2.3の状態に同期する
 
-```jsx
+```sh
 cd repos/mddo-worker/
 git pull origin main
 git fetch --tags
@@ -21,10 +21,9 @@ git switch -d v0.2.3
 cd ../../
 ```
 
-    
 - [ ]  リポジトリ状況を確認
 
-```jsx
+```text
 mddo@mddo-srv02:~/playground$ bash check_repos.sh
 repository                target-branch/tag   current-branch   current-tag   current-commit   up-to-date?
 playground                NONE                v2.5.3-dev                     02a61ee          yes
@@ -40,18 +39,18 @@ repos/state-conductor     v1.0.0                               v1.0.0        7ac
 
 - [ ]  MDDOのコントローラおよびワーカーを起動する
 
-```jsx
+```sh
 sudo docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d
 cd playground/repos/mddo-worker/
 sudo docker compose up -d
 ```
 
-```bash
+```sh
 cd ~/playground/usecases/manual_steps/mddo-bgp
 vi params.yaml
 ```
 
-```bash
+```yaml
 ---
 expected_traffic:
   original_targets:
@@ -145,30 +144,28 @@ l3_preallocated_resources:
 
 - [ ]  emulated_asis環境の立ち上げ
 
-```
+```sh
 cd /playground/demo/candidate_model_ops
 bash 11_manual_steps.sh
-
 ```
 
 - [ ]  トラフィック負荷
 
-```jsx
+```sh
 curl --header "Content-Type: application/json" --request POST --data '{"crpd_image":"crpd:23.4R1.9","iperf_commands":[{"clients":[{"client_node":"as65550-endpoint00","rate":86.509,"server_address":"10.100.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":25.391,"server_address":"10.100.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":148.211,"server_address":"10.100.0.100","server_port":5203}],"server_node":"as65520-endpoint00"},{"clients":[{"client_node":"as65550-endpoint00","rate":31.253,"server_address":"10.110.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":86.158,"server_address":"10.110.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":139.712,"server_address":"10.110.0.100","server_port":5203}],"server_node":"as65520-endpoint01"},{"clients":[{"client_node":"as65550-endpoint00","rate":181.03100000000002,"server_address":"10.120.0.100","server_port":5201},{"client_node":"as65550-endpoint02","rate":6.861,"server_address":"10.120.0.100","server_port":5202},{"client_node":"as65550-endpoint03","rate":9.951,"server_address":"10.120.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":335.599,"server_address":"10.120.0.100","server_port":5204},{"client_node":"as65560-endpoint01","rate":6.595,"server_address":"10.120.0.100","server_port":5205},{"client_node":"as65560-endpoint02","rate":4.2640000000000003,"server_address":"10.120.0.100","server_port":5206},{"client_node":"as65560-endpoint03","rate":1.825,"server_address":"10.120.0.100","server_port":5207}],"server_node":"as65520-endpoint02"},{"clients":[{"client_node":"as65550-endpoint00","rate":70.170,"server_address":"10.130.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":15.248,"server_address":"10.130.0.100","server_port":5202},{"client_node":"as65550-endpoint02","rate":3.042,"server_address":"10.130.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":151.715,"server_address":"10.130.0.100","server_port":5204}],"server_node":"as65520-endpoint03"}],"message":"iperf","network_name":"mddo-bgp","remote_address":"172.17.0.1","snapshot_name":"emulated_asis_preallocated0","usecase_name":"manual_steps"}' http://localhost:48090//endpoint
 ```
 
 - [ ]  bridgeの付け替え1
 
-```jsx
+```sh
 ./topo_frontend.py  link --src as65520-edge01[Ethernet3] --dst edge-tk12[1/1/c12/1]
 ```
-    
+
 - [ ]  bridgeの付け替え2
 
-```jsx
+```sh
 ./topo_frontend.py link --src edge-tk12[1/1/c21/1] --dst core-tk01[ge-0/0/0.0]
 ```
-    
 
 # [事前構築]Grafana画面修正
 
@@ -223,7 +220,7 @@ exit
 docker inspect clab-emulated-edge-tk12-1 --format '{{ .NetworkSettings.Networks.clab.IPAddress }}'  | xargs -I{} echo "ssh admin@{}"
 ```
 
-```bash
+```text
 ssh admin@SR-SIM
 Pseudo-terminal will not be allocated because stdin is not a terminal.
 TiMOS-C-25.7.R1 cpm/x86_64 Nokia 7750 SR Copyright (c) 2000-2025 Nokia.
@@ -244,12 +241,12 @@ admin@172.20.20.20's password:
 passwordは下記を参照
 https://containerlab.dev/manual/kinds/sros/#credentials
 
-```bash
+```
 configure ex
 router "Base" { autonomous-system 65500 }
 router "Base" { router-id 192.168.254.12 }
-router "Base" { confederation confed-as-num 65518 } 
-router "Base" { confederation members 65500 { } } 
+router "Base" { confederation confed-as-num 65518 }
+router "Base" { confederation members 65500 { } }
 router "Base" { interface system admin-state enable }
 router "Base" { interface system ipv4 primary address 192.168.254.12 }
 router "Base" { interface system ipv4 primary prefix-length 32 }
@@ -280,7 +277,6 @@ show card a memory-pools
 
 - [ ]  CPU利用率XX%以下であること
 - [ ]  MEM利用率XX%以下であること
-   
 
 ## BGP状態の確認
 
@@ -306,7 +302,6 @@ show log log-id "99" count 100 | no-more
 ```
 
 - [ ]  異常ログなしを確認
-   
 
 # Interface開通設定
 
@@ -316,7 +311,7 @@ show log log-id "99" count 100 | no-more
 admin show configuration flat /configure | match "1/1/c12"
 admin show configuration flat /configure | match "1/1/c21"
 ```
-    
+
 - [ ]  1/1/c12 の設定がないこと
 - [ ]  1/1/c21 の設定がないこと
 
@@ -361,11 +356,11 @@ list
 exit
 ```
 
-- [ ]  切り戻し用ファイルがあることを確認    
+- [ ]  切り戻し用ファイルがあることを確認
 
 ## 設定作業3(設定投入)
 
-```bash
+```
 configure ex
 port 1/1/c12 { }
 port 1/1/c12 { admin-state enable }
@@ -425,7 +420,6 @@ exit
 ```
 
 - [ ]  異常ログが発生しないこと
-    
 
 ## 事後確認1(設定確認)
 
@@ -437,8 +431,6 @@ admin show configuration flat /configure | match 1/1/c21
 - [ ]  eth1 の設定があること
 - [ ]  eth2 の設定があること
 
-    
-
 ## 事後確認2(状態確認)
 
 ```
@@ -448,7 +440,6 @@ show port | match 1/1/c21
 
 - [ ]  1/1/c12 がupしていること
 - [ ]  1/1/c21 がupしていること
-    
 
 ## 事後確認4(経路確認)
 
@@ -469,7 +460,7 @@ ping 192.168.1.101
 ping 192.168.200.2
 ```
 
-- [ ]  到達性があること    
+- [ ]  到達性があること
 
 # 切り戻し(Interface開通設定)
 
@@ -530,7 +521,7 @@ configure ex
 
 ## 設定作業3(設定投入)
 
-```bash
+```
 policy-options as-path "any" expression ".*"
 policy-options as-path "as65550-origin" expression "^(65550 )+$"
 policy-options as-path "aspath-longer200" expression ".{200,}"
@@ -543,7 +534,7 @@ policy-options { prefix-list "as65550-advd" prefix 10.100.0.0/16 type exact }
 policy-options { prefix-list "default-ipv4" prefix 0.0.0.0/0 type exact }
 policy-options prefix-list "longer24-ipv4" prefix 0.0.0.0/0 type range start-length 25
 policy-options prefix-list "longer24-ipv4" prefix 0.0.0.0/0 type range end-length 32
-policy-options policy-statement "POI-East_in" entry 10 from protocol name [bgp] 
+policy-options policy-statement "POI-East_in" entry 10 from protocol name [bgp]
 policy-options policy-statement "POI-East_in" entry 10 action action-type accept
 policy-options policy-statement "POI-East_in" entry 10 action local-preference 300
 policy-options policy-statement "POI-East_in" entry 10 action metric set 100
@@ -611,7 +602,7 @@ commit
 exit
 ```
 
-- [ ]  異常ログが発生しないこと    
+- [ ]  異常ログが発生しないこと
 
 ## 事後確認
 
@@ -667,8 +658,6 @@ show ospf neighbor
 
 - [ ]  ospfのneighborがないこと
 
-    
-
 ## 事前確認(OSPFコンフィグ確認)
 
 ```
@@ -700,12 +689,12 @@ exit
 
 ## 設定変更3(設定投入)
 
-```bash
+```
 configure ex
 router "Base" { ospf 0  { admin-state enable } }
 router "Base" { ospf 0  { router-id 192.168.254.12 } }
-router "Base" { ospf 0  { area 0.0.0.0 { interface "sub-1/1/c21/1:0"  { admin-state enable } } } } 
-router "Base" { ospf 0  { area 0.0.0.0 { interface "sub-1/1/c21/1:0"  { metric 10 } } } } 
+router "Base" { ospf 0  { area 0.0.0.0 { interface "sub-1/1/c21/1:0"  { admin-state enable } } } }
+router "Base" { ospf 0  { area 0.0.0.0 { interface "sub-1/1/c21/1:0"  { metric 10 } } } }
 router "Base" { ospf 0  { area 0.0.0.0 { interface "system"  { admin-state enable } } } }
 router "Base" { ospf 0  { area 0.0.0.0 { interface "system"  { metric 1 } } } }
 ```
@@ -727,16 +716,15 @@ commit
 exit
 ```
 
-- [ ]  異常ログが発生しないこと    
+- [ ]  異常ログが発生しないこと
 
 ## 事後確認(OSPFネイバー確認)
 
 ```
-show ospf neighbor 
+show ospf neighbor
 ```
-- [ ]  ospfのneighborがあること
 
-    
+- [ ]  ospfのneighborがあること
 
 ## 事後確認(OSPFコンフィグ確認)
 
@@ -746,14 +734,11 @@ admin show configuration flat /configure router "Base" ospf
 
 - [ ]  ospfのコンフィグがあること
 
-    
-
 # 切り戻し(OSPF設定)
 
 ```
 run file list
 load override YYYYMMDD-3.conf
-
 ```
 
 - [ ]  「load complete」と表示されるか確認
@@ -762,28 +747,24 @@ load override YYYYMMDD-3.conf
 
 ```
 compare flat
-
 ```
 
 - [ ]  scriptで投入した設定が切り戻っていること
 
 ```
 validate
-
 ```
 
 - [ ]  文法上のエラーが起きてないこと
 
 ```
 commit
-
 ```
 
 - [ ]  異常ログが上がっていないことを確認
 
 ```
 exit
-
 ```
 
 - [ ]  異常ログが上がっていないことを確認
@@ -811,7 +792,7 @@ exit
 
 ```
 admin save configure  YYYYMMDD-4.conf
-file 
+file
 list
 exit
 ```
@@ -820,7 +801,7 @@ exit
 
 ## 設定変更3(設定投入)
 
-```bash
+```
 configure ex
 router "Base" { bgp group "192.168.255.101" }
 router "Base" { bgp group "192.168.255.101" admin-state enable }
@@ -846,7 +827,6 @@ validate
 
 - [ ]  設定投入箇所のみ出力されていること
 - [ ]  文法上のエラーが起こってないこと
-    
 
 ## 設定作業5(commit)
 
@@ -860,10 +840,10 @@ exit
 ## 事後確認(対象BGPネイバーの状態を確認)
 
 ```
-show router bgp summary 
+show router bgp summary
 ```
 
-- [ ]  BGP sessionが確立していることを確認    
+- [ ]  BGP sessionが確立していることを確認
 
 # 対外向け設定
 
@@ -889,7 +869,7 @@ exit
 
 ```
 admin save configure YYYYMMDD-5.conf
-file 
+file
 list
 exit
 ```
@@ -898,7 +878,7 @@ exit
 
 ## 設定変更3(設定投入)
 
-```bash
+```
 configure ex
 router "Base" { bgp group "192.168.200.2" }
 router "Base" { bgp group "192.168.200.2" admin-state enable }
@@ -929,7 +909,6 @@ validate
 
 - [ ]  設定投入箇所のみ出力されていること
 - [ ]  文法上のエラーが起こってないこと
-    
 
 ## 設定作業5(commit)
 
@@ -944,7 +923,7 @@ exit
 ### 対象BGPネイバーの状態を確認
 
 ```
-show router  bgp summary 
+show router  bgp summary
 ```
 
 - [ ]  BGP sessionが確立していることを確認
@@ -996,13 +975,13 @@ load full-replace YYYMMDD-5.conf
 compare flat
 ```
 
-- [ ]  投入した設定が切り戻っていること  
+- [ ]  投入した設定が切り戻っていること
 
 ```
 validate
 commit
 ```
-    
+
 - [ ]  トラフィックが戻っていることを確認
 
 ![srsim3](fig/srsim3.png)
@@ -1039,7 +1018,7 @@ validate
 commit
 exit
 ```
-    
+
 - [ ]  異常なログが出ていないことを確認
 
 # 対向側機器設定(core-tk01)
@@ -1080,8 +1059,8 @@ exit
 ## BGPの状態確認
 
 ```bash
-show router bgp summary 
-```   
+show router bgp summary
+```
 
 ## egde-tk12の再設定投入
 
@@ -1102,7 +1081,6 @@ router "Base" { bgp neighbor "192.168.200.2" admin-state enable }
 router "Base" { bgp neighbor "192.168.200.2" group "192.168.200.2" }
 router "Base" { bgp neighbor "192.168.200.2" type external }
 router "Base" { bgp neighbor "192.168.200.2" peer-as 65520 }
-
 ```
 
 ## 設定作業2(commit前チェック)
@@ -1126,8 +1104,8 @@ exit
 
 ## BGPの状態確認
 
-```bash
-show router bgp summary 
+```
+show router bgp summary
 ```
 
 

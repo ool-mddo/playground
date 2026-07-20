@@ -4,17 +4,17 @@
 
 - [ ]  playgroundをv2.5.3の状態に同期する
 
-```jsx
+```sh
 cd playground
 git fetch --tags
 git switch -d v2.5.3
 git branch
 git submodule update --init --recursive
 ```
-    
+
 - [ ]  リポジトリ状況を確認
 
-```jsx
+```text
 mddo@mddo-srv02:~/playground$  bash check_repos.sh
 repository                target-branch/tag   current-branch   current-tag   current-commit   up-to-date?
 playground                NONE                v2.5.3-dev                     91bb663          yes
@@ -30,12 +30,12 @@ repos/state-conductor     v1.0.0                               v1.0.0        7ac
 
 - [ ]  MDDOのコントローラおよびワーカーを起動する
 
-```jsx
+```sh
 sudo docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d
 cd playground/repos/mddo-worker/
 sudo docker compose up -d
 ```
-    
+
 - [ ]  emulated_asis環境の立ち上げ
 
 ```
@@ -46,22 +46,22 @@ bash 11_manual_steps.sh
 
 - [ ]  トラフィック負荷
 
-```jsx
+```sh
 curl --header "Content-Type: application/json" --request POST --data '{"crpd_image":"crpd:23.4R1.9","iperf_commands":[{"clients":[{"client_node":"as65550-endpoint00","rate":8650.9,"server_address":"10.100.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":2539.1,"server_address":"10.100.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":14821.1,"server_address":"10.100.0.100","server_port":5203}],"server_node":"as65520-endpoint00"},{"clients":[{"client_node":"as65550-endpoint00","rate":3125.3,"server_address":"10.110.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":8615.8,"server_address":"10.110.0.100","server_port":5202},{"client_node":"as65560-endpoint00","rate":13971.2,"server_address":"10.110.0.100","server_port":5203}],"server_node":"as65520-endpoint01"},{"clients":[{"client_node":"as65550-endpoint00","rate":18103.100000000002,"server_address":"10.120.0.100","server_port":5201},{"client_node":"as65550-endpoint02","rate":686.1,"server_address":"10.120.0.100","server_port":5202},{"client_node":"as65550-endpoint03","rate":995.1,"server_address":"10.120.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":33559.9,"server_address":"10.120.0.100","server_port":5204},{"client_node":"as65560-endpoint01","rate":659.5,"server_address":"10.120.0.100","server_port":5205},{"client_node":"as65560-endpoint02","rate":426.40000000000003,"server_address":"10.120.0.100","server_port":5206},{"client_node":"as65560-endpoint03","rate":182.5,"server_address":"10.120.0.100","server_port":5207}],"server_node":"as65520-endpoint02"},{"clients":[{"client_node":"as65550-endpoint00","rate":7017.0,"server_address":"10.130.0.100","server_port":5201},{"client_node":"as65550-endpoint01","rate":1524.8,"server_address":"10.130.0.100","server_port":5202},{"client_node":"as65550-endpoint02","rate":304.2,"server_address":"10.130.0.100","server_port":5203},{"client_node":"as65560-endpoint00","rate":15171.5,"server_address":"10.130.0.100","server_port":5204}],"server_node":"as65520-endpoint03"}],"message":"iperf","network_name":"mddo-bgp","remote_address":"172.17.0.1","snapshot_name":"emulated_asis_preallocated0","usecase_name":"manual_steps"}' http://localhost:48090//endpoint
 ```
 
 - [ ]  bridgeの付け替え1
 
-```jsx
+```sh
 ./topo_frontend.py  link --src as65520-edge01[Ethernet3] --dst edge-tk12[ge-0/0/0.0]
 ```
-    
+
 - [ ]  bridgeの付け替え2
 
 
-```jsx
+```sh
 ./topo_frontend.py link --src edge-tk12[ge-0/0/1.0] --dst core-tk01[ge-0/0/0.0]
-```    
+```
 
 # [事前構築]Grafana画面修正
 
@@ -120,7 +120,6 @@ set protocols bgp group 192.168.200.1 neighbor 192.168.200.1 export advertise-al
 commit
 exit
 exit
-
 ```
 
 # [事前構築]設定投入(edge-tk12)
@@ -158,7 +157,7 @@ show chassis fpc | no-more
 ```
 
 - [ ]  CPU利用率XX%以下であること
-- [ ]  MEM利用率XX%以下であること   
+- [ ]  MEM利用率XX%以下であること
 
 ⇒cRPDでは使えなかった
 
@@ -185,12 +184,9 @@ show interface terse | no-more
 
 ```
 show log messages | last 100 | no-more
-
 ```
 
 - [ ]  異常ログなしを確認
-
-    
 
 ## 対象ルータのログ表示モードを起動
 
@@ -206,7 +202,7 @@ monitor start messages | except xntp | except BLOW
 show configuration interface eth1 | no-more
 show configuration interface eth2 | no-more
 ```
-    
+
 - [ ]  eth1 の設定がないこと
 - [ ]  eth2 の設定がないこと
 
@@ -218,7 +214,6 @@ show chassis hardware | no-more
 
 - [ ]  eth0 を認識していないこと
 - [ ]  eth1 を認識していないこと
-   
 
 cRPDだと使えないコマンド
 
@@ -243,7 +238,6 @@ show route 192.168.200.0/30  | no-more
 ```
 
 - [ ]  経路がないこと
-    
 
 ## 事前確認5(到達性の確認)
 
@@ -272,8 +266,6 @@ run file list
 
 - [ ]  切り戻し用ファイルがあることを確認
 
-    
-
 ## 設定作業3(設定投入)
 
 ```
@@ -287,7 +279,6 @@ set interfaces eth2 unit 0 family inet address 192.168.1.12/24
 
 - [ ]  入力失敗がないか
 - [ ]  異常なログがでていないこと
-    
 
 cRPDだとdisableがないので入力失敗あり
 
@@ -300,7 +291,6 @@ commit check
 
 - [ ]  設定投入箇所のみ出力されていること
 - [ ]  文法上のエラーが起こってないこと
-    
 
 ## 設定作業5(commit)
 
@@ -310,7 +300,6 @@ exit
 ```
 
 - [ ]  異常ログが発生しないこと
-    
 
 ## 事後確認1(設定確認)
 
@@ -321,7 +310,6 @@ show configuration interface eth2 | no-more
 
 - [ ]  eth1 の設定があること
 - [ ]  eth2 の設定があること
-   
 
 ## 事後確認2(トランシーバーの確認)
 
@@ -342,7 +330,6 @@ show interfaces terse | match "eth1|eth2" | no-more
 
 - [ ]  eth1 がupしていること
 - [ ]  eth2 がupしていること
-    
 
 ## 事後確認4(経路確認)
 
@@ -354,7 +341,6 @@ show route 192.168.200.0/30  | no-more
 ```
 
 - [ ]  経路があること
-    
 
 ## 事後確認5(到達性の確認)
 
@@ -364,7 +350,6 @@ ping 192.168.200.2
 ```
 
 - [ ]  到達性があること
-   
 
 # 切り戻し(Interface開通設定)
 
@@ -535,7 +520,6 @@ commit check
 
 - [ ]  設定投入箇所のみ出力されていること
 - [ ]  文法上のエラーが起こってないこと
- 
 
 ## 設定作業5(commit)
 
@@ -545,7 +529,6 @@ exit
 ```
 
 - [ ]  異常ログが発生しないこと
-  
 
 ## 事後確認
 
@@ -632,9 +615,7 @@ show ospf interface
     ```
     root@edge-tk12> show ospf interface
     OSPF instance is not running
-    
     ```
-    
 
 ## 事前確認(OSPFネイバー確認)
 
@@ -649,7 +630,6 @@ show ospf neighbor
     show ospf neighbor
     OSPF instance is not running
     ```
-    
 
 ## 事前確認(OSPFコンフィグ確認)
 
@@ -700,7 +680,6 @@ commit check
 
 - [ ]  設定投入箇所のみ出力されていること
 - [ ]  文法上のエラーが起こってないこと
-    
 
 ## 設定作業5(commit)
 
@@ -715,7 +694,6 @@ exit
 
 ```
 show ospf interface | no-more
-
 ```
 
 - [ ]  ospfの対象IFとしてlo0.0があること
@@ -729,7 +707,6 @@ show ospf neighbor | no-more
 ```
 
 - [ ]  ospfのneighborがあること
-  
 
 ## 事後確認(OSPFコンフィグ確認)
 
@@ -740,14 +717,11 @@ show conf  protocols ospf area 0.0.0.0 interface lo0.0 | no-more
 
 - [ ]  ospfのコンフィグがあること
 
-    
-
 # 切り戻し(OSPF設定)
 
 ```
 run file list
 load override YYYYMMDD-3.conf
-
 ```
 
 - [ ]  「load complete」と表示されるか確認
@@ -829,7 +803,6 @@ commit check
 
 - [ ]  設定投入箇所のみ出力されていること
 - [ ]  文法上のエラーが起こってないこと
-    
 
 ## 設定作業5(commit)
 
@@ -847,7 +820,6 @@ show bgp summary | match  192.168.255.101
 ```
 
 - [ ]  BGP sessionが確立していることを確認
-  
 
 # 対外向け設定
 
@@ -919,7 +891,6 @@ show bgp summary | match 192.168.200.2
 
 - [ ]  BGP sessionが確立していることを確認
 - [ ]  AS番号が 「65520」 であることを確認
- 
 
 ### BGP 送受信経路数を確認
 
@@ -970,7 +941,7 @@ show | compare
 commit check
 commit
 ```
-    
+
 - [ ]  トラフィックが戻っていることを確認
 - [ ]  ※原因特定できるなにかが必要そう
 originalとemulatedのトポロジーモデルのDIFFをみて
