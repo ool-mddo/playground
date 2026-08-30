@@ -87,9 +87,10 @@ services:
       MODEL_CONDUCTOR_HOST: model-conductor:${MODEL_CONDUCTOR_PORT}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
-      MDDO_TTP_CONFIGS_DIR: ${MDDO_TTP_CONFIGS_DIR}
-      MDDO_TTP_OUTPUTS_DIR: ${MDDO_TTP_OUTPUTS_DIR}
-      MDDO_BGP_POLICIES_DIR: ${MDDO_BGP_POLICIES_DIR}
+      MDDO_BGP_POLICY_PARSER_DIR: ${MDDO_BGP_POLICY_PARSER_DIR}
+      MDDO_BGP_POLICY_PARSER_CONFIGS_DIR: ${MDDO_BGP_POLICY_PARSER_CONFIGS_DIR}
+      MDDO_BGP_POLICY_PARSER_OUTPUTS_DIR: ${MDDO_BGP_POLICY_PARSER_OUTPUTS_DIR}
+      MDDO_BGP_POLICY_PARSER_POLICIES_DIR: ${MDDO_BGP_POLICY_PARSER_POLICIES_DIR}
       PYTHONUNBUFFERED: 1
     volumes:
       # data dirs
@@ -102,8 +103,8 @@ services:
         target: ${MDDO_QUERIES_DIR}
         read_only: true
       - type: volume
-        source: ttp
-        target: ${MDDO_TTP_DIR}
+        source: policies
+        target: ${MDDO_POLICIES_DIR}
       # for development
       - type: bind
         source: ./repos/bgp-policy-parser
@@ -192,12 +193,12 @@ volumes:
       type: none
       o: bind
       device: ./${SHARED_TOPOLOGIES_DIR}
-  ttp:
+  policies:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./${SHARED_TTP_DIR}
+      device: ./${SHARED_POLICIES_DIR}
   usecases:
     driver: local
     driver_opts:
