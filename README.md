@@ -86,7 +86,7 @@
 ### FY2025
 * APNOMS 2025 (2025/09/22-24)
   * Poster session
-  * [roposal of verification system based on network models for large-scale network reproduction in virtual environments. In: Proceedings of 25th Asia-Pacific Network Operations and Management Symposium (APNOMS 2025), pp. 1–4 (2025).](https://doi.org/10.23919/APNOMS67058.2025.11181368)
+  * [Proposal of verification system based on network models for large-scale network reproduction in virtual environments. In: Proceedings of 25th Asia-Pacific Network Operations and Management Symposium (APNOMS 2025), pp. 1–4 (2025).](https://doi.org/10.23919/APNOMS67058.2025.11181368)
 * Okinawa Open Days 2025 (2025/12/03-05)
   * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策 / 滝口 敏行・山口 大樹](https://www.okinawaopendays.com/post/1204-2)
   * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策/ood2025 - Speaker Deck](https://speakerdeck.com/corestate55/ood2025)
