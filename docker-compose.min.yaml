@@ -13,12 +13,14 @@ services:
       - model-conductor
       - netomox-exp
       - batfish-wrapper
+
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
     volumes:
       - type: bind
         source: ./assets/batfish/log4j2.yaml
         target: /log4j2.yaml
+
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
     tty: true  # for rerun (requires console input)
@@ -53,6 +55,7 @@ services:
         target: /netomox-exp/config.ru
     depends_on:
       - batfish-wrapper
+
   batfish-wrapper:
     image: ${BATFISH_WRAPPER_IMAGE}:${BATFISH_WRAPPER_IMAGE_TAG}
     environment:
@@ -80,6 +83,7 @@ services:
         target: /batfish-wrapper
     depends_on:
       - batfish
+
   bgp-policy-parser:
     image: ${BGP_POLICY_PARSER_IMAGE}:${BGP_POLICY_PARSER_IMAGE_TAG}
     tty: true
@@ -87,9 +91,10 @@ services:
       MODEL_CONDUCTOR_HOST: model-conductor:${MODEL_CONDUCTOR_PORT}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
-      MDDO_TTP_CONFIGS_DIR: ${MDDO_TTP_CONFIGS_DIR}
-      MDDO_TTP_OUTPUTS_DIR: ${MDDO_TTP_OUTPUTS_DIR}
-      MDDO_BGP_POLICIES_DIR: ${MDDO_BGP_POLICIES_DIR}
+      MDDO_BGP_POLICY_PARSER_DIR: ${MDDO_BGP_POLICY_PARSER_DIR}
+      MDDO_BGP_POLICY_PARSER_CONFIGS_DIR: ${MDDO_BGP_POLICY_PARSER_CONFIGS_DIR}
+      MDDO_BGP_POLICY_PARSER_OUTPUTS_DIR: ${MDDO_BGP_POLICY_PARSER_OUTPUTS_DIR}
+      MDDO_BGP_POLICY_PARSER_POLICIES_DIR: ${MDDO_BGP_POLICY_PARSER_POLICIES_DIR}
       PYTHONUNBUFFERED: 1
     volumes:
       # data dirs
@@ -102,12 +107,13 @@ services:
         target: ${MDDO_QUERIES_DIR}
         read_only: true
       - type: volume
-        source: ttp
-        target: ${MDDO_TTP_DIR}
+        source: policies
+        target: ${MDDO_POLICIES_DIR}
       # for development
       - type: bind
         source: ./repos/bgp-policy-parser
         target: /bgp-policy-parser
+
   model-conductor:
     image: ${MODEL_CONDUCTOR_IMAGE}:${MODEL_CONDUCTOR_IMAGE_TAG}
     environment:
@@ -129,6 +135,7 @@ services:
     depends_on:
       - batfish-wrapper
       - netomox-exp
+
   netoviz:
     image: ${NETOVIZ_IMAGE}:${NETOVIZ_IMAGE_TAG}
     ports:
@@ -192,12 +199,12 @@ volumes:
       type: none
       o: bind
       device: ./${SHARED_TOPOLOGIES_DIR}
-  ttp:
+  policies:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./${SHARED_TTP_DIR}
+      device: ./${SHARED_POLICIES_DIR}
   usecases:
     driver: local
     driver_opts:
