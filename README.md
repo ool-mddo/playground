@@ -86,7 +86,7 @@
 ### FY2025
 * APNOMS 2025 (2025/09/22-24)
   * Poster session
-  * [Proposal of Verification System Based on Network Models for Large-Scale Network Reproduction in Virtual Environments | IEEE Conference Publication | IEEE Xplore](https://ieeexplore.ieee.org/document/11181368)
+  * [Proposal of verification system based on network models for large-scale network reproduction in virtual environments. In: Proceedings of 25th Asia-Pacific Network Operations and Management Symposium (APNOMS 2025), pp. 1–4 (2025).](https://doi.org/10.23919/APNOMS67058.2025.11181368)
 * Okinawa Open Days 2025 (2025/12/03-05)
   * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策 / 滝口 敏行・山口 大樹](https://www.okinawaopendays.com/post/1204-2)
   * [ネットワーク・デジタルツインの実運用への適用に立ちはだかる課題と対策/ood2025 - Speaker Deck](https://speakerdeck.com/corestate55/ood2025)
@@ -96,3 +96,7 @@
 * IEICE ICM研究会, 2026年情報通信マネジメントワークショップ (2026/03/19)
   * [研究会 開催プログラム - 2026-03-ICM](https://ken.ieice.org/ken/program/index.php?tgs_regid=b35708c57ebd4e174df1d399aa23ab1cb4afb606453bd5c2fe93ef8bcc38ae0f&tgid=IEICE-ICM)
   * [過去の設計ミス再現を目的とした ログインして触れるネットワークのデジタルツイン構築](https://www.ieice.org/~icm/jpn/icmws/icmws202603.html)
+
+### Related work
+[信州大学工学部電子情報システム工学科 モデル駆動ソフトウェア研究室 (小形研究室)](https://shinshu-mdse-lab.wordpress.com/)と情報交換を行っています。
+* [Ogata, K. et al. (2026). Integrating Model-Based Verification and Configuration-File Analysis for Network Configurations. In: Barolli, L., K. G. Seah, W., Woungang, I. (eds) Advanced Information Networking and Applications. AINA 2026. Lecture Notes on Data Engineering and Communications Technologies, vol 294. Springer, Cham.](https://doi.org/10.1007/978-3-032-23260-1_3)
