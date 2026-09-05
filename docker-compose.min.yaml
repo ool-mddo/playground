@@ -13,12 +13,14 @@ services:
       - model-conductor
       - netomox-exp
       - batfish-wrapper
+
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
     volumes:
       - type: bind
         source: ./assets/batfish/log4j2.yaml
         target: /log4j2.yaml
+
   netomox-exp:
     image: ${NETOMOX_EXP_IMAGE}:${NETOMOX_EXP_IMAGE_TAG}
     tty: true  # for rerun (requires console input)
@@ -53,6 +55,7 @@ services:
         target: /netomox-exp/config.ru
     depends_on:
       - batfish-wrapper
+
   batfish-wrapper:
     image: ${BATFISH_WRAPPER_IMAGE}:${BATFISH_WRAPPER_IMAGE_TAG}
     environment:
@@ -80,6 +83,7 @@ services:
         target: /batfish-wrapper
     depends_on:
       - batfish
+
   bgp-policy-parser:
     image: ${BGP_POLICY_PARSER_IMAGE}:${BGP_POLICY_PARSER_IMAGE_TAG}
     tty: true
@@ -109,6 +113,7 @@ services:
       - type: bind
         source: ./repos/bgp-policy-parser
         target: /bgp-policy-parser
+
   model-conductor:
     image: ${MODEL_CONDUCTOR_IMAGE}:${MODEL_CONDUCTOR_IMAGE_TAG}
     environment:
@@ -130,6 +135,7 @@ services:
     depends_on:
       - batfish-wrapper
       - netomox-exp
+
   netoviz:
     image: ${NETOVIZ_IMAGE}:${NETOVIZ_IMAGE_TAG}
     ports:
