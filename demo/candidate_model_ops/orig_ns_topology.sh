@@ -45,10 +45,18 @@ function splice_external_as_topology() {
 
 # UNDER_DEVELOPMENT: parse firewall props and splice it original_asis topology
 function splice_firewall_props() {
+  # firewall-policy data handling
+  # parse configuration files with TTP
+  # TODO: definition of firewall-pair: it will be in usecase params
   curl -s -X POST \
-  http://${API_PROXY}/fw_policy/${NETWORK_NAME}/original_asis/parsed_result \
-  -H 'Content-Type: application/json' \
-  -d '{"node_pairs": [{"primary": "site-a-fw-1", "secondary": "site-a-fw-2"}]}' # TODO: define in usecase params
+    -H 'Content-Type: application/json' \
+    -d '{"node_pairs": [{"primary": "site-a-fw-1", "secondary": "site-a-fw-2"}]}' \
+    http://${API_PROXY}/fw_policy/${NETWORK_NAME}/original_asis/parsed_result
+
+  # post firewall policy data to model-conductor to merge it with topology data
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{}' \
+    "http://${API_PROXY}/fw_policy/${NETWORK_NAME}/original_asis/topology"
 }
 
 function copy_original_asis_to_preallocated() {
