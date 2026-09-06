@@ -134,12 +134,16 @@ services:
     image: ${FIREWAlL_POLICY_PARSER_IMAGE}:${FIREWALL_POLICY_PARSER_IMAGE_TAG}
     tty: true
     environment:
+      MODEL_CONDUCTOR_HOST: model-conductor:${MODEL_CONDUCTOR_PORT}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_POLICIES_DIR: ${MDDO_POLICIES_DIR}
       MDDO_FIREWALL_POLICY_PARSER_DIR: ${MDDO_FIREWALL_POLICY_PARSER_DIR}
       MDDO_FIREWALL_POLICY_PARSER_CONFIGS_DIR: ${MDDO_FIREWALL_POLICY_PARSER_CONFIGS_DIR}
       MDDO_FIREWALL_POLICY_PARSER_OUTPUTS_DIR: ${MDDO_FIREWALL_POLICY_PARSER_OUTPUTS_DIR}
       PYTHONUNBUFFERED: 1
+      FLASK_APP: /src/app.py
+      FLASK_DEBUG: "1"
+    command: flask run --host=0.0.0.0 --port=5000
     volumes:
       # data dirs
       - type: volume
@@ -151,7 +155,7 @@ services:
         target: ${MDDO_POLICIES_DIR}
       # for development
       - type: bind
-        source: ./repos/bgp-policy-parser
+        source: ./repos/firewall-policy-parser/src
         target: /src
 
   model-conductor:
