@@ -43,6 +43,14 @@ function splice_external_as_topology() {
     >/dev/null # ignore echo-back (topology json)
 }
 
+# UNDER_DEVELOPMENT: parse firewall props and splice it original_asis topology
+function splice_firewall_props() {
+  curl -s -X POST \
+  http://${API_PROXY}/fw_policy/${NETWORK_NAME}/original_asis/parsed_result \
+  -H 'Content-Type: application/json' \
+  -d '{"node_pairs": [{"primary": "site-a-fw-1", "secondary": "site-a-fw-2"}]}' # TODO: define in usecase params
+}
+
 function copy_original_asis_to_preallocated() {
   curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis/topology" | \
     jq '{ "topology_data": . }' - | \

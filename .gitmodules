@@ -37,3 +37,6 @@
 [submodule "configs/mddo-fw"]
 	path = configs/mddo-fw
 	url = https://github.com/ool-mddo/mddo-fw.git
+[submodule "repos/firewall-policy-parser"]
+	path = repos/firewall-policy-parser
+	url = https://github.com/ool-mddo/firewall-policy-parser.git
