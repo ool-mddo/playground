@@ -19,5 +19,5 @@ splice_external_as_topology
 splice_firewall_props
 
 # add netoviz index
-jq '{"index_data": [.[0]]}' network_index/${NETWORK_NAME}.json | \
+jq '{"index_data": [.[0]]}' "network_index/${NETWORK_NAME}.json" | \
 curl -X POST -H "Content-Type: application/json" -d@- "http://${API_PROXY}/topologies/index"

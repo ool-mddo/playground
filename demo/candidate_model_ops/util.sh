@@ -93,3 +93,6 @@ function diff_emulated_topologies() {
   diff_topologies "$emul_src_ss" "$emul_dst_ss"
 }
 
+function get_usecase_params() {
+  curl -s "http://$API_PROXY/usecases/${USECASE_NAME}/${NETWORK_NAME}/params"
+}

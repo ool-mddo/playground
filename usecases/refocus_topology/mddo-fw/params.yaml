@@ -1,0 +1,4 @@
+---
+cluster_firewall_pairs:
+  - primary: site-a-fw-1
+    secondary: site-a-fw-2
