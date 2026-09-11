@@ -1,4 +1,22 @@
 ---
 cluster_firewall_pairs:
-  - primary: site-a-fw-1
-    secondary: site-a-fw-2
+  - primary:
+      name: site-a-fw-1
+      atypical_interfaces:
+        - name: fab0
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-0/0/0
+        - name: eth0
+          role: control
+    secondary:
+      name: site-a-fw-2
+      atypical_interfaces:
+        - name: fab1
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-7/0/0
+        - name: eth0
+          role: control

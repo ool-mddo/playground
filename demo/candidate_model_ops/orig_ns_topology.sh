@@ -44,12 +44,12 @@ function splice_external_as_topology() {
 }
 
 # UNDER_DEVELOPMENT: parse firewall props and splice it original_asis topology
-function splice_firewall_props() {
+function splice_firewall_attributes() {
   # firewall-policy data handling
-  # parse configuration files with TTP
 
-  fw_params=$(get_usecase_params | jq -c '.cluster_firewall_pairs | {"node_pairs": .}')
-    curl -s -X POST \
+  # parse configuration files using TTP
+  fw_params=$(get_usecase_params | jq -c '.cluster_firewall_pairs | {"cluster_firewall_pairs": .}')
+  curl -s -X POST \
     -H 'Content-Type: application/json' \
     -d "${fw_params}" \
     http://${API_PROXY}/fw_policy/${NETWORK_NAME}/original_asis/parsed_result

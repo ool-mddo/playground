@@ -16,7 +16,7 @@ generate_original_asis_topology
 # BGP layer operation: Splice external-AS topology to original as-is topology
 splice_external_as_topology
 # Firewall property operation
-splice_firewall_props
+splice_firewall_attributes
 
 # add netoviz index
 jq '{"index_data": [.[0]]}' "network_index/${NETWORK_NAME}.json" | \
