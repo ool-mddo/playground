@@ -91,6 +91,7 @@ services:
       MODEL_CONDUCTOR_HOST: model-conductor:${MODEL_CONDUCTOR_PORT}
       MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
+      MDDO_POLICIES_DIR: ${MDDO_POLICIES_DIR}
       MDDO_BGP_POLICY_PARSER_DIR: ${MDDO_BGP_POLICY_PARSER_DIR}
       MDDO_BGP_POLICY_PARSER_CONFIGS_DIR: ${MDDO_BGP_POLICY_PARSER_CONFIGS_DIR}
       MDDO_BGP_POLICY_PARSER_OUTPUTS_DIR: ${MDDO_BGP_POLICY_PARSER_OUTPUTS_DIR}
@@ -113,6 +114,31 @@ services:
       - type: bind
         source: ./repos/bgp-policy-parser
         target: /bgp-policy-parser
+
+  firewall-policy-parser:
+    image: ${FIREWAlL_POLICY_PARSER_IMAGE}:${FIREWALL_POLICY_PARSER_IMAGE_TAG}
+    tty: true
+    environment:
+      MODEL_CONDUCTOR_HOST: model-conductor:${MODEL_CONDUCTOR_PORT}
+      MDDO_CONFIGS_DIR: ${MDDO_CONFIGS_DIR}
+      MDDO_POLICIES_DIR: ${MDDO_POLICIES_DIR}
+      MDDO_FIREWALL_POLICY_PARSER_DIR: ${MDDO_FIREWALL_POLICY_PARSER_DIR}
+      MDDO_FIREWALL_POLICY_PARSER_CONFIGS_DIR: ${MDDO_FIREWALL_POLICY_PARSER_CONFIGS_DIR}
+      MDDO_FIREWALL_POLICY_PARSER_OUTPUTS_DIR: ${MDDO_FIREWALL_POLICY_PARSER_OUTPUTS_DIR}
+      PYTHONUNBUFFERED: 1
+    volumes:
+      # data dirs
+      - type: volume
+        source: configs
+        target: ${MDDO_CONFIGS_DIR}
+        read_only: true
+      - type: volume
+        source: policies
+        target: ${MDDO_POLICIES_DIR}
+      # for development
+      - type: bind
+        source: ./repos/firewall-policy-parser/src
+        target: /src
 
   model-conductor:
     image: ${MODEL_CONDUCTOR_IMAGE}:${MODEL_CONDUCTOR_IMAGE_TAG}

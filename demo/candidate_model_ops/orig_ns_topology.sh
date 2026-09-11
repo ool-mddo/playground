@@ -43,6 +43,24 @@ function splice_external_as_topology() {
     >/dev/null # ignore echo-back (topology json)
 }
 
+# UNDER_DEVELOPMENT: parse firewall props and splice it original_asis topology
+function splice_firewall_attributes() {
+  # firewall-policy data handling
+
+  # parse configuration files using TTP
+  fw_params=$(get_usecase_params | jq -c '.cluster_firewall_pairs | {"cluster_firewall_pairs": .}')
+  curl -s -X POST \
+    -H 'Content-Type: application/json' \
+    -d "${fw_params}" \
+    http://${API_PROXY}/fw_policy/${NETWORK_NAME}/original_asis/parsed_result
+
+  # post firewall policy data to model-conductor to merge it with topology data
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{}' \
+    "http://${API_PROXY}/fw_policy/${NETWORK_NAME}/original_asis/topology" \
+    >/dev/null # ignore echo-back (topology json)
+}
+
 function copy_original_asis_to_preallocated() {
   curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/original_asis/topology" | \
     jq '{ "topology_data": . }' - | \

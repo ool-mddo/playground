@@ -18,9 +18,11 @@ CONTROLLER_ADDRESS="172.32.0.1"
 WORKER_ADDRESS="172.32.0.1" # e.g.) "192.168.0.1,192.168.0.2,..." when using multiple workers
 
 # all steps: target network/usecase name
-NETWORK_NAME="mddo-bgp"
-USECASE_NAME="manual_steps" # one of [pni_addlink, pni_te, multi_region_te, multi_src_as_te] for mddo-bgp network
-#USECASE_NAME="multi_src_as_te" # one of [pni_addlink, pni_te, multi_region_te, multi_src_as_te] for mddo-bgp network
+NETWORK_NAME="mddo-fw"
+# one of [pni_addlink, pni_te, multi_region_te, multi_src_as_te] for mddo-bgp network
+# or "manual_steps"
+# or "refocus_topology" for mddo-fw network
+USECASE_NAME="refocus_topology"
 
 # directory and file
 LOCALSERVER_USER=mddo

@@ -1,0 +1,26 @@
+[
+  {
+    "label": "MDDO-FW (original_asis)",
+    "network": "mddo-fw",
+    "snapshot": "original_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-FW (emulated_asis)",
+    "network": "mddo-fw",
+    "snapshot": "emulated_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-FW (emulated_tobe)",
+    "network": "mddo-fw",
+    "snapshot": "emulated_tobe",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-FW (original_tobe)",
+    "network": "mddo-fw",
+    "snapshot": "original_tobe",
+    "file": "topology.json"
+  }
+]

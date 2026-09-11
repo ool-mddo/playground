@@ -3,10 +3,6 @@
 # shellcheck disable=SC1091
 source ./util.sh
 
-function get_usecase_params() {
-  curl -s "http://$API_PROXY/usecases/${USECASE_NAME}/${NETWORK_NAME}/params"
-}
-
 function get_state_diff() {
   src_ss=$1
   dst_ss=$2
