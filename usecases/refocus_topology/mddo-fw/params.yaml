@@ -20,3 +20,23 @@ cluster_firewall_pairs:
               - ge-7/0/0
         - name: eth0
           role: control
+  - primary:
+      name: site-b-fw-1
+      atypical_interfaces:
+        - name: fab0
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-0/0/0
+        - name: eth0
+          role: control
+    secondary:
+      name: site-b-fw-2
+      atypical_interfaces:
+        - name: fab1
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-7/0/0
+        - name: eth0
+          role: control

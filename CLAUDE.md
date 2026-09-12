@@ -54,12 +54,22 @@ docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d
 cd demo/candidate_model_ops
 source demo_vars
 
-# refocus_topology ユースケース (トポロジ生成 + netoviz 更新)
+# refocus_topology ユースケース (トポロジ生成 + conduit topology 生成 + netoviz 更新)
 ./21_refocus_topology.sh
 
 # 候補モデル生成 + エミュレーション評価 (フルフロー)
 ./00_run_phase.sh
 ```
+
+`21_refocus_topology.sh` の処理順序:
+1. `generate_original_asis_topology` — Batfish でトポロジ生成
+2. `splice_external_as_topology` — 外部 AS トポロジをマージ
+3. `splice_firewall_attributes` — FW 属性をマージ
+4. netoviz index に `original_asis` エントリを登録
+5. `generate_conduit_topology` — blueprint に基づいた土管化トポロジ生成 (`original_asis_conduit*`) + netoviz index 追記
+
+> **blueprint ファイル:** `usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`
+> を人が作成・配置することで conduit 処理の抽象化目標を定義する。
 
 ## ライブ開発
 

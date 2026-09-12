@@ -137,7 +137,8 @@ playground/
 │   └── refocus_topology/        # ★ 現在のユースケース
 │       └── mddo-fw/
 │           ├── params.yaml      # FW クラスタ対の定義 (site-a/site-b)
-│           └── original_asis_blueprint/  # 参照用抽象化トポロジ
+│           └── original_asis_blueprint/  # blueprint snapshot: conduit_topology の入力
+│               └── topology.json         # 目標とする抽象化トポロジ (人が作成・管理)
 │
 ├── repos/                       # 各サービスのソースコード (docker compose bindmount)
 │   ├── batfish-wrapper/
@@ -223,6 +224,38 @@ playground/
 出力: CSV (各候補のインターフェーストラフィック変化量)
 ```
 
+### フロー 5: `21_refocus_topology.sh` 後半 — conduit topology 生成・netoviz 登録
+
+「土管化」: 詳細なトポロジを blueprint に従って抽象化・簡略化したスナップショットを生成する。
+
+```
+入力: topologies/mddo-fw/original_asis/topology.json
+      usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json
+        (blueprint: 目標とする抽象度のトポロジを人が定義したもの)
+
+→ model-conductor: POST /conduct/mddo-fw/original_asis/conduit_topology
+    {usecase: "refocus_topology", blueprint_snapshot: "original_asis_blueprint"}
+
+    [model-conductor 内部処理]
+    1. netomox-exp: DELETE /topologies/mddo-fw/original_asis_conduit* (既存 conduit を削除)
+    2. netomox-exp: GET /usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology
+       (blueprint topology 取得)
+    3. netomox-exp: GET /topologies/mddo-fw/original_asis/topology
+       (original topology 取得)
+    4. ConduitTopologyGenerator#generate
+       (blueprint の network 数 = conduit 数。現在は pass-through stub)
+    5. netomox-exp: POST /topologies/mddo-fw/original_asis_conduitN/topology × N件
+
+→ shell: netoviz index に conduit スナップショットのエントリを追加
+    GET /topologies/index → jq でエントリ追記 → POST /topologies/index
+
+出力: topologies/mddo-fw/original_asis_conduit1/topology.json (... conduitN まで)
+      netoviz index 更新 → GUI で conduit トポロジが選択可能に
+```
+
+> **注意**: `ConduitTopologyGenerator` の土管化ロジックは現在 stub (original_asis をそのまま保存)。
+> 実ロジックは `repos/model-conductor/lib/generate_conduit_topology/conduit_topology_generator.rb` に実装する。
+
 ---
 
 ## Important Data Models
@@ -278,6 +311,14 @@ fw_cluster_pairs:
 
 Prometheus から scrape したトラフィックカウンタを集約。`diff2csv.py` でベンチマークとの差分を計算して候補評価に使用。
 
+### Blueprint Topology (`usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`)
+
+人が手動で作成・管理する「目標とする抽象化トポロジ」。`conduit_topology` API の入力として使用される。
+
+- `GET /usecases/:uc/:nw/:ss/topology` で netomox-exp から取得される
+- このファイルに含まれる `ietf-network:networks.network` 配列の要素数 = 生成される conduit スナップショットの数
+- blueprint の各 network (レイヤー) が、それぞれ対応する conduit スナップショットの抽象度を定義する
+
 ### `demo_vars` (環境変数定義)
 
 ```bash
@@ -317,7 +358,7 @@ PLAYGROUND_DIR="/home/hagiwara/ool-mddo/playground"
 
 1. **`refocus_topology` ユースケースの候補生成ロジックの詳細**: `netomox-exp` が FW HA クラスタを抽象化する際の具体的な処理内容 (fab インターフェースの扱い、クラスタノードの統合方法) は `repos/netomox-exp/` を確認する必要がある。
 
-2. **`original_asis_blueprint/topology.json` の用途**: `usecases/refocus_topology/mddo-fw/` に置かれているが、自動処理で参照されるのか、単なる参照用ドキュメントなのか不明。
+2. ~~**`original_asis_blueprint/topology.json` の用途**~~ → 解決済み: `conduit_topology` API の blueprint 入力として使用。`GET /usecases/:uc/:nw/:ss/topology` で取得される。
 
 3. **`mddo-fw` での `00_run_phase.sh` の挙動**: `mddo-bgp` 向けに設計された候補評価フロー (iperf, state diff) が `mddo-fw` でもそのまま動くのか、`21_refocus_topology.sh` は別系統の処理なのかの関係が不明。
 
