@@ -242,8 +242,14 @@ playground/
        (blueprint topology 取得)
     3. netomox-exp: GET /topologies/mddo-fw/original_asis/topology
        (original topology 取得)
-    4. ConduitTopologyGenerator#generate
-       (blueprint の network 数 = conduit 数。現在は pass-through stub)
+    4. ConduitTopologyGenerator#generate (blueprint の network 数 = conduit 数)
+       土管化変換ルール:
+       - Firewall ノード (top-level flag に "firewall"): 元ノードをそのまま保持
+       - Router ノード (blueprint でグループ化): 代表ノード 1 つに集約。
+         外部 TP のみ eth1, eth2, ... に rename。並列リンクは 1 本に集約
+       - Segment ノード: グループ間をまたぐ外部セグメントのみ自動生成
+       - ospf_area: layer3 と同じ node/TP mapping を適用して再構築
+       - 出力ネットワーク順: ospfX(降順) → ospf0 → layer3
     5. netomox-exp: POST /topologies/mddo-fw/original_asis_conduitN/topology × N件
 
 → shell: netoviz index に conduit スナップショットのエントリを追加
@@ -253,8 +259,8 @@ playground/
       netoviz index 更新 → GUI で conduit トポロジが選択可能に
 ```
 
-> **注意**: `ConduitTopologyGenerator` の土管化ロジックは現在 stub (original_asis をそのまま保存)。
-> 実ロジックは `repos/model-conductor/lib/generate_conduit_topology/conduit_topology_generator.rb` に実装する。
+> 実装: `repos/model-conductor/lib/generate_conduit_topology/` 配下の
+> `BlueprintNetwork`, `Layer3ConduitBuilder`, `OspfConduitBuilder`, `ConduitTopologyGenerator` が担う。
 
 ---
 
