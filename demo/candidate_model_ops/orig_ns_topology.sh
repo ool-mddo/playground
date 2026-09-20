@@ -116,3 +116,19 @@ function diff_benchmark_and_candidate_topologies() {
   done
 }
 
+# Generate conduit topologies
+generate_conduit_topology() {
+  local network=$1
+  local snapshot=$2           # e.g. "original_asis"
+  local usecase=$3            # e.g. "refocus_topology"
+  local blueprint_snapshot=$4 # e.g. "original_asis_blueprint"
+
+  # echo "# Generate conduit topology: ${network}/${snapshot} (blueprint: ${blueprint_snapshot})"
+
+  conduit_response=$(curl -s -X POST \
+    -H "Content-Type: application/json" \
+    -d "{\"usecase\": \"${usecase}\", \"blueprint_snapshot\": \"${blueprint_snapshot}\"}" \
+    "http://${API_PROXY}/conduct/${network}/${snapshot}/conduit_topology")
+
+  echo "$conduit_response"
+}

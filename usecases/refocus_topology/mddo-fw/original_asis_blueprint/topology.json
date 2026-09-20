@@ -1,0 +1,371 @@
+{
+  "ietf-network:networks": {
+    "network": [
+      {
+        "network-id": "zoom0-layer3",
+        "network-types": {
+          "mddo-topology:l3-network": {}
+        },
+        "node": [
+          {
+            "node-id": "site-b-fw",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.0.0.2/30"
+                  ]
+                }
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "192.0.2.1/30"
+                  ]
+                }
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-fw-1"
+              },
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-fw-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-b-wan-zone-rt",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.0.1.1/30"
+                  ]
+                }
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.0.0.1/30"
+                  ]
+                }
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-br-1"
+              },
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-br-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-a-wan-zone-rt",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.0.1.2/30"
+                  ]
+                }
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.0.2.1/30"
+                  ]
+                }
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-br-1"
+              },
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-br-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-a-fw",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.0.2.2/30"
+                  ]
+                }
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "192.0.2.5/30"
+                  ]
+                }
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-fw-1"
+              },
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-fw-2"
+              }
+            ]
+          }
+        ],
+        "ietf-network-topology:link": [
+          {
+            "link-id": "site-b-fw,eth1,site-b-wan-zone-rt,eth2",
+            "source": {
+              "source-node": "site-b-fw",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-b-wan-zone-rt",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-b-wan-zone-rt,eth2,site-b-fw,eth1",
+            "source": {
+              "source-node": "site-b-wan-zone-rt",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-b-fw",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-b-wan-zone-rt,eth1,site-a-wan-zone-rt,eth1",
+            "source": {
+              "source-node": "site-b-wan-zone-rt",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-a-wan-zone-rt",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-a-wan-zone-rt,eth1,site-b-wan-zone-rt,eth1",
+            "source": {
+              "source-node": "site-a-wan-zone-rt",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-b-wan-zone-rt",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-a-wan-zone-rt,eth2,site-a-fw,eth1",
+            "source": {
+              "source-node": "site-a-wan-zone-rt",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-a-fw",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-a-fw,eth1,site-a-wan-zone-rt,eth2",
+            "source": {
+              "source-node": "site-a-fw",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-a-wan-zone-rt",
+              "dest-tp": "eth2"
+            }
+          }
+        ]
+      },
+      {
+        "network-id": "zoom1-layer3",
+        "network-types": {
+          "mddo-topology:l3-network": {}
+        },
+        "node": [
+          {
+            "node-id": "site-b-fw",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.1.0.2/30"
+                  ]
+                }
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "198.51.100.1/30"
+                  ]
+                }
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-b-fw"
+              }
+            ]
+          },
+          {
+            "node-id": "wan-zone-rt",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.1.1.1/30"
+                  ]
+                }
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.1.0.1/30"
+                  ]
+                }
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-a-wan-zone-rt"
+              },
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-b-wan-zone-rt"
+              }
+            ]
+          },
+          {
+            "node-id": "site-a-fw",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "10.1.1.2/30"
+                  ]
+                }
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {
+                  "ip-address": [
+                    "198.51.100.5/30"
+                  ]
+                }
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-a-fw"
+              }
+            ]
+          }
+        ],
+        "ietf-network-topology:link": [
+          {
+            "link-id": "site-b-fw,eth1,wan-zone-rt,eth2",
+            "source": {
+              "source-node": "site-b-fw",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "wan-zone-rt",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "wan-zone-rt,eth2,site-b-fw,eth1",
+            "source": {
+              "source-node": "wan-zone-rt",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-b-fw",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "wan-zone-rt,eth1,site-a-fw,eth1",
+            "source": {
+              "source-node": "wan-zone-rt",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-a-fw",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-a-fw,eth1,wan-zone-rt,eth1",
+            "source": {
+              "source-node": "site-a-fw",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "wan-zone-rt",
+              "dest-tp": "eth1"
+            }
+          }
+        ],
+        "supporting-network": [
+          {
+            "network-ref": "zoom0-layer3"
+          }
+        ]
+      }
+    ]
+  }
+}
