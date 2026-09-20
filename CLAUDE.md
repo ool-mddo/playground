@@ -67,9 +67,15 @@ source demo_vars
 3. `splice_firewall_attributes` — FW 属性をマージ
 4. netoviz index に `original_asis` エントリを登録
 5. `generate_conduit_topology` — blueprint に基づいた土管化トポロジ生成 (`original_asis_conduit*`) + netoviz index 追記
+6. `convert_namespace "original_asis"` — 名前空間変換: `original_asis` → `emulated_asis`
+7. conduit snapshot ごとに `convert_namespace` — `original_asis_conduit<X>` → `emulated_asis_conduit<X>`
+8. netoviz index に `emulated_asis*` エントリを追加
 
 > **blueprint ファイル:** `usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`
 > を人が作成・配置することで conduit 処理の抽象化目標を定義する。
+
+> **FW ノードアトリビュート JSON スキーマ:** 複数リポジトリをまたがる canonical definition は
+> [docs/firewall_node_attributes.md](docs/firewall_node_attributes.md) を参照。
 
 ## ライブ開発
 
