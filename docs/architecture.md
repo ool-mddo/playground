@@ -262,6 +262,33 @@ playground/
 > 実装: `repos/model-conductor/lib/generate_conduit_topology/` 配下の
 > `BlueprintNetwork`, `Layer3ConduitBuilder`, `OspfConduitBuilder`, `ConduitTopologyGenerator` が担う。
 
+### フロー 6: `21_refocus_topology.sh` 後半② — 名前空間変換・emulated netoviz 登録
+
+```
+入力: topologies/mddo-fw/original_asis/topology.json
+      topologies/mddo-fw/original_asis_conduit*/topology.json
+      topologies/mddo-fw/ns_convert_table.json (フロー 1 で生成済み)
+
+→ model-conductor: POST /conduct/mddo-fw/ns_convert/original_asis/emulated_asis
+    → netomox-exp: ns_convert_table を参照してノード名・TP名を変換
+    → topologies/mddo-fw/emulated_asis/topology.json として保存
+
+→ conduit snapshot ごとに ns_convert を実行:
+    POST /conduct/mddo-fw/ns_convert/original_asis_conduit1/emulated_asis_conduit1
+    POST /conduct/mddo-fw/ns_convert/original_asis_conduit2/emulated_asis_conduit2
+    ...
+
+→ shell: netoviz index に emulated_asis* エントリを追加
+    GET /topologies/index → jq でエントリ追記 → POST /topologies/index
+
+出力: topologies/mddo-fw/emulated_asis/topology.json
+      topologies/mddo-fw/emulated_asis_conduit*/topology.json
+      netoviz index 更新 → GUI で emulated トポロジが選択可能に
+```
+
+> 名前空間変換は **一方向** (`original_*` → `emulated_*`)。
+> `ns_convert_table.json` はフロー 1 の `generate_original_asis_topology` ステップで生成される。
+
 ---
 
 ## Important Data Models
@@ -325,6 +352,33 @@ Prometheus から scrape したトラフィックカウンタを集約。`diff2c
 - このファイルに含まれる `ietf-network:networks.network` 配列の要素数 = 生成される conduit スナップショットの数
 - blueprint の各 network (レイヤー) が、それぞれ対応する conduit スナップショットの抽象度を定義する
 
+### FW ノードアトリビュート (`firewall` セクション)
+
+L3 トポロジの FW ノードに付与される拡張アトリビュート。
+firewall-policy-parser が生成し、netomox-exp が topology.json に保存する。
+
+**完全なスキーマ定義**: [docs/firewall_node_attributes.md](firewall_node_attributes.md)
+
+```json
+"mddo-topology:l3-node-attributes": {
+  "node-type": "node",
+  "flag": ["firewall"],
+  "firewall": {
+    "node": "site-a-fw-1",
+    "pair": {
+      "primary":   { "name": "site-a-fw-1", "atypical_interfaces": [...] },
+      "secondary": { "name": "site-a-fw-2", "atypical_interfaces": [...] }
+    },
+    "zones":    [ { "name": "WAN", "interfaces": ["ge-0/0/1.0"] } ],
+    "policies": [ { "from_zone": "LAN", "to_zone": "WAN", "rules": [...] } ]
+  }
+}
+```
+
+- **`flag: ["firewall"]`**: netomox-exp / model-conductor での FW ノード識別に使用
+- **`firewall` アトリビュート**: FW 設定情報本体。conduit topology 生成時は FW ノードをそのまま保持する
+- 複数リポジトリ間のスキーマ整合性は [docs/firewall_node_attributes.md](firewall_node_attributes.md) で管理
+
 ### `demo_vars` (環境変数定義)
 
 ```bash
@@ -374,4 +428,4 @@ PLAYGROUND_DIR="/home/hagiwara/ool-mddo/playground"
 
 6. **計測待機時間 90 秒の根拠**: `mddo-bgp` 向けの値が `mddo-fw` に流用されている可能性がある。`mddo-fw` のネットワーク規模に対して適切かどうか未確認。
 
-7. **`firewall-policy-parser` の出力形式**: FW 属性がトポロジのどのレイヤー・フィールドにマージされるかは `repos/firewall-policy-parser/` を確認しないと判断できない。
+7. ~~**`firewall-policy-parser` の出力形式**~~ → 解決済み: [docs/firewall_node_attributes.md](firewall_node_attributes.md) に canonical schema を整備。FW アトリビュートは L3 トポロジの `mddo-topology:l3-node-attributes.firewall` にマージされる。
