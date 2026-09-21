@@ -32,15 +32,15 @@ firewall-policy-parser が各 FW ノードごとに生成する JSON:
     "primary": {
       "name": "site-a-fw-1",
       "atypical_interfaces": [
-        { "name": "ae0",      "role": "fabric",  "fabric_options": { "member_interfaces": ["ge-0/0/0"] } },
-        { "name": "ge-0/0/1", "role": "control" }
+        { "name": "fab0",     "role": "fabric",  "fabric_options": { "member_interfaces": ["ge-0/0/0"] } },
+        { "name": "eth0",     "role": "control" }
       ]
     },
     "secondary": {
       "name": "site-a-fw-2",
       "atypical_interfaces": [
-        { "name": "ae0",      "role": "fabric",  "fabric_options": { "member_interfaces": ["ge-0/0/0"] } },
-        { "name": "ge-0/0/1", "role": "control" }
+        { "name": "fab1",     "role": "fabric",  "fabric_options": { "member_interfaces": ["ge-7/0/0"] } },
+        { "name": "eth0",     "role": "control" }
       ]
     }
   },

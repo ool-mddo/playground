@@ -40,3 +40,64 @@ cluster_firewall_pairs:
               - ge-7/0/0
         - name: eth0
           role: control
+containerlab_nodes:
+  site-a-fw-1:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    env:
+      container: docker
+    binds:
+      - /dev/kvm:/dev/kvm
+      - /tmp/proxmox-shared:/var/tmp
+      - /tmp/proxmox-shared/qemu:/opt/qemu-shared
+    ports:
+      - "8006:8006"
+    labels:
+      ansible-group: junos
+      clusterid: 1
+      redundant: act
+  site-a-fw-2:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    env:
+      container: docker
+    binds:
+      - /dev/kvm:/dev/kvm
+      - /tmp/proxmox-shared:/var/tmp
+      - /tmp/proxmox-shared/qemu:/opt/qemu-shared
+    ports:
+      - "18006:8006"
+    labels:
+      ansible-group: junos
+      clusterid: 1
+      redundant: sby
+  site-b-fw-1:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    env:
+      container: docker
+    binds:
+      - /dev/kvm:/dev/kvm
+      - /tmp/proxmox-shared:/var/tmp
+      - /tmp/proxmox-shared/qemu:/opt/qemu-shared
+    ports:
+      - "28006:8006"
+    labels:
+      ansible-group: junos
+      clusterid: 2
+      redundant: act
+  site-b-fw-2:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    env:
+      container: docker
+    binds:
+      - /dev/kvm:/dev/kvm
+      - /tmp/proxmox-shared:/var/tmp
+      - /tmp/proxmox-shared/qemu:/opt/qemu-shared
+    ports:
+      - "38006:8006"
+    labels:
+      ansible-group: junos
+      clusterid: 2
+      redundant: sby
