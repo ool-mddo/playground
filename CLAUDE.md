@@ -68,7 +68,10 @@ source demo_vars
 4. netoviz index に `original_asis` エントリを登録
 5. `generate_conduit_topology` — blueprint に基づいた土管化トポロジ生成 (`original_asis_conduit*`) + netoviz index 追記
 6. `convert_namespace "original_asis"` — 名前空間変換: `original_asis` → `emulated_asis` + netoviz index 追記
-7. ~~conduit snapshot ごとに `convert_namespace`~~ (現在コメントアウト中)
+7. conduit snapshot ごとに `convert_namespace` — `original_asis_conduit*` → `emulated_asis_conduit*` + netoviz index 追記
+
+`convert_namespace` は内部で `POST /topologies/:nw/:ss/ns_convert_table` を呼び出し、
+変換テーブルを各スナップショットディレクトリ (`topologies/<nw>/<ss>/ns_convert_table.json`) に保存する。
 
 > **blueprint ファイル:** `usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`
 > を人が作成・配置することで conduit 処理の抽象化目標を定義する。
