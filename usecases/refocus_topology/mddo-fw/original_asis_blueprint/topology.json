@@ -11,20 +11,12 @@
             "node-id": "site-b-fw",
             "ietf-network-topology:termination-point": [
               {
-                "tp-id": "eth1",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.0.0.2/30"
-                  ]
-                }
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
               },
               {
-                "tp-id": "eth2",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "192.0.2.1/30"
-                  ]
-                }
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -45,20 +37,12 @@
             "node-id": "site-b-wan-zone-rt",
             "ietf-network-topology:termination-point": [
               {
-                "tp-id": "eth1",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.0.1.1/30"
-                  ]
-                }
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
               },
               {
-                "tp-id": "eth2",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.0.0.1/30"
-                  ]
-                }
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -80,19 +64,11 @@
             "ietf-network-topology:termination-point": [
               {
                 "tp-id": "eth1",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.0.1.2/30"
-                  ]
-                }
+                "mddo-topology:l3-termination-point-attributes": {}
               },
               {
                 "tp-id": "eth2",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.0.2.1/30"
-                  ]
-                }
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -113,20 +89,12 @@
             "node-id": "site-a-fw",
             "ietf-network-topology:termination-point": [
               {
-                "tp-id": "eth1",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.0.2.2/30"
-                  ]
-                }
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
               },
               {
-                "tp-id": "eth2",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "192.0.2.5/30"
-                  ]
-                }
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -223,20 +191,12 @@
             "node-id": "site-b-fw",
             "ietf-network-topology:termination-point": [
               {
-                "tp-id": "eth1",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.1.0.2/30"
-                  ]
-                }
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
               },
               {
-                "tp-id": "eth2",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "198.51.100.1/30"
-                  ]
-                }
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -253,20 +213,12 @@
             "node-id": "wan-zone-rt",
             "ietf-network-topology:termination-point": [
               {
-                "tp-id": "eth1",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.1.1.1/30"
-                  ]
-                }
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
               },
               {
-                "tp-id": "eth2",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.1.0.1/30"
-                  ]
-                }
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -287,20 +239,12 @@
             "node-id": "site-a-fw",
             "ietf-network-topology:termination-point": [
               {
-                "tp-id": "eth1",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "10.1.1.2/30"
-                  ]
-                }
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
               },
               {
-                "tp-id": "eth2",
-                "mddo-topology:l3-termination-point-attributes": {
-                  "ip-address": [
-                    "198.51.100.5/30"
-                  ]
-                }
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
