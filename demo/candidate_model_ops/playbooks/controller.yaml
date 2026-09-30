@@ -22,6 +22,12 @@
     set_fact:
       fw_node_names: "{{ layer3_nodes.json | json_query('nodes[?attribute.firewall].node') }}"
 
+  - name: "reset config file for firewall nodes"
+    copy:
+      content: ""
+      dest: "/app/{{ item }}.conf"
+    loop: "{{ fw_node_names }}"
+
   - name: generate config
     template:
       src: template/crpd/common/crpd.j2
@@ -74,40 +80,48 @@
     template:
       src: template/crpd/layer3/crpd_routing-option-static.j2
       dest: "/app/{{ item.node }}_routing-options-static.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge static-route config
     shell: "cat /app/{{ item.node }}_routing-options-static.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-static.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate router-id config (bgp)
     template:
       src: template/crpd/bgp/crpd_routing-option-routerid.j2
       dest: "/app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge router-id config
     shell: "cat /app/{{ item.node }}_routing-options-routerid.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate router-id config (ospf)
     template:
       src: template/crpd/ospf/crpd_routing-option-routerid.j2
       dest: "/app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge router-id config
     shell: "cat /app/{{ item.node }}_routing-options-routerid.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate asn config
     template:
       src: template/crpd/bgp/crpd_routing-option-asn.j2
       dest: "/app/{{ item.node }}_routing-options-asn.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge asn config
     shell: "cat /app/{{ item.node }}_routing-options-asn.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-asn.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   ## bgp_proc, bgp policy and peer ##
