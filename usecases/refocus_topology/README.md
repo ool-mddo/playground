@@ -21,8 +21,8 @@ usecases/refocus_topology/
 `<network>/<snapshot>/topology.json` は、`topologies/<network>/<snapshot>/topology.json`
 （Batfish から自動生成された実際のトポロジ）を基準に、どのノード群をどう集約・抽象化するかを
 定義する **blueprint snapshot** データ。`generate_conduit_topology`（土管化トポロジ生成、
-`21_refocus_topology.sh` の一部）がこれを読み込み、`original_asis_conduit*` スナップショットを
-生成する際の集約ルールとして使う。
+`demo/candidate_model_ops/21_generate_conduit.sh` の一部）がこれを読み込み、
+`original_asis_conduit*` スナップショットを生成する際の集約ルールとして使う。
 
 現在のターゲット: `network=mddo-fw`, `snapshot=original_asis_blueprint`
 （`usecases/refocus_topology/mddo-fw/params.yaml` の設定に対応）。

@@ -5,8 +5,6 @@ source ./demo_vars
 # shellcheck disable=SC1091
 source ./scripts/orig_ns_topology.sh
 
-echo # newline
-
 # Append snapshot entries (JSON array) to the current netoviz index
 append_netoviz_entries() {
   local new_entries="$1"

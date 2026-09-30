@@ -6,7 +6,7 @@
   tasks:
   - name: "get convert table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/layer3/config_params"
       method: "GET"
       body_format: json
     register: layer3_convert_table
@@ -20,24 +20,42 @@
 
   - name: "get ospf node table (select ospf_proc node)"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
       method: "GET"
       body_format: json
     register: ospf_nodes
 
   - name: "get layer3 node table (reject segment node)"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/nodes?exc_node_type=segment"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/layer3/nodes?exc_node_type=segment"
       method: "GET"
       body_format: json
     register: layer3_nodes
 
+  - name: "get original topology (to check bgp_proc layer existence)"
+    uri:
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology"
+      method: "GET"
+      body_format: json
+      return_content: true
+    register: original_topology
+
+  - name: "check bgp_proc layer existence"
+    set_fact:
+      has_bgp_proc: "{{ 'mddo-topology:bgp-proc-network' in original_topology.content }}"
+
   - name: "get bgp_proc node table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/bgp_proc/interfaces"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/bgp_proc/interfaces"
       method: "GET"
       body_format: json
     register: bgp_proc_nodes
+    when: has_bgp_proc
+
+  - name: "default bgp_proc node table when bgp_proc layer is absent"
+    set_fact:
+      bgp_proc_nodes: "{{ bgp_proc_nodes | combine({'json': {'nodes': []}}) }}"
+    when: not has_bgp_proc
 
   ## layer3 (static-route) ##
   ## crpd_routingoption_asn.j2       crpd_routingoption_routerid.j2  crpd_routingoption_static.j2
@@ -144,7 +162,7 @@
     include_role:
       name: upload_config
     vars:
-      url: "http://api-proxy/configs/{{ network_name }}/{{ snapshot_name }}/"
+      url: "http://api-proxy/configs/{{ network_name }}/{{ emulated_snapshot_name }}/"
       filepath: "/app/{{ item.agent_name }}.conf"
     loop: "{{ layer3_convert_table.json }}"
 
@@ -161,16 +179,18 @@
         network_name: "{{ network_name }}"
         crpd_image: "{{ crpd_image }}"
         endpoint_image: "{{ endpoint_image }}"
-        snapshot_name: "{{ snapshot_name }}"
+        snapshot_name: "{{ emulated_snapshot_name }}"
         remote_address: "{{ remote_address }}"
+    when: with_clab | bool
 
   - name: generate iperf command parameter
     uri:
-      url: "http://api-proxy/usecases/{{ usecase_name }}/{{ network_name }}/{{ snapshot_name }}/iperf_commands?flow_data=event"
+      url: "http://api-proxy/usecases/{{ usecase_name }}/{{ network_name }}/{{ emulated_snapshot_name }}/iperf_commands?flow_data=event"
       method: GET
       body_format: json
     register:
       iperf_commands
+    when: with_clab | bool
 
 
   - name: "setup iperf"
@@ -185,6 +205,7 @@
         usecase_name: "{{ usecase_name }}"
         network_name: "{{ network_name }}"
         crpd_image: "{{ crpd_image }}"
-        snapshot_name: "{{ snapshot_name }}"
+        snapshot_name: "{{ emulated_snapshot_name }}"
         remote_address: "{{ remote_address }}"
         iperf_commands: "{{ iperf_commands.json }}"
+    when: with_clab | bool

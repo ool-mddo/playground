@@ -5,6 +5,7 @@
 * [デモ環境](./doc/abstract.md)
 * ユースケース (デモシナリオ)
   * [デモ操作手順](./doc/operation.md)
+  * [refocus_topology 操作手順](./README_refocus_topology.md)
   * [(単一AS)複数リージョントラフィック制御](./doc/multi_region_te/introduction.md)
   * [複数ASトラフィック制御](./doc/multi_src_as_te/introduction.md)
 * 拡張ユースケース(デモシナリオ)

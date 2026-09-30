@@ -17,9 +17,6 @@ function up_emulated_env() {
   # configuration part #
   ######################
 
-  # convert namespace from original to emulated
-  convert_namespace "$original_topology"
-
   # generate emulated_candidate configs from emulated_candidate topology
   # generate emulated_candidate environment from emulated_candidate topology/configs
   curl -s -X POST -H "Content-Type: application/json" \
@@ -32,18 +29,11 @@ function up_emulated_env() {
           "usecase_name": "'"$USECASE_NAME"'",
           "worker_node_address": "'"$worker_node_address"'",
           "remote_address": "'"$CONTROLLER_ADDRESS"'",
-          "snapshot_name": "'"$emulated_topology"'"
+          "emulated_snapshot_name": "'"$emulated_topology"'",
+          "original_snapshot_name": "'"$original_topology"'",
+          "with_clab": "'"$WITH_CLAB"'"
         }' \
     "http://${ANSIBLE_EDA}/endpoint"
-
-  while :; do
-    echo "worker_node_address: $worker_node_address"
-    msg=$(curl -s "http://${worker_node_address}:${NODE_EXPORTER_PORT}/metrics" | grep job)
-    echo "message: $msg"
-    break_judge=$(echo "$msg" | grep AllJob_Complete | grep -c '} 1')
-    [[ $break_judge -eq 1 ]] && break
-    sleep 5
-  done
 
   ###############
   # state part #
@@ -54,7 +44,16 @@ function up_emulated_env() {
     return 0
   fi
 
-  # NOTE: will be rewrited codes that routers are ready to use
+  while :; do
+    echo "worker_node_address: $worker_node_address"
+    msg=$(curl -s "http://${worker_node_address}:${NODE_EXPORTER_PORT}/metrics" | grep job)
+    echo "message: $msg"
+    break_judge=$(echo "$msg" | grep AllJob_Complete | grep -c '} 1')
+    [[ $break_judge -eq 1 ]] && break
+    sleep 5
+  done
+
+  # NOTE: will be rewrote codes that routers are ready to use
   # wait to boot environment
   echo # newline
   echo "Wait env:${NETWORK_NAME}/${emulated_topology} be ready..."
