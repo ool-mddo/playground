@@ -3,7 +3,7 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
-source ./util.sh
+source ./scripts/util.sh
 
 function up_emulated_env() {
   original_topology=$1
@@ -86,7 +86,7 @@ function up_emulated_env() {
   # post-clean #
   ##############
   echo "destroy $emulated_topology on $worker_node_address"
-  bash env_post_clean.sh "$emulated_topology" "$worker_node_address"
+  bash scripts/env_post_clean.sh "$emulated_topology" "$worker_node_address"
   while :; do
     echo "worker_node_address: $worker_node_address"
     msg=$(curl -s "http://${worker_node_address}:${NODE_EXPORTER_PORT}/metrics" | grep job)

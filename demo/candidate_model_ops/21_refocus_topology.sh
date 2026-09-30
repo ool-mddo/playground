@@ -3,7 +3,7 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
-source ./orig_ns_topology.sh
+source ./scripts/orig_ns_topology.sh
 
 echo # newline
 

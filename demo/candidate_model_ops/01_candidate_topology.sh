@@ -3,7 +3,7 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
-source ./orig_ns_topology.sh
+source ./scripts/orig_ns_topology.sh
 
 print_usage() {
   echo "Usage: $(basename "$0") [options]"
@@ -70,5 +70,5 @@ diff_benchmark_and_candidate_topologies "$original_benchmark_topology" "$phase"
 # Add netoviz index
 generate_netoviz_index "$phase" 1
 
-bash generate_scrape.sh
+bash scripts/generate_scrape.sh
 echo # newline

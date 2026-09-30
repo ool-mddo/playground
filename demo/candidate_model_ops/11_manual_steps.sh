@@ -3,11 +3,11 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
-source ./orig_ns_topology.sh
+source ./scripts/orig_ns_topology.sh
 # shellcheck disable=SC1091
-source ./util.sh
+source ./scripts/util.sh
 # shellcheck disable=SC1091
-source ./up_emulated_env.sh
+source ./scripts/up_emulated_env.sh
 
 echo # newline
 

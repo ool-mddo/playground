@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # shellcheck disable=SC1091
-source ./util.sh
+source ./scripts/util.sh
 
 # output: original_asis topology (internal-AS only)
 function generate_original_asis_topology() {

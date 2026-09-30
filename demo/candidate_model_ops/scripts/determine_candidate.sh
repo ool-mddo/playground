@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # shellcheck disable=SC1091
-source ./util.sh
+source ./scripts/util.sh
 
 function get_state_diff() {
   src_ss=$1
@@ -26,5 +26,5 @@ function determine_candidate() {
   get_state_diff "$emulated_benchmark_topology" "$emulated_candidate_topology" >"$diff_bench_candidate"
 
   echo "Result state diff between $emulated_benchmark_topology and $emulated_candidate_topology (with names in original namespace)"
-  python3 diff2csv.py -p "$usecase_params" -d "$diff_bench_candidate" | column -s, -t
+  python3 scripts/diff2csv.py -p "$usecase_params" -d "$diff_bench_candidate" | column -s, -t
 }

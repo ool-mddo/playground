@@ -59,7 +59,7 @@ echo # newline
 
 # pre-clean (phase/session data)
 if [ "$phase" -eq 1 ]; then
-  bash phase_pre_clean.sh
+  bash scripts/phase_pre_clean.sh
 fi
 
 # generate candidate topologies

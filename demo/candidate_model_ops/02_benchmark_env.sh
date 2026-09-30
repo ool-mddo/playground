@@ -3,9 +3,9 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
-source ./util.sh
+source ./scripts/util.sh
 # shellcheck disable=SC1091
-source ./up_emulated_env.sh
+source ./scripts/up_emulated_env.sh
 
 # read worker addresses as array
 IFS=',' read -r -a remote_nodes <<< "$WORKER_ADDRESS"
