@@ -2,17 +2,17 @@
 
 [containerlab](https://containerlab.dev/)で起動したemulated環境で流れているトラフィック量を可視化するためのシステムです。
 
-同梱しているダッシュボードは[PNIユースケース](../../demo/copy_to_emulated_env/README.md)での使用を想定して作成されています。
+同梱しているダッシュボードは[PNIユースケース](../../README.md)での使用を想定して作成されています。
 
 # システム構成
 
 仮想ルータ間で流れているトラフィック量は[cAdvisor](https://github.com/google/cadvisor)と[Prometheus](https://prometheus.io/)を使用して収集し、[Grafana](https://grafana.com/)で可視化のダッシュボードを提供しています。
 
-![システム概要図](./overview.drawio.svg)
+![システム概要図](../fig/overview.drawio.svg)
 
 # 使用方法
 
-デモシステムで使用するコンテナ定義 (docker-compose.yaml) に対して追加するツール類のコンテナ定義 (docker-compose.visualize.yaml) を分離しています。環境変数 `COMPOSE_FILE` でこれらの compose ファイルを指定して `docker compose up` してください。(参照: [PNIユースケース/環境準備](../../demo/copy_to_emulated_env/doc/pni/provision.md))
+デモシステムで使用するコンテナ定義 (docker-compose.yaml) に対して追加するツール類のコンテナ定義 (docker-compose.visualize.yaml) を分離しています。環境変数 `COMPOSE_FILE` でこれらの compose ファイルを指定して `docker compose up` してください。(参照: [PNIユースケース/環境準備](./provision.md))
 
 デフォルトではGrafanaとPrometheusは以下のポートを使用します。ポート番号を変更したい場合は適宜`docker-compose.visualize.yaml`を修正してください。
 

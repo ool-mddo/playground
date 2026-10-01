@@ -1,6 +1,6 @@
 # 環境準備
 
-共通する環境設定については[デモ環境構築](../../../doc/provision.md)を参照してください。
+共通する環境設定については[デモ環境構築](../../../docs/design_notes/provision.md)を参照してください。
 
 - `playground` リポジトリの tag は `v1.0.0` を選択してください。
 - デモ用システムを起動してください (`docker compose up`)

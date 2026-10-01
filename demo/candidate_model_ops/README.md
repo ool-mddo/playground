@@ -19,4 +19,4 @@
 
 ## Related info
 
-システム構成については[環境セットアップ(ワーカー分離)](../../doc/provision_workers.md)を参照してください。
+システム構成については[環境セットアップ(ワーカー分離)](../../docs/design_notes/provision_workers.md)を参照してください。

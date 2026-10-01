@@ -7,13 +7,13 @@
 
 ## Documents
 
-* [このプロジェクトの位置づけ](./doc/project_positioning.md)
-* [システムアーキテクチャ](./doc/system_architecture.md)
-* [ネットワークのモデル](./doc/network_model.md)
+* [このプロジェクトの位置づけ](./docs/design_notes/project_positioning.md)
+* [システムアーキテクチャ](./docs/design_notes/system_architecture.md)
+* [ネットワークのモデル](./docs/design_notes/network_model.md)
   * [中間出力・トポロジデータのサンプル](https://github.com/ool-mddo/mddo-bgp-queries)
-* [デモ環境セットアップ](./doc/provision.md)
-  * [開発用・開発者向け](./doc/development.md)
-* [デモ環境セットアップ(ワーカー分離)](./doc/provision_workers.md)
+* [デモ環境セットアップ](./docs/design_notes/provision.md)
+  * [開発用・開発者向け](./docs/design_notes/development.md)
+* [デモ環境セットアップ(ワーカー分離)](./docs/design_notes/provision_workers.md)
 
 ## Demonstration
 

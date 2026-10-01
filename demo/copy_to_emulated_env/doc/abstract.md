@@ -1,6 +1,6 @@
 # アプローチ
 
-ref. [プロジェクトの位置づけ](../../../doc/project_positioning.md)
+ref. [プロジェクトの位置づけ](../../../docs/design_notes/project_positioning.md)
 
 ## コンテナベースの検証環境
 
