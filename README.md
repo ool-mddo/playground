@@ -100,3 +100,4 @@
 ### Related work
 [信州大学工学部電子情報システム工学科 モデル駆動ソフトウェア研究室 (小形研究室)](https://shinshu-mdse-lab.wordpress.com/)と情報交換を行っています。
 * [Ogata, K. et al. (2026). Integrating Model-Based Verification and Configuration-File Analysis for Network Configurations. In: Barolli, L., K. G. Seah, W., Woungang, I. (eds) Advanced Information Networking and Applications. AINA 2026. Lecture Notes on Data Engineering and Communications Technologies, vol 294. Springer, Cham.](https://doi.org/10.1007/978-3-032-23260-1_3)
+* [尾形健斗, 永井孝, 鈴木彦文, 小形真平, 橋浦弘明, 岡野浩三, 清水さや子, ネットワーク構成モデルに対する検証環境のクラウド化, 情報処理学会研究報告 インターネットと運用技術(IOT), Vol.2026-IOT-75, No.14, pp.1–8, 2026.](https://ipsj.ixsq.nii.ac.jp/records/2012042)
