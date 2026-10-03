@@ -2,7 +2,7 @@
 
 ## ステータス
 
-未着手。別タスクとして対応予定。
+対応済み（model-conductor の conduit 生成とテンプレートを修正）。詳細は [investigation_conduit_ospf_config_failure.md](investigation_conduit_ospf_config_failure.md) を参照。
 
 ## 症状
 
