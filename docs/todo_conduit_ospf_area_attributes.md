@@ -31,20 +31,18 @@ conduit スナップショットの topology データにはこの属性が存�
 netomox-exp / model-conductor 側の conduit topology 生成ロジック）が、OSPF area の
 ネットワークレベル属性（`mddo-topology:ospf-area-network-attributes`）を生成結果から落としている。
 
-## 影響範囲
+## 影響範囲（修正前）
 
-- `22_up_conduit.sh -s emulated_asis_conduit1`（および恐らく `emulated_asis_conduit2` も同様）で
-  ansible-eda 経由の config 生成が OSPF エリア関連のところで失敗する。
-- `emulated_asis`（非 conduit, `original_asis` 起動分）には影響しない（確認済み、正常動作）。
+- `22_up_conduit.sh -s emulated_asis_conduit1` / `emulated_asis_conduit2` で
+  ansible-eda 経由の config 生成が OSPF エリア関連のところで失敗していた。
+- `emulated_asis`（非 conduit）には影響しなかった。
 
-## 次のアクション（未実施）
+## 対応結果
 
-1. `repos/netomox-exp` および `repos/model-conductor` の conduit topology 生成コード
-   （`generate_conduit_topology` の実装）を調査し、OSPF area のネットワークレベル属性
-   （`mddo-topology:ospf-area-network-attributes` および `supporting-network`）を
-   コピー・再構築する処理が抜けていないか確認する。
-2. 同様に他のネットワークレベル属性（BGP proc 等）についても conduit 化で欠落していないか
-   横展開で確認する。
-3. 修正後、`22_up_conduit.sh -s emulated_asis_conduit1 -d` を再実行し、
-   `docker compose logs ansible-eda` で "generate ospf config" 以降のタスクが
-   エラーなく完走することを確認する。
+- 原因調査・修正内容は [investigation_conduit_ospf_config_failure.md](investigation_conduit_ospf_config_failure.md) を参照。
+- 修正後の確認（2026-10-03）: `21_generate_conduit.sh` の後、`22_up_conduit.sh -s <snapshot> -d` を
+  `emulated_asis` / `emulated_asis_conduit1` / `emulated_asis_conduit2` で実行し、
+  いずれも ansible-eda の playbook が `failed=0` で完走（"generate ospf config" 以降も成功）。
+  FW 以外の全ルータの conf に `router-id` が出力され、全 conf に OSPF area が含まれることを確認。
+- 他のネットワークレベル属性（BGP proc 等）の conduit 化での欠落の横展開確認は、今回未実施
+  （`refocus_topology` / `mddo-fw` には bgp_proc layer がない）。

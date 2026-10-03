@@ -74,12 +74,6 @@ bash 22_up_conduit.sh -s emulated_asis -d
   この場合、worker 側の `node_exporter`（`WORKER_ADDRESS:9100`）が起動していないと
   `scripts/up_emulated_env.sh` 内のジョブ完了待ちループ（`AllJob_Complete` ポーリング）が
   無限ループする点に注意（タイムアウト等のガードは現状ない）。
-- **既知の不具合**: conduit snapshot（`original_asis_conduitX` / `emulated_asis_conduitX`）には
-  conduit topology 生成時に OSPF area のネットワーク属性（`identifier` 等）が欠落する問題があり、
-  `-d` を付けても ansible-eda 側の "generate ospf config" タスクで失敗する場合がある。
-  詳細・原因・対応方針は [docs/todo_conduit_ospf_area_attributes.md](../../docs/todo_conduit_ospf_area_attributes.md)
-  を参照。この問題が解消するまで conduit snapshot の起動確認は完走しない
-  （`original_asis`／`emulated_asis` 本体には影響なし）。
 - blueprint（`usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`）を
   変更した場合は `21_generate_conduit.sh` を再実行してデータを作り直す必要がある
   （`21_generate_conduit.sh` の先頭で該当ネットワークの全 snapshot が一度クリアされる）。
@@ -87,5 +81,5 @@ bash 22_up_conduit.sh -s emulated_asis -d
 ## 関連ドキュメント
 
 - [usecases/refocus_topology/README.md](../../usecases/refocus_topology/README.md) — blueprint データフォーマット・変換ツールの詳細
-- [docs/todo_conduit_ospf_area_attributes.md](../../docs/todo_conduit_ospf_area_attributes.md) — 既知の不具合（conduit topology の OSPF area 属性欠落）
+- [docs/todo_conduit_ospf_area_attributes.md](../../docs/todo_conduit_ospf_area_attributes.md) — conduit topology の OSPF area 属性欠落の経緯と対応（対応済み）
 - [../../CLAUDE.md](../../CLAUDE.md) — プロジェクト全体のコマンド一覧
