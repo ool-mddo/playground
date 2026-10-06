@@ -263,6 +263,8 @@ playground/
        - Router ノード (blueprint でグループ化): 代表ノード 1 つに集約。
          外部 TP のみ eth1, eth2, ... に rename。並列リンクは 1 本に集約
        - Segment ノード: グループ間をまたぐ外部セグメントのみ自動生成
+       - blueprint に定義されていないノード: conduit topology から省略 (Segment の該当 endpoint も除外。
+         残りが 2 グループ未満になった Segment は生成しない)
        - ospf_area: layer3 と同じ node/TP mapping を適用して再構築
        - 出力ネットワーク順: ospfX(降順) → ospf0 → layer3
     5. netomox-exp: POST /topologies/mddo-fw/original_asis_conduitN/topology × N件
@@ -368,6 +370,8 @@ Prometheus から scrape したトラフィックカウンタを集約。`diff2c
 - `GET /usecases/:uc/:nw/:ss/topology` で netomox-exp から取得される
 - このファイルに含まれる `ietf-network:networks.network` 配列の要素数 = 生成される conduit スナップショットの数
 - blueprint の各 network (レイヤー) が、それぞれ対応する conduit スナップショットの抽象度を定義する
+- blueprint は original snapshot の全ノードとの対応を定義するものではなく、必要な一部分のみを定義する。
+  blueprint に定義されていないノードは conduit topology から単純に省略される (エラーにはならない)
 
 ### FW ノードアトリビュート (`firewall` セクション)
 
