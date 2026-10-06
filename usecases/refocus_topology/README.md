@@ -24,6 +24,9 @@ usecases/refocus_topology/
 `demo/candidate_model_ops/21_generate_conduit.sh` の一部）がこれを読み込み、
 `original_asis_conduit*` スナップショットを生成する際の集約ルールとして使う。
 
+blueprint は original snapshot の全ノードを網羅する必要はなく、必要な一部分のみを定義する。
+blueprint に定義されていないノードは、conduit topology から単純に省略される。
+
 現在のターゲット: `network=mddo-fw`, `snapshot=original_asis_blueprint`
 （`usecases/refocus_topology/mddo-fw/params.yaml` の設定に対応）。
 
