@@ -27,8 +27,13 @@ usecases/refocus_topology/
 blueprint は original snapshot の全ノードを網羅する必要はなく、必要な一部分のみを定義する。
 blueprint に定義されていないノードは、conduit topology から単純に省略される。
 
-現在のターゲット: `network=mddo-fw`, `snapshot=original_asis_blueprint`
+現在のターゲット: `network=mddo-fw`, `snapshot=original_asis_blueprint1`
 （`usecases/refocus_topology/mddo-fw/params.yaml` の設定に対応）。
+
+`mddo-fw` には `original_asis_blueprint1`（site-a/site-b のみを対象）と
+`original_asis_blueprint2`（site-c を含む）の2つの blueprint snapshot を用意している。
+どちらを使うかは `demo/candidate_model_ops/21_generate_conduit.sh -b <blueprint_snapshot>` で切り替える
+（デフォルトは `original_asis_blueprint1`）。
 
 ## topology-def.yaml フォーマット
 
@@ -85,7 +90,7 @@ python3 topology_def_to_blueprint.py [-n NETWORK] [-s SNAPSHOT] [-t TOPOLOGY_DEF
 | オプション | デフォルト | 説明 |
 |---|---|---|
 | `-n`, `--network` | `mddo-fw` | ネットワーク名 |
-| `-s`, `--snapshot` | `original_asis_blueprint` | スナップショット名 |
+| `-s`, `--snapshot` | `original_asis_blueprint1` | スナップショット名 |
 | `-t`, `--topology-def` | `topology-def.yaml` | 入力ファイル名 |
 
 - 入力: `<network>/<snapshot>/<topology-def-file>`
@@ -96,8 +101,8 @@ python3 topology_def_to_blueprint.py [-n NETWORK] [-s SNAPSHOT] [-t TOPOLOGY_DEF
 ```sh
 cd usecases/refocus_topology
 python3 topology_def_to_blueprint.py
-# usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology-def.yaml を読み、
-# usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json を生成
+# usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology-def.yaml を読み、
+# usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json を生成
 ```
 
 ### エラー時の挙動

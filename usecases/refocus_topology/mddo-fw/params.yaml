@@ -40,6 +40,26 @@ cluster_firewall_pairs:
               - ge-7/0/0
         - name: eth0
           role: control
+  - primary:
+      name: site-c-fw-1
+      atypical_interfaces:
+        - name: fab0
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-0/0/0
+        - name: eth0
+          role: control
+    secondary:
+      name: site-c-fw-2
+      atypical_interfaces:
+        - name: fab1
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-7/0/0
+        - name: eth0
+          role: control
 containerlab_nodes:
   site-a-fw-1:
     kind: linux
@@ -100,4 +120,34 @@ containerlab_nodes:
     labels:
       ansible-group: junos
       clusterid: 2
+      redundant: sby
+  site-c-fw-1:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    env:
+      container: docker
+    binds:
+      - /dev/kvm:/dev/kvm
+      - /tmp/proxmox-shared:/var/tmp
+      - /tmp/proxmox-shared/qemu:/opt/qemu-shared
+    ports:
+      - "48006:8006"
+    labels:
+      ansible-group: junos
+      clusterid: 3
+      redundant: act
+  site-c-fw-2:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    env:
+      container: docker
+    binds:
+      - /dev/kvm:/dev/kvm
+      - /tmp/proxmox-shared:/var/tmp
+      - /tmp/proxmox-shared/qemu:/opt/qemu-shared
+    ports:
+      - "58006:8006"
+    labels:
+      ansible-group: junos
+      clusterid: 3
       redundant: sby

@@ -140,8 +140,8 @@ playground/
 ├── usecases/                    # 【共有ボリューム】ユースケース設定
 │   └── refocus_topology/        # ★ 現在のユースケース
 │       └── mddo-fw/
-│           ├── params.yaml      # FW クラスタ対の定義 (site-a/site-b)
-│           └── original_asis_blueprint/  # blueprint snapshot: conduit_topology の入力
+│           ├── params.yaml      # FW クラスタ対の定義 (site-a/site-b/site-c)
+│           └── original_asis_blueprint1/ # blueprint snapshot: conduit_topology の入力
 │               └── topology.json         # 目標とする抽象化トポロジ (人が作成・管理)
 │
 ├── repos/                       # 各サービスのソースコード (docker compose bindmount)
@@ -245,15 +245,16 @@ playground/
 
 ```
 入力: topologies/mddo-fw/original_asis/topology.json
-      usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json
-        (blueprint: 目標とする抽象度のトポロジを人が定義したもの)
+      usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json
+        (blueprint: 目標とする抽象度のトポロジを人が定義したもの。
+         21_generate_conduit.sh の -b オプションで切り替え可能。デフォルト: original_asis_blueprint1)
 
 → model-conductor: POST /conduct/mddo-fw/original_asis/conduit_topology
-    {usecase: "refocus_topology", blueprint_snapshot: "original_asis_blueprint"}
+    {usecase: "refocus_topology", blueprint_snapshot: "original_asis_blueprint1"}
 
     [model-conductor 内部処理]
     1. netomox-exp: DELETE /topologies/mddo-fw/original_asis_conduit* (既存 conduit を削除)
-    2. netomox-exp: GET /usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology
+    2. netomox-exp: GET /usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology
        (blueprint topology 取得)
     3. netomox-exp: GET /topologies/mddo-fw/original_asis/topology
        (original topology 取得)
@@ -337,18 +338,44 @@ RFC 8345 ベースの YANG モデルを JSON で表現した構造：
 ### FW クラスタパラメータ (`usecases/refocus_topology/mddo-fw/params.yaml`)
 
 ```yaml
-fw_cluster_pairs:
-  - primary: site-a-fw-1
-    secondary: site-a-fw-2
-    fab_interfaces:
-      primary: [fab0, ge-0/0/0]
-      secondary: [fab1, ge-7/0/0]
-    ctrl_interfaces:
-      primary: [eth0]
-      secondary: [eth0]
+cluster_firewall_pairs:
+  - primary:
+      name: site-a-fw-1
+      atypical_interfaces:
+        - name: fab0
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-0/0/0
+        - name: eth0
+          role: control
+    secondary:
+      name: site-a-fw-2
+      atypical_interfaces:
+        - name: fab1
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-7/0/0
+        - name: eth0
+          role: control
+  # site-b, site-c も同様の構成で定義する
+containerlab_nodes:
+  site-a-fw-1:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    # ... (env/binds/ports/labels は ContainerLab 上の proxmox ノード設定)
 ```
 
-`refocus_topology` ユースケースで FW HA クラスタを1つの抽象ノードに畳み込む際に `netomox-exp` が参照する。
+- `cluster_firewall_pairs`: `splice_firewall_attributes`（`21_generate_conduit.sh` の一部）が
+  `firewall-policy-parser` にそのまま渡す（`fw_policy/:nw/:ss/parsed_result` API）。
+  ここに列挙された primary/secondary ペアだけが FW ノードとして認識され、
+  L3 トポロジ上のノードに `"flag": ["firewall"]` と HA ペア属性（fabric/control インタフェース等）が付与される。
+  **ここに列挙されていないノードは FW ノードとして扱われず**、`conduit_topology` 生成時に
+  通常の router ノードとして代表ノードへ集約されてしまう（site追加時の定義漏れに注意）。
+- `containerlab_nodes`: ノード名をキーとするハッシュ。`ContainerLabConverter`（netomox-exp）が
+  containerlab topology 生成時に proxmox/vSRX ノードの kind/image/env/binds/ports/labels を
+  ここから取得する（`l3_preallocated_resources` とは独立した別セクション）。
 
 ### State JSON (state-conductor 出力)
 
@@ -363,9 +390,14 @@ fw_cluster_pairs:
 
 Prometheus から scrape したトラフィックカウンタを集約。`diff2csv.py` でベンチマークとの差分を計算して候補評価に使用。
 
-### Blueprint Topology (`usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`)
+### Blueprint Topology (`usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`)
 
 人が手動で作成・管理する「目標とする抽象化トポロジ」。`conduit_topology` API の入力として使用される。
+`usecases/refocus_topology/mddo-fw/` 配下には複数の blueprint snapshot を配置でき、
+`21_generate_conduit.sh -b <blueprint_snapshot>` で使用する blueprint を切り替えられる
+(デフォルト: `original_asis_blueprint1`)。
+現在、`original_asis_blueprint1`（site-a/site-b のみ）と `original_asis_blueprint2`（site-c を含む）
+の2つを用意している。
 
 - `GET /usecases/:uc/:nw/:ss/topology` で netomox-exp から取得される
 - このファイルに含まれる `ietf-network:networks.network` 配列の要素数 = 生成される conduit スナップショットの数

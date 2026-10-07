@@ -121,7 +121,7 @@ generate_conduit_topology() {
   local network=$1
   local snapshot=$2           # e.g. "original_asis"
   local usecase=$3            # e.g. "refocus_topology"
-  local blueprint_snapshot=$4 # e.g. "original_asis_blueprint"
+  local blueprint_snapshot=$4 # e.g. "original_asis_blueprint1"
 
   # echo "# Generate conduit topology: ${network}/${snapshot} (blueprint: ${blueprint_snapshot})"
 

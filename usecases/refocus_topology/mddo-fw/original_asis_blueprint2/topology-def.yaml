@@ -1,0 +1,29 @@
+zooms:
+  - network: zoom0-layer3
+    supports: layer3
+    nodes:
+      site-a-fw:          {supports: [site-a-fw-1, site-a-fw-2], tps: [eth2]}
+      site-b-fw:          {supports: [site-b-fw-1, site-b-fw-2], tps: [eth2]}
+      site-c-fw:          {supports: [site-c-fw-1, site-c-fw-2], tps: [eth2]}
+      site-a-wan-zone-rt: {supports: [site-a-br-1, site-a-br-2]}
+      site-b-wan-zone-rt: {supports: [site-b-br-1, site-b-br-2]}
+      site-c-wan-zone-rt: {supports: [site-c-br-1, site-c-br-2]}
+    links:
+      - endpoints: ['site-a-fw:eth1', 'site-a-wan-zone-rt:eth3']
+      - endpoints: ['site-b-fw:eth1', 'site-b-wan-zone-rt:eth3']
+      - endpoints: ['site-c-fw:eth1', 'site-c-wan-zone-rt:eth3']
+      - endpoints: ['site-a-wan-zone-rt:eth1', 'site-b-wan-zone-rt:eth1']
+      - endpoints: ['site-b-wan-zone-rt:eth2', 'site-c-wan-zone-rt:eth1']
+      - endpoints: ['site-c-wan-zone-rt:eth2', 'site-a-wan-zone-rt:eth2']
+
+  - network: zoom1-layer3
+    supports: zoom0-layer3
+    nodes:
+      site-a-fw:   {supports: [site-a-fw], tps: [eth2]}
+      site-b-fw:   {supports: [site-b-fw], tps: [eth2]}
+      site-c-fw:   {supports: [site-c-fw], tps: [eth2]}
+      wan-zone-rt: {supports: [site-a-wan-zone-rt, site-b-wan-zone-rt, site-c-wan-zone-rt]}
+    links:
+      - endpoints: ['site-a-fw:eth1', 'wan-zone-rt:eth1']
+      - endpoints: ['site-b-fw:eth1', 'wan-zone-rt:eth2']
+      - endpoints: ['site-c-fw:eth1', 'wan-zone-rt:eth3']

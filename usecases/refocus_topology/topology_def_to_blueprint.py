@@ -263,7 +263,10 @@ def parse_args():
     )
     parser.add_argument("-n", "--network", default="mddo-fw", help="network name (default: mddo-fw)")
     parser.add_argument(
-        "-s", "--snapshot", default="original_asis_blueprint", help="snapshot name (default: original_asis_blueprint)"
+        "-s",
+        "--snapshot",
+        default="original_asis_blueprint1",
+        help="snapshot name (default: original_asis_blueprint1)",
     )
     parser.add_argument(
         "-t",

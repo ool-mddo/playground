@@ -8,7 +8,7 @@ blueprint に基づいて抽象化（土管化 / conduit 化）し、それぞ�
 
 - `docker compose up -d` 済みであること
 - `demo_vars` で `NETWORK_NAME=mddo-fw`, `USECASE_NAME=refocus_topology` になっていること
-- blueprint データ (`usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`) が
+- blueprint データ (`usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`) が
   配置されていること。フォーマット・作り方は [usecases/refocus_topology/README.md](../../usecases/refocus_topology/README.md) を参照
 
 ## スクリプト構成
@@ -30,7 +30,17 @@ blueprint に基づいて抽象化（土管化 / conduit 化）し、それぞ�
 ```sh
 cd demo/candidate_model_ops
 source demo_vars
-bash 21_generate_conduit.sh
+bash 21_generate_conduit.sh [-b <blueprint_snapshot>]
+```
+
+| オプション | 説明 |
+|---|---|
+| `-b` | 使用する blueprint snapshot 名（省略時: `original_asis_blueprint1`）。`usecases/refocus_topology/mddo-fw/` 配下の blueprint snapshot ディレクトリ名を指定する（例: `original_asis_blueprint2`） |
+| `-h` | ヘルプ表示 |
+
+```sh
+# 例: site-c を含む blueprint (original_asis_blueprint2) を使って conduit topology を生成
+bash 21_generate_conduit.sh -b original_asis_blueprint2
 ```
 
 blueprint の定義内容に応じて `original_asis`, `original_asis_conduit1`, `original_asis_conduit2`, ...
@@ -74,8 +84,9 @@ bash 22_up_conduit.sh -s emulated_asis -d
   この場合、worker 側の `node_exporter`（`WORKER_ADDRESS:9100`）が起動していないと
   `scripts/up_emulated_env.sh` 内のジョブ完了待ちループ（`AllJob_Complete` ポーリング）が
   無限ループする点に注意（タイムアウト等のガードは現状ない）。
-- blueprint（`usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`）を
-  変更した場合は `21_generate_conduit.sh` を再実行してデータを作り直す必要がある
+- blueprint（`usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`、
+  または `-b` で指定した blueprint snapshot）を変更した場合は
+  `21_generate_conduit.sh` を再実行してデータを作り直す必要がある
   （`21_generate_conduit.sh` の先頭で該当ネットワークの全 snapshot が一度クリアされる）。
 
 ## 関連ドキュメント
