@@ -1,0 +1,159 @@
+{# vSRX chassis cluster config (one config per cluster pair)                     #}
+{#   item          : layer3 node of the primary FW (topology/layer3/nodes)        #}
+{#   l3_interfaces : topology/layer3/interfaces response                          #}
+{#   ospf_areas    : topology/layer_type_ospf/interfaces?node_type=ospf_proc      #}
+{#   fw_mgmt_addresses (optional) : { <fw node name>: <fxp0 address> }            #}
+{% set fw = item["attribute"]["firewall"] %}
+{% set cluster_nodes = [fw["pair"]["primary"], fw["pair"]["secondary"]] %}
+{% set mgmt_addrs = fw_mgmt_addresses | default({}) %}
+groups {
+{% for member in cluster_nodes %}
+    node{{ loop.index0 }} {
+        system {
+            host-name {{ member["name"] }};
+        }
+{%   if member["name"] in mgmt_addrs %}
+        interfaces {
+            fxp0 {
+                unit 0 {
+                    family inet {
+                        address {{ mgmt_addrs[member["name"]] }};
+                    }
+                }
+            }
+        }
+{%   endif %}
+    }
+{% endfor %}
+}
+apply-groups "${node}";
+system {
+    root-authentication {
+        encrypted-password "$6$vOte4zs5$j1X3fElYvJSt8VPNXx2KzRNrZIkp9CeRX83/W4wQo5K4Tl/MHZeMcvbymEzm9/2ya3S4hU993YDSLY26ROGnW/"; ## SECRET-DATA
+    }
+    login {
+        user vrnetlab {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password "$6$CDmzGe/d$g43HmhI3FA.21JCYppnTg1h4q/JO4DOHSICLhhavqBem5zUTgKEcg5m9tBG1Ik6qmfb7L3v.wgj4/DkfgZejO0"; ## SECRET-DATA
+            }
+        }
+    }
+    services {
+        ssh;
+        netconf {
+            ssh;
+        }
+    }
+}
+security {
+    policies {
+{% for policy in fw["policies"] %}
+        from-zone {{ policy["from_zone"] }} to-zone {{ policy["to_zone"] }} {
+{%   for rule in policy["rules"] %}
+            policy {{ rule["name"] }} {
+                match {
+                    source-address {{ rule["source_address"] }};
+                    destination-address {{ rule["destination_address"] }};
+                    application {{ rule["application"] }};
+                }
+                then {
+                    {{ rule["action"] }};
+                }
+            }
+{%   endfor %}
+        }
+{% endfor %}
+    }
+    zones {
+{% for zone in fw["zones"] %}
+        security-zone {{ zone["name"] }} {
+{%   if zone["interfaces"] %}
+{#     NOTE: host-inbound-traffic is not parsed by firewall-policy-parser (fixed value) #}
+            host-inbound-traffic {
+                system-services {
+                    all;
+                }
+                protocols {
+                    all;
+                }
+            }
+            interfaces {
+{%     for interface in zone["interfaces"] %}
+                {{ interface }};
+{%     endfor %}
+            }
+{%   endif %}
+        }
+{% endfor %}
+    }
+}
+interfaces {
+{% for l3_node in l3_interfaces["nodes"] if l3_node["node"] == item["node"] %}
+{%   for interface in l3_node["interfaces"] %}
+    {{ interface["interface"] | regex_replace('\.0$', '') }} {
+{%     if interface["attribute"]["description"] %}
+        description "{{ interface["attribute"]["description"] | regex_replace('"', '') }}";
+{%     endif %}
+        unit 0 {
+            family inet {
+{%     for address in interface["attribute"]["ip-address"] %}
+                address {{ address }};
+{%     endfor %}
+            }
+        }
+    }
+{%   endfor %}
+{% endfor %}
+{% for member in cluster_nodes %}
+{%   for interface in member["atypical_interfaces"] if interface["role"] == "fabric" %}
+    {{ interface["name"] }} {
+        fabric-options {
+            member-interfaces {
+{%     for member_interface in interface["fabric_options"]["member_interfaces"] %}
+                {{ member_interface }};
+{%     endfor %}
+            }
+        }
+    }
+{%   endfor %}
+{% endfor %}
+}
+{# NOTE: ospf_proc data is split into primary/secondary nodes; merge them into one cluster config #}
+{% set cluster_node_names = cluster_nodes | map(attribute="name") | list %}
+{% set ns = namespace(has_ospf=false) %}
+{% for area in ospf_areas %}
+{%   for ospf_node in area["nodes"] if ospf_node["node"] in cluster_node_names %}
+{%     set ns.has_ospf = true %}
+{%   endfor %}
+{% endfor %}
+{% if ns.has_ospf %}
+protocols {
+    ospf {
+{%   for area in ospf_areas %}
+{%     set area_nodes = area["nodes"] | selectattr("node", "in", cluster_node_names) | list %}
+{%     if area_nodes %}
+        area {{ area["attribute"]["identifier"] }} {
+{%       for ospf_node in area_nodes %}
+{%         for interface in ospf_node["interfaces"] %}
+            interface {{ interface["interface"] }} {
+{%           if "POINT_TO_POINT" in interface["attribute"]["network-type"] %}
+                interface-type p2p;
+{%           endif %}
+{%           if interface["attribute"]["passive"] %}
+                passive;
+{%           endif %}
+                metric {{ interface["attribute"]["metric"] }};
+                priority {{ interface["attribute"]["priority"] }};
+                hello-interval {{ interface["attribute"]["timer"]["hello-interval"] }};
+                dead-interval {{ interface["attribute"]["timer"]["dead-interval"] }};
+            }
+{%         endfor %}
+{%       endfor %}
+        }
+{%     endif %}
+{%   endfor %}
+    }
+}
+{% endif %}

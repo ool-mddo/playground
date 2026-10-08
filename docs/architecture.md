@@ -125,19 +125,23 @@ playground/
 │       ├── 02_benchmark_env.sh  # ベンチマーク環境構築
 │       ├── 03_candidate_env.sh  # 候補環境構築・評価
 │       ├── 11_manual_steps.sh   # 過去障害再現シナリオ
-│       ├── 21_refocus_topology.sh  # refocus_topology ユースケース実行
-│       ├── up_emulated_env.sh   # ContainerLab 環境起動・計測・破棄
-│       ├── determine_candidate.sh  # 候補評価 (state diff 取得)
-│       ├── diff2csv.py          # state diff → CSV 変換
-│       ├── netoviz_index.py     # netoviz インデックス JSON 生成
+│       ├── 21_generate_conduit.sh  # refocus_topology: トポロジ・conduit生成 + netoviz 登録 (環境起動は含まない)
+│       ├── 22_up_conduit.sh     # refocus_topology: 指定した1 snapshot のエミュレーション環境起動
+│       ├── README_refocus_topology.md  # refocus_topology 操作手順・注意事項
+│       ├── scripts/             # 上記スクリプトから呼ばれる補助スクリプト群
+│       │   ├── up_emulated_env.sh   # ContainerLab 環境起動・計測・破棄
+│       │   ├── determine_candidate.sh  # 候補評価 (state diff 取得)
+│       │   ├── diff2csv.py          # state diff → CSV 変換
+│       │   ├── netoviz_index.py     # netoviz インデックス JSON 生成
+│       │   └── util.sh              # 共通関数 (convert_namespace 等)
 │       └── playbooks/
 │           └── controller.yaml  # Ansible: cRPD 設定生成 + ContainerLab デプロイ
 │
 ├── usecases/                    # 【共有ボリューム】ユースケース設定
 │   └── refocus_topology/        # ★ 現在のユースケース
 │       └── mddo-fw/
-│           ├── params.yaml      # FW クラスタ対の定義 (site-a/site-b)
-│           └── original_asis_blueprint/  # blueprint snapshot: conduit_topology の入力
+│           ├── params.yaml      # FW クラスタ対の定義 (site-a/site-b/site-c)
+│           └── original_asis_blueprint1/ # blueprint snapshot: conduit_topology の入力
 │               └── topology.json         # 目標とする抽象化トポロジ (人が作成・管理)
 │
 ├── repos/                       # 各サービスのソースコード (docker compose bindmount)
@@ -159,7 +163,7 @@ playground/
 
 ## Main Execution Flows
 
-### フロー 1: `21_refocus_topology.sh` — FW トポロジ生成・可視化
+### フロー 1: `21_generate_conduit.sh` — FW トポロジ生成・可視化
 
 ```
 入力: configs/mddo-fw/original_asis/configs/ (JunOS設定ファイル)
@@ -191,26 +195,37 @@ playground/
 出力: topologies/{network}/original_candidate_*/topology.json
 ```
 
-### フロー 3: `up_emulated_env.sh` — エミュレーション環境起動・計測
+### フロー 3: `scripts/up_emulated_env.sh` — エミュレーション環境起動・計測
+
+`refocus_topology` では `22_up_conduit.sh -s <snapshot> [-d]` から呼ばれる
+（namespace 変換自体はフロー6で完了済みの前提。ここでは指定された original snapshot 名を渡す）。
 
 ```
-入力: ネットワーク名, スナップショット名 (emulated_*)
+入力: original snapshot 名, worker ノードアドレス
+      (emulated snapshot 名は reverse_snapshot_name() で内部的に導出)
 
-→ netomox-exp: 名前空間変換 (original_* → emulated_*)
-→ ansible-eda: POST /endpoint {message=controller}
+→ ansible-eda: POST /endpoint {message=controller, ..., original_snapshot_name, emulated_snapshot_name, with_clab}
     → Ansible playbook controller.yaml:
-        → netomox-exp: L3 設定情報取得
+        → netomox-exp: L3/OSPF/bgp_proc 設定情報取得 (original snapshot 側の ns_convert_table を参照)
         → Jinja2: cRPD/cEOS 設定ファイル生成 (BGP, OSPF, 静的ルート等)
-        → batfish-wrapper: emulated 設定アップロード
-        → mddo-worker EDA: ContainerLab デプロイ
-        → mddo-worker EDA: iperf3 トラフィック生成
-→ (90秒待機: BGP セッション確立)
-→ state-conductor: 計測開始 → 90秒計測 → 計測終了
-→ state-conductor: 計測結果取得
-→ ContainerLab 破棄
+        → netomox-exp: 生成した設定を emulated snapshot にアップロード
+        → with_clab=true の場合のみ:
+            → mddo-worker EDA: ContainerLab デプロイ
+            → mddo-worker EDA: iperf3 トラフィック生成
+→ with_clab=false ("-d" 指定時) はここで終了 (config 生成確認のみ)
+→ with_clab=true の場合のみ以降を実行:
+    → (90秒待機: BGP セッション確立)
+    → state-conductor: 計測開始 → 90秒計測 → 計測終了
+    → state-conductor: 計測結果取得
+    → ContainerLab 破棄
 
-出力: state JSON (インターフェースごとのトラフィック量)
+出力: state JSON (インターフェースごとのトラフィック量、with_clab=true の場合のみ)
 ```
+
+> `with_clab` は `up_emulated_env` 呼び出し元 (`22_up_conduit.sh` の `-d` オプション等) から
+> ansible-eda・`controller.yaml` まで伝播する。`original_snapshot_name` / `emulated_snapshot_name`
+> は netomox-exp の per-snapshot `ns_convert_table.json`（`original_*` 側にのみ存在）に対応するため
+> 明確に区別して渡す必要がある。
 
 ### フロー 4: `determine_candidate.sh` — 候補評価
 
@@ -224,21 +239,22 @@ playground/
 出力: CSV (各候補のインターフェーストラフィック変化量)
 ```
 
-### フロー 5: `21_refocus_topology.sh` 後半 — conduit topology 生成・netoviz 登録
+### フロー 5: `21_generate_conduit.sh` 後半 — conduit topology 生成・netoviz 登録
 
 「土管化」: 詳細なトポロジを blueprint に従って抽象化・簡略化したスナップショットを生成する。
 
 ```
 入力: topologies/mddo-fw/original_asis/topology.json
-      usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json
-        (blueprint: 目標とする抽象度のトポロジを人が定義したもの)
+      usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json
+        (blueprint: 目標とする抽象度のトポロジを人が定義したもの。
+         21_generate_conduit.sh の -b オプションで切り替え可能。デフォルト: original_asis_blueprint1)
 
 → model-conductor: POST /conduct/mddo-fw/original_asis/conduit_topology
-    {usecase: "refocus_topology", blueprint_snapshot: "original_asis_blueprint"}
+    {usecase: "refocus_topology", blueprint_snapshot: "original_asis_blueprint1"}
 
     [model-conductor 内部処理]
     1. netomox-exp: DELETE /topologies/mddo-fw/original_asis_conduit* (既存 conduit を削除)
-    2. netomox-exp: GET /usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology
+    2. netomox-exp: GET /usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology
        (blueprint topology 取得)
     3. netomox-exp: GET /topologies/mddo-fw/original_asis/topology
        (original topology 取得)
@@ -248,6 +264,8 @@ playground/
        - Router ノード (blueprint でグループ化): 代表ノード 1 つに集約。
          外部 TP のみ eth1, eth2, ... に rename。並列リンクは 1 本に集約
        - Segment ノード: グループ間をまたぐ外部セグメントのみ自動生成
+       - blueprint に定義されていないノード: conduit topology から省略 (Segment の該当 endpoint も除外。
+         残りが 2 グループ未満になった Segment は生成しない)
        - ospf_area: layer3 と同じ node/TP mapping を適用して再構築
        - 出力ネットワーク順: ospfX(降順) → ospf0 → layer3
     5. netomox-exp: POST /topologies/mddo-fw/original_asis_conduitN/topology × N件
@@ -262,7 +280,7 @@ playground/
 > 実装: `repos/model-conductor/lib/generate_conduit_topology/` 配下の
 > `BlueprintNetwork`, `Layer3ConduitBuilder`, `OspfConduitBuilder`, `ConduitTopologyGenerator` が担う。
 
-### フロー 6: `21_refocus_topology.sh` 後半② — 名前空間変換・emulated netoviz 登録
+### フロー 6: `21_generate_conduit.sh` 後半② — 名前空間変換・emulated netoviz 登録
 
 ```
 入力: topologies/mddo-fw/original_asis/topology.json
@@ -288,6 +306,8 @@ playground/
 
 > 名前空間変換は **一方向** (`original_*` → `emulated_*`)。
 > `ns_convert_table.json` はフロー 1 の `generate_original_asis_topology` ステップで生成される。
+> ここまでは環境起動を含まない。生成された snapshot のうち1つをエミュレーション環境として
+> 起動するには、別スクリプト `22_up_conduit.sh -s <emulated_snapshot>` を実行する（フロー 3 参照）。
 
 ---
 
@@ -318,18 +338,44 @@ RFC 8345 ベースの YANG モデルを JSON で表現した構造：
 ### FW クラスタパラメータ (`usecases/refocus_topology/mddo-fw/params.yaml`)
 
 ```yaml
-fw_cluster_pairs:
-  - primary: site-a-fw-1
-    secondary: site-a-fw-2
-    fab_interfaces:
-      primary: [fab0, ge-0/0/0]
-      secondary: [fab1, ge-7/0/0]
-    ctrl_interfaces:
-      primary: [eth0]
-      secondary: [eth0]
+cluster_firewall_pairs:
+  - primary:
+      name: site-a-fw-1
+      atypical_interfaces:
+        - name: fab0
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-0/0/0
+        - name: eth0
+          role: control
+    secondary:
+      name: site-a-fw-2
+      atypical_interfaces:
+        - name: fab1
+          role: fabric
+          fabric_options:
+            member_interfaces:
+              - ge-7/0/0
+        - name: eth0
+          role: control
+  # site-b, site-c も同様の構成で定義する
+containerlab_nodes:
+  site-a-fw-1:
+    kind: linux
+    image: 'rtedpro/proxmox:9.2.3'
+    # ... (env/binds/ports/labels は ContainerLab 上の proxmox ノード設定)
 ```
 
-`refocus_topology` ユースケースで FW HA クラスタを1つの抽象ノードに畳み込む際に `netomox-exp` が参照する。
+- `cluster_firewall_pairs`: `splice_firewall_attributes`（`21_generate_conduit.sh` の一部）が
+  `firewall-policy-parser` にそのまま渡す（`fw_policy/:nw/:ss/parsed_result` API）。
+  ここに列挙された primary/secondary ペアだけが FW ノードとして認識され、
+  L3 トポロジ上のノードに `"flag": ["firewall"]` と HA ペア属性（fabric/control インタフェース等）が付与される。
+  **ここに列挙されていないノードは FW ノードとして扱われず**、`conduit_topology` 生成時に
+  通常の router ノードとして代表ノードへ集約されてしまう（site追加時の定義漏れに注意）。
+- `containerlab_nodes`: ノード名をキーとするハッシュ。`ContainerLabConverter`（netomox-exp）が
+  containerlab topology 生成時に proxmox/vSRX ノードの kind/image/env/binds/ports/labels を
+  ここから取得する（`l3_preallocated_resources` とは独立した別セクション）。
 
 ### State JSON (state-conductor 出力)
 
@@ -344,13 +390,20 @@ fw_cluster_pairs:
 
 Prometheus から scrape したトラフィックカウンタを集約。`diff2csv.py` でベンチマークとの差分を計算して候補評価に使用。
 
-### Blueprint Topology (`usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`)
+### Blueprint Topology (`usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`)
 
 人が手動で作成・管理する「目標とする抽象化トポロジ」。`conduit_topology` API の入力として使用される。
+`usecases/refocus_topology/mddo-fw/` 配下には複数の blueprint snapshot を配置でき、
+`21_generate_conduit.sh -b <blueprint_snapshot>` で使用する blueprint を切り替えられる
+(デフォルト: `original_asis_blueprint1`)。
+現在、`original_asis_blueprint1`（site-a/site-b のみ）と `original_asis_blueprint2`（site-c を含む）
+の2つを用意している。
 
 - `GET /usecases/:uc/:nw/:ss/topology` で netomox-exp から取得される
 - このファイルに含まれる `ietf-network:networks.network` 配列の要素数 = 生成される conduit スナップショットの数
 - blueprint の各 network (レイヤー) が、それぞれ対応する conduit スナップショットの抽象度を定義する
+- blueprint は original snapshot の全ノードとの対応を定義するものではなく、必要な一部分のみを定義する。
+  blueprint に定義されていないノードは conduit topology から単純に省略される (エラーにはならない)
 
 ### FW ノードアトリビュート (`firewall` セクション)
 
@@ -406,9 +459,9 @@ PLAYGROUND_DIR="/home/hagiwara/ool-mddo/playground"
 
 5. **ContainerLab + cRPD は Worker ノードに依存**: `WORKER_LIST` の Worker ノードが稼働している必要がある。
 
-6. **Ansible EDA の webhook は非同期**: `up_emulated_env.sh` が node_exporter のメトリクスをポーリングして完了を判断する (`AllJob_Complete=1` を待つ)。
+6. **Ansible EDA の webhook は非同期**: `scripts/up_emulated_env.sh` が node_exporter のメトリクスをポーリングして完了を判断する (`AllJob_Complete=1` を待つ)。
 
-7. **計測の待機時間がハードコード**: `up_emulated_env.sh` 内に `sleep 90` が 2 箇所。BGP コンバージェンス待ちとトラフィック計測の待機時間。ネットワーク規模によって調整が必要な可能性あり。
+7. **計測の待機時間がハードコード**: `scripts/up_emulated_env.sh` 内に `sleep 90` が 2 箇所。BGP コンバージェンス待ちとトラフィック計測の待機時間。ネットワーク規模によって調整が必要な可能性あり。
 
 8. **`configs/mddo-fw` はサブモジュール**: 変更時は submodule 側でコミットしてから playground で参照先を更新すること。
 
@@ -420,7 +473,7 @@ PLAYGROUND_DIR="/home/hagiwara/ool-mddo/playground"
 
 2. ~~**`original_asis_blueprint/topology.json` の用途**~~ → 解決済み: `conduit_topology` API の blueprint 入力として使用。`GET /usecases/:uc/:nw/:ss/topology` で取得される。
 
-3. **`mddo-fw` での `00_run_phase.sh` の挙動**: `mddo-bgp` 向けに設計された候補評価フロー (iperf, state diff) が `mddo-fw` でもそのまま動くのか、`21_refocus_topology.sh` は別系統の処理なのかの関係が不明。
+3. **`mddo-fw` での `00_run_phase.sh` の挙動**: `mddo-bgp` 向けに設計された候補評価フロー (iperf, state diff) が `mddo-fw` でもそのまま動くのか、`21_generate_conduit.sh` / `22_up_conduit.sh` は別系統の処理なのかの関係が不明。
 
 4. **Worker ノードのセットアップ方法**: `WORKER_LIST` (`172.32.0.1`) のセットアップ手順が playground リポジトリ内に見当たらない。`mddo-worker` リポジトリに手順があると推測するが未確認。
 

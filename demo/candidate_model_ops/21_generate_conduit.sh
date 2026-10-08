@@ -3,8 +3,37 @@
 # shellcheck disable=SC1091
 source ./demo_vars
 # shellcheck disable=SC1091
-source ./orig_ns_topology.sh
+source ./scripts/orig_ns_topology.sh
 
+print_usage() {
+  echo "Usage: $(basename "$0") [-b <blueprint_snapshot>]"
+  echo "Options:"
+  echo "  -b     Blueprint snapshot name to use (default: original_asis_blueprint1)"
+  echo "  -h     Display this help message"
+}
+
+# option check
+# defaults
+blueprint_snapshot="original_asis_blueprint1"
+while getopts b:h option; do
+  case $option in
+  b)
+    blueprint_snapshot="$OPTARG"
+    ;;
+  h)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown option detected, -$OPTARG" >&2
+    print_usage
+    exit 1
+    ;;
+  esac
+done
+
+echo # newline
+echo "# check: blueprint_snapshot = ${blueprint_snapshot}"
 echo # newline
 
 # Append snapshot entries (JSON array) to the current netoviz index
@@ -36,7 +65,7 @@ jq '{"index_data": [.[0]]}' "network_index/${NETWORK_NAME}.json" | \
 echo # newline
 
 # Generate conduit topologies
-conduit_response=$(generate_conduit_topology "${NETWORK_NAME}" "original_asis" "${USECASE_NAME}" "original_asis_blueprint")
+conduit_response=$(generate_conduit_topology "${NETWORK_NAME}" "original_asis" "${USECASE_NAME}" "${blueprint_snapshot}")
 echo "# Conduit response: ${conduit_response}"
 
 # Append original_asis_conduit* entries to current netoviz index

@@ -1,6 +1,6 @@
 # 環境準備
 
-全体の環境設定については[デモ環境構築](../../../../doc/provision.md)を参照してください。
+全体の環境設定については[デモ環境構築](../../../../docs/design_notes/provision.md)を参照してください。
 copy_to_emulated_env デモ共通の設定については[copy_to_emulated_env共通環境準備](../provision.md)を参照してください。
 
 # Gitブランチの選択

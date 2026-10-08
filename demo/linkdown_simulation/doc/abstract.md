@@ -1,6 +1,6 @@
 # アプローチ
 
-ref. [プロジェクトの位置づけ](../../../doc/project_positioning.md)
+ref. [プロジェクトの位置づけ](../../../docs/design_notes/project_positioning.md)
 
 ## モデルベースの静的検査
 

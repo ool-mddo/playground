@@ -1,9 +1,12 @@
 routing-options {
-{# ospf_area_nodes is per area, ospf_proc node list, ospf_area_nodes #}
-{% for ospf_area_node in ospf_nodes.json[0]["nodes"] %}
-{%   if ospf_area_node["node"] == item["node"] %}
+{# ospf_nodes is a list of ospf_area networks, each has ospf_proc node list. A node may appear in several areas (same router-id) -> output once #}
+{% set ns = namespace(done=false) %}
+{% for ospf_area in ospf_nodes.json %}
+{%   for ospf_area_node in ospf_area["nodes"] %}
+{%     if ospf_area_node["node"] == item["node"] and not ns.done %}
     router-id {{ ospf_area_node["attribute"]["router-id"] }};
-{%   endif %}
-{% endfor  %}
+{%       set ns.done = true %}
+{%     endif %}
+{%   endfor %}
+{% endfor %}
 }
-

@@ -6,14 +6,14 @@
 
 - 各デモ (linkdown simulation, copy to emulated env) に共通するデモ用システムのセットアップ
     - デモシステムについては [デモシステムの構造と設計](system_architecture.md) を参照してください
-- [実環境を検証環境にコピーするデモ ("環境コピー"デモ, copy to emulated env)](../demo/copy_to_emulated_env/README.md) で使用する、検証環境(emulated env)のためのセットアップ
+- [実環境を検証環境にコピーするデモ ("環境コピー"デモ, copy to emulated env)](../../demo/copy_to_emulated_env/README.md) で使用する、検証環境(emulated env)のためのセットアップ
 
 ![system stack](fig/system_stack.drawio.svg)
 
 > [!NOTE]
 > - デモ環境には Linux を使用します。(開発側では Ubuntu22 で動作確認しています)
 > - デモシステムはスクリプト ([ool-mddo/playground リポジトリ](https://github.com/ool-mddo/playground)) とコンテナイメージで提供されています。
-> - [環境コピー](../demo/copy_to_emulated_env/README.md) デモで使用する grafana/prometheus についてはデモシステムとは定義(compose file)を分けてあります。詳細は[トラフィック可視化](../demo/copy_to_emulated_env/doc/pni/visualize.md), [PNIユースケース/環境準備](../demo/copy_to_emulated_env/doc/pni/provision.md) ドキュメントを参照してください。
+> - [環境コピー](../../demo/copy_to_emulated_env/README.md) デモで使用する grafana/prometheus についてはデモシステムとは定義(compose file)を分けてあります。詳細は[トラフィック可視化](../../demo/copy_to_emulated_env/doc/pni/visualize.md), [PNIユースケース/環境準備](../../demo/copy_to_emulated_env/doc/pni/provision.md) ドキュメントを参照してください。
 
 # デモシステムのセットアップ(デモ共通)
 
@@ -225,7 +225,7 @@ docker compose down
 
 # 検証環境(emulated env)のセットアップ
 
-[環境コピー](../demo/copy_to_emulated_env/README.md) デモでは、本番同等の構成をコンテナを使って再現した検証環境 (Emulated env) を構築します。その際、検証環境の操作には ansible を使用します。コンテナとコンテナ間接続は containerlab で管理します。
+[環境コピー](../../demo/copy_to_emulated_env/README.md) デモでは、本番同等の構成をコンテナを使って再現した検証環境 (Emulated env) を構築します。その際、検証環境の操作には ansible を使用します。コンテナとコンテナ間接続は containerlab で管理します。
 
 ## Pythonのインストール
 
@@ -246,7 +246,7 @@ sudo python3 -m pip install ansible-runner
 ```
 
 デモで使用する ansible runner のコンテナイメージは[リポジトリ](https://github.com/ool-mddo/mddo-ansible-runner)に用意してあります。
-デモで使用するコンテナイメージは `demo/copy_to_emulated_env/demo_vars` の環境変数で指定します。(設定済み…詳細は[環境準備ドキュメント](../demo/copy_to_emulated_env/doc/move_seg/provision.md)参照)
+デモで使用するコンテナイメージは `demo/copy_to_emulated_env/demo_vars` の環境変数で指定します。(設定済み…詳細は[環境準備ドキュメント](../../demo/copy_to_emulated_env/doc/move_seg/provision.md)参照)
 
 ansible runner 実行時(デモ用スクリプトの中で呼ばれています)に指定されたコンテナイメージがなければ自動でダウンロード (pull) が実行されますが、ここではあらかじめ pull しておきます。
 
@@ -291,10 +291,10 @@ $ docker image ls | grep crpd
 crpd                                   23.4R1.9             9ed2949df81f   4 months ago    502MB
 ```
 
-インポートしたコンテナの情報を `demo/copy_to_emulated_env/demo_vars` の環境変数で指定します。(設定済み…詳細は[環境準備ドキュメント](../demo/copy_to_emulated_env/doc/move_seg/provision.md)参照)
+インポートしたコンテナの情報を `demo/copy_to_emulated_env/demo_vars` の環境変数で指定します。(設定済み…詳細は[環境準備ドキュメント](../../demo/copy_to_emulated_env/doc/move_seg/provision.md)参照)
 
 MDDO PJにて動作確認できているバージョンは `junos-routing-crpd-amd64-docker-23.4R1.9.tgz` です。
 
 ### Juniper cRPDのライセンス適用
 
-cRPDコンテナ起動後にライセンスを適用する必要があります。詳細については [環境コピーデモ step②](../demo/copy_to_emulated_env/doc/move_seg/step1-2.md)を参照してください。
+cRPDコンテナ起動後にライセンスを適用する必要があります。詳細については [環境コピーデモ step②](../../demo/copy_to_emulated_env/doc/move_seg/step1-2.md)を参照してください。

@@ -54,27 +54,36 @@ docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d
 cd demo/candidate_model_ops
 source demo_vars
 
-# refocus_topology ユースケース (トポロジ生成 + conduit topology 生成 + netoviz 更新)
-./21_refocus_topology.sh
+# refocus_topology ユースケース: トポロジ生成 + conduit topology 生成 + namespace変換 + netoviz 更新
+./21_generate_conduit.sh
 
-# 候補モデル生成 + エミュレーション評価 (フルフロー)
+# 上で生成・登録済みの snapshot のうち1つだけをエミュレーション環境として起動
+./22_up_conduit.sh -s emulated_asis -d   # -d: containerlab を使わない (config生成確認のみ)
+
+# 候補モデル生成 + エミュレーション評価 (フルフロー、別シナリオ)
 ./00_run_phase.sh
 ```
 
-`21_refocus_topology.sh` の処理順序:
+`21_generate_conduit.sh` の処理順序:
 1. `generate_original_asis_topology` — Batfish でトポロジ生成
 2. `splice_external_as_topology` — 外部 AS トポロジをマージ
 3. `splice_firewall_attributes` — FW 属性をマージ
 4. netoviz index に `original_asis` エントリを登録
-5. `generate_conduit_topology` — blueprint に基づいた土管化トポロジ生成 (`original_asis_conduit*`) + netoviz index 追記
+5. `generate_conduit_topology` — blueprint (`-b` オプションで指定。デフォルト `original_asis_blueprint1`) に
+   基づいた土管化トポロジ生成 (`original_asis_conduit*`) + netoviz index 追記
 6. `convert_namespace "original_asis"` — 名前空間変換: `original_asis` → `emulated_asis` + netoviz index 追記
 7. conduit snapshot ごとに `convert_namespace` — `original_asis_conduit*` → `emulated_asis_conduit*` + netoviz index 追記
+
+環境起動は含まない（`22_up_conduit.sh` が別スクリプトとして担当）。詳細な操作手順・注意事項は
+[demo/candidate_model_ops/README_refocus_topology.md](demo/candidate_model_ops/README_refocus_topology.md) を参照。
 
 `convert_namespace` は内部で `POST /topologies/:nw/:ss/ns_convert_table` を呼び出し、
 変換テーブルを各スナップショットディレクトリ (`topologies/<nw>/<ss>/ns_convert_table.json`) に保存する。
 
-> **blueprint ファイル:** `usecases/refocus_topology/mddo-fw/original_asis_blueprint/topology.json`
+> **blueprint ファイル:** `usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`
 > を人が作成・配置することで conduit 処理の抽象化目標を定義する。
+> `21_generate_conduit.sh` の `-b` オプションで使用する blueprint snapshot を切り替えられる
+> (デフォルト: `original_asis_blueprint1`)。
 
 > **FW ノードアトリビュート JSON スキーマ:** 複数リポジトリをまたがる canonical definition は
 > [docs/firewall_node_attributes.md](docs/firewall_node_attributes.md) を参照。

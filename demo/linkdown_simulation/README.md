@@ -10,5 +10,5 @@
 
 ## Related info
 
-* [システムアーキテクチャ](../../doc/system_architecture.md)
+* [システムアーキテクチャ](../../docs/design_notes/system_architecture.md)
 * [物理トポロジデータの生成](../layer1_topology/doc/operation.md)

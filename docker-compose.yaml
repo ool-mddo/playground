@@ -215,8 +215,8 @@ services:
         source: ./repos/netoviz/static
         target: /netoviz/static
       - type: bind
-        source: ./repos/netoviz/store
-        target: /netoviz/store
+        source: ./repos/netoviz/stores
+        target: /netoviz/stores
 
   fish-tracer:
     image: ${FISH_TRACER_IMAGE}:${FISH_TRACER_IMAGE_TAG}

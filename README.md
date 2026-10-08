@@ -7,13 +7,13 @@
 
 ## Documents
 
-* [このプロジェクトの位置づけ](./doc/project_positioning.md)
-* [システムアーキテクチャ](./doc/system_architecture.md)
-* [ネットワークのモデル](./doc/network_model.md)
+* [このプロジェクトの位置づけ](./docs/design_notes/project_positioning.md)
+* [システムアーキテクチャ](./docs/design_notes/system_architecture.md)
+* [ネットワークのモデル](./docs/design_notes/network_model.md)
   * [中間出力・トポロジデータのサンプル](https://github.com/ool-mddo/mddo-bgp-queries)
-* [デモ環境セットアップ](./doc/provision.md)
-  * [開発用・開発者向け](./doc/development.md)
-* [デモ環境セットアップ(ワーカー分離)](./doc/provision_workers.md)
+* [デモ環境セットアップ](./docs/design_notes/provision.md)
+  * [開発用・開発者向け](./docs/design_notes/development.md)
+* [デモ環境セットアップ(ワーカー分離)](./docs/design_notes/provision_workers.md)
 
 ## Demonstration
 
@@ -100,3 +100,4 @@
 ### Related work
 [信州大学工学部電子情報システム工学科 モデル駆動ソフトウェア研究室 (小形研究室)](https://shinshu-mdse-lab.wordpress.com/)と情報交換を行っています。
 * [Ogata, K. et al. (2026). Integrating Model-Based Verification and Configuration-File Analysis for Network Configurations. In: Barolli, L., K. G. Seah, W., Woungang, I. (eds) Advanced Information Networking and Applications. AINA 2026. Lecture Notes on Data Engineering and Communications Technologies, vol 294. Springer, Cham.](https://doi.org/10.1007/978-3-032-23260-1_3)
+* [尾形健斗, 永井孝, 鈴木彦文, 小形真平, 橋浦弘明, 岡野浩三, 清水さや子, ネットワーク構成モデルに対する検証環境のクラウド化, 情報処理学会研究報告 インターネットと運用技術(IOT), Vol.2026-IOT-75, No.14, pp.1–8, 2026.](https://ipsj.ixsq.nii.ac.jp/records/2012042)

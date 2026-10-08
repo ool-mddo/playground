@@ -6,38 +6,73 @@
   tasks:
   - name: "get convert table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/config_params"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/layer3/config_params"
       method: "GET"
       body_format: json
     register: layer3_convert_table
+
+  - name: "get layer3 node table (reject segment node)"
+    uri:
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/layer3/nodes?exc_node_type=segment"
+      method: "GET"
+      body_format: json
+    register: layer3_nodes
+
+  - name: "collect firewall node names"
+    set_fact:
+      fw_node_names: "{{ layer3_nodes.json | json_query('nodes[?attribute.firewall].node') }}"
+
+  - name: "reset config file for firewall nodes"
+    copy:
+      content: ""
+      dest: "/app/{{ item }}.conf"
+    loop: "{{ fw_node_names }}"
 
   - name: generate config
     template:
       src: template/crpd/common/crpd.j2
       dest: "/app/{{ item.name }}.conf"
-    when: '"segment" not in item.type'
+    when: '"segment" not in item.type and item.name not in fw_node_names'
     loop: "{{ layer3_convert_table.json }}"
 
   - name: "get ospf node table (select ospf_proc node)"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/layer_type_ospf/interfaces?node_type=ospf_proc"
       method: "GET"
       body_format: json
     register: ospf_nodes
 
-  - name: "get layer3 node table (reject segment node)"
+  - name: "get layer3 interfaces table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/layer3/nodes?exc_node_type=segment"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/layer3/interfaces"
       method: "GET"
       body_format: json
-    register: layer3_nodes
+    register: layer3_interfaces
+
+  - name: "get original topology (to check bgp_proc layer existence)"
+    uri:
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology"
+      method: "GET"
+      body_format: json
+      return_content: true
+    register: original_topology
+
+  - name: "check bgp_proc layer existence"
+    set_fact:
+      has_bgp_proc: "{{ 'mddo-topology:bgp-proc-network' in original_topology.content }}"
 
   - name: "get bgp_proc node table"
     uri:
-      url: "http://api-proxy/topologies/{{ network_name }}/{{ snapshot_name }}/topology/bgp_proc/interfaces"
+      url: "http://api-proxy/topologies/{{ network_name }}/{{ original_snapshot_name }}/topology/bgp_proc/interfaces"
       method: "GET"
       body_format: json
     register: bgp_proc_nodes
+    when: has_bgp_proc
+
+  - name: "default bgp_proc node table when bgp_proc layer is absent"
+    set_fact:
+      bgp_proc_nodes: "{{ bgp_proc_nodes | combine({'json': {'nodes': []}}) }}"
+    when: not has_bgp_proc
 
   ## layer3 (static-route) ##
   ## crpd_routingoption_asn.j2       crpd_routingoption_routerid.j2  crpd_routingoption_static.j2
@@ -45,40 +80,48 @@
     template:
       src: template/crpd/layer3/crpd_routing-option-static.j2
       dest: "/app/{{ item.node }}_routing-options-static.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge static-route config
     shell: "cat /app/{{ item.node }}_routing-options-static.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-static.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate router-id config (bgp)
     template:
       src: template/crpd/bgp/crpd_routing-option-routerid.j2
       dest: "/app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge router-id config
     shell: "cat /app/{{ item.node }}_routing-options-routerid.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate router-id config (ospf)
     template:
       src: template/crpd/ospf/crpd_routing-option-routerid.j2
       dest: "/app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge router-id config
     shell: "cat /app/{{ item.node }}_routing-options-routerid.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-routerid.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: generate asn config
     template:
       src: template/crpd/bgp/crpd_routing-option-asn.j2
       dest: "/app/{{ item.node }}_routing-options-asn.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   - name: merge asn config
     shell: "cat /app/{{ item.node }}_routing-options-asn.conf >>  /app/{{ item.node }}.conf ; rm /app/{{ item.node }}_routing-options-asn.conf"
+    when: item.node not in fw_node_names
     loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   ## bgp_proc, bgp policy and peer ##
@@ -109,11 +152,46 @@
     template:
       src: template/crpd/ospf/crpd_ospf.j2
       dest: "/app/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
+    when: item.1.node not in fw_node_names
     loop: "{{ ospf_nodes.json | subelements('nodes', skip_missing=True) }}"
 
   - name: merge ospf config
     shell: "cat /app/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf >> /app/{{ item.1.node }}.conf ; rm /app/{{ item.1.node }}_ospf_area{{item.0.attribute.identifier}}.conf"
+    when: item.1.node not in fw_node_names
     loop: "{{ ospf_nodes.json | subelements('nodes', skip_missing=True) }}"
+
+  ## firewall (vsrx cluster) ##
+  ## generate one chassis-cluster config per FW pair (keyed by the primary node),
+  ## then merge the identical content into both cluster members' config files
+  ## (Junos chassis-cluster configs are shared; "apply-groups "${node}"" picks the
+  ## right node{0,1} stanza per member at load time).
+
+  - name: generate vsrx cluster config
+    template:
+      src: template/vsrx/vsrx_cluster.j2
+      dest: "/app/{{ item.node }}_firewall.conf"
+    vars:
+      l3_interfaces: "{{ layer3_interfaces.json }}"
+      ospf_areas: "{{ ospf_nodes.json }}"
+    when: item.attribute.firewall is defined and item.attribute.firewall.pair.primary.name == item.node
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: merge vsrx cluster config (primary)
+    shell: "cat /app/{{ item.node }}_firewall.conf >> /app/{{ item.node }}.conf"
+    when: item.attribute.firewall is defined and item.attribute.firewall.pair.primary.name == item.node
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: merge vsrx cluster config (secondary)
+    shell: "cat /app/{{ item.attribute.firewall.pair.primary.name }}_firewall.conf >> /app/{{ item.node }}.conf"
+    when: item.attribute.firewall is defined and item.attribute.firewall.pair.primary.name != item.node
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
+
+  - name: cleanup vsrx cluster config temp file
+    file:
+      path: "/app/{{ item.node }}_firewall.conf"
+      state: absent
+    when: item.attribute.firewall is defined and item.attribute.firewall.pair.primary.name == item.node
+    loop: "{{ layer3_nodes.json | json_query('nodes[*]') }}"
 
   ## bridge ##
 
@@ -144,7 +222,7 @@
     include_role:
       name: upload_config
     vars:
-      url: "http://api-proxy/configs/{{ network_name }}/{{ snapshot_name }}/"
+      url: "http://api-proxy/configs/{{ network_name }}/{{ emulated_snapshot_name }}/"
       filepath: "/app/{{ item.agent_name }}.conf"
     loop: "{{ layer3_convert_table.json }}"
 
@@ -161,16 +239,18 @@
         network_name: "{{ network_name }}"
         crpd_image: "{{ crpd_image }}"
         endpoint_image: "{{ endpoint_image }}"
-        snapshot_name: "{{ snapshot_name }}"
+        snapshot_name: "{{ emulated_snapshot_name }}"
         remote_address: "{{ remote_address }}"
+    when: with_clab | bool
 
   - name: generate iperf command parameter
     uri:
-      url: "http://api-proxy/usecases/{{ usecase_name }}/{{ network_name }}/{{ snapshot_name }}/iperf_commands?flow_data=event"
+      url: "http://api-proxy/usecases/{{ usecase_name }}/{{ network_name }}/{{ emulated_snapshot_name }}/iperf_commands?flow_data=event"
       method: GET
       body_format: json
     register:
       iperf_commands
+    when: with_clab | bool
 
 
   - name: "setup iperf"
@@ -185,6 +265,7 @@
         usecase_name: "{{ usecase_name }}"
         network_name: "{{ network_name }}"
         crpd_image: "{{ crpd_image }}"
-        snapshot_name: "{{ snapshot_name }}"
+        snapshot_name: "{{ emulated_snapshot_name }}"
         remote_address: "{{ remote_address }}"
         iperf_commands: "{{ iperf_commands.json }}"
+    when: with_clab | bool
