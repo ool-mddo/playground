@@ -2,7 +2,7 @@
 
 ## ステータス
 
-対応済み（model-conductor の conduit 生成とテンプレートを修正）。詳細は [investigation_conduit_ospf_config_failure.md](investigation_conduit_ospf_config_failure.md) を参照。
+対応済み（model-conductor の conduit 生成とテンプレートを修正）。詳細は [investigation_conduit_ospf_config_failure.md](../investigations/conduit_ospf_config_failure.md) を参照。
 
 ## 症状
 
@@ -14,7 +14,7 @@ ansible-eda 側の `controller.yaml` の "generate ospf config" タスクが以�
 offending line: "generate ospf config"
 ```
 
-該当テンプレート [demo/candidate_model_ops/playbooks/template/crpd/ospf/crpd_ospf.j2](../demo/candidate_model_ops/playbooks/template/crpd/ospf/crpd_ospf.j2) 呼び出し元の
+該当テンプレート [demo/candidate_model_ops/playbooks/template/crpd/ospf/crpd_ospf.j2](../../../demo/candidate_model_ops/playbooks/template/crpd/ospf/crpd_ospf.j2) 呼び出し元の
 `controller.yaml` の `generate ospf config` タスクは `item.0.attribute.identifier`（OSPF area の識別子、例: `0.0.0.20`）を参照するが、
 conduit スナップショットの topology データにはこの属性が存在しない。
 
@@ -39,7 +39,7 @@ netomox-exp / model-conductor 側の conduit topology 生成ロジック）が�
 
 ## 対応結果
 
-- 原因調査・修正内容は [investigation_conduit_ospf_config_failure.md](investigation_conduit_ospf_config_failure.md) を参照。
+- 原因調査・修正内容は [investigation_conduit_ospf_config_failure.md](../investigations/conduit_ospf_config_failure.md) を参照。
 - 修正後の確認（2026-10-03）: `21_generate_conduit.sh` の後、`22_up_conduit.sh -s <snapshot> -d` を
   `emulated_asis` / `emulated_asis_conduit1` / `emulated_asis_conduit2` で実行し、
   いずれも ansible-eda の playbook が `failed=0` で完走（"generate ospf config" 以降も成功）。

@@ -6,8 +6,8 @@
 
 `GET /topologies/:nw/:ss/topology/:layer/containerlab_topology` (netomox-exp)
 
-- API: [convert_layer_topology.rb](../repos/netomox-exp/lib/api/topologies/network/snapshot/topology/layer/convert_layer_topology.rb)
-- 変換: [containerlab_converter.rb](../repos/netomox-exp/lib/convert_topology/containerlab_converter.rb)
+- API: [convert_layer_topology.rb](../../../repos/netomox-exp/lib/api/topologies/network/snapshot/topology/layer/convert_layer_topology.rb)
+- 変換: [containerlab_converter.rb](../../../repos/netomox-exp/lib/convert_topology/containerlab_converter.rb)
 - 変更は netomox-exp 内で完結 (model-conductor / shell / playbook の変更は不要)
 
 ## 現状
@@ -50,29 +50,29 @@
   ```
 - リンク順: 通常 L3 リンク → ペアごとに eth2, eth3 の順 (既存の `link_data + pair_link_data` 構造を維持)。
 - eth2 = control (JunOS eth0 相当)、eth3 = fabric。ともに L3 TP に現れない固定割当て
-  ([CLAUDE.md](../repos/netomox-exp/CLAUDE.md) の eth 割当て表と一致)。
+  ([CLAUDE.md](../../../repos/netomox-exp/CLAUDE.md) の eth 割当て表と一致)。
 - ns_convert_table 側 (`TermPointNameTable`) は変更しない: eth2 は元々 L3 TP にもテーブルにも
   現れず、コンテナラボ側でのみ直接使用する (eth3 と同様)。
 
-## テスト変更 ([spec/convert_topology/containerlab_converter_spec.rb](../repos/netomox-exp/spec/convert_topology/containerlab_converter_spec.rb))
+## テスト変更 ([spec/convert_topology/containerlab_converter_spec.rb](../../../repos/netomox-exp/spec/convert_topology/containerlab_converter_spec.rb))
 
 - `'uses env_name option or "emulated" as the name'` — converter 単体の挙動は不変のため維持。
 - links 件数: `(l3_links.length / 2) + 2` → `+ 4` (2 HA ペア × eth2/eth3)。
 - fabric リンクテスト: eth2 / eth3 の両リンク (site-a, site-b) の存在を assert。
   カウント検証を `-fw-` かつ eth2/eth3 の 4 本に更新。
 - FW 属性なしの場合、eth2/eth3 いずれのペアリンクも出ないこと (既存テストを eth2 も対象に拡張)。
-- API spec ([spec/api/ns_convert_table_api_spec.rb](../repos/netomox-exp/spec/api/ns_convert_table_api_spec.rb)):
+- API spec ([spec/api/ns_convert_table_api_spec.rb](../../../repos/netomox-exp/spec/api/ns_convert_table_api_spec.rb)):
   `containerlab_topology` 応答の `name` が snapshot 名 (`env_name` 省略時) になること、
   `env_name` 指定時は上書きされることを追加。
 
 ## ドキュメント更新
 
-- [repos/netomox-exp/README.md](../repos/netomox-exp/README.md): `env_name` の説明を
+- [repos/netomox-exp/README.md](../../../repos/netomox-exp/README.md): `env_name` の説明を
   「default: snapshot 名」に。FW ペアの eth2/eth3 直結リンクの記述を追加。
-- [repos/netomox-exp/CLAUDE.md](../repos/netomox-exp/CLAUDE.md) 「FW HA ペアの fabric リンク自動生成」節:
+- [repos/netomox-exp/CLAUDE.md](../../../repos/netomox-exp/CLAUDE.md) 「FW HA ペアの fabric リンク自動生成」節:
   eth3 のみ → eth2 + eth3、関連メソッド名を更新。
-- [repos/netomox-exp/docs/test_plan.md](../repos/netomox-exp/docs/test_plan.md): fabric リンク記述 (L52, L158) を更新。
-- [repos/netomox-exp/docs/architecture.md](../repos/netomox-exp/docs/architecture.md): 必要なら eth 割当て記述を追記。
+- [repos/netomox-exp/docs/test_plan.md](../../../repos/netomox-exp/docs/test_plan.md): fabric リンク記述 (L52, L158) を更新。
+- [repos/netomox-exp/docs/architecture.md](../../../repos/netomox-exp/docs/architecture.md): 必要なら eth 割当て記述を追記。
 
 ## 影響範囲・確認事項
 

@@ -9,13 +9,13 @@
   - body 空 / `usecase` → `:ss` の `topology.json` からテーブルを生成して保存
   - `convert_table` → 渡されたテーブルをそのまま `:ss` に保存
 - model-conductor `POST /conduct/:nw/ns_convert/:src_ss/:dst_ss`
-  ([ns_convert.rb](../repos/model-conductor/lib/api/conduct/network/ns_convert.rb)):
+  ([ns_convert.rb](../../../repos/model-conductor/lib/api/conduct/network/ns_convert.rb)):
   1. `table_origin` 指定あり → `post_init_ns_convert_table(network, origin_ss, usecase)`
      (= origin snapshot ディレクトリにのみ保存)
   2. `table_origin` 指定なし → `exist_ns_convert_table!(network, src_ss)` で src 側の存在確認のみ
   3. `fetch_converted_topology_data(network, src_ss)` → `post_topology_data(network, dst_ss, ...)`
   - → dst (emulated) 側にはテーブルが存在しない (現状 `topologies/mddo-fw/` には `original_*` のみ)
-- shell: `convert_namespace()` ([util.sh:30-42](../demo/candidate_model_ops/scripts/util.sh))
+- shell: `convert_namespace()` ([util.sh:30-42](../../../demo/candidate_model_ops/scripts/util.sh))
   が `table_origin=$src_ss` を付けて上記 API を呼ぶ。
 
 ## 方針
@@ -29,7 +29,7 @@ netomox-exp 側の API は既に任意 snapshot への `convert_table` POST を�
 
 ## 変更箇所
 
-### 1. 必須: [repos/model-conductor/lib/api/conduct/network/ns_convert.rb](../repos/model-conductor/lib/api/conduct/network/ns_convert.rb)
+### 1. 必須: [repos/model-conductor/lib/api/conduct/network/ns_convert.rb](../../../repos/model-conductor/lib/api/conduct/network/ns_convert.rb)
 
 `post 'ns_convert/:src_ss/:dst_ss'` の末尾 (`post_topology_data` の後) に追加:
 
@@ -52,10 +52,10 @@ rest_api.post_update_ns_convert_table(network, dst_ss, ns_convert_table)
 - 順序: dst の topology POST の後に実行 (topology POST はディレクトリ作成のみで表は消さないが、
   意図を明確にするため後置)。
 - `fetch_ns_convert_table` は `symbolize_names: false` 済みで、`post_update_ns_convert_table` は
-  JSON でそのまま送れる (`DO NOT symbolize` 注意 ([CLAUDE.md](../repos/model-conductor/CLAUDE.md)) を遵守)。
+  JSON でそのまま送れる (`DO NOT symbolize` 注意 ([CLAUDE.md](../../../repos/model-conductor/CLAUDE.md)) を遵守)。
 - ログ: `logger.info "Copy ns convert table of network:#{network} from #{table_ss} to #{dst_ss}"` を追加。
 
-### 2. 任意: [repos/model-conductor/lib/api/mddo_rest_api_client.rb](../repos/model-conductor/lib/api/mddo_rest_api_client.rb)
+### 2. 任意: [repos/model-conductor/lib/api/mddo_rest_api_client.rb](../../../repos/model-conductor/lib/api/mddo_rest_api_client.rb)
 
 不要 (既存の `fetch_ns_convert_table` / `post_update_ns_convert_table` で足りる)。
 ヘルパーとして `copy_ns_convert_table(network, from_ss, to_ss)` を追加してもよい (好み)。
@@ -93,14 +93,14 @@ rest_api.post_update_ns_convert_table(network, dst_ss, ns_convert_table)
 
 | ファイル | 修正内容 |
 |---|---|
-| [CLAUDE.md](../CLAUDE.md) L80-81 | `convert_namespace` が表を **original/emulated 両 snapshot ディレクトリ** に保存する旨を追記 |
-| [docs/architecture.md](architecture.md) L227 | 「`original_*` 側にのみ存在」→ 両側に存在 (内容は同一)。ansible へは引き続き original 名を渡す理由の説明を修正 |
+| [CLAUDE.md](../../../CLAUDE.md) L80-81 | `convert_namespace` が表を **original/emulated 両 snapshot ディレクトリ** に保存する旨を追記 |
+| [docs/architecture.md](../../architecture.md) L227 | 「`original_*` 側にのみ存在」→ 両側に存在 (内容は同一)。ansible へは引き続き original 名を渡す理由の説明を修正 |
 | docs/architecture.md L288 | フロー6 入力の `topologies/mddo-fw/ns_convert_table.json` → `original_asis/ns_convert_table.json` に訂正し、出力に `emulated_asis*/ns_convert_table.json` を追加 |
 | docs/architecture.md L308 | 「一方向」注記に、表は両 snapshot に保存される旨を追記 |
-| [repos/model-conductor/CLAUDE.md](../repos/model-conductor/CLAUDE.md) L119-135 | `ns_convert.rb での使用` に dst への複製ステップを追記 |
-| [repos/netomox-exp/CLAUDE.md](../repos/netomox-exp/CLAUDE.md) L253-270 | 「変換方向の意味」表を実装に合わせて修正 (同一内容が両側に保存される) |
+| [repos/model-conductor/CLAUDE.md](../../../repos/model-conductor/CLAUDE.md) L119-135 | `ns_convert.rb での使用` に dst への複製ステップを追記 |
+| [repos/netomox-exp/CLAUDE.md](../../../repos/netomox-exp/CLAUDE.md) L253-270 | 「変換方向の意味」表を実装に合わせて修正 (同一内容が両側に保存される) |
 | repos/netomox-exp/docs/test_plan.md L76 | 「`original_*` / `emulated_*` の方向」の記述を実装に合わせて確認 (必要なら修正) |
-| [demo/candidate_model_ops/README_refocus_topology.md](../demo/candidate_model_ops/README_refocus_topology.md) | ns_convert / 生成物一覧に emulated 側の `ns_convert_table.json` を追記 (該当記述がある場合) |
+| [demo/candidate_model_ops/README_refocus_topology.md](../../../demo/candidate_model_ops/README_refocus_topology.md) | ns_convert / 生成物一覧に emulated 側の `ns_convert_table.json` を追記 (該当記述がある場合) |
 
 ## テスト / 検証
 

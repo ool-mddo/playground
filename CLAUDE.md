@@ -10,6 +10,9 @@
 
 詳細なアーキテクチャは [docs/architecture.md](docs/architecture.md) を参照。
 
+作業メモ (plan / 調査 / todo) は `docs/work/{plans,investigations,todo}/` に置く
+(ファイル名に `plan_` 等の接頭辞は付けない)。`docs/` 直下と `docs/design_notes/` は現行仕様・設計の記述用。
+
 ## 現在のターゲット
 
 - **デモ:** `demo/candidate_model_ops/`
