@@ -57,6 +57,8 @@ if ! echo "$netoviz_index" | jq -e --arg snap "$snapshot_name" 'any(.[]; .snapsh
   exit 1
 fi
 
+sudo cp /home/mddo/playground/topologies/mddo-fw/original_asis_conduit1/ns_convert_table.json /home/mddo/playground/topologies/mddo-fw/emulated_asis_conduit1
+sudo cp /home/mddo/playground/topologies/mddo-fw/original_asis_conduit2/ns_convert_table.json /home/mddo/playground/topologies/mddo-fw/emulated_asis_conduit2
 sudo cp /home/mddo/playground/topologies/mddo-fw/original_asis/ns_convert_table.json /home/mddo/playground/topologies/mddo-fw/emulated_asis
 
 # read worker addresses as array

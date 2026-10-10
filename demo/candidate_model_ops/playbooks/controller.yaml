@@ -248,6 +248,7 @@
       url: "http://api-proxy/usecases/{{ usecase_name }}/{{ network_name }}/{{ emulated_snapshot_name }}/iperf_commands?flow_data=event"
       method: GET
       body_format: json
+    ignore_errors: true
     register:
       iperf_commands
     when: with_clab | bool
