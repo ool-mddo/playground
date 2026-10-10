@@ -71,8 +71,8 @@ rest_api.post_update_ns_convert_table(network, dst_ss, ns_convert_table)
   `convert_namespace` (`table_origin` 付き) で表が再生成・複製されるため変更不要。
 - `03_candidate_env.sh` / `02_benchmark_env.sh` / `11_manual_steps.sh` / `21_generate_conduit.sh`:
   すべて `convert_namespace` 経由なので API 修正で自動的に両側保存になる。
-- ansible `controller.yaml` は `original_snapshot_name` 側の `config_params` 等を参照 (original 側表を使用)。
-  動作は変わらない。emulated 側に表ができたことで emulated 名でも API が 404 にならなくなるだけ。
+- ansible `controller.yaml` は `snapshot_name` (emulated snapshot) 側の `config_params` 等を参照する。
+  emulated 側にも表が保存されるため 404 にならない。
 - state-conductor `app.py:152` の旧 per-network URL は **今回は変更しない** (スコープ外)。
 
 ### 4. 確認・要判断事項

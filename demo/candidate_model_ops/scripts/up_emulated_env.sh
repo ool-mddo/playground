@@ -29,8 +29,7 @@ function up_emulated_env() {
           "usecase_name": "'"$USECASE_NAME"'",
           "worker_node_address": "'"$worker_node_address"'",
           "remote_address": "'"$CONTROLLER_ADDRESS"'",
-          "emulated_snapshot_name": "'"$emulated_topology"'",
-          "original_snapshot_name": "'"$original_topology"'",
+          "snapshot_name": "'"$emulated_topology"'",
           "with_clab": "'"$WITH_CLAB"'"
         }' \
     "http://${ANSIBLE_EDA}/endpoint"

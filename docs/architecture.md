@@ -204,9 +204,9 @@ playground/
 入力: original snapshot 名, worker ノードアドレス
       (emulated snapshot 名は reverse_snapshot_name() で内部的に導出)
 
-→ ansible-eda: POST /endpoint {message=controller, ..., original_snapshot_name, emulated_snapshot_name, with_clab}
+→ ansible-eda: POST /endpoint {message=controller, ..., snapshot_name (emulated), with_clab}
     → Ansible playbook controller.yaml:
-        → netomox-exp: L3/OSPF/bgp_proc 設定情報取得 (original snapshot 側の ns_convert_table を参照)
+        → netomox-exp: L3/OSPF/bgp_proc 設定情報取得 (emulated snapshot 側の ns_convert_table を参照)
         → Jinja2: cRPD/cEOS 設定ファイル生成 (BGP, OSPF, 静的ルート等)
         → netomox-exp: 生成した設定を emulated snapshot にアップロード
         → with_clab=true の場合のみ:
@@ -223,9 +223,9 @@ playground/
 ```
 
 > `with_clab` は `up_emulated_env` 呼び出し元 (`22_up_conduit.sh` の `-d` オプション等) から
-> ansible-eda・`controller.yaml` まで伝播する。`original_snapshot_name` / `emulated_snapshot_name`
-> は netomox-exp の per-snapshot `ns_convert_table.json`（`original_*` / `emulated_*` の両側に同一内容で存在）に対応するため
-> 明確に区別して渡す必要がある（ansible は引き続き original 側を参照する）。
+> ansible-eda・`controller.yaml` まで伝播する。`snapshot_name` は emulated snapshot 名
+> (`up_emulated_env` が `reverse_snapshot_name()` で導出して渡す)。
+> emulated 側にも `ns_convert_table.json` が保存されるため、`controller.yaml` は emulated 側を参照する。
 
 ### フロー 4: `determine_candidate.sh` — 候補評価
 
