@@ -224,8 +224,8 @@ playground/
 
 > `with_clab` は `up_emulated_env` 呼び出し元 (`22_up_conduit.sh` の `-d` オプション等) から
 > ansible-eda・`controller.yaml` まで伝播する。`original_snapshot_name` / `emulated_snapshot_name`
-> は netomox-exp の per-snapshot `ns_convert_table.json`（`original_*` 側にのみ存在）に対応するため
-> 明確に区別して渡す必要がある。
+> は netomox-exp の per-snapshot `ns_convert_table.json`（`original_*` / `emulated_*` の両側に同一内容で存在）に対応するため
+> 明確に区別して渡す必要がある（ansible は引き続き original 側を参照する）。
 
 ### フロー 4: `determine_candidate.sh` — 候補評価
 
@@ -285,7 +285,7 @@ playground/
 ```
 入力: topologies/mddo-fw/original_asis/topology.json
       topologies/mddo-fw/original_asis_conduit*/topology.json
-      topologies/mddo-fw/ns_convert_table.json (フロー 1 で生成済み)
+      topologies/mddo-fw/original_asis*/ns_convert_table.json (フロー 1 / 本フローで生成)
 
 → model-conductor: POST /conduct/mddo-fw/ns_convert/original_asis/emulated_asis
     → netomox-exp: ns_convert_table を参照してノード名・TP名を変換
@@ -300,12 +300,14 @@ playground/
     GET /topologies/index → jq でエントリ追記 → POST /topologies/index
 
 出力: topologies/mddo-fw/emulated_asis/topology.json
+      topologies/mddo-fw/emulated_asis*/ns_convert_table.json (original 側と同一内容のコピー)
       topologies/mddo-fw/emulated_asis_conduit*/topology.json
       netoviz index 更新 → GUI で emulated トポロジが選択可能に
 ```
 
 > 名前空間変換は **一方向** (`original_*` → `emulated_*`)。
-> `ns_convert_table.json` はフロー 1 の `generate_original_asis_topology` ステップで生成される。
+> `ns_convert_table.json` は `ns_convert` (`table_origin` 指定) で original 側に生成され、同一内容が emulated 側にも保存される
+> (作成時のみペア。snapshot 単体の DELETE は相手側に影響しない)。
 > ここまでは環境起動を含まない。生成された snapshot のうち1つをエミュレーション環境として
 > 起動するには、別スクリプト `22_up_conduit.sh -s <emulated_snapshot>` を実行する（フロー 3 参照）。
 
