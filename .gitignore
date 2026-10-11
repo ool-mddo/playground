@@ -23,3 +23,6 @@ demo/**/passwords
 demo/**/artifacts/**
 # license
 license.key
+
+# local development override (see docs/design_notes/development.md)
+docker-compose.override.yaml
