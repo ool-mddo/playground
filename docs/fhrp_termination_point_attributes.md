@@ -28,7 +28,9 @@ topologies/<nw>/<ss>/topology.json   ← layer3 TP の mddo-topology:l3-terminat
   └─ netoviz: マウスオーバー (tooltip) に表示
 ```
 
-fhrp から VRRP/HSRP の config を生成する処理は未実装 (次フェーズ)。
+emulated 環境の config 生成 (Junos VRRP) は playground の `controller.yaml` / `crpd.j2` が、netomox-exp の
+`GET .../layer3/config_params` の `if_list[].fhrp` を使って行う (計画: Phase H。`protocol: vrrp` のみ。HSRP は未対応)。
+実装済み・動作確認済み (`docs/work/plans/fhrp_termination_point_attributes.md` Phase H)。
 
 ---
 
@@ -152,6 +154,8 @@ FHRP:
 | `repos/batfish-wrapper` | **データの生成元** (CSV) | `src/bfwrapper/bf_query_thrower.py` (`BF_QUERY_DICT` の `vrrp_props`, `hsrp_props`) |
 | `netomox` | **スキーマのパーサー / ジェネレータ** (Topology / DSL) | `lib/netomox/{topology,dsl}/tp_attr/mddo_fhrp.rb` (`MddoFhrp`)、`mddo.rb` (`MddoL3TPAttribute#fhrp`)、`lib/netomox/convert_attr.rb` (`virtual_address` → `virtual_addresses`) |
 | `repos/netomox-exp` | CSV → topology の変換、保存・名前空間変換 | `lib/topology_builder/csv_mapper/fhrp_props_table.rb`、`lib/topology_builder/l3_data_builder.rb` (`l3_tp_attribute`) |
+| `repos/netomox-exp` (config 生成用 API) | `GET .../layer3/config_params` の `if_list[].fhrp` | `lib/api/topologies/network/snapshot/topology/layer/config_params.rb` |
+| `playground` (config 生成) | Junos の `vrrp-group` 出力 | `demo/candidate_model_ops/playbooks/template/crpd/common/crpd.j2` |
 | `repos/model-conductor` | conduit topology 生成 | `lib/generate_conduit_topology/fhrp_gateway_resolver.rb`、`layer3_conduit_builder.rb` (`build_router_conduit_tp`) |
 | `repos/netoviz` | tooltip 表示 | `server/graph/rfc-model/tp-attr/mddo-fhrp.js` (`MddoFhrp`)、`mddo.js` (`MddoL3TermPointAttribute#fhrp`)、`server/graph/common/diff-state.js` (`diffDataForArrayElement`) |
 
@@ -178,7 +182,13 @@ FHRP:
 
 ### 現時点の制約 (未対応)
 
-- `fhrp` から VRRP/HSRP の config を生成する処理 (エミュレーション環境へ反映する処理) は未実装。
+- config 生成 (エミュレーション環境への反映) は Junos の VRRP のみ。HSRP の config は生成しない。
+- **`accept-data` は常に出力する**。データモデルに `accept-data` が無いため。`accept-data` は Junos 固有で、Master が VIP 宛てパケット
+  (ping/SSH 等) を自分で受け取ることを許可する (既定では VIP の所有者でない Master は VIP 宛てを破棄する)。
+  元 config に `accept-data` が無いグループは再現できず (emulated 側は付く)、VIP 宛て疎通確認の結果が元と異なりうる。
+  デフォルトゲートウェイとしてのフォワーディングには影響しない。必要になれば `fhrp` に属性を追加する。
+- `authentication-key`、`track`、タイマ (`advertise-interval` 等) などの Junos VRRP オプションはモデルにもテンプレートにも無い。
+  `preempt` は `false` のときだけ `no-preempt` を出力する (Junos の既定は preempt 有効)。
 - mddo-mregnw (Arista の Vlan インタフェース、IPv4/IPv6 混在の VIP) は対象外。Batfish の `vrrpProperties` が IPv6 の VIP を返すかは未確認。
 - `(protocol, group-id)` の一意性、`protocol` の値 (`vrrp` / `hsrp`) の検証は行っていない。
 - conduit で、1 つの TP が「冗長を維持できるグループ」と「維持できないグループ」の両方を持つ場合は、維持できるグループの `fhrp` と元の IP を残し、

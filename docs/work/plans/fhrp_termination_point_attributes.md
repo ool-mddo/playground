@@ -1,6 +1,6 @@
 # Plan: VRRP/HSRP 情報を layer3 termination-point attribute (`fhrp`) として扱う
 
-(状態: Step 1 (batfish-wrapper)、Phase A (netomox)、Phase B (ローカル bind mount での取り込み)、Phase C (netomox-exp)、Phase D (名前空間変換での保持の確認)、Phase E (model-conductor の conduit 生成)、Phase F (netoviz の tooltip 表示)、Phase G (結合確認・canonical definition・netomox 公開・イメージ更新) は実施済み)
+(状態: Step 1 (batfish-wrapper)、Phase A (netomox)、Phase B (ローカル bind mount での取り込み)、Phase C (netomox-exp)、Phase D (名前空間変換での保持の確認)、Phase E (model-conductor の conduit 生成)、Phase F (netoviz の tooltip 表示)、Phase G (結合確認・canonical definition・netomox 公開・イメージ更新)、Phase H (Junos VRRP config 生成) は実施済み)
 
 ## 目的
 
@@ -114,7 +114,7 @@ CSV (`vrrp_props.csv` / `hsrp_props.csv`) → layer3 TP の `fhrp` 配列へ変�
 
 - **今回のゴール:** configs → `emulated_asis` / `emulated_asis_conduit*` トポロジの layer3 TP に `fhrp` 属性が載り、
   生成・変換・保存の各段階で失われないところまで。
-- **スコープ外:** `fhrp` 属性から VRRP/HSRP の config を生成する処理 (最終ゴールだが次フェーズ)。
+- **スコープ外 (Phase A〜G):** `fhrp` 属性から VRRP/HSRP の config を生成する処理 (次フェーズ = Phase H で Junos VRRP のみ対応)。
 - 各 Phase は単独でテスト・動作確認ができる単位に分け、前の Phase の確認が済んでから次に進む。
 - 対象リポジトリは Phase ごとに異なる (netomox は playground の外: `/home/hagiwara/ool-mddo/netomox`)。
 
@@ -156,6 +156,7 @@ CSV (`vrrp_props.csv` / `hsrp_props.csv`) → layer3 TP の `fhrp` 配列へ変�
 | E | model-conductor | splice / conduit 生成で `fhrp` を保持 | `original_asis` / `*_conduit*` の topology.json |
 | F | netoviz | layer3 TP のマウスオーバー (tooltip) に `fhrp` を表示 | netoviz の vitest + ブラウザでの表示確認 |
 | G | playground | 結合確認とドキュメント | `21_generate_conduit.sh` 一式 |
+| H | netomox-exp / playground | `fhrp` から Junos VRRP の config を生成 (`22_up_conduit.sh`) | `emulated_asis` の cr config と `original_asis` の比較 |
 
 ### Phase A: netomox で fhrp attribute を扱えるようにする
 
@@ -305,6 +306,76 @@ Phase A の完了条件: netomox 単体で `fhrp` 付き topology.json の読み
 3. コミット順序 (複数リポジトリ): netomox → (gem 公開) → netomox-exp / model-conductor (Gemfile.lock 含む) →
    batfish-wrapper (Step 1) → netoviz → playground (submodule 参照更新 + docs)。
 
+### Phase H: emulated 環境の config 生成 (Junos VRRP テンプレート)
+
+(変更対象は netomox-exp と playground。model-conductor は変更なし。)
+
+#### ゴール
+
+`22_up_conduit.sh -s emulated_asis` (`-d` 可) を実行したとき、`configs/mddo-fw/emulated_asis/configs/site-*-cr-*.conf` に
+`configs/mddo-fw/original_asis/configs/site-*-cr-*.config` と同等の `vrrp-group` 設定が出力されること。
+(interface 名は emulated 側の `ethN`、ほかの設定の書式差は対象外。同等 = group-id / virtual-address / priority / accept-data が一致)
+
+#### 現状
+
+- config は `demo/candidate_model_ops/playbooks/controller.yaml` が生成する。`template/crpd/common/crpd.j2` が interface ごとに
+  `address <ip>;` のみを出力。
+- 入力は netomox-exp `GET /topologies/:nw/:ss/topology/layer3/config_params` (`if_list[]` = `name`, `agent_name`, `ipv4`,
+  `description`, `original_if`)。`fhrp` は応答に含まれない。
+- 比較対象 (original) は `address 192.168.101.2/24 { vrrp-group 1 { virtual-address ...; priority 150; accept-data; } }`。
+
+#### 方針と決定事項
+
+| # | 決定 |
+|---|---|
+| H1 | **`accept-data` は常に出力する** (データモデルには属性を追加しない)。元 config の全グループが `accept-data` 付きのため同等になる。 |
+| H2 | netomox-exp `config_params` API の `if_list[]` に `fhrp` を追加 (TP の `fhrp` をそのまま。無ければ空配列)。 |
+| H3 | `crpd.j2` は `fhrp` が空なら現行出力のまま。あれば `address <ip> { vrrp-group <id> { ... } }` 形式で出力。`protocol == 'vrrp'` のみ対象。HSRP は Junos に無いため出力しない。 |
+| H4 | `preempt` は Junos の既定が有効なので、`preempt == false` のときだけ `no-preempt;` を出力。 |
+| H5 | 変更は netomox-exp `v1.20.0-dev` に積む。イメージ再ビルドまでは bind mount でライブ確認する。 |
+
+##### accept-data の仕様・制約 (ドキュメントに残す)
+
+- `accept-data` は Junos 固有の設定で、Master が VIP 宛てパケット (ping/SSH 等) を自分で受け取ることを許可する。
+  VRRP の既定 (RFC 3768/5798) では、VIP の所有者でない Master は VIP 宛て IP パケットを破棄する (ARP には応答する)。
+- 現在のデータモデル (`fhrp`) は `accept-data` を持たない。生成する config では常に `accept-data` を付ける。
+- したがって「元 config に `accept-data` が無いグループ」は再現できない (emulated 側は付いた状態になる)。
+  フォワーディング動作 (デフォルトゲートウェイとしての利用) には影響しないが、VIP 宛て疎通確認の結果が元と異なりうる。
+- 将来必要になれば、`fhrp` に属性を追加する (batfish が値を返すか要確認。netomox / netomox-exp / netoviz / playground の canonical doc に波及)。
+- 同様に、`authentication-key`、`track` 等の Junos の VRRP オプション、`advertise-interval` 等のタイマはモデルにも
+  テンプレートにも無い (出力しない)。
+
+#### 変更内容
+
+1. netomox-exp: `lib/api/topologies/network/snapshot/topology/layer/config_params.rb` に `fhrp` を追加。
+   `tp.attribute.fhrp` は netomox の `MddoFhrp` オブジェクトなので、`to_data` 相当で kebab-case のハッシュにして返す
+   (テンプレートからは `item['group-id']` 等で参照)。
+2. playground: `demo/candidate_model_ops/playbooks/template/crpd/common/crpd.j2` の interface ブロックを上記 H3/H4 に変更。
+3. テスト:
+   - netomox-exp: `config_params` API の spec (fhrp あり/なし。fixture `mddo-fw-fhrp`)。
+   - テンプレート: 追加する jinja2 テンプレートのレンダリング確認 (ansible の `template` を使った最小 playbook で、fhrp あり/なし/複数グループ/preempt=false)。
+4. ドキュメント:
+   - playground `docs/fhrp_termination_point_attributes.md`: データフローに config 生成を追加、「現時点の制約」を更新 (accept-data 含む)。
+   - playground `docs/work/plans/fhrp_termination_point_attributes.md`: Phase H の結果。
+   - netomox-exp `CLAUDE.md` / `docs/architecture.md`: `config_params` の応答に `fhrp` を追加した旨。
+   - playground `docs/architecture.md`: config 生成の説明。
+
+#### 動作確認
+
+1. `21_generate_conduit.sh` → `22_up_conduit.sh -s emulated_asis -d`。
+2. `emulated_asis/configs/site-{a,b,c}-cr-{1,2}.conf` の `vrrp-group` の group-id / virtual-address / priority / accept-data が
+   original の cr config (6 ファイル × 2 グループ) と一致すること (interface 名のみ eth 名)。
+3. 回帰: fw / br / segment、および `emulated_asis_conduit*` の config に差分が出ないこと (conduit に fhrp が無いため)。
+4. 古い queries (vrrp/hsrp CSV 無し) でも config 生成が通ること。
+
+#### 実装ステップ
+
+1. 本計画 (済) と canonical doc の更新。
+2. netomox-exp: `config_params` + spec。
+3. `crpd.j2` 変更 + テンプレート確認。
+4. 実環境確認 (bind mount)。
+5. ドキュメント更新・コミット (netomox-exp と playground)。
+
 ## 決定済み事項
 
 - 属性クラス名は `MddoFhrp` (netomox の Topology/DSL 両層、netoviz のサブ属性クラスも同名の方針)。
@@ -352,3 +423,14 @@ Phase A の完了条件: netomox 単体で `fhrp` 付き topology.json の読み
   pull + `up -d`、`21_generate_conduit.sh` / `22_up_conduit.sh -d` が正常終了し、結果 (queries、topology.json、clab) は以前と同一。netoviz のツールチップにも `FHRP:` が表示される。
 - playground の `.env` は 4 つのイメージ (netomox-exp / model-conductor / batfish-wrapper / netoviz) の新しいタグを参照する。
 
+#### Phase H の結果 (2026-10-11。公開イメージ netomox-exp `v1.20.0-dev` + netomox 0.14.0、netomox-exp の `lib` と playbook は bind mount)
+
+- 実装: `config_params.rb` に `if_list[].fhrp` を追加、`crpd.j2` に `vrrp-group` 出力を追加 (`protocol == 'vrrp'` のみ。`accept-data` は常に、`preempt == false` のとき `no-preempt`)。
+- `21_generate_conduit.sh` → `22_up_conduit.sh -s emulated_asis -d`: 正常終了 (ansible PLAY RECAP failed=0)。
+  `emulated_asis/configs/site-{a,b,c}-cr-{1,2}.conf` の 6 ファイル × 2 グループの `vrrp-group` (group-id / virtual-address / priority / accept-data) が
+  `original_asis/configs/*.config` と一致 (出力順が異なるのは a-cr-2 / c-cr-1 の interface の並びのみで、ソートすると一致)。
+- 回帰: 変更前のコピーとの差分は cr の 6 ファイルの `vrrp-group` 追加のみ。fw / br / segment の config は変化なし。
+  `emulated_asis_conduit1` (`-d`) の config は変更前と同一。
+- テスト: netomox-exp 170 examples, 0 failures (新規 `spec/api/config_params_fhrp_spec.rb` 2 件)、rubocop 違反なし。
+  (host の rspec は、`netomox` を `path:` 指定した一時 Gemfile をリポジトリ外に置いて `BUNDLE_GEMFILE` で実行。コンテナには rspec が入っていない)
+- 未確認: containerlab を使う実機起動 (crpd が `vrrp-group` を受理するか。`-d` は config 生成のみ)、HSRP、`accept-data` が無い元 config との比較。
