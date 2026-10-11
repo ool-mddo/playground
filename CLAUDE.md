@@ -93,6 +93,9 @@ source demo_vars
 > **FW ノードアトリビュート JSON スキーマ:** 複数リポジトリをまたがる canonical definition は
 > [docs/firewall_node_attributes.md](docs/firewall_node_attributes.md) を参照。
 
+> **FHRP (VRRP/HSRP) TP アトリビュート JSON スキーマ:** layer3 TP の `fhrp` アトリビュートの canonical definition は
+> [docs/fhrp_termination_point_attributes.md](docs/fhrp_termination_point_attributes.md) を参照。
+
 ## ライブ開発
 
 `repos/{service}/` を編集するとコンテナ内に即時反映される (Docker bind mount)。

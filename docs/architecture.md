@@ -262,7 +262,11 @@ playground/
        土管化変換ルール:
        - Firewall ノード (top-level flag に "firewall"): 元ノードをそのまま保持
        - Router ノード (blueprint でグループ化): 代表ノード 1 つに集約。
-         外部 TP のみ eth1, eth2, ... に rename。並列リンクは 1 本に集約
+         外部 TP のみ eth1, eth2, ... に rename。並列リンクは 1 本に集約。
+         ただし `fhrp` (VRRP/HSRP) を持つ unlinked TP (エッジ) は、外部 TP に続けて残す:
+         冗長を維持できる (メンバーが 2 つ以上の別 conduit ノードにいる) ときは `fhrp` を引き継ぎ、
+         維持できない (畳んだ / パートナーが blueprint に無い) ときは `fhrp` を付けず virtual-address を IP にする
+         (エッジセグメントのエンドポイントのデフォルトゲートウェイを変えない)
        - Segment ノード: グループ間をまたぐ外部セグメントのみ自動生成
        - blueprint に定義されていないノード: conduit topology から省略 (Segment の該当 endpoint も除外。
          残りが 2 グループ未満になった Segment は生成しない)
@@ -407,6 +411,30 @@ Prometheus から scrape したトラフィックカウンタを集約。`diff2c
 - blueprint は original snapshot の全ノードとの対応を定義するものではなく、必要な一部分のみを定義する。
   blueprint に定義されていないノードは conduit topology から単純に省略される (エラーにはならない)
 
+### FHRP (VRRP/HSRP) TP アトリビュート (`fhrp` セクション)
+
+L3 トポロジの TP (`mddo-topology:l3-termination-point-attributes`) に付与される拡張アトリビュート。
+Batfish の `vrrpProperties` / `hsrpProperties` の結果 (queries の `vrrp_props.csv` / `hsrp_props.csv`) から
+netomox-exp が topology.json に追加する。TP に FHRP が無い場合は `fhrp` キー自体を出力しない。
+
+**完全なスキーマ定義**: [docs/fhrp_termination_point_attributes.md](fhrp_termination_point_attributes.md)
+
+```json
+"mddo-topology:l3-termination-point-attributes": {
+  "ip-address": ["192.168.101.2/24"],
+  "fhrp": [
+    { "protocol": "vrrp", "group-id": 1, "virtual-address": ["192.168.101.1"], "priority": 150,
+      "preempt": true, "source-address": "192.168.101.2/24", "active": true }
+  ]
+}
+```
+
+- netomox-exp: `FhrpPropertiesTable` (`vrrp_props.csv` / `hsrp_props.csv`。無ければ空扱い) → `L3DataBuilder` が layer3 TP に付与。namespace 変換では保持される。
+- model-conductor (conduit): Firewall グループは保持。Router グループは、`fhrp` を持つ unlinked TP を残し、冗長を維持できれば `fhrp` を引き継ぎ、
+  維持できなければ virtual-address を IP にして `fhrp` は付けない (エッジのエンドポイントのデフォルトゲートウェイを変えない)。
+- netoviz: layer3 TP の tooltip に `FHRP:` を表示。
+- netomox v0.14.0 以降が必要 (`MddoL3TPAttribute#fhrp`)。
+
 ### FW ノードアトリビュート (`firewall` セクション)
 
 L3 トポロジの FW ノードに付与される拡張アトリビュート。
@@ -432,7 +460,7 @@ firewall-policy-parser が生成し、netomox-exp が topology.json に保存す
 
 - **`flag: ["firewall"]`**: netomox-exp / model-conductor での FW ノード識別に使用
 - **`firewall` アトリビュート**: FW 設定情報本体。conduit topology 生成時は FW ノードをそのまま保持する
-- 複数リポジトリ間のスキーマ整合性は [docs/firewall_node_attributes.md](firewall_node_attributes.md) で管理
+- 複数リポジトリ間のスキーマ整合性は [docs/firewall_node_attributes.md](firewall_node_attributes.md) (FW) / [docs/fhrp_termination_point_attributes.md](fhrp_termination_point_attributes.md) (FHRP) で管理
 
 ### `demo_vars` (環境変数定義)
 
