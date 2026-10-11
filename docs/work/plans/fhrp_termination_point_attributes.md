@@ -347,5 +347,8 @@ Phase A の完了条件: netomox 単体で `fhrp` 付き topology.json の読み
   (ローカル netomox の bind mount (`docker-compose.override.yaml`) は使わない)。コンテナ内の netomox は 0.14.0 (`MddoFhrp` あり)。
   `21_generate_conduit.sh` / `22_up_conduit.sh -s emulated_asis -d` / `-s emulated_asis_conduit1 -d` が正常終了し、結果 (topology.json、clab) はローカル確認時と同一。
   netoviz のツールチップ (`emulated_asis` の `site-b-cr-2[eth3.0]`) に `FHRP:` が表示される。
-- 未公開: batfish-wrapper (`v1.2.0-dev`) と netoviz (`v0.10.0-dev`) は未 push (image のタグも未変更。playground では bind mount で動作)。
+- batfish-wrapper (`v1.2.0-dev`、`6561077`) / netoviz (`v0.10.0-dev`、`cac200f`) も push し、CI 成功。イメージ: `ghcr.io/ool-mddo/batfish-wrapper:v1.2.0-dev`、
+  `ghcr.io/ool-mddo/netoviz:v0.10.0-dev` (どちらもイメージ内に変更が入っていることを確認)。`.env` の `BATFISH_WRAPPER_IMAGE_TAG` / `NETOVIZ_IMAGE_TAG` をこれらに変更して
+  pull + `up -d`、`21_generate_conduit.sh` / `22_up_conduit.sh -d` が正常終了し、結果 (queries、topology.json、clab) は以前と同一。netoviz のツールチップにも `FHRP:` が表示される。
+- playground の `.env` は 4 つのイメージ (netomox-exp / model-conductor / batfish-wrapper / netoviz) の新しいタグを参照する。
 
