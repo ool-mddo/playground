@@ -8,6 +8,72 @@
         },
         "node": [
           {
+            "node-id": "site-a-cr",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-cr-1"
+              },
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-cr-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-b-cr",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-cr-1"
+              },
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-cr-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-c-cr",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-c-cr-1"
+              },
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-c-cr-2"
+              }
+            ]
+          },
+          {
             "node-id": "site-a-fw",
             "ietf-network-topology:termination-point": [
               {
@@ -178,6 +244,72 @@
         ],
         "ietf-network-topology:link": [
           {
+            "link-id": "site-a-cr,eth1,site-a-fw,eth2",
+            "source": {
+              "source-node": "site-a-cr",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-a-fw",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-a-fw,eth2,site-a-cr,eth1",
+            "source": {
+              "source-node": "site-a-fw",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-a-cr",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-b-cr,eth1,site-b-fw,eth2",
+            "source": {
+              "source-node": "site-b-cr",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-b-fw",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-b-fw,eth2,site-b-cr,eth1",
+            "source": {
+              "source-node": "site-b-fw",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-b-cr",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-c-cr,eth1,site-c-fw,eth2",
+            "source": {
+              "source-node": "site-c-cr",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-c-fw",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-c-fw,eth2,site-c-cr,eth1",
+            "source": {
+              "source-node": "site-c-fw",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-c-cr",
+              "dest-tp": "eth1"
+            }
+          },
+          {
             "link-id": "site-a-fw,eth1,site-a-wan-zone-rt,eth3",
             "source": {
               "source-node": "site-a-fw",
@@ -318,6 +450,60 @@
         },
         "node": [
           {
+            "node-id": "site-a-cr",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-a-cr"
+              }
+            ]
+          },
+          {
+            "node-id": "site-b-cr",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-b-cr"
+              }
+            ]
+          },
+          {
+            "node-id": "site-c-cr",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-c-cr"
+              }
+            ]
+          },
+          {
             "node-id": "site-a-fw",
             "ietf-network-topology:termination-point": [
               {
@@ -419,6 +605,72 @@
           }
         ],
         "ietf-network-topology:link": [
+          {
+            "link-id": "site-a-cr,eth1,site-a-fw,eth2",
+            "source": {
+              "source-node": "site-a-cr",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-a-fw",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-a-fw,eth2,site-a-cr,eth1",
+            "source": {
+              "source-node": "site-a-fw",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-a-cr",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-b-cr,eth1,site-b-fw,eth2",
+            "source": {
+              "source-node": "site-b-cr",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-b-fw",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-b-fw,eth2,site-b-cr,eth1",
+            "source": {
+              "source-node": "site-b-fw",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-b-cr",
+              "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-c-cr,eth1,site-c-fw,eth2",
+            "source": {
+              "source-node": "site-c-cr",
+              "source-tp": "eth1"
+            },
+            "destination": {
+              "dest-node": "site-c-fw",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-c-fw,eth2,site-c-cr,eth1",
+            "source": {
+              "source-node": "site-c-fw",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-c-cr",
+              "dest-tp": "eth1"
+            }
+          },
           {
             "link-id": "site-a-fw,eth1,wan-zone-rt,eth1",
             "source": {
