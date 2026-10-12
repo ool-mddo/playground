@@ -89,6 +89,19 @@ bash 22_up_conduit.sh -s emulated_asis -d
   `21_generate_conduit.sh` を再実行してデータを作り直す必要がある
   （`21_generate_conduit.sh` の先頭で該当ネットワークの全 snapshot が一度クリアされる）。
 
+### conduit topology の interface description
+
+conduit topology (layer3) の TP description は、生成した link 構造から再生成される
+(`TpDescriptionResolver`)。元トポロジの description は引き継がない。
+
+- 2 endpoint の segment を介した機器 TP: segment を跳ばして `to_<対向ノード>_<対向TP>`
+- 3 endpoint 以上の segment の機器 TP / link を持たない TP: 空
+- segment TP: `to_<接続先ノード>_<TP>`
+- FW cluster pair (`firewall.pair` の primary/secondary): 同名 TP の description は pair で同一にする。link で確定した側の description を、link のない側 (HA 対向ポート) にコピーする
+  (original 側: `TpDescriptionResolver`、emulated 側: netomox-exp `NamespaceConverter#sync_firewall_pair_description`)
+- `emulated_asis*` は namespace 変換で link から再生成される (netomox-exp `update_tp_description`)。
+  2 endpoint の segment は跳ばして対向機器 (`to_<対向ノード>_<対向TP>`、l1_agent 名)、3 endpoint 以上の segment は segment 自身 (`to_Seg-..._EthernetN`)
+
 ## 関連ドキュメント
 
 - [usecases/refocus_topology/README.md](../../usecases/refocus_topology/README.md) — blueprint データフォーマット・変換ツールの詳細
