@@ -53,6 +53,17 @@ curl -s "http://${API_PROXY}/topologies/index" | jq .
 
 netoviz UI（`http://localhost:3000`）からも見える。
 
+conduit topology (`original_asis_conduit*` / `emulated_asis_conduit*`) の生成元 blueprint は、
+topology の `ietf-network:networks` 直下 `mddo-topology:networks-attributes` の `flag` に
+`blueprint=<blueprint snapshot 名>` として記録される (blueprint が違っても snapshot 名は同じになるため)。
+スキーマは [docs/networks_attributes.md](../../docs/networks_attributes.md) を参照。
+
+```sh
+curl -s "http://${API_PROXY}/topologies/${NETWORK_NAME}/emulated_asis_conduit1/topology" \
+  | jq '."ietf-network:networks"."mddo-topology:networks-attributes"'
+# => { "flag": ["blueprint=original_asis_blueprint1"] }
+```
+
 ### 2. emulated 環境の起動 (`22_up_conduit.sh`)
 
 ```sh

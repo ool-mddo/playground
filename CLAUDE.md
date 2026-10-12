@@ -96,6 +96,10 @@ source demo_vars
 > **FHRP (VRRP/HSRP) TP アトリビュート JSON スキーマ:** layer3 TP の `fhrp` アトリビュートの canonical definition は
 > [docs/fhrp_termination_point_attributes.md](docs/fhrp_termination_point_attributes.md) を参照。
 
+> **networks アトリビュート (conduit の生成元 blueprint) JSON スキーマ:** `ietf-network:networks` 直下の
+> `mddo-topology:networks-attributes` (`flag: ["blueprint=<snapshot>"]`) の canonical definition は
+> [docs/networks_attributes.md](docs/networks_attributes.md) を参照。
+
 ## ライブ開発
 
 `repos/{service}/` を編集するとコンテナ内に即時反映される (Docker bind mount)。

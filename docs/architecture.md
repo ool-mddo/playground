@@ -460,6 +460,7 @@ firewall-policy-parser が生成し、netomox-exp が topology.json に保存す
 
 - **`flag: ["firewall"]`**: netomox-exp / model-conductor での FW ノード識別に使用
 - **`firewall` アトリビュート**: FW 設定情報本体。conduit topology 生成時は FW ノードをそのまま保持する
+- conduit topology の生成元 blueprint は `mddo-topology:networks-attributes` の flag に記録される ([docs/networks_attributes.md](networks_attributes.md))
 - 複数リポジトリ間のスキーマ整合性は [docs/firewall_node_attributes.md](firewall_node_attributes.md) (FW) / [docs/fhrp_termination_point_attributes.md](fhrp_termination_point_attributes.md) (FHRP) で管理
 
 ### `demo_vars` (環境変数定義)
