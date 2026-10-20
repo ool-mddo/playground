@@ -93,7 +93,18 @@ source demo_vars
 > **FW ノードアトリビュート JSON スキーマ:** 複数リポジトリをまたがる canonical definition は
 > [docs/firewall_node_attributes.md](docs/firewall_node_attributes.md) を参照。
 
+> **FHRP (VRRP/HSRP) TP アトリビュート JSON スキーマ:** layer3 TP の `fhrp` アトリビュートの canonical definition は
+> [docs/fhrp_termination_point_attributes.md](docs/fhrp_termination_point_attributes.md) を参照。
+
+> **networks アトリビュート (conduit の生成元 blueprint) JSON スキーマ:** `ietf-network:networks` 直下の
+> `mddo-topology:networks-attributes` (`flag: ["blueprint=<snapshot>"]`) の canonical definition は
+> [docs/networks_attributes.md](docs/networks_attributes.md) を参照。
+
 ## ライブ開発
 
 `repos/{service}/` を編集するとコンテナ内に即時反映される (Docker bind mount)。
 イメージの再ビルド・再起動は不要。
+
+**netomox (gem) の修正を伴う場合**は、`docker-compose.override.yaml` でローカルの netomox を netomox-exp / model-conductor のコンテナに
+bind mount して開発する (gem の中身は通常の bind mount の対象外)。手順・注意点・公開までの流れは
+[docs/design_notes/development.md](docs/design_notes/development.md#netomox-gem-の修正を伴う開発) を参照。

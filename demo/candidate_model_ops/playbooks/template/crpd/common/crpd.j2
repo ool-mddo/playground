@@ -29,7 +29,25 @@ interfaces {
         unit 0 {
             mtu 1500
             family inet {
+{% set vrrp_groups = interface.fhrp | default([]) | selectattr('protocol', 'equalto', 'vrrp') | list %}
+{% if vrrp_groups | length > 0 %}
+                address {{ interface.ipv4 }} {
+{% for group in vrrp_groups %}
+                    vrrp-group {{ group['group-id'] }} {
+{% for vip in group['virtual-address'] %}
+                        virtual-address {{ vip }};
+{% endfor %}
+                        priority {{ group['priority'] }};
+{% if not group['preempt'] %}
+                        no-preempt;
+{% endif %}
+                        accept-data;
+                    }
+{% endfor %}
+                }
+{% else %}
                 address {{ interface.ipv4 }};
+{% endif %}
             }
         }
     }
