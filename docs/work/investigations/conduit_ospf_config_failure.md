@@ -1,7 +1,7 @@
 # 調査: conduit topology (emulated_asis_conduit{1,2}) のコンフィグ生成失敗
 
 **ステータス: 実施済み**（A〜D の修正を適用し、conduit1/2 と emulated_asis で `22_up_conduit.sh -d` によるコンフィグ生成が完走することを確認。ABR 挙動の実機確認とテスト追加は未実施）
-関連: [docs/todo_conduit_ospf_area_attributes.md](todo_conduit_ospf_area_attributes.md)（先行メモ。本調査で裏取り・拡張）
+関連: [docs/work/todo/conduit_ospf_area_attributes.md](../todo/conduit_ospf_area_attributes.md)（先行メモ。本調査で裏取り・拡張）
 
 ## 結論（要約）
 
@@ -69,4 +69,4 @@ ospf の Seg ノード TP 集合 == layer3 の同名 Seg TP 集合（conduit1/2 
    - FW cluster conf の ospf area が正しい
 5. 実起動(可能なら)で OSPF 隣接確立と、conduit2 で area10↔area20 の経路伝搬（ABR 挙動）を確認。
 6. `emulated_asis`（非 conduit）に回帰が無いこと（template 変更の影響確認）。
-7. `docs/todo_conduit_ospf_area_attributes.md` のステータス更新。
+7. `docs/work/todo/conduit_ospf_area_attributes.md` のステータス更新。

@@ -92,5 +92,5 @@ bash 22_up_conduit.sh -s emulated_asis -d
 ## 関連ドキュメント
 
 - [usecases/refocus_topology/README.md](../../usecases/refocus_topology/README.md) — blueprint データフォーマット・変換ツールの詳細
-- [docs/todo_conduit_ospf_area_attributes.md](../../docs/todo_conduit_ospf_area_attributes.md) — conduit topology の OSPF area 属性欠落の経緯と対応（対応済み）
+- [docs/work/todo/conduit_ospf_area_attributes.md](../../docs/work/todo/conduit_ospf_area_attributes.md) — conduit topology の OSPF area 属性欠落の経緯と対応（対応済み）
 - [../../CLAUDE.md](../../CLAUDE.md) — プロジェクト全体のコマンド一覧
