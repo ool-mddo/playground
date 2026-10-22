@@ -10,6 +10,9 @@ blueprint に基づいて抽象化（土管化 / conduit 化）し、それぞ�
 - `demo_vars` で `NETWORK_NAME=mddo-fw`, `USECASE_NAME=refocus_topology` になっていること
 - blueprint データ (`usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`) が
   配置されていること。フォーマット・作り方は [usecases/refocus_topology/README.md](../../usecases/refocus_topology/README.md) を参照
+  - blueprint は endpoint (`site-*-host-1/2`) を含む。conduit topology でも host は元と同じ IP / default route / TP 名 (`eth0`) で残り、
+    gateway (`site-*-cr`) の host 向け TP は 1 つに畳まれて virtual-address (例 `192.168.100.1/24`) になる
+    (host の default gateway は変わらない)
 
 ## スクリプト構成
 

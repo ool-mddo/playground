@@ -406,7 +406,8 @@ Prometheus から scrape したトラフィックカウンタを集約。`diff2c
 `21_generate_conduit.sh -b <blueprint_snapshot>` で使用する blueprint を切り替えられる
 (デフォルト: `original_asis_blueprint1`)。
 現在、`original_asis_blueprint1`（site-a/site-b のみ）と `original_asis_blueprint2`（site-c を含む）
-の2つを用意している。
+の2つを用意している。どちらも対象サイトの endpoint (`site-*-host-1/2`) を含み、cr-1/cr-2 は `site-*-cr` に集約する
+(endpoint を収容する L2 スイッチは layer3 のノードではないので blueprint には現れない)。
 
 - `GET /usecases/:uc/:nw/:ss/topology` で netomox-exp から取得される
 - このファイルに含まれる `ietf-network:networks.network` 配列の要素数 = 生成される conduit スナップショットの数
@@ -435,6 +436,8 @@ netomox-exp が topology.json に追加する。TP に FHRP が無い場合は `
 - netomox-exp: `FhrpPropertiesTable` (`vrrp_props.csv` / `hsrp_props.csv`。無ければ空扱い) → `L3DataBuilder` が layer3 TP に付与。namespace 変換では保持される。
 - model-conductor (conduit): Firewall グループは保持。Router グループは、`fhrp` を持つ unlinked TP を残し、冗長を維持できれば `fhrp` を引き継ぎ、
   維持できなければ virtual-address を IP にして `fhrp` は付けない (エッジのエンドポイントのデフォルトゲートウェイを変えない)。
+  endpoint (host) を blueprint に含めて host 向けセグメントが外部セグメントになる場合は、同じ conduit ノードに集約された
+  冗長 gateway の TP をセグメント上で代表 1 TP に畳む。元ノード 1 つだけのグループ (host など) は TP 名を維持する。
 - netoviz: layer3 TP の tooltip に `FHRP:` を表示。
 - netomox v0.14.0 以降が必要 (`MddoL3TPAttribute#fhrp`)。
 

@@ -118,6 +118,7 @@ conduit topology (`original_asis_conduit*`) は blueprint に基づいてノー�
 - **Firewall グループ** (top-level `flag` に `"firewall"`): 全 TP を属性ごと保持 (`fhrp` も保持)。
 - **Router グループ** (blueprint で 1 つのノードに集約):
   - 通常は「外部セグメント (他グループとの間のセグメント) に接続する TP」だけを `eth1, eth2, ...` として残す。
+    ただし **元ノード 1 つだけのグループ** (endpoint (host) など、集約しないもの) は TP 名を rename せず元の名前のまま残す。
   - 例外: `fhrp` を持つ **unlinked TP (セグメントに接続していない TP = エッジ)** は、外部 TP の連番に続けて `ethN+1...` として残す。
     その扱いは「冗長を維持できるか」で決まる。
     - **冗長を維持できる** (同じ FHRP グループ `(protocol, group-id, virtual-address)` のメンバーが、blueprint に含まれるノードの範囲で
@@ -127,8 +128,15 @@ conduit topology (`original_asis_conduit*`) は blueprint に基づいてノー�
     - 1 conduit ノード・1 FHRP グループにつき TP は 1 つ。代表は Master/Active に選ばれるメンバー
       (**priority 最大、同値なら source-address の数値が最大**。VRRP の 255 (address owner) が最優先、0 が最後。VRRP/HSRP 共通)。
   - 外部 TP が `fhrp` を持つ場合: IP は変えず、冗長を維持できるときだけ `fhrp` を引き継ぐ。
+  - **外部セグメント上の冗長 gateway**: 同じ FHRP グループのメンバーが、同じ conduit ノードに集約され、かつ同じ外部セグメント
+    (endpoint (host) を blueprint に含めたときの host 向けセグメントなど) に繋がっている場合は、セグメント上の TP を
+    代表 1 TP (上記の代表選出ルール) に畳み、他のメンバーの TP はセグメント・tp_mapping から除く。
+    代表 TP の `ip-address` / `fhrp` は edge TP と同じ規則 (冗長を維持できる → 元の IP と `fhrp`、できない → virtual-address) で決める。
+    これにより endpoint のデフォルトゲートウェイ (virtual-address) が conduit でも残る。
   - `fhrp` を持たない unlinked TP は従来どおり残らない。
-- 現行の blueprint (`original_asis_blueprint1` / `blueprint2`) は cr ノード (VRRP を持つ) を含まないため、conduit に `fhrp` は現れない。
+- 現行の blueprint (`original_asis_blueprint1` / `blueprint2`) は `site-*-cr` (cr-1/cr-2 を集約) と endpoint (host) を含む。
+  cr-1/cr-2 は 1 つの conduit ノードに畳まれる (冗長を維持できない) ので、conduit では host 向け TP が 1 つになり、
+  `ip-address` は virtual-address (例 `192.168.100.1/24`)、`fhrp` は付かない。
 
 ---
 
