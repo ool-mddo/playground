@@ -13,6 +13,14 @@
               {
                 "tp-id": "eth1",
                 "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth3",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -35,6 +43,14 @@
               {
                 "tp-id": "eth1",
                 "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth3",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -56,6 +72,14 @@
             "ietf-network-topology:termination-point": [
               {
                 "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth3",
                 "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
@@ -238,6 +262,114 @@
               {
                 "network-ref": "layer3",
                 "node-ref": "site-c-br-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-a-host-1",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-host-1"
+              }
+            ]
+          },
+          {
+            "node-id": "site-a-host-2",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-a-host-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-b-host-1",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-host-1"
+              }
+            ]
+          },
+          {
+            "node-id": "site-b-host-2",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-b-host-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-c-host-1",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-c-host-1"
+              }
+            ]
+          },
+          {
+            "node-id": "site-c-host-2",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "layer3",
+                "node-ref": "site-c-host-2"
               }
             ]
           }
@@ -440,6 +572,138 @@
               "dest-node": "site-c-wan-zone-rt",
               "dest-tp": "eth2"
             }
+          },
+          {
+            "link-id": "site-a-cr,eth2,site-a-host-1,eth0",
+            "source": {
+              "source-node": "site-a-cr",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-a-host-1",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-a-host-1,eth0,site-a-cr,eth2",
+            "source": {
+              "source-node": "site-a-host-1",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-a-cr",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-a-cr,eth3,site-a-host-2,eth0",
+            "source": {
+              "source-node": "site-a-cr",
+              "source-tp": "eth3"
+            },
+            "destination": {
+              "dest-node": "site-a-host-2",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-a-host-2,eth0,site-a-cr,eth3",
+            "source": {
+              "source-node": "site-a-host-2",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-a-cr",
+              "dest-tp": "eth3"
+            }
+          },
+          {
+            "link-id": "site-b-cr,eth2,site-b-host-1,eth0",
+            "source": {
+              "source-node": "site-b-cr",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-b-host-1",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-b-host-1,eth0,site-b-cr,eth2",
+            "source": {
+              "source-node": "site-b-host-1",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-b-cr",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-b-cr,eth3,site-b-host-2,eth0",
+            "source": {
+              "source-node": "site-b-cr",
+              "source-tp": "eth3"
+            },
+            "destination": {
+              "dest-node": "site-b-host-2",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-b-host-2,eth0,site-b-cr,eth3",
+            "source": {
+              "source-node": "site-b-host-2",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-b-cr",
+              "dest-tp": "eth3"
+            }
+          },
+          {
+            "link-id": "site-c-cr,eth2,site-c-host-1,eth0",
+            "source": {
+              "source-node": "site-c-cr",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-c-host-1",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-c-host-1,eth0,site-c-cr,eth2",
+            "source": {
+              "source-node": "site-c-host-1",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-c-cr",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-c-cr,eth3,site-c-host-2,eth0",
+            "source": {
+              "source-node": "site-c-cr",
+              "source-tp": "eth3"
+            },
+            "destination": {
+              "dest-node": "site-c-host-2",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-c-host-2,eth0,site-c-cr,eth3",
+            "source": {
+              "source-node": "site-c-host-2",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-c-cr",
+              "dest-tp": "eth3"
+            }
           }
         ]
       },
@@ -454,6 +718,14 @@
             "ietf-network-topology:termination-point": [
               {
                 "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth3",
                 "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
@@ -473,6 +745,14 @@
               {
                 "tp-id": "eth1",
                 "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth3",
+                "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
             "mddo-topology:l3-node-attributes": {
@@ -490,6 +770,14 @@
             "ietf-network-topology:termination-point": [
               {
                 "tp-id": "eth1",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth2",
+                "mddo-topology:l3-termination-point-attributes": {}
+              },
+              {
+                "tp-id": "eth3",
                 "mddo-topology:l3-termination-point-attributes": {}
               }
             ],
@@ -600,6 +888,114 @@
               {
                 "network-ref": "zoom0-layer3",
                 "node-ref": "site-c-wan-zone-rt"
+              }
+            ]
+          },
+          {
+            "node-id": "site-a-host-1",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-a-host-1"
+              }
+            ]
+          },
+          {
+            "node-id": "site-a-host-2",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-a-host-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-b-host-1",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-b-host-1"
+              }
+            ]
+          },
+          {
+            "node-id": "site-b-host-2",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-b-host-2"
+              }
+            ]
+          },
+          {
+            "node-id": "site-c-host-1",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-c-host-1"
+              }
+            ]
+          },
+          {
+            "node-id": "site-c-host-2",
+            "ietf-network-topology:termination-point": [
+              {
+                "tp-id": "eth0",
+                "mddo-topology:l3-termination-point-attributes": {}
+              }
+            ],
+            "mddo-topology:l3-node-attributes": {
+              "node-type": "node"
+            },
+            "supports": [
+              {
+                "network-ref": "zoom0-layer3",
+                "node-ref": "site-c-host-2"
               }
             ]
           }
@@ -735,6 +1131,138 @@
             "destination": {
               "dest-node": "site-c-fw",
               "dest-tp": "eth1"
+            }
+          },
+          {
+            "link-id": "site-a-cr,eth2,site-a-host-1,eth0",
+            "source": {
+              "source-node": "site-a-cr",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-a-host-1",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-a-host-1,eth0,site-a-cr,eth2",
+            "source": {
+              "source-node": "site-a-host-1",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-a-cr",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-a-cr,eth3,site-a-host-2,eth0",
+            "source": {
+              "source-node": "site-a-cr",
+              "source-tp": "eth3"
+            },
+            "destination": {
+              "dest-node": "site-a-host-2",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-a-host-2,eth0,site-a-cr,eth3",
+            "source": {
+              "source-node": "site-a-host-2",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-a-cr",
+              "dest-tp": "eth3"
+            }
+          },
+          {
+            "link-id": "site-b-cr,eth2,site-b-host-1,eth0",
+            "source": {
+              "source-node": "site-b-cr",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-b-host-1",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-b-host-1,eth0,site-b-cr,eth2",
+            "source": {
+              "source-node": "site-b-host-1",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-b-cr",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-b-cr,eth3,site-b-host-2,eth0",
+            "source": {
+              "source-node": "site-b-cr",
+              "source-tp": "eth3"
+            },
+            "destination": {
+              "dest-node": "site-b-host-2",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-b-host-2,eth0,site-b-cr,eth3",
+            "source": {
+              "source-node": "site-b-host-2",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-b-cr",
+              "dest-tp": "eth3"
+            }
+          },
+          {
+            "link-id": "site-c-cr,eth2,site-c-host-1,eth0",
+            "source": {
+              "source-node": "site-c-cr",
+              "source-tp": "eth2"
+            },
+            "destination": {
+              "dest-node": "site-c-host-1",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-c-host-1,eth0,site-c-cr,eth2",
+            "source": {
+              "source-node": "site-c-host-1",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-c-cr",
+              "dest-tp": "eth2"
+            }
+          },
+          {
+            "link-id": "site-c-cr,eth3,site-c-host-2,eth0",
+            "source": {
+              "source-node": "site-c-cr",
+              "source-tp": "eth3"
+            },
+            "destination": {
+              "dest-node": "site-c-host-2",
+              "dest-tp": "eth0"
+            }
+          },
+          {
+            "link-id": "site-c-host-2,eth0,site-c-cr,eth3",
+            "source": {
+              "source-node": "site-c-host-2",
+              "source-tp": "eth0"
+            },
+            "destination": {
+              "dest-node": "site-c-cr",
+              "dest-tp": "eth3"
             }
           }
         ],

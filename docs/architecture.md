@@ -263,10 +263,13 @@ playground/
        - Firewall ノード (top-level flag に "firewall"): 元ノードをそのまま保持
        - Router ノード (blueprint でグループ化): 代表ノード 1 つに集約。
          外部 TP のみ eth1, eth2, ... に rename。並列リンクは 1 本に集約。
+         ただし元ノード 1 つだけのグループ (endpoint (host) など、集約しないもの) は TP 名を rename せず元の名前のまま保持。
          ただし `fhrp` (VRRP/HSRP) を持つ unlinked TP (エッジ) は、外部 TP に続けて残す:
          冗長を維持できる (メンバーが 2 つ以上の別 conduit ノードにいる) ときは `fhrp` を引き継ぎ、
          維持できない (畳んだ / パートナーが blueprint に無い) ときは `fhrp` を付けず virtual-address を IP にする
          (エッジセグメントのエンドポイントのデフォルトゲートウェイを変えない)
+         endpoint (host) を blueprint に含め、host 向けセグメントが外部セグメントになる場合も同様に、
+         同じ conduit ノードに集約された冗長ゲートウェイ (fhrp メンバー) の TP をセグメント上で代表 1 TP に畳む
        - Segment ノード: グループ間をまたぐ外部セグメントのみ自動生成
        - blueprint に定義されていないノード: conduit topology から省略 (Segment の該当 endpoint も除外。
          残りが 2 グループ未満になった Segment は生成しない)
