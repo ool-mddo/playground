@@ -21,6 +21,8 @@ blueprint に基づいて抽象化（土管化 / conduit 化）し、それぞ�
                             環境起動は含まない
 22_up_conduit.sh ......... 21 で生成・登録済みの snapshot のうち、指定した1つを
                             emulated 環境として起動する (up_emulated_env)
+23_fw_fault.sh ........... 起動中の emulated 環境の FW (vSRX) に障害を注入/復旧する
+                            (リンク断 / ノード障害 / サイレント障害)
 ```
 
 ## 使い方
@@ -83,6 +85,41 @@ bash 22_up_conduit.sh -s <snapshot_name> [-d]
 # 例: emulated_asis を、containerlab を使わずに起動（config生成テンプレートの動作確認のみ）
 bash 22_up_conduit.sh -s emulated_asis -d
 ```
+
+### 3. FW 障害の注入・復旧 (`23_fw_fault.sh`)
+
+FW クラスタ (vSRX chassis cluster) の act/sby 切り替え・切り離し試験用。worker の EDA に
+`message: "fw_fault"` を送り、`fw_fault.yaml` (mddo-worker) が障害を注入/復旧する。
+
+```sh
+bash 23_fw_fault.sh -s <snapshot_name> -n <fw_node> [-m link|node|silent] [-i <junos_ifs>] [-u]
+```
+
+| オプション | 説明 |
+|---|---|
+| `-s` | 起動中の emulated snapshot 名（**必須**。例: `emulated_asis`） |
+| `-n` | 対象 FW ノード名（**必須**。例: `site-a-fw-1`） |
+| `-m` | `link`（既定）: 指定 IF のリンクを両端で down / `node`: VM 停止 + 全リンク down（ノード障害）/ `silent`: VM 一時停止（リンクは up のまま転送停止） |
+| `-i` | 対象の JunOS IF 名（カンマ区切り。`link` 時は必須。例: `ge-0/0/1,ge-0/0/2`）。ns_convert_table で Proxmox コンテナ側の `ethN` に変換する |
+| `-u` | 復旧（up）。省略時は注入（down） |
+
+```sh
+# 例: site-a-fw-1 (node0) のデータ IF を切り離す → 戻す
+bash 23_fw_fault.sh -s emulated_asis -n site-a-fw-1 -i ge-0/0/1,ge-0/0/2
+bash 23_fw_fault.sh -s emulated_asis -n site-a-fw-1 -i ge-0/0/1,ge-0/0/2 -u
+
+# 例: site-a-fw-1 (node0) のノード障害 → 復旧 (VM 再起動後、クラスタ復帰に数分かかる)
+bash 23_fw_fault.sh -s emulated_asis -n site-a-fw-1 -m node
+bash 23_fw_fault.sh -s emulated_asis -n site-a-fw-1 -m node -u
+```
+
+- `-i` には `-n` のノード自身のポートを指定する（node0 = `ge-0/0/*`、node1 = `ge-7/0/*`）。
+  HA 相手側のポートを指定するとエラーになる。
+- `node` モードで復旧しても RG0 は自動では戻らない (preempt なし)。必要なら FW で
+  `request chassis cluster failover redundancy-group 0 node 0` → `request chassis cluster failover reset redundancy-group 0` を実行する。
+- `silent` モードで止めたノードは、再開後に chassis cluster から `disabled` にされる（コントロールリンク障害扱い）。
+  `-m node` → `-m node -u` で再起動して戻す。
+- 障害注入の方式と検証結果は [docs/work/plans/fw_failover_test.md](../../docs/work/plans/fw_failover_test.md) を参照。
 
 ## 注意事項
 
