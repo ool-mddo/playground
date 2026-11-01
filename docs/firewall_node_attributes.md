@@ -56,9 +56,9 @@ firewall-policy-parser が各 FW ノードごとに生成する JSON:
         {
           "name": "DEFAULT",
           "action": "permit",
-          "application": "any",
-          "source_address": "any",
-          "destination_address": "any"
+          "application": ["any"],
+          "source_address": ["any"],
+          "destination_address": ["any"]
         }
       ]
     }
@@ -132,10 +132,14 @@ netomox-exp が保存するトポロジ JSON の L3 ノードアトリビュー�
 | `policies[].to_zone` | String | 宛先ゾーン名 |
 | `policies[].rules` | Array | ルールのリスト |
 | `policies[].rules[].name` | String | ルール名 |
-| `policies[].rules[].action` | String | `'permit'` または `'deny'` |
-| `policies[].rules[].application` | String | アプリケーション識別子 (例: `'any'`, `'http'`) |
-| `policies[].rules[].source_address` | String | 送信元アドレスまたは `'any'` |
-| `policies[].rules[].destination_address` | String | 宛先アドレスまたは `'any'` |
+| `policies[].rules[].action` | String | `'permit'` または `'deny'` (firewall-policy-parser は `'reject'` も取り込む) |
+| `policies[].rules[].application` | Array[String] | アプリケーション識別子のリスト (例: `['any']`, `['junos-ping', 'junos-https']`) |
+| `policies[].rules[].source_address` | Array[String] | 送信元アドレスのリスト (例: `['any']`) |
+| `policies[].rules[].destination_address` | Array[String] | 宛先アドレスのリスト (例: `['any']`) |
+
+> **netomox 0.15.0 / firewall-policy-parser v0.2.0 での変更:** `application` / `source_address` / `destination_address` は常に配列 (要素 1 つでも配列、`any` は `["any"]`)。
+> 旧形式 (String) は netomox が読み込み時に 1 要素の配列へ、空文字は `[]` へ正規化する。
+> address-book / address-set / application-set は未対応で、名前は解決されずそのまま配列要素になる。
 
 ---
 
