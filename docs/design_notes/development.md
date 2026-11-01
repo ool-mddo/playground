@@ -190,6 +190,46 @@ cd demo/candidate_model_ops && source demo_vars && ./21_generate_conduit.sh
   動作確認の最後には必ず override を外し、公開イメージで確認してください。
 * ローカルの netomox を使った確認結果は、公開版 (イメージ) でも同じになることを確認してから完了とします。
 
+## ランタイム/ベースイメージのバージョン管理
+
+各サブモジュールの Dockerfile は、ベースイメージのタグを **パッチ番号まで固定** します
+(例: `FROM python:3.12.16-slim`)。ビルド済みイメージを調べなくても、Dockerfile の 1 行目で
+そのイメージが使うランタイムのバージョンを特定できます。
+`3.12-slim` のような浮動タグは、再ビルドのたびに中身が変わるため使いません。
+その代わり、ランタイムのセキュリティ更新は Dockerfile を書き換えて取り込みます。
+
+現行のバージョン (2026-11 時点):
+
+| サブモジュール | ベースイメージ |
+|---|---|
+| netomox-exp / model-conductor | `ruby:3.4.12-slim` |
+| firewall-policy-parser / state-conductor | `python:3.12.16-slim` |
+| batfish-wrapper / bgp-policy-parser | `python:3.12.16-slim` (3.11 から移行) |
+| netoviz | `node:24.22.2-alpine` |
+| fish-tracer | `node:16.13-bullseye-slim` (EOL。現在は未使用で更新対象外) |
+
+### 更新手順
+
+1. 上流の最新パッチ版を調べ、Docker Hub に同名タグがあることを確認する
+   (`python`, `ruby`, `node` の公式イメージ)。サポート終了 (EOL) の状況も確認する。
+2. 各サブモジュールの `vX.Y.Z-dev` ブランチで Dockerfile の 1 行目を書き換えて push する。
+   CI がイメージ (`ghcr.io/ool-mddo/<service>:<ブランチ名>`) を build / push する。
+3. playground の `.env` のイメージタグを更新し、`docker compose pull && docker compose up -d` で
+   コンテナ内のランタイムを確認する (`ruby -v` / `python3 --version` / `node -v`)。
+   全体の動作確認として `demo/candidate_model_ops/21_generate_conduit.sh` を実行する。
+4. 必要ならサブモジュールをリリースする。
+
+Ruby のイメージを更新したときは、model-conductor の `Gemfile.lock` の `RUBY VERSION` も変わります
+(`Gemfile.lock` は `.gitignore` 対象)。Python のメジャー/マイナー更新では、依存パッケージ
+(pybatfish, pandas, Flask など) が新しい版に解決されるため、ビルドとテストで互換性を確認してください。
+
+### ローカル環境
+
+ローカルのランタイムは anyenv (rbenv / pyenv / nodenv) で管理しています。
+global はイメージに合わせて ruby 3.4 系 / python 3.12 系 / node 24 系にします。
+`anyenv install --list` の対象は各 `*-build` プラグインが知るバージョンだけなので、
+新しいパッチ版を入れる前に、各プラグイン (`~/.anyenv/envs/*/plugins/*-build`) を `git pull` してください。
+
 ## YAMLフォーマットチェック
 
 [YAMLlint](https://github.com/adrienverge/yamllint) を使ってください。playground ディレクトリに設定ファイル `.yamllint` があります。
