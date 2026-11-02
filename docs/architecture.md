@@ -15,6 +15,7 @@ graph TB
     subgraph Playground ["playground (Docker Compose)"]
         subgraph Frontend
             netoviz["netoviz\n(Nuxt.js:3000)\nトポロジ可視化"]
+            netoviz2["netoviz2\n(Vue SPA, nginx)\nトポロジ可視化 (api-proxy 経由)"]
             fish["fish-tracer\n(Nuxt.js)\nパケット追跡UI"]
         end
 
@@ -57,6 +58,7 @@ graph TB
     proxy -->|/batfish /configs /queries| bw
     proxy -->|/topologies /usecases| ne
     proxy -->|/conduct| mc
+    proxy -->|/netoviz2| netoviz2
     proxy -->|/fw_policy| fpp
     proxy -->|/bgp_policy| bgpp
 
@@ -151,6 +153,7 @@ playground/
 │   ├── model-conductor/
 │   ├── netomox-exp/
 │   ├── netoviz/
+│   ├── netoviz2/                # (開発中。独立リポジトリ。サブモジュール登録前)
 │   ├── state-conductor/
 │   └── mddo-worker/
 │

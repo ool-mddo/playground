@@ -37,6 +37,7 @@
 | `firewall-policy-parser` | (内部) | Juniper FW 設定解析 → トポロジへのマージ |
 | `ansible-eda` | 48080 | ContainerLab デプロイの自動化 (webhook) |
 | `netoviz` | 3000 | トポロジ可視化フロントエンド |
+| `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (開発中。静的 SPA。データは netomox-exp の API) |
 
 ## 起動コマンド
 

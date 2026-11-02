@@ -190,6 +190,41 @@ cd demo/candidate_model_ops && source demo_vars && ./21_generate_conduit.sh
   動作確認の最後には必ず override を外し、公開イメージで確認してください。
 * ローカルの netomox を使った確認結果は、公開版 (イメージ) でも同じになることを確認してから完了とします。
 
+## netoviz2 の開発
+
+netoviz2 は、マルチレイヤのトポロジを表示する汎用ビューワーです (Vite + Vue 3 + TypeScript の静的 SPA)。
+サブモジュール登録の前は、`repos/netoviz2` に置いた独立リポジトリとして扱います。データの読み込み・加工は netomox-exp の
+`/topologies/:network/:snapshot/netoviz2/*` API が行い、netoviz2 は volume を持たず REST API だけを呼びます。
+仕様は [netoviz2_data_format.md](../netoviz2_data_format.md)、設計・進捗は [netoviz2_requirements.md](../work/plans/netoviz2_requirements.md) を参照してください。
+
+### 開発サーバでの確認
+
+```bash
+# 事前に playground を起動しておく (api-proxy: localhost:15000)
+cd repos/netoviz2
+npm install
+npm run dev        # http://localhost:5173/netoviz2/ ( /topologies は NETOVIZ2_API_URL (既定 http://localhost:15000) へプロキシ)
+npm run typecheck && npm run lint && npm test && npm run build   # コミット前に 4 つとも通す
+```
+
+### コンテナでの確認 (api-proxy 経由)
+
+```bash
+# playground のディレクトリで
+docker compose up -d --build netoviz2 api-proxy
+# http://localhost:15000/netoviz2/
+```
+
+* `netoviz2` サービスは `build:` を持ち、`repos/netoviz2/Dockerfile` (node でビルド → nginx で `/netoviz2/` 配下に静的配信) からイメージを作ります。イメージのタグは `.env` の `NETOVIZ2_IMAGE_TAG` です。
+* api-proxy の設定 (`assets/api-proxy/default.conf`) は bind mount なので、変更後は `docker compose exec api-proxy nginx -s reload` で反映します。
+  `/netoviz2/` の転送と、netoviz2 API (`/topologies/:nw/:ss/netoviz2/...`) だけの gzip が入っています (他の API は圧縮しません)。
+* 属性・support 内の差分の表示には、netomox gem の修正 (`_diff_state_` の復元) が必要です。リリースまでは、上の「netomox (gem) の修正を伴う開発」の手順でローカルの netomox を mount して確認します。
+
+### ブラウザでの動作確認のヒント
+
+* ヘッドレス Chrome の `--screenshot --virtual-time-budget` では、`requestAnimationFrame` が進まず、force-simulation が数ティックしか動きません。**実時間で待つ**ようにしてください (DevTools Protocol で、ページを開いて待ち、評価して撮る)。
+* 状態は URL で指定できます: `?layers=<layer ID,...>&sel=<object ID>` (ID は URL エンコードする)。
+
 ## ランタイム/ベースイメージのバージョン管理
 
 各サブモジュールの Dockerfile は、ベースイメージのタグを **パッチ番号まで固定** します
