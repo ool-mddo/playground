@@ -70,6 +70,7 @@
 | link の support/attribute | スキーマ上の枠のみ用意、実装は後回し |
 | 開発時運用 | Vite dev server から api-proxy へプロキシ |
 | 並行稼働 | 現行 netoviz は netoviz2 が必要機能を満たすまで置き換えない |
+| レイアウトエンジン | **force (d3-force) と自前の stress の 2 つ。既定は stress。ELK は採用しない** (品質で自前の stress に及ばず、EPL-2.0 の対応と約 1.5MB が必要なため)。設計と経緯は [design_notes/netoviz2_layout.md](../../design_notes/netoviz2_layout.md) |
 | gem の利用 | netomox-exp の整形処理は netomox gem のオブジェクトモデルを使う (整合性・保守性・可読性を優先)。性能は厳密に求めず、問題があれば gem 側を改善する。gem が保持しない属性が必要なら gem 側に追加する |
 | 位置づけ | ユースケース非依存の汎用トポロジビューワー。ユースケース・レイヤ種別・属性スキーマ固有の知識をフロント/バックエンドの共通処理に持たせない (固有の見せ方は属性キーをキーとするオプション拡張) |
 | レイヤ間の依存 | `supporting-network` の宣言ではなく、宣言と実際の node/tp support の和集合から求める (実データで両者が一致しない) |
@@ -289,6 +290,8 @@ netoviz2 に両方のエンジンを実装し、`?layout=<engine>` で切り替�
 * **ライセンス: elkjs は EPL-2.0 OR GPL-3.0-or-later。本プロジェクトは MIT。** 依存として使い、改変せずに配布する範囲で問題になるかを、本採用の前に確認する必要がある。
 
 **推奨 (案)**: 既定のエンジンを ELK stress にする (または force と stress をユーザーが選べるようにしたまま、既定を stress にする)。階層的なトポロジ向けに ELK layered を選択肢として残す。ELK の force は外す。ライセンスの確認が済むまでは、既定を force のままにしておくこともできる。
+> **決定 (7.8.1〜7.8.3 の検討を受けて)**: エンジンは force (d3-force) と自前の stress の 2 つとし、既定を stress にする。**ELK は採用しない。** 設計の詳細・検討した選択肢・比較結果・ELK のライセンス分析は [design_notes/netoviz2_layout.md](../../design_notes/netoviz2_layout.md) に移した (以下の 7.8.1〜7.8.3 は、検討の過程の記録)。ELK の検証用に入れていたコード・依存・経路 (折れ点) の描画は削除した。
+
 ### 7.8.3 自前のストレス最小化 (stress (own)) と ELK stress の比較
 ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004) なので、同じ手法を自前で実装し (依存なし。`src/render/layout/stress.ts`)、エンジン `stress` として追加した。リンクの長さを「間隔 + 両端ノードの半径」にしてノードの大きさを考慮し (TP を展開した大きなノードが離れる)、連結成分ごとに別々に配置して (複数回の初期化から交差・重なりが最小のものを採用、交差ゼロで打ち切り)、最後に重なりを除去し、成分をグリッドに並べる。URL は `?layout=stress`、「Compare layouts」では `stress` と ELK stress を比較する (他のエンジンは `stress` と比較する)。
 
@@ -371,6 +374,7 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
   * テスト: 157 例すべて成功。コンテナも作り直し済み (`http://localhost:15000/netoviz2/`)。
   * ホバーとラベル: マウスオーバーした要素 (ラベル上を含む) を強調・最前面に出し、つながるリンクも強調。ラベルのクリック・ダブルクリックも要素への操作として扱う (実ブラウザのマウス操作で確認)。テスト 167 例成功。
 * レイアウトエンジンの検証 (7.8.2): **実施済み**。force (d3) と ELK (layered / stress / force) を実装し、URL (`?layout=` / `?compare=`) とツールバーで切り替え・左右比較できる (交差数・重なり・所要時間を各パネルに表示)。実データで比較した結果、ELK stress が総合的に最良、layered は階層的なトポロジ向き。リンクは ELK の経路 (折れ点) で描画。force は交差が 0 になるまで再試行し、レイヤが揃ってから配置する。テスト 215 例成功。
+* レイアウトエンジンの決定: **force (d3-force) と自前の stress を採用 (既定は stress)、ELK は採用しない。** ELK 関連のコード・依存 (elkjs)・折れ点の経路描画を削除した。エンジンは URL の `?layout=<stress|force>` で切り替え、`&compare=<engine>` で並べて比較できる (他の値は無視して既定にする)。設計・経緯・ELK のライセンス分析は [design_notes/netoviz2_layout.md](../../design_notes/netoviz2_layout.md)。テスト 212 例成功。
 * 段階 4 (dependency (レイヤ帯) Viewer) 以降: 未着手 (段階 4 は後で実施)。
 
 * 変更は小さな単位に分割し、各ステップで関連テストを実行する。

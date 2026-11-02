@@ -223,7 +223,7 @@ docker compose up -d --build netoviz2 api-proxy
 ### ブラウザでの動作確認のヒント
 
 * ヘッドレス Chrome の `--screenshot --virtual-time-budget` では、`requestAnimationFrame` が進まず、force-simulation が数ティックしか動きません。**実時間で待つ**ようにしてください (DevTools Protocol で、ページを開いて待ち、評価して撮る)。
-* 状態は URL で指定できます: `?layers=<layer ID,...>&sel=<object ID>` (ID は URL エンコードする)。レイアウトエンジンは `&layout=<force|elk-layered|elk-stress|elk-force>`、並べて比較するときは `&compare=<engine>`。
+* 状態は URL で指定できます: `?layers=<layer ID,...>&sel=<object ID>` (ID は URL エンコードする)。レイアウトエンジンは `&layout=<stress|force>` (既定は stress)、並べて比較するときは `&compare=<engine>`。レイアウトの設計と検討の経緯は [netoviz2_layout.md](netoviz2_layout.md)。
 
 ## ランタイム/ベースイメージのバージョン管理
 
