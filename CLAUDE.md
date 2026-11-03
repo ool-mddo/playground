@@ -24,6 +24,7 @@
 
 - **変更しないディレクトリ:** `queries/`, `topologies/`, `policies/` は自動生成。直接編集不可。
 - **`configs/mddo-fw` はサブモジュール:** 変更は submodule 側でコミットしてから、playground 側で参照先を更新すること。
+- **`repos/` 下のサブモジュールのブランチ名にスラッシュを使わない:** CI はブランチ名をそのままコンテナイメージのタグにする (`ghcr.io/ool-mddo/<service>:<ブランチ名>`)。例: `feature/xxx` ではなく `v1.22.0-dev`。詳細は [docs/design_notes/development.md](docs/design_notes/development.md)。
 - **`demo_vars` が全体の設定起点:** `NETWORK_NAME` / `USECASE_NAME` を変えると対象ネットワーク・ユースケースが切り替わる。
 
 ## サービス構成 (抜粋)

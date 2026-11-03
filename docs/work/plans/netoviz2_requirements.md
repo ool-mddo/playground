@@ -348,15 +348,14 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
   * 実データ (mddo-fw / mddo-mregnw / mddo-bgp) で稼働中の環境から API の動作を確認済み (api-proxy 経由、304 を含む)。
   * `code-reviewer` のレビュー結果を反映済み: link の ID に `~link` マーカーを追加して node との衝突を排除 (`~` も常にエンコード)、POST attributes は 304 を扱わず `200`、builder の例外を JSON の 500 とログに、`ids` の型不正を 422、循環警告を循環内に限定、ETag にスキーマ版を含める、キャッシュのテスト間リセット、など。仕様書の不一致も修正。
   * gem の往復確認と規模の計測の結果は仕様書の 11 に記載。想定上限 (30,000 TP) では 1 リクエスト約 2.8 秒 (キャッシュなし)、layer 応答 2.5MB (gzip で 222KB)。キャッシュを入れ、gzip は段階 5 で追加する。
-* **netomox gem の修正** (別リポジトリ `/home/hagiwara/ool-mddo/netomox`、ブランチ `fix/attribute-diff-state`、`v0.15-dev` から作成、未コミット・未リリース):
+* **netomox gem の修正** (別リポジトリ `/home/hagiwara/ool-mddo/netomox`、ブランチ `fix/attribute-diff-state`、`v0.15-dev` から作成。**v0.15.1 としてリリース済み** (CI で gem 登録を確認)):
   * 属性・support の `_diff_state_` を読み込み時に復元する (`DiffState.from_data` を追加、`AttributeBase` で復元)。`DiffState#to_data` / `#to_s` が `pair` に文字列 (復元後の値) を持つ場合に落ちる問題も修正。
   * 実データ (`mddo-ospf/emulated_diff`) で、修正前は属性内の差分 0 件・support の `pair` 0 件、修正後は 1 件・118 件が復元されることを確認。
   * テスト: gem 側 347 例 + 新規 10 例 = 357 例が成功、rubocop 指摘なし。修正した gem を netomox-exp のテストに適用しても 274 例が成功 (回帰なし)。
 * **残作業 (段階 2 関連):**
-  * netomox の修正をコミット・リリースし、netomox-exp の Gemfile の要求バージョンを上げる (その後、pending のテストが有効になる)。
+  * (済) netomox v0.15.1 をリリースし、netomox-exp の Gemfile を `>= 0.15.1` に更新。netomox-exp のブランチは `v1.22.0-dev` (旧 `feature/netoviz2`。イメージタグにするためスラッシュなし) で、CI がイメージを build 済み。
   * gem 側の修正候補 (任意): node 直下の `flag`、bgp-proc 属性の一部 (BGP ポリシー関連)。
   * 低優先度の指摘 (未対応): ModelCache が構築中に他の snapshot のキャッシュヒットも待たせる (キーごとのロック)、トポロジ書き込み中に読むと一時的に 500 になりうる (書き込み側を一時ファイル + rename にする案は既存コードの変更を伴う)。
-  * コミットはまだ行っていない (netomox-exp の `feature/netoviz2`、netomox の `fix/attribute-diff-state`)。
 * 段階 3 (netoviz2 MVP): **実装済み** (`repos/netoviz2`、独立リポジトリ、ブランチ `v0.1.0-dev`、コミット済み。リモートは未設定)。
   * 構成: Vite + Vue 3 + TypeScript の SPA (Pinia、vue-router、d3-force/zoom/drag)。UI ライブラリなし。実行時の依存の脆弱性は 0 件。
   * 機能: network/snapshot 一覧、サマリ (flags・diff 印・警告)、レイヤの表示切替 (URL の `?layers=`)、force-simulation 表示 (ノード単位、ダブルクリックで term-point 展開)、オブジェクトの選択 (URL の `?sel=`) と support トレースの強調 (上位/下位レイヤ・トレース方向の切替)、右パネルに属性・diff (汎用 JSON ツリー、diff_data の before/after 表示)・上位/下位レイヤのオブジェクト一覧 (クリックで選択)、5 秒ごとの ETag 確認による自動リロード。

@@ -1,6 +1,6 @@
 # netoviz2 データ形式・API 仕様
 
-> 状態: **netomox-exp 側は実装済み (ブランチ `feature/netoviz2`)、netoviz2 側は MVP 実装済み (`repos/netoviz2`)**。属性・support 内の差分 (4.4) は netomox gem の修正 (ブランチ `fix/attribute-diff-state`、未リリース) が必要。計画は [docs/work/plans/netoviz2_requirements.md](work/plans/netoviz2_requirements.md) を参照。
+> 状態: **netomox-exp 側は実装済み (netomox-exp ブランチ `v1.22.0-dev`)、netoviz2 側は MVP 実装済み (`repos/netoviz2`)**。属性・support 内の差分 (4.4) は netomox gem v0.15.1 以降が必要。計画は [docs/work/plans/netoviz2_requirements.md](work/plans/netoviz2_requirements.md) を参照。
 > 実装: netomox-exp (`lib/netoviz2/`, `lib/api/helpers_netoviz2.rb`, `lib/api/topologies/network/snapshot/netoviz2_api.rb`)。利用側: netoviz2 (フロントエンド)。
 > `schema_version`: `"1"`
 
@@ -200,7 +200,7 @@ GET の各エンドポイントは `ETag` を返し、`If-None-Match` に一致�
 
 * `attributes` の内容は **netomox gem が保持している属性に限る** (11 参照)。gem が未宣言のキーを捨てるため、例えば mddo-fw の FW ノードの node 直下の `flag: ["firewall"]` は現状では含まれない。必要なら gem 側に属性を追加して対応する (netoviz2 側では補完しない)。
 * 属性が全く無いオブジェクトも実在する (ietf 標準型の fixture など)。その場合 `attributes` は `{}`。
-* 属性・support の内部に埋め込まれた `_diff_state_` (例: `pair: "attribute"` / `"support"` と `diff_data`) は `to_data` に含まれ、フロントが属性パネルで差分強調に使う。**この復元には netomox gem の修正が必要** (gem 0.15.0 は読み込み時に属性・support の `_diff_state_` を捨てる。修正は netomox の `fix/attribute-diff-state` ブランチ。リリースされるまでは、オブジェクト自体の `diff` は得られるが、属性内の差分は得られない)。**diff でないトポロジでも `_diff_state_` は `kept` で埋め込まれている** (gem が常に出力する) ため、フロントは `kept` の `_diff_state_` を属性ツリーに表示しない (または既定で折りたたむ)。
+* 属性・support の内部に埋め込まれた `_diff_state_` (例: `pair: "attribute"` / `"support"` と `diff_data`) は `to_data` に含まれ、フロントが属性パネルで差分強調に使う。**この復元には netomox gem の修正が必要** (gem 0.15.0 以前は読み込み時に属性・support の `_diff_state_` を捨てる。v0.15.1 で修正済み。それ以前の gem ではオブジェクト自体の `diff` は得られるが、属性内の差分は得られない)。**diff でないトポロジでも `_diff_state_` は `kept` で埋め込まれている** (gem が常に出力する) ため、フロントは `kept` の `_diff_state_` を属性ツリーに表示しない (または既定で折りたたむ)。
 
 ### 4.5 既存 API の利用
 
@@ -288,7 +288,7 @@ network / snapshot の一覧は既存の `GET /topologies/index` を利用する
 | 失われるキー | 件数・範囲 | 対応 |
 |---|---|---|
 | node 直下の `flag` (`["firewall"]`) | 28 件、6 ファイル (mddo-fw の FW ノード) | gem 側に追加する候補 (本 API では表示されない) |
-| 属性・support 内の `_diff_state_` (往復では「失われるキー」として数えない) | diff 付きの実データ (`mddo-ospf/emulated_diff`) で、属性内の差分 1 件、support の `pair` 118 件が失われていた | **gem を修正済み** (netomox `fix/attribute-diff-state`、未リリース)。修正後は復元されることを実データで確認 |
+| 属性・support 内の `_diff_state_` (往復では「失われるキー」として数えない) | diff 付きの実データ (`mddo-ospf/emulated_diff`) で、属性内の差分 1 件、support の `pair` 118 件が失われていた | **gem を修正済み** (netomox v0.15.1)。修正後は復元されることを実データで確認 |
 | bgp-proc ノード属性の一部 (`as-path-set[].as-path.*`、`policy[].default.actions[].next`、`policy[].statements[].actions[].type`、`policy[].statements[].conditions[].as-path`、`prefix-set[].prefixes[].length` / `match-type`) | BGP ポリシーを含む 1 ファイル。gem が「Unknown bgp-policy ... keyword」「Attribute type mismatch」のエラーログを出す | gem の bgp-proc 属性定義が、データ生成側 (bgp-policy-parser) の出力に追従していない。gem 側に追加する候補 |
 | node の `supports` (別形式) | netomox-exp の blueprint fixture 1 件 | 対象外 (スナップショットの `topology.json` の形式ではない) |
 | l3 TP 属性が空 (`{}`) のもの | 1 ファイル 14 件 | 影響なし (空の属性は元から表示対象外) |

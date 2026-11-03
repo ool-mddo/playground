@@ -181,50 +181,11 @@ services:
       - batfish-wrapper
       - netomox-exp
 
-  netoviz:
-    image: ${NETOVIZ_IMAGE}:${NETOVIZ_IMAGE_TAG}
-    ports:
-      - target: 3000
-        published: 3000
-    environment:
-      MDDO_TOPOLOGIES_DIR: /netoviz/static/model
-    volumes:
-      # data dirs
-      - type: volume
-        source: topologies
-        target: /netoviz/static/model
-      # for development
-      - type: bind
-        source: ./repos/netoviz/components
-        target: /netoviz/components
-      - type: bind
-        source: ./repos/netoviz/layouts
-        target: /netoviz/layouts
-      - type: bind
-        source: ./repos/netoviz/nuxt.config.js
-        target: /netoviz/nuxt.config.js
-      - type: bind
-        source: ./repos/netoviz/lib
-        target: /netoviz/lib
-      - type: bind
-        source: ./repos/netoviz/pages
-        target: /netoviz/pages
-      - type: bind
-        source: ./repos/netoviz/server
-        target: /netoviz/server
-      - type: bind
-        source: ./repos/netoviz/static
-        target: /netoviz/static
-      - type: bind
-        source: ./repos/netoviz/stores
-        target: /netoviz/stores
 
   # netoviz2: static files (SPA). It has no volume: data comes from netomox-exp through api-proxy.
   # Access: http://localhost:${API_PROXY_PUB_PORT}/netoviz2/
   netoviz2:
     image: ${NETOVIZ2_IMAGE}:${NETOVIZ2_IMAGE_TAG}
-    build:
-      context: ./repos/netoviz2
 
   fish-tracer:
     image: ${FISH_TRACER_IMAGE}:${FISH_TRACER_IMAGE_TAG}
