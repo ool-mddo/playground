@@ -375,6 +375,7 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
   * ホバーとラベル: マウスオーバーした要素 (ラベル上を含む) を強調・最前面に出し、つながるリンクも強調。ラベルのクリック・ダブルクリックも要素への操作として扱う (実ブラウザのマウス操作で確認)。テスト 167 例成功。
 * レイアウトエンジンの検証 (7.8.2): **実施済み**。force (d3) と ELK (layered / stress / force) を実装し、URL (`?layout=` / `?compare=`) とツールバーで切り替え・左右比較できる (交差数・重なり・所要時間を各パネルに表示)。実データで比較した結果、ELK stress が総合的に最良、layered は階層的なトポロジ向き。リンクは ELK の経路 (折れ点) で描画。force は交差が 0 になるまで再試行し、レイヤが揃ってから配置する。テスト 215 例成功。
 * レイアウトエンジンの決定: **force (d3-force) と自前の stress を採用 (既定は stress)、ELK は採用しない。** ELK 関連のコード・依存 (elkjs)・折れ点の経路描画を削除した。エンジンは URL の `?layout=<stress|force>` で切り替え、`&compare=<engine>` で並べて比較できる (他の値は無視して既定にする)。設計・経緯・ELK のライセンス分析は [design_notes/netoviz2_layout.md](../../design_notes/netoviz2_layout.md)。テスト 212 例成功。
+* 手動確認のフィードバックへの対応 (3 回目): **MIT の `LICENSE` を netoviz2 に追加** (`package.json` にも `license: MIT`)。ライト/ダークの切り替え (ヘッダー右の Auto / Light / Dark。選択はブラウザに保存。色は `styles/theme.css` の変数で一元管理し、`color-scheme` と `light-dark()` を使う)。レイヤ一覧に「Select all / Clear all」。ネットワーク一覧・スナップショット一覧の、リンクと文字の間隔。テスト 223 例成功。
 * 段階 4 (dependency (レイヤ帯) Viewer) 以降: 未着手 (段階 4 は後で実施)。
 
 * 変更は小さな単位に分割し、各ステップで関連テストを実行する。
