@@ -100,7 +100,6 @@ graph TB
 ```
 playground/
 ├── docker-compose.yaml          # フルスタック構成 (全サービス)
-├── docker-compose.min.yaml      # 最小構成 (ansible-eda, netoviz2 除外)
 ├── docker-compose.visualize.yaml # 可視化追加 (grafana, prometheus, state-conductor)
 ├── .env                         # コンテナイメージタグ定義
 ├── check_repos.sh               # repos/ サブモジュールの状態確認スクリプト

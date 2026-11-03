@@ -69,7 +69,7 @@
 | 引き継ぎ機能 | diff / networks flags / 自動リロード = 継続、alert = 廃止 |
 | link の support/attribute | スキーマ上の枠のみ用意、実装は後回し |
 | 開発時運用 | Vite dev server から api-proxy へプロキシ |
-| 並行稼働 | 当初は現行 netoviz を置き換えない方針だったが、compose (`docker-compose.yaml` / `docker-compose.min.yaml`) と `.env` からは netoviz を外し netoviz2 に切り替えた (`repos/netoviz` のサブモジュールは残置) |
+| 並行稼働 | 当初は現行 netoviz を置き換えない方針だったが、compose (`docker-compose.yaml`) と `.env` からは netoviz を外し netoviz2 に切り替えた (`repos/netoviz` のサブモジュールは残置) |
 | レイアウトエンジン | **force (d3-force) と自前の stress の 2 つ。既定は stress。ELK は採用しない** (品質で自前の stress に及ばず、EPL-2.0 の対応と約 1.5MB が必要なため)。設計と経緯は [design_notes/netoviz2_layout.md](../../design_notes/netoviz2_layout.md) |
 | gem の利用 | netomox-exp の整形処理は netomox gem のオブジェクトモデルを使う (整合性・保守性・可読性を優先)。性能は厳密に求めず、問題があれば gem 側を改善する。gem が保持しない属性が必要なら gem 側に追加する |
 | 位置づけ | ユースケース非依存の汎用トポロジビューワー。ユースケース・レイヤ種別・属性スキーマ固有の知識をフロント/バックエンドの共通処理に持たせない (固有の見せ方は属性キーをキーとするオプション拡張) |
@@ -380,7 +380,7 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
 * レイアウトエンジンの検証 (7.8.2): **実施済み**。force (d3) と ELK (layered / stress / force) を実装し、URL (`?layout=` / `?compare=`) とツールバーで切り替え・左右比較できる (交差数・重なり・所要時間を各パネルに表示)。実データで比較した結果、ELK stress が総合的に最良、layered は階層的なトポロジ向き。リンクは ELK の経路 (折れ点) で描画。force は交差が 0 になるまで再試行し、レイヤが揃ってから配置する。テスト 215 例成功。
 * レイアウトエンジンの決定: **force (d3-force) と自前の stress を採用 (既定は stress)、ELK は採用しない。** ELK 関連のコード・依存 (elkjs)・折れ点の経路描画を削除した。エンジンは URL の `?layout=<stress|force>` で切り替え、`&compare=<engine>` で並べて比較できる (他の値は無視して既定にする)。設計・経緯・ELK のライセンス分析は [design_notes/netoviz2_layout.md](../../design_notes/netoviz2_layout.md)。テスト 212 例成功。
 * 手動確認のフィードバックへの対応 (3 回目): **MIT の `LICENSE` を netoviz2 に追加** (`package.json` にも `license: MIT`)。ライト/ダークの切り替え (ヘッダー右の Auto / Light / Dark。選択はブラウザに保存。色は `styles/theme.css` の変数で一元管理し、`color-scheme` と `light-dark()` を使う)。レイヤ一覧に「Select all / Clear all」。ネットワーク一覧・スナップショット一覧の、リンクと文字の間隔。テスト 223 例成功。
-* リリース・統合 (2026-11-03): netomox gem v0.15.1 (属性・support の `_diff_state_` の復元) をリリースし、netomox-exp は `v1.22.0-dev` (gem >= 0.15.1)、model-conductor は `v1.19.1-dev` (gem >= 0.15.1) のイメージを CI で作成して `.env` を更新。netoviz2 は `ool-mddo/netoviz2` リポジトリ + GitHub Actions + `repos/netoviz2` サブモジュール。playground のブランチは `v2.12.1-dev-netoviz2` (サブモジュールのブランチ名はイメージタグになるのでスラッシュを使わない、のルールを `CLAUDE.md` に追加)。compose から netoviz と fish-tracer (コメントアウト分) を削除。api-proxy の `default.conf` / `min.conf` の整合 (min に `/usecases/`) と、既存ドキュメントの不一致 (Grape、ns_convert_table) の修正も実施。
+* リリース・統合 (2026-11-03): netomox gem v0.15.1 (属性・support の `_diff_state_` の復元) をリリースし、netomox-exp は `v1.22.0-dev` (gem >= 0.15.1)、model-conductor は `v1.19.1-dev` (gem >= 0.15.1) のイメージを CI で作成して `.env` を更新。netoviz2 は `ool-mddo/netoviz2` リポジトリ + GitHub Actions + `repos/netoviz2` サブモジュール。playground のブランチは `v2.12.1-dev-netoviz2` (サブモジュールのブランチ名はイメージタグになるのでスラッシュを使わない、のルールを `CLAUDE.md` に追加)。compose から netoviz と fish-tracer (コメントアウト分) を削除。api-proxy の設定 (`default.conf` と `min.conf`) の整合 (min に `/usecases/`) を取った上で、差がほぼなくなったため最小構成 (`docker-compose.min.yaml`、`assets/api-proxy/min.conf`) を削除、既存ドキュメントの不一致 (Grape、ns_convert_table) の修正も実施。
 * 段階 4 (dependency (レイヤ帯) Viewer): **実装済み** (`repos/netoviz2`)。
   * 目的は、レイヤをまたぐ関係 (support) が正しく設定されているかを確認するデバッグ用途。
   * **構成: 主画面 = トポロジ (stress / force)、副画面 = dependency。** 全ノードを出すと情報量が多すぎるため、dependency は**トポロジ側で選択した node / term-point だけ**の依存ツリー (支えられている側・支えている側を辿った範囲) を出す。ツールバーの「Dependency view」(`?dependency=1`) で出し入れする (検証用の「Compare layouts」と入れ替え)。選択は両画面で共有。ツリー内のオブジェクトのクリックで選択を移して辿れる。
