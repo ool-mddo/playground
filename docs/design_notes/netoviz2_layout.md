@@ -7,7 +7,7 @@ netoviz2 (汎用トポロジビューワー) が、ノードとリンクをど�
 
 * レイアウトエンジンは **force (d3-force)** と **stress (自前のストレス最小化)** の 2 つ。**既定は stress**。
 * **ELK (elkjs) は採用しない。** 検証 (3 参照) では品質で自前の stress に及ばず、ライセンス (EPL-2.0) への対応と約 1.5MB のサイズが必要になるため。
-* 2 つのエンジンは、画面で切り替えて比較できる (`?layout=<force|stress>`、`&compare=<engine>`)。各パネルが、所要時間・リンクの交差数・ノードの重なりを表示する。
+* 2 つのエンジンは、画面で切り替えられる (`?layout=<force|stress>`)。パネルが、所要時間・リンクの交差数・ノードの重なりを表示する。(エンジンの比較用の「Compare layouts」(`&compare=`) は、検証が済んだため削除した。副画面の枠は dependency view に使っている。)
 * 階層的な表示 (ELK layered が得意とするもの) は、レイアウトエンジンではなく、段階 4 の dependency 表示 (レイヤ帯) で別に扱う。
 
 ## 2. 要求
@@ -51,7 +51,7 @@ netoviz2 (汎用トポロジビューワー) が、ノードとリンクをど�
 ### 3.4 品質の指標と比較の画面
 
 * 指標: **リンクの交差数** (ノード間の直線の組で、端を共有しないものの交差)、**ノードの重なり** (円が重なる深さの合計)、**所要時間** (配置の開始から終了まで)。
-* 画面: ツールバーの「Compare layouts」で 2 つのエンジンを左右に並べる。選択・ホバー・トレースは両方で共有される。URL に `?layout=<engine>&compare=<engine>` が入るので、共有・再現できる。
+* 画面 (検証時): ツールバーの「Compare layouts」で 2 つのエンジンを左右に並べていた。現在は削除し、`?layout=<engine>` の切り替えのみ。
 
 ## 4. 検討した選択肢
 
@@ -115,6 +115,6 @@ netoviz2 (汎用トポロジビューワー) が、ノードとリンクをど�
 
 ## 8. 検証と再現
 
-* 画面で比較する: `http://localhost:15000/netoviz2/<network>/<snapshot>?layers=<layer>&layout=force&compare=stress` (各パネルの指標を読む)。
+* 画面で比べる: `?layers=<layer>&layout=force` と `&layout=stress` を順に開き、パネルの指標を読む (検証時は `&compare=` で並べていた)。
 * 単体テスト: `npm test` (`src/render/layout/*.test.ts`、`src/render/forceRenderer.test.ts`)。stress は、サイクル・グリッド・複数成分・大きなノード・再現性を検証している。
 * ブラウザでの測定: ヘッドレス Chrome を DevTools Protocol で操作し、各パネルの指標 (`[data-testid=layout-stats]`) を読む。**`--virtual-time-budget` は使わない** (`requestAnimationFrame` が進まず、force のシミュレーションが数ティックしか動かない)。
