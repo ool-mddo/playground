@@ -28,7 +28,6 @@ services:
       - netomox-exp
       - batfish-wrapper
       - netoviz2
-      - fish-tracer
 
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
@@ -181,35 +180,10 @@ services:
       - batfish-wrapper
       - netomox-exp
 
-
   # netoviz2: static files (SPA). It has no volume: data comes from netomox-exp through api-proxy.
   # Access: http://localhost:${API_PROXY_PUB_PORT}/netoviz2/
   netoviz2:
     image: ${NETOVIZ2_IMAGE}:${NETOVIZ2_IMAGE_TAG}
-
-  fish-tracer:
-    image: ${FISH_TRACER_IMAGE}:${FISH_TRACER_IMAGE_TAG}
-    environment:
-      BASE_URL: http://${FISH_TRACER_BASE_HOST}:${API_PROXY_PUB_PORT}
-    volumes:
-      # for development
-      - type: bind
-        source: ./repos/fish-tracer/components
-        target: /fish-tracer/components
-      - type: bind
-        source: ./repos/fish-tracer/nuxt.config.js
-        target: /fish-tracer/nuxt.config.js
-      - type: bind
-        source: ./repos/fish-tracer/pages
-        target: /fish-tracer/pages
-      - type: bind
-        source: ./repos/fish-tracer/static
-        target: /fish-tracer/static
-      - type: bind
-        source: ./repos/fish-tracer/store
-        target: /fish-tracer/store
-    depends_on:
-      - batfish-wrapper
 
 networks:
   default:
