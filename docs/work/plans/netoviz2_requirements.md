@@ -1,6 +1,6 @@
 # netoviz2 要求・設計・実装計画
 
-> 状態: 実装中 (2026-11-03 時点)。段階 1〜5 は実施済み (進捗は 8 を参照)。段階 6 (移行判断) は、現行 netoviz との機能比較のあとに判断する (netoviz2 は playground のサブモジュール・compose に登録済みで、compose から netoviz は外した。`repos/netoviz` は残置)。
+> 状態: 実装中 (2026-11-03 時点)。段階 1〜5 は実施済み (進捗は 8 を参照)。段階 6 (移行判断) は決定済み (6 の「決定」を参照)。保留中の課題は 9.1 にまとめた。
 > 構成: 1 背景 → 2 目的・基本方針 → 3 要求 → 4 決定事項 → 5 現状調査 → 6 妥当性評価 → 7 設計 → 8 実装計画 → 9 リスク・未確認事項 → 付録
 
 ---
@@ -337,7 +337,12 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
 | 3 | netoviz2 MVP | リポジトリ雛形 (Vite + Vue 3 + TS)、一覧ページ、レイヤ取得、force-simulation (ノード単位 + TP 展開)、選択 + 属性パネル + support トレース、networks flags 表示、diff 色分け、etag ポーリングによる自動リロード | dev server + api-proxy で mddo-fw デモデータを表示・確認できる |
 | 4 | dependency Viewer | 共通部品を再利用してレイヤ帯表示を実装。複数の表示案があれば比較して決める | トレース経路の強調が機能する |
 | 5 | コンテナ化・統合 | 静的成果物 + nginx のイメージ (volume なし)。api-proxy に `/netoviz2/` と gzip を追加。`localhost:15000/netoviz2/:nw/:ss/` で確認。現行 netoviz と並行稼働し、デモデータで機能比較 | 現行との機能比較結果の報告 |
-| 6 | 移行判断 | 機能が十分なら playground のサブモジュール登録。index 更新スクリプト・`docs/architecture.md` などを更新 | サブモジュール登録、ドキュメント更新 |
+| 6 | 移行判断 | 機能が十分なら playground のサブモジュール登録。index 更新スクリプト・`docs/architecture.md` などを更新 | サブモジュール登録、ドキュメント更新 **(決定済み。下記)** |
+
+**段階 6 の決定 (2026-11-03):**
+* `repos/netoviz` サブモジュールは**残す** (compose と `.env` からは外した。netoviz2 はサブモジュール `repos/netoviz2` として登録済み)。
+* `demo/` 配下の、これまでの demo / usecase での netoviz に関する記述 (`netoviz_url`、ポート 3000 など) は**書き換えずに残す** (経緯が分からなくなるため。fish-tracer の記述と同じ扱い)。
+* `21_generate_conduit.sh` と index (`_index.json`、`netoviz_index.py`、`GET/POST /topologies/index`) の仕組みは**そのまま残す** (netoviz2 も netomox-exp の `/topologies/index` を使う)。名前 (「netoviz index」) も変えない。
 
 ### 進捗 (2026-11-02)
 * 段階 1: 仕様のドラフトを作成済み ([docs/netoviz2_data_format.md](../../netoviz2_data_format.md))。
@@ -389,6 +394,29 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
 * 既存インタフェース (netomox-exp の既存 API、現行 netoviz) は維持する。
 
 # 9. リスクと未確認事項
+
+## 9.1 保留中の課題 (2026-11-03。いったん保留とし、必要になったときに着手する)
+
+### netoviz2
+* **規模の計測**: 想定上限 (30,000 TP) での描画性能 (SVG + ノード単位表示で足りるか。必要なら Cytoscape.js / Canvas を検討)。
+* **表示の改善**: 小さなトポロジで全レイヤを同時に出すと見づらい (既定の表示レイヤ)、ラベルの重なり。
+* **dependency view**:
+  * 大きなツリーへの対策 (トレースの深さ・規模の制限)。
+  * バックエンドの警告 (参照切れなど) との統合表示。
+  * warn が出る壊れたデータと、diff 付きデータでの画面確認 (手元にデータがない。チェックのロジックは単体テストで確認済み)。
+* **手動のレイアウト調整と保存** (7.8.1 の F): 必要性と保存先 (バックエンドの書き込み API) を決めてから。
+* **link の support / attribute の表示**: スキーマ上の枠のみで未実装 (実利用がなく優先度が低い)。
+* **固有の見せ方の拡張**: fhrp、FW 属性など (汎用ツリー上の薄い拡張として後から追加)。
+* コンテナ版 netoviz2 の画面確認は、開発サーバ (api-proxy 経由) の確認のみ。
+
+### netomox-exp
+* ModelCache が構築中に他の snapshot のキャッシュヒットも待たせる (キーごとのロックにする)。
+* トポロジの書き込み中に読むと一時的に 500 になりうる (書き込み側を一時ファイル + rename にする案は既存コードの変更を伴う)。
+* gem 側の修正候補 (任意): node 直下の `flag`、bgp-proc 属性の一部 (BGP ポリシー関連)。
+* (済) gem 0.15.1 のリリース待ちだった spec (属性内の diff state) は有効にした (`skip` を削除。275 例すべて成功)。
+
+### リリース
+* 各 `-dev` ブランチの `main` へのマージ・タグ付け (netomox v0.15.1、netomox-exp v1.22.0、model-conductor v1.19.1、netoviz2 v0.1.0、playground v2.12.1) は未実施。`release-submodule` / `release-playground` の手順で行う。
 
 ## リスク
 * 現行機能の再実装による欠落・回帰 → 並行稼働と機能比較で緩和。
