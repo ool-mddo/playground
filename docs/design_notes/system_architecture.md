@@ -6,7 +6,8 @@
 
 デモシステムは図のようなコンポーネント(コンテナ)で構成されています
 
-![mddo system architecture](fig/mddo_architecture.drawio.svg)
+![mddo system architecture](fig/mddo_architecture_netoviz2.drawio.svg)
+(OLD: playground `v2.11.x` 以前: [mddo_architecture](fig/mddo_architecture.drawio.svg))
 
 > [!WARNING]
 > - データはファイルとして管理されています。
@@ -28,8 +29,9 @@ Playground のディレクトリ構成と役割は以下のようになってい
     - [netomox-exp](https://github.com/ool-mddo/netomox-exp): トポロジデータ管理 (`topologies` ディレクトリ)
     - [batfish-wrapper](https://github.com/ool-mddo/batfish-wrapper): BatfishへのAPI,コンフィグ管理とBatfishで得られた構成情報の管理 (`configs`, `queries` ディレクトリ)
     - [bgp-policy-parser](https://github.com/ool-mddo/bgp-policy-parser): Batfishで処理できないBGPポリシ関連のデータ抽出と加工 (`ttp` ディレクトリ)
-    - [netoviz](https://github.com/ool-mddo/netoviz): トポロジデータの可視化 (WebUI)
-    - [fish-tracer](https://github.com/ool-mddo/fish-tracer): traceroute 実行・結果可視化 (WebUI)
+    - [netoviz](https://github.com/ool-mddo/netoviz): トポロジデータの可視化 (WebUI) [⚠️obsoleted, playground `v2.12.1` 以降でnetoviz2に移行]
+    - [netoviz2](http://github.com/ool-mddo/netoviz2): トポロジデータの可視化 (WebUI)
+    - [fish-tracer](https://github.com/ool-mddo/fish-tracer): traceroute 実行・結果可視化 (WebUI) [⚠️obsoleted]
 - `assets` : コンテナに直接マウントする設定ファイル等
 - `demo` : デモシナリオ素材
 
