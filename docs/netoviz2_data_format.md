@@ -1,6 +1,6 @@
 # netoviz2 データ形式・API 仕様
 
-> 状態: **netomox-exp 側は実装済み (netomox-exp ブランチ `v1.22.0-dev`)、netoviz2 側は MVP 実装済み (`repos/netoviz2`)**。属性・support 内の差分 (4.4) は netomox gem v0.15.1 以降が必要。計画は [docs/work/plans/netoviz2_requirements.md](work/plans/netoviz2_requirements.md) を参照。
+> 状態: **netomox-exp 側は実装済み (netomox-exp ブランチ `v1.22.0-dev`)、netoviz2 側は実装済み (`repos/netoviz2`。MVP、レイアウト、dependency 表示まで)**。属性・support 内の差分 (4.4) は netomox gem v0.15.1 以降が必要。計画は [docs/work/plans/netoviz2_requirements.md](work/plans/netoviz2_requirements.md) を参照。
 > 実装: netomox-exp (`lib/netoviz2/`, `lib/api/helpers_netoviz2.rb`, `lib/api/topologies/network/snapshot/netoviz2_api.rb`)。利用側: netoviz2 (フロントエンド)。
 > `schema_version`: `"1"`
 

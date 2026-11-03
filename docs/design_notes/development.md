@@ -217,19 +217,20 @@ npm run typecheck && npm run lint && npm test && npm run build   # コミット�
 
 ```bash
 # playground のディレクトリで
-docker compose up -d --build netoviz2 api-proxy
+docker compose pull netoviz2        # CI が作ったイメージ
+docker compose up -d netoviz2 api-proxy
 # http://localhost:15000/netoviz2/
 ```
 
-* `netoviz2` サービスは `build:` を持ち、`repos/netoviz2/Dockerfile` (node でビルド → nginx で `/netoviz2/` 配下に静的配信) からイメージを作ります。イメージのタグは `.env` の `NETOVIZ2_IMAGE_TAG` です。
+* `netoviz2` サービスは CI が作ったイメージ (`ghcr.io/ool-mddo/netoviz2:<ブランチ名>`。タグは `.env` の `NETOVIZ2_IMAGE_TAG`) を使います。イメージは `repos/netoviz2/Dockerfile` (node でビルド → nginx で `/netoviz2/` 配下に静的配信) から作られます。ブランチ (タグ) が同じ間は同じタグが上書きされるので、更新後は `docker compose pull netoviz2` が必要です。
 * api-proxy の設定 (`assets/api-proxy/default.conf`) は bind mount なので、変更後は `docker compose exec api-proxy nginx -s reload` で反映します。
   `/netoviz2/` の転送と、netoviz2 API (`/topologies/:nw/:ss/netoviz2/...`) だけの gzip が入っています (他の API は圧縮しません)。
-* 属性・support 内の差分の表示には、netomox gem の修正 (`_diff_state_` の復元) が必要です。リリースまでは、上の「netomox (gem) の修正を伴う開発」の手順でローカルの netomox を mount して確認します。
+* 属性・support 内の差分の表示には、netomox gem v0.15.1 以降 (`_diff_state_` の復元) が必要です (netomox-exp `v1.22.0-dev` 以降のイメージは 0.15.1 を使います)。
 
 ### ブラウザでの動作確認のヒント
 
 * ヘッドレス Chrome の `--screenshot --virtual-time-budget` では、`requestAnimationFrame` が進まず、force-simulation が数ティックしか動きません。**実時間で待つ**ようにしてください (DevTools Protocol で、ページを開いて待ち、評価して撮る)。
-* 状態は URL で指定できます: `?layers=<layer ID,...>&sel=<object ID>` (ID は URL エンコードする)。レイアウトエンジンは `&layout=<stress|force>` (既定は stress)、並べて比較するときは `&compare=<engine>`。レイアウトの設計と検討の経緯は [netoviz2_layout.md](netoviz2_layout.md)。
+* 状態は URL で指定できます: `?layers=<layer ID,...>&sel=<object ID>` (ID は URL エンコードする)。レイアウトエンジンは `&layout=<stress|force>` (既定は stress)、依存関係の副画面 (dependency view) は `&dependency=1`。レイアウトの設計と検討の経緯は [netoviz2_layout.md](netoviz2_layout.md)。
 
 ## ランタイム/ベースイメージのバージョン管理
 
