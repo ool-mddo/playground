@@ -378,7 +378,7 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
 * 段階 4 (dependency (レイヤ帯) Viewer): **実装済み** (`repos/netoviz2`)。
   * 目的は、レイヤをまたぐ関係 (support) が正しく設定されているかを確認するデバッグ用途。
   * **構成: 主画面 = トポロジ (stress / force)、副画面 = dependency。** 全ノードを出すと情報量が多すぎるため、dependency は**トポロジ側で選択した node / term-point だけ**の依存ツリー (支えられている側・支えている側を辿った範囲) を出す。ツールバーの「Dependency view」(`?dependency=1`) で出し入れする (検証用の「Compare layouts」と入れ替え)。選択は両画面で共有。ツリー内のオブジェクトのクリックで選択を移して辿れる。
-  * term-point の依存にも対応: term-point を選ぶと term-point 同士の依存、node を選ぶと node の依存 (「Term-points」でその node の term-point の依存も加える)。表示名は term-point が `node:tp`。
+  * term-point の依存にも対応: term-point を選ぶと term-point 同士の依存、node を選ぶと node の依存 (「Term-points」でその node の term-point の依存も加える)。**term-point は所属する node の箱の中に表示し、node と分離しない** (term-point だけが対象でも、node を破線の箱で添える)。箱の幅を考慮して配置し、箱の中の term-point の順序は下位の term-point の位置に合わせる。
   * 配置 (案 B): 最下位レイヤは名前順、上位レイヤは support 先の位置の平均に揃える (線がほぼ垂直)。帯の中は順序を保ったまま最小限の移動で重ならないように間隔を取る。support 先のないオブジェクトは上位のオブジェクトの下に置く (それもなければ右端)。ラベルは隣り合うもので 2 段にずらす。
   * デバッグ用のチェック (`src/domain/supportCheck.ts`。表示中のレイヤが対象で、一覧・印付けは表示中のツリーのオブジェクトに限る): `unsupported`・`unused`・`tp-only`・`same-layer` / `inverted`・`undeclared`・`no-support`。
   * 実データ (mddo-fw) で node / term-point の依存ツリーを確認。テスト 262 例成功。
