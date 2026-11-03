@@ -19,8 +19,8 @@ graph TB
 
         subgraph Core
             proxy["api-proxy\n(nginx:15000)\nルーティング"]
-            mc["model-conductor\n(Ruby/Sinatra)\nオーケストレーター"]
-            ne["netomox-exp\n(Ruby/Sinatra)\nトポロジモデルAPI"]
+            mc["model-conductor\n(Ruby/Grape)\nオーケストレーター"]
+            ne["netomox-exp\n(Ruby/Grape)\nトポロジモデルAPI"]
             bw["batfish-wrapper\n(Python)\nBatfish APIラッパー"]
         end
 

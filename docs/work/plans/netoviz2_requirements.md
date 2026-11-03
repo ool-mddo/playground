@@ -396,7 +396,7 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
 
 ---
 
-# 付録: 副次的に見つかった既存ドキュメントの不一致 (今回は修正しない)
-* `docs/architecture.md` は netomox-exp を「Ruby/Sinatra」と記載しているが実装は Grape。また netoviz が `GET /topologies/...` で取得するように読めるが、実際は共有 volume 経由。
-* `repos/netomox-exp/docs/architecture.md` の ns_convert_table の記述 (パス、保存場所) が実装 (`/topologies/:nw/:ss/ns_convert_table`) と異なる。
-* netoviz の `MDDO_TOPOLOGIES_DIR` 環境変数はコード上参照されず、`static` がハードコードされている。
+# 付録: 副次的に見つかった既存ドキュメントの不一致 (修正済み)
+* `docs/architecture.md` の netomox-exp / model-conductor の「Ruby/Sinatra」を Grape に修正した。netoviz が `GET /topologies/...` で取得するように読める図は、netoviz を compose と図から外したときに解消済み (netoviz2 は api-proxy 経由で netomox-exp の API を呼ぶ)。
+* `repos/netomox-exp/docs/architecture.md` の ns_convert_table の記述 (パス、リクエスト本文、保存場所、ルートの階層) を実装 (`POST /topologies/:nw/:ss/ns_convert_table`、本文は `usecase` または `convert_table`、保存先は `<nw>/<ss>/ns_convert_table.json`) に合わせた。
+* netoviz の `MDDO_TOPOLOGIES_DIR` 環境変数 (コード上参照されない): 設定していた compose の `netoviz` サービスを削除したため解消。
