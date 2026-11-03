@@ -1,6 +1,6 @@
 # netoviz2 要求・設計・実装計画
 
-> 状態: 実装中 (2026-11-02 時点)。段階 1〜3・5 は実施済み (進捗は 8 を参照)。段階 4 (dependency 表示) とレイアウトエンジンの検証 (7.8.1) は未着手。
+> 状態: 実装中 (2026-11-02 時点)。段階 1〜3・5 は実施済み (進捗は 8 を参照)。段階 4 (dependency 表示) も実施済み。
 > 構成: 1 背景 → 2 目的・基本方針 → 3 要求 → 4 決定事項 → 5 現状調査 → 6 妥当性評価 → 7 設計 → 8 実装計画 → 9 リスク・未確認事項 → 付録
 
 ---
@@ -375,7 +375,13 @@ ELK stress の元は標準的な手法 (ストレス最小化。Gansner ら 2004
 * レイアウトエンジンの検証 (7.8.2): **実施済み**。force (d3) と ELK (layered / stress / force) を実装し、URL (`?layout=` / `?compare=`) とツールバーで切り替え・左右比較できる (交差数・重なり・所要時間を各パネルに表示)。実データで比較した結果、ELK stress が総合的に最良、layered は階層的なトポロジ向き。リンクは ELK の経路 (折れ点) で描画。force は交差が 0 になるまで再試行し、レイヤが揃ってから配置する。テスト 215 例成功。
 * レイアウトエンジンの決定: **force (d3-force) と自前の stress を採用 (既定は stress)、ELK は採用しない。** ELK 関連のコード・依存 (elkjs)・折れ点の経路描画を削除した。エンジンは URL の `?layout=<stress|force>` で切り替え、`&compare=<engine>` で並べて比較できる (他の値は無視して既定にする)。設計・経緯・ELK のライセンス分析は [design_notes/netoviz2_layout.md](../../design_notes/netoviz2_layout.md)。テスト 212 例成功。
 * 手動確認のフィードバックへの対応 (3 回目): **MIT の `LICENSE` を netoviz2 に追加** (`package.json` にも `license: MIT`)。ライト/ダークの切り替え (ヘッダー右の Auto / Light / Dark。選択はブラウザに保存。色は `styles/theme.css` の変数で一元管理し、`color-scheme` と `light-dark()` を使う)。レイヤ一覧に「Select all / Clear all」。ネットワーク一覧・スナップショット一覧の、リンクと文字の間隔。テスト 223 例成功。
-* 段階 4 (dependency (レイヤ帯) Viewer) 以降: 未着手 (段階 4 は後で実施)。
+* 段階 4 (dependency (レイヤ帯) Viewer): **実装済み** (`repos/netoviz2`)。
+  * 目的は、レイヤをまたぐ関係 (support) が正しく設定されているかを確認するデバッグ用途。force / stress と**左右に並べて見られる** (`?layout=dependency`、`?compare=dependency`。選択・トレースは共有)。
+  * 配置 (案 B): 最下位レイヤは名前順、上位レイヤは support 先のノードの位置の平均に揃える (線がほぼ垂直になる)。帯の中のノードは順序を保ったまま最小限の移動で重ならないように間隔を取る (isotonic regression)。support 先のないノードは帯の右端に離して置く。ラベルは隣り合うノードで 2 段にずらす。
+  * 描画は既定でノード単位 (TP の support はノード間に集約)。選択したノードのトレース経路を強調し、それ以外を薄くする。
+  * デバッグ用のチェック (`src/domain/supportCheck.ts`、表示中のレイヤが対象): `unsupported` (下位レイヤがあるのに支えられていない)・`unused` (上位レイヤがあるのに使われていない)・`tp-only` (TP の support のみでノードの support がない)・`same-layer` / `inverted` (同一レイヤ内、または上位から下位でない support)・`undeclared` (宣言されていないレイヤ間の support)・`no-support` (宣言されているのに support がない)。ノードの印付け・一覧 (クリックで選択) を持つ。
+  * 実データ (mddo-fw) で確認: 線がほぼ垂直になり、host やセグメントなどの未使用ノード 8 件が `unused` として出る。テスト 262 例成功。
+  * 残る課題: 大規模 (TP まで展開) の表示、レイヤ内のリンクの表示、バックエンドの警告 (参照切れなど) との統合表示。
 
 * 変更は小さな単位に分割し、各ステップで関連テストを実行する。
 * 既存インタフェース (netomox-exp の既存 API、現行 netoviz) は維持する。
