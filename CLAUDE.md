@@ -37,8 +37,7 @@
 | `batfish-wrapper` + `batfish` | (内部) | 機器設定解析 |
 | `firewall-policy-parser` | (内部) | Juniper FW 設定解析 → トポロジへのマージ |
 | `ansible-eda` | 48080 | ContainerLab デプロイの自動化 (webhook) |
-| `netoviz` | 3000 | トポロジ可視化フロントエンド |
-| `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (開発中。静的 SPA。データは netomox-exp の API) |
+| `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (静的 SPA。データは netomox-exp の API。`repos/netoviz2`)。旧 `netoviz` (port 3000) は compose から削除済み (`repos/netoviz` は残置) |
 
 ## 起動コマンド
 

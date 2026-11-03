@@ -14,9 +14,7 @@
 graph TB
     subgraph Playground ["playground (Docker Compose)"]
         subgraph Frontend
-            netoviz["netoviz\n(Nuxt.js:3000)\nトポロジ可視化"]
             netoviz2["netoviz2\n(Vue SPA, nginx)\nトポロジ可視化 (api-proxy 経由)"]
-            fish["fish-tracer\n(Nuxt.js)\nパケット追跡UI"]
         end
 
         subgraph Core
@@ -93,7 +91,7 @@ graph TB
 | `/conduct/` | model-conductor:9292 |
 | `/bgp_policy/` | bgp-policy-parser:5000 |
 | `/fw_policy/` | firewall-policy-parser:5000 |
-| `/` (default) | fish-tracer:3000 |
+| `/netoviz2/` | netoviz2:80 (静的 SPA) |
 
 ---
 
@@ -102,7 +100,7 @@ graph TB
 ```
 playground/
 ├── docker-compose.yaml          # フルスタック構成 (全サービス)
-├── docker-compose.min.yaml      # 最小構成 (ansible-eda, fish-tracer 除外)
+├── docker-compose.min.yaml      # 最小構成 (ansible-eda, netoviz2 除外)
 ├── docker-compose.visualize.yaml # 可視化追加 (grafana, prometheus, state-conductor)
 ├── .env                         # コンテナイメージタグ定義
 ├── check_repos.sh               # repos/ サブモジュールの状態確認スクリプト
@@ -153,7 +151,7 @@ playground/
 │   ├── model-conductor/
 │   ├── netomox-exp/
 │   ├── netoviz/
-│   ├── netoviz2/                # (開発中。独立リポジトリ。サブモジュール登録前)
+│   ├── netoviz2/                # 汎用トポロジビューワー (独立リポジトリ、サブモジュール)
 │   ├── state-conductor/
 │   └── mddo-worker/
 │
@@ -181,7 +179,7 @@ playground/
     (usecases/refocus_topology/mddo-fw/params.yaml の FW クラスタ対定義を参照)
 
 出力: topologies/mddo-fw/original_asis/topology.json (FW属性付きL3トポロジ)
-      netoviz インデックス更新 → GUI で確認可能 (port 3000)
+      netoviz インデックス更新 → netoviz2 で確認可能 (http://localhost:15000/netoviz2/)
 ```
 
 ### フロー 2: `01_candidate_topology.sh` — 候補トポロジ生成
