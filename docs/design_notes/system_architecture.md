@@ -7,7 +7,8 @@
 デモシステムは図のようなコンポーネント(コンテナ)で構成されています
 
 ![mddo system architecture](fig/mddo_architecture_netoviz2.drawio.svg)
-(OLD: playground `v2.11.x` 以前: [mddo_architecture](fig/mddo_architecture.drawio.svg))
+
+(OLD: playground `v2.11.x` 以前 → [mddo_architecture](fig/mddo_architecture.drawio.svg))
 
 > [!WARNING]
 > - データはファイルとして管理されています。
@@ -21,14 +22,15 @@ Playground のディレクトリ構成と役割は以下のようになってい
 - `configs` (input) : 分析対象のコンフィグファイル(snapshots)
 - `usecases` (input) : デモ(candidate_model_ops)ユースケース用データ
 - `queries` (output) : コンフィグファイルをBatfishに与えて必要な構成情報を抜き出したデータファイル(CSV)
-- `ttp` (output) : Batfishでは処理できないコンフィグからのデータ抽出
+- `policies` (output) : Batfishでは処理できないコンフィグからのデータ抽出
 - `topologies` (output) : queries の各種データファイルを元に構成したトポロジデータ
 - `repos` : 各種ツール : 開発用に、playground から起動するコンテナにマウントする形になっています
     - [model-conductor](https://github.com/ool-mddo/model-conductor): 各種データ操作の実行用APIの提供
     - [state-conductor](https://github.com/ool-mddo/state-conductor): 検証環境(emulated env)の情報取得・管理・操作
     - [netomox-exp](https://github.com/ool-mddo/netomox-exp): トポロジデータ管理 (`topologies` ディレクトリ)
     - [batfish-wrapper](https://github.com/ool-mddo/batfish-wrapper): BatfishへのAPI,コンフィグ管理とBatfishで得られた構成情報の管理 (`configs`, `queries` ディレクトリ)
-    - [bgp-policy-parser](https://github.com/ool-mddo/bgp-policy-parser): Batfishで処理できないBGPポリシ関連のデータ抽出と加工 (`ttp` ディレクトリ)
+    - [bgp-policy-parser](https://github.com/ool-mddo/bgp-policy-parser): Batfishで処理できないBGPポリシ関連のデータ抽出と加工 (`policies` ディレクトリ)
+    - [firewall-policy-parser](https://github.com/ool-mddo/firewall-policy-parser): Batfishで処理できないFirewallポリシ関連のデータ抽出と加工 (`policies` ディレクトリ)
     - [netoviz](https://github.com/ool-mddo/netoviz): トポロジデータの可視化 (WebUI) [⚠️obsoleted, playground `v2.12.1` 以降でnetoviz2に移行]
     - [netoviz2](http://github.com/ool-mddo/netoviz2): トポロジデータの可視化 (WebUI)
     - [fish-tracer](https://github.com/ool-mddo/fish-tracer): traceroute 実行・結果可視化 (WebUI) [⚠️obsoleted]
