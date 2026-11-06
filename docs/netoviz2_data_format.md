@@ -1,6 +1,6 @@
 # netoviz2 データ形式・API 仕様
 
-> 状態: **netomox-exp 側は実装済み (netomox-exp ブランチ `v1.22.0-dev`)、netoviz2 側は実装済み (`repos/netoviz2`。MVP、レイアウト、dependency 表示まで)**。属性・support 内の差分 (4.4) は netomox gem v0.15.1 以降が必要。計画は [docs/work/plans/netoviz2_requirements.md](work/plans/netoviz2_requirements.md) を参照。
+> 状態: **netomox-exp 側は実装済み (netomox-exp ブランチ `v1.22.0-dev`)、netoviz2 側は実装済み (`repos/netoviz2`。MVP、レイアウト、dependency 表示まで)**。属性・support 内の差分 (4.4) は netomox gem v0.15.1 以降が必要。計画は [netoviz2 の要求・設計・計画 (経緯)](../repos/netoviz2/docs/work/plans/requirements.md) を参照。
 > 実装: netomox-exp (`lib/netoviz2/`, `lib/api/helpers_netoviz2.rb`, `lib/api/topologies/network/snapshot/netoviz2_api.rb`)。利用側: netoviz2 (フロントエンド)。
 > `schema_version`: `"1"`
 
@@ -202,7 +202,44 @@ GET の各エンドポイントは `ETag` を返し、`If-None-Match` に一致�
 * 属性が全く無いオブジェクトも実在する (ietf 標準型の fixture など)。その場合 `attributes` は `{}`。
 * 属性・support の内部に埋め込まれた `_diff_state_` (例: `pair: "attribute"` / `"support"` と `diff_data`) は `to_data` に含まれ、フロントが属性パネルで差分強調に使う。**この復元には netomox gem の修正が必要** (gem 0.15.0 以前は読み込み時に属性・support の `_diff_state_` を捨てる。v0.15.1 で修正済み。それ以前の gem ではオブジェクト自体の `diff` は得られるが、属性内の差分は得られない)。**diff でないトポロジでも `_diff_state_` は `kept` で埋め込まれている** (gem が常に出力する) ため、フロントは `kept` の `_diff_state_` を属性ツリーに表示しない (または既定で折りたたむ)。
 
-### 4.5 既存 API の利用
+### 4.5 `GET /topologies/:network/netoviz2/profiles`
+
+schematic レイアウトのダイアグラムプロファイル (書式: netoviz2 の [profile_format.md](https://github.com/ool-mddo/netoviz2/blob/main/docs/design/profile_format.md)) を返す。**network 単位** (snapshot には依存しない。適用先の snapshot はプロファイル自身の `target.snapshot` が宣言する) なので、ベースパスは `/topologies/:network/netoviz2` (snapshot が無い)。
+
+元データは playground の `profiles/<network>/<名前>.yaml` (人が書く YAML。netomox-exp には `MDDO_PROFILES_DIR` で渡す)。netomox-exp は YAML を **JSON に変換するだけ**で、意味の検証はしない (検証・選択は netoviz2)。
+
+```json
+{
+  "network": "mddo-fw",
+  "profiles": [
+    {"name": "asis", "etag": "1746506244000000000-1234",
+     "documents": [
+       {"view": "physical", "target": {"network": "mddo-fw", "snapshot": "original_asis", "layer": "layer1"},
+        "tiers": ["wan", "fw"], "rules": [{"select": "*", "group": "site"}]}
+     ]},
+    {"name": "broken", "etag": "...", "documents": [], "error": "did not find expected key at line 3"}
+  ]
+}
+```
+
+| フィールド | 説明 |
+|---|---|
+| `profiles[]` | `profiles/<network>/` の `*.yaml` / `*.yml` (通常のファイルだけ。シンボリックリンクは辿らない)。ファイル名 (拡張子を除く) の昇順。ディレクトリが無い・空なら `[]` (`200`)。同じ名前で `.yaml` と `.yml` があれば `.yaml` を使う |
+| `name` | ファイル名から拡張子を除いたもの。先頭が英数字か `_` で、`[A-Za-z0-9_.-]` だけの名前に限る。`?profile=<name>` で指定する名前 |
+| `etag` | ファイルの mtime (ns) と size から生成 |
+| `documents[]` | YAML の文書 (`---` 区切り) ごとに 1 要素。内容をそのまま JSON にした値 (通常はオブジェクト。値の種類の検証は netoviz2)。空の文書は除く |
+| `error` | ファイル単位のエラー (YAML の構文エラー、JSON で表せない書き方、サイズ超過)。メッセージにファイル名か文書の番号 (`document #2: ...`) を含む。このときの `documents` は `[]`。他のファイルと HTTP ステータスには影響しない |
+
+* **YAML の書き方の制限:** JSON で表せない書き方は使わない。使われていれば、そのファイルが `error` になる。
+  * アンカー・エイリアス・タグ (`&x` `*x` `!foo` `!!str` `!!binary` など)
+  * 文字列でないキー (`1: x`)、日付・時刻・シンボルなどの YAML 独自の型
+  * `.nan` `.inf`、深さが 64 段を超える入れ子
+  * 1MB を超えるファイル
+* **型は YAML 1.1 (Ruby の Psych) の規則:** 引用符なしの `01` は数値、`017` は 8 進数の 15、`yes` / `on` は真偽値、`1e3` は文字列になる。文字列にしたい値 (`primary: '1'` など) は引用符で囲む。
+* 安全な読み込みだけを使う (任意のオブジェクトを作らない)。
+* `ETag` ヘッダと `304` は扱わない (小さい応答を毎回返す)。他のエンドポイントのような `schema_version` は持たない (形式が変わるときは、この節で互換性を扱う)。
+
+### 4.6 既存 API の利用
 
 network / snapshot の一覧は既存の `GET /topologies/index` を利用する。
 

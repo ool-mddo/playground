@@ -46,6 +46,7 @@ services:
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
       MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
       MDDO_USECASES_DIR: ${MDDO_USECASES_DIR}
+      MDDO_PROFILES_DIR: ${MDDO_PROFILES_DIR}
     volumes:
       # data dirs
       - type: volume
@@ -58,6 +59,11 @@ services:
       - type: volume
         source: usecases
         target: ${MDDO_USECASES_DIR}
+      # diagram profiles for netoviz2 (written by hand, only read)
+      - type: volume
+        source: profiles
+        target: ${MDDO_PROFILES_DIR}
+        read_only: true
       # for development
       - type: bind
         source: ./repos/netomox-exp/lib
@@ -222,3 +228,9 @@ volumes:
       type: none
       o: bind
       device: ./${SHARED_USECASES_DIR}
+  profiles:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_PROFILES_DIR}

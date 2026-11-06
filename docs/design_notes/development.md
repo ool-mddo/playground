@@ -198,39 +198,20 @@ cd demo/candidate_model_ops && source demo_vars && ./21_generate_conduit.sh
 
 ## netoviz2 の開発
 
-netoviz2 は、マルチレイヤのトポロジを表示する汎用ビューワーです (Vite + Vue 3 + TypeScript の静的 SPA)。
-サブモジュール登録の前は、`repos/netoviz2` に置いた独立リポジトリとして扱います。データの読み込み・加工は netomox-exp の
-`/topologies/:network/:snapshot/netoviz2/*` API が行い、netoviz2 は volume を持たず REST API だけを呼びます。
-仕様は [netoviz2_data_format.md](../netoviz2_data_format.md)、設計・進捗は [netoviz2_requirements.md](../work/plans/netoviz2_requirements.md) を参照してください。
+netoviz2 は、マルチレイヤのトポロジを表示する汎用ビューワーです (Vite + Vue 3 + TypeScript の静的 SPA。サブモジュール `repos/netoviz2`)。
+データの読み込み・加工は netomox-exp の `/topologies/:network/:snapshot/netoviz2/*` API が行い、netoviz2 は volume を持たず REST API だけを呼びます。schematic レイアウトのプロファイル (人が書く YAML。`profiles/`) は、netomox-exp が `profiles` ボリューム (read-only) から読んで JSON にし、`/topologies/:network/netoviz2/profiles` で返します。
 
-### 開発サーバでの確認
+* データ形式・API 仕様: [netoviz2_data_format.md](../netoviz2_data_format.md) (netomox-exp と netoviz2 の共通の仕様)
+* 開発手順 (開発サーバ、コンテナ、CI、ブランチ名、ブラウザでの動作確認のヒント): [repos/netoviz2/docs/development.md](../../repos/netoviz2/docs/development.md)
+* 構成・設計: [repos/netoviz2/docs/README.md](../../repos/netoviz2/docs/README.md)
 
-```bash
-# 事前に playground を起動しておく (api-proxy: localhost:15000)
-cd repos/netoviz2
-npm install
-npm run dev        # http://localhost:5173/netoviz2/ ( /topologies は NETOVIZ2_API_URL (既定 http://localhost:15000) へプロキシ)
-npm run typecheck && npm run lint && npm test && npm run build   # コミット前に 4 つとも通す
-```
+playground 側で関係することだけを書きます。
 
-### コンテナでの確認 (api-proxy 経由)
-
-```bash
-# playground のディレクトリで
-docker compose pull netoviz2        # CI が作ったイメージ
-docker compose up -d netoviz2 api-proxy
-# http://localhost:15000/netoviz2/
-```
-
-* `netoviz2` サービスは CI が作ったイメージ (`ghcr.io/ool-mddo/netoviz2:<ブランチ名>`。タグは `.env` の `NETOVIZ2_IMAGE_TAG`) を使います。イメージは `repos/netoviz2/Dockerfile` (node でビルド → nginx で `/netoviz2/` 配下に静的配信) から作られます。ブランチ (タグ) が同じ間は同じタグが上書きされるので、更新後は `docker compose pull netoviz2` が必要です。
-* api-proxy の設定 (`assets/api-proxy/default.conf`) は bind mount なので、変更後は `docker compose exec api-proxy nginx -s reload` で反映します。
-  `/netoviz2/` の転送と、netoviz2 API (`/topologies/:nw/:ss/netoviz2/...`) だけの gzip が入っています (他の API は圧縮しません)。
+* `netoviz2` サービスは、CI が作ったイメージ (`ghcr.io/ool-mddo/netoviz2:<ブランチ名>`。タグは `.env` の `NETOVIZ2_IMAGE_TAG`) を使います。イメージは `repos/netoviz2/Dockerfile` (node でビルド → nginx で `/netoviz2/` 配下に静的配信) から作られます。ブランチ名にスラッシュを入れないでください。
+* 開発サーバ (`npm run dev`) の前に、playground を起動しておきます (api-proxy: localhost:15000)。
+* api-proxy の設定 (`assets/api-proxy/default.conf`) は bind mount なので、変更後は `docker compose exec api-proxy nginx -s reload` で反映します。`/netoviz2/` の転送と、netoviz2 API (`/topologies/:nw/:ss/netoviz2/...`) だけの gzip が入っています (他の API は圧縮しません)。
 * 属性・support 内の差分の表示には、netomox gem v0.15.1 以降 (`_diff_state_` の復元) が必要です (netomox-exp `v1.22.0-dev` 以降のイメージは 0.15.1 を使います)。
-
-### ブラウザでの動作確認のヒント
-
-* ヘッドレス Chrome の `--screenshot --virtual-time-budget` では、`requestAnimationFrame` が進まず、force-simulation が数ティックしか動きません。**実時間で待つ**ようにしてください (DevTools Protocol で、ページを開いて待ち、評価して撮る)。
-* 状態は URL で指定できます: `?layers=<layer ID,...>&sel=<object ID>` (ID は URL エンコードする)。レイアウトエンジンは `&layout=<stress|force>` (既定は stress)、依存関係の副画面 (dependency view) は `&dependency=1`。レイアウトの設計と検討の経緯は [netoviz2_layout.md](netoviz2_layout.md)。
+* schematic レイアウトのプロファイルの正本は、このリポジトリの [profiles/](../../profiles/README.md) に置きます。
 
 ## ランタイム/ベースイメージのバージョン管理
 

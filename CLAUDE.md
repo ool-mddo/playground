@@ -23,6 +23,7 @@
 ## 重要な制約
 
 - **変更しないディレクトリ:** `queries/`, `topologies/`, `policies/` は自動生成。直接編集不可。
+- **`profiles/` は人が書く:** netoviz2 の schematic レイアウト用のダイアグラムプロファイル (正本)。置き場所と使い方は [profiles/README.md](profiles/README.md)、書式は [repos/netoviz2/docs/design/profile_format.md](repos/netoviz2/docs/design/profile_format.md)。
 - **`configs/mddo-fw` はサブモジュール:** 変更は submodule 側でコミットしてから、playground 側で参照先を更新すること。
 - **`repos/` 下のサブモジュールのブランチ名にスラッシュを使わない:** CI はブランチ名をそのままコンテナイメージのタグにする (`ghcr.io/ool-mddo/<service>:<ブランチ名>`)。例: `feature/xxx` ではなく `v1.22.0-dev`。詳細は [docs/design_notes/development.md](docs/design_notes/development.md)。
 - **`demo_vars` が全体の設定起点:** `NETWORK_NAME` / `USECASE_NAME` を変えると対象ネットワーク・ユースケースが切り替わる。
@@ -37,7 +38,7 @@
 | `batfish-wrapper` + `batfish` | (内部) | 機器設定解析 |
 | `firewall-policy-parser` | (内部) | Juniper FW 設定解析 → トポロジへのマージ |
 | `ansible-eda` | 48080 | ContainerLab デプロイの自動化 (webhook) |
-| `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (静的 SPA。データは netomox-exp の API。`repos/netoviz2`)。旧 `netoviz` (port 3000) は compose から削除済み (`repos/netoviz` は残置) |
+| `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (静的 SPA。データは netomox-exp の API。`repos/netoviz2`。ドキュメントは [repos/netoviz2/docs/](repos/netoviz2/docs/README.md))。旧 `netoviz` (port 3000) は compose から削除済み (`repos/netoviz` は残置) |
 
 ## 起動コマンド
 
