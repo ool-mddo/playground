@@ -1,14 +1,11 @@
 # Plan: vSRX chassis cluster の act 側「切り離し」障害試験 (emulated env)
 
-(状態: 実装済み・検証用の縮小トポロジで動作確認済み。mddo-fw フル構成 (`22_up_conduit.sh`) での確認は未実施)
-
 ## 目的
 
 `mddo-fw` の FW クラスタ (vSRX chassis cluster, act/sby) を emulated env 上に起動した状態で、
 act 側 (node0) を切り離しても E2E 通信が継続されることを確認する障害試験を行えるようにする。
 
 - 確認したいこと: トラフィックの片寄せ、切り替え・切り戻しの手順、切り替え時にトラフィックが落ちないこと (落ちるならその断時間)
-- ref. Notion「v2.11-12作業メモ」10/23「そのままではリンクダウンしないのでどうするか、がボトルネック」
 
 ## 課題: 単純にリンクを落とせない
 
@@ -124,11 +121,3 @@ client ─ cr-1 ─ (ge-0/0/2) site-a-fw-1/2 (ge-0/0/1) ─ br-1 ─ server
    クラスタモードの ge-x/0/y はクラスタ由来の MAC (4c:96:14:...) を使うので、今回の試験では影響はなかった。
 6. (検証用トポロジの事情) cRPD の veth は MTU 9500 で vSRX (1500) と合わず OSPF が ExStart で止まった。
    本番テンプレート (crpd.j2) は unit に `mtu 1500` を設定しているので、フル構成では問題にならないはず。
-
-## 残課題
-
-- mddo-fw フル構成 (`21_generate_conduit.sh` → `22_up_conduit.sh -s emulated_asis`) 上での動作確認
-  (`23_fw_fault.sh` は ns_convert_table をモック API で返して変換・POST 内容のみ確認済み)
-- ステートフルな通信 (TCP: HTTP / iperf3) の継続確認。今回は ICMP のみ
-- node モードでは HA 相手の VM 側 (control/fabric の virtio) は up のまま。相手側は heartbeat 断で検知する
-- router-id 未設定の影響を、試験のトラブル案 (Notion「AIに聞く」) として扱うかどうか
