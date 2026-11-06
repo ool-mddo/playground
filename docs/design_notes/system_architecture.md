@@ -21,6 +21,7 @@ Playground のディレクトリ構成と役割は以下のようになってい
 
 - `configs` (input) : 分析対象のコンフィグファイル(snapshots)
 - `usecases` (input) : デモ(candidate_model_ops)ユースケース用データ
+- `profiles` (input) : netoviz2 用のレイアウト(schematic)プロファイルデータ
 - `queries` (output) : コンフィグファイルをBatfishに与えて必要な構成情報を抜き出したデータファイル(CSV)
 - `policies` (output) : Batfishでは処理できないコンフィグからのデータ抽出
 - `topologies` (output) : queries の各種データファイルを元に構成したトポロジデータ
