@@ -40,3 +40,6 @@
 [submodule "repos/firewall-policy-parser"]
 	path = repos/firewall-policy-parser
 	url = https://github.com/ool-mddo/firewall-policy-parser.git
+[submodule "repos/netoviz2"]
+	path = repos/netoviz2
+	url = https://github.com/ool-mddo/netoviz2

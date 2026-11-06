@@ -58,7 +58,6 @@ conduit1 では FW の 12 TP が stale (`to_site-a-cr-1_ge-0/0/0` 等。しか�
 | mddo-fw (p2p のみ) | config の description そのまま。segment を跳ばして対向機器/IF (`to_site-c-br-1_ge-0/0/1`) | `to_<自身が繋がる機器>_<その TP>` |
 | mddo-bgp `original_asis` (6 台が 1 segment) | config 由来の自由記述で、segment 背後の **L2 スイッチ/ポート** (`to_SW-TK01_Ethernet1`, 一部 `SW-TK01_Eth3` と形式ばらつき)。L3 topology に無い機器を指す | 同上 |
 | mddo-bgp `emulated_asis` | ns_convert の `update_tp_description` により **segment を対向とする** (`to_Seg-192.168.1.0-24_Ethernet1`)。link 由来なので完全に整合 | 同上 |
-| nttcom-trial `original_asis` | config 由来。L2 スイッチ `a01c.chib` の L3 TP (Vlan) を指す (`to_a01c.chib_Hu1/0/28`)。ハブ側 TP は config 由来の自由文 (`Chiba-minato BackBone #1`) | 同上 |
 | mddo-mregnw / pushed_configs / batfish-test (L2 含む) | **空** (config に description なし。builder は `''` を設定) | 同上 |
 
 結論:

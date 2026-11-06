@@ -1,5 +1,11 @@
 # 開発用・開発者向け
 
+## サブモジュールのブランチ名のルール
+
+`repos` 下のサブモジュールは、CI が**ブランチ名をそのままコンテナイメージのタグ**にして build / push します (`ghcr.io/ool-mddo/<service>:<ブランチ名>`)。
+イメージタグにはスラッシュ (`/`) を使えないため、**サブモジュールのブランチ名にスラッシュを含めないでください** (例: `feature/xxx` ではなく `v1.22.0-dev`)。
+playground の `.env` のイメージタグには、このブランチ名を指定します。
+
 ## 開発用サブモジュールの更新チェック
 
 デモシステム開発のために、repos 下にソースコードを配置してコンテナにマウントしています。
@@ -189,6 +195,23 @@ cd demo/candidate_model_ops && source demo_vars && ./21_generate_conduit.sh
 * **override は開発用の一時的なものです。** コミットしないでください (`.gitignore` 済み。`git add -A` でも入りません)。
   動作確認の最後には必ず override を外し、公開イメージで確認してください。
 * ローカルの netomox を使った確認結果は、公開版 (イメージ) でも同じになることを確認してから完了とします。
+
+## netoviz2 の開発
+
+netoviz2 は、マルチレイヤのトポロジを表示する汎用ビューワーです (Vite + Vue 3 + TypeScript の静的 SPA。サブモジュール `repos/netoviz2`)。
+データの読み込み・加工は netomox-exp の `/topologies/:network/:snapshot/netoviz2/*` API が行い、netoviz2 は volume を持たず REST API だけを呼びます。schematic レイアウトのプロファイル (人が書く YAML。`profiles/`) は、netomox-exp が `profiles` ボリューム (read-only) から読んで JSON にし、`/topologies/:network/netoviz2/profiles` で返します。
+
+* データ形式・API 仕様: [netoviz2_data_format.md](../netoviz2_data_format.md) (netomox-exp と netoviz2 の共通の仕様)
+* 開発手順 (開発サーバ、コンテナ、CI、ブランチ名、ブラウザでの動作確認のヒント): [repos/netoviz2/docs/development.md](../../repos/netoviz2/docs/development.md)
+* 構成・設計: [repos/netoviz2/docs/README.md](../../repos/netoviz2/docs/README.md)
+
+playground 側で関係することだけを書きます。
+
+* `netoviz2` サービスは、CI が作ったイメージ (`ghcr.io/ool-mddo/netoviz2:<ブランチ名>`。タグは `.env` の `NETOVIZ2_IMAGE_TAG`) を使います。イメージは `repos/netoviz2/Dockerfile` (node でビルド → nginx で `/netoviz2/` 配下に静的配信) から作られます。ブランチ名にスラッシュを入れないでください。
+* 開発サーバ (`npm run dev`) の前に、playground を起動しておきます (api-proxy: localhost:15000)。
+* api-proxy の設定 (`assets/api-proxy/default.conf`) は bind mount なので、変更後は `docker compose exec api-proxy nginx -s reload` で反映します。`/netoviz2/` の転送と、netoviz2 API (`/topologies/:nw/:ss/netoviz2/...`) だけの gzip が入っています (他の API は圧縮しません)。
+* 属性・support 内の差分の表示には、netomox gem v0.15.1 以降 (`_diff_state_` の復元) が必要です (netomox-exp `v1.22.0-dev` 以降のイメージは 0.15.1 を使います)。
+* schematic レイアウトのプロファイルの正本は、このリポジトリの [profiles/](../../profiles/README.md) に置きます。
 
 ## ランタイム/ベースイメージのバージョン管理
 

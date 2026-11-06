@@ -1,0 +1,40 @@
+# mddo-fw (as-is の構成) の図の定義。トポロジとは別に人が管理する。
+# 正本。repos/netoviz2/src/profiles/mddo-fw.yaml は試行段階の作業用コピー (P4 で廃止する。?profile=mddo-fw)。
+# 書式: repos/netoviz2/docs/design/profile_format.md
+# 1 つの文書が 1 つのプロファイル。target (network / snapshot (正規表現) / layer) に合うレイヤに使われる。
+
+# --- original_asis の layer1 (機器)。上位レイヤ (layer2, layer3) は、この配置を継承する ---
+view: physical
+target: { network: mddo-fw, snapshot: original_asis, layer: layer1 }
+tiers: [wan, fw, core, segment, host] # 上 = 上流
+
+# 名前の分解。site-a-br-1 → site=a, role=br, index=1 / site-a-seg1 → site=a, role=seg, index=1
+name: '^site-(?<site>[a-z])-(?<role>[a-z]+)-?(?<index>\d+)$'
+
+rules: # 後に書いたものが勝つ
+  - { select: "*", group: site, pair: { by: index, primary: "1" } }
+  - { select: "[role=br]", tier: wan }
+  - { select: "[role=fw]", tier: fw }
+  - { select: "[role=cr]", tier: core }
+  - { select: "[role=seg]", tier: segment }
+  - { select: "[role=host]", tier: host }
+  - { select: "[site=a]", order: 1 } # 拠点は左から a, b, c
+  - { select: "[site=b]", order: 2 }
+  - { select: "[site=c]", order: 3 }
+
+---
+# --- emulated_asis の layer3 (layer1/layer2 が無いので、継承できない。機器の名前は original_asis と同じ) ---
+view: logical
+target: { network: mddo-fw, snapshot: emulated_asis, layer: layer3 }
+tiers: [wan, fw, core, segment, host]
+name: '^site-(?<site>[a-z])-(?<role>[a-z]+)-?(?<index>\d+)$'
+
+rules:
+  - { select: "*", group: site, pair: { by: index, primary: "1" } }
+  - { select: "[role=br]", tier: wan }
+  - { select: "[role=fw]", tier: fw }
+  - { select: "[role=cr]", tier: core }
+  - { select: "[role=host]", tier: host }
+  - { select: "[site=a]", order: 1 }
+  - { select: "[site=b]", order: 2 }
+  - { select: "[site=c]", order: 3 }
