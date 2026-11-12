@@ -16,6 +16,8 @@
 # data directories
 configs/nttcom-trial-*/
 configs/biglobe*/
+configs/bgp-test/
+demo/bgp-test/
 demo/layer1_topology/inet-henge/*
 # tools
 .ansible
