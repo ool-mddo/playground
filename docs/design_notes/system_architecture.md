@@ -25,6 +25,7 @@ Playground のディレクトリ構成と役割は以下のようになってい
 - `queries` (output) : コンフィグファイルをBatfishに与えて必要な構成情報を抜き出したデータファイル(CSV)
 - `policies` (output) : Batfishでは処理できないコンフィグからのデータ抽出
 - `topologies` (output) : queries の各種データファイルを元に構成したトポロジデータ
+- `states` (output): state-conductor が残す状態情報
 - `repos` : 各種ツール : 開発用に、playground から起動するコンテナにマウントする形になっています
     - [model-conductor](https://github.com/ool-mddo/model-conductor): 各種データ操作の実行用APIの提供
     - [state-conductor](https://github.com/ool-mddo/state-conductor): 検証環境(emulated env)の情報取得・管理・操作

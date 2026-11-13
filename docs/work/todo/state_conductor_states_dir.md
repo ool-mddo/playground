@@ -2,8 +2,9 @@
 
 ## ステータス
 
-保留。いま進めている作業が一区切りしてから取り込みを検討する。
-playground のリモートブランチ `add_state` は、本 TODO にまとめた調査をもとに削除してよい (未削除)。
+取り込み済み (#121, v2.12.1 以降)。state-conductor v1.1.0 に更新し、`.env` / `docker-compose.visualize.yaml` /
+`states/.gitignore` を反映した。残りは「取り込み時にやること」の項目 4 (動作確認) と 5 (リモートブランチ整理) のみ。
+(playground の `add_state` は、本 TODO の調査をもとに削除してよい。未削除)
 
 ## 背景
 
@@ -20,7 +21,7 @@ playground のリモートブランチ `origin/add_state` (73c7a7c "add states d
 
 ## state-conductor 側の対応状況 (調査結果)
 
-受け側の実装は state-conductor の**未リリースブランチ**にあり、現行リリース (v1.0.2) には存在しない。
+(調査時点の記録) 受け側の実装は当時 state-conductor の未リリースブランチにあり、v1.0.2 には存在しなかった。現在は v1.1.0 にリリース済み。
 
 | ブランチ / コミット | 内容 |
 |---|---|
@@ -59,18 +60,17 @@ playground のリモートブランチ `origin/add_state` (73c7a7c "add states d
 
 ## 取り込み時にやること
 
-1. state-conductor v1.1.0 (`MDDO_STATES_DIR` 対応版) のリリース。playground は現在 `STATE_CONDUCTOR_IMAGE_TAG=v1.0.2`。
+1. [済] state-conductor v1.1.0 (`MDDO_STATES_DIR` 対応版) のリリース。playground は `STATE_CONDUCTOR_IMAGE_TAG=v1.1.0` に更新済み。
    - その他 v1.1.0-dev での変更点 (e18bcbb 以外に差分はないはずだが、リリース時に再確認)。
-2. 古い `add_state` を rebase せず、現在の main から作り直す (約 1 年前のブランチで衝突しやすいため)。
+2. [済] 古い `add_state` を rebase せず、現在の main から作り直す (約 1 年前のブランチで衝突しやすいため)。
    - `.env` に `SHARED_STATES_DIR` / `MDDO_STATES_DIR` を追加。
    - `docker-compose.visualize.yaml` の state-conductor に環境変数とボリュームを追加。
    - 既存の `SHARED_*_DIR` の命名・配置 (`.env`) に合わせる。
-3. `states/` の扱いを決める: `.gitignore` に追加するか (自動生成物。`queries/` 等と同様の扱い)。
-4. 動作確認: `docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d` で起動し、
+3. [済: `states/.gitignore` で `*` を無視] `states/` の扱いを決める: `.gitignore` に追加するか (自動生成物。`queries/` 等と同様の扱い)。
+4. [未] 動作確認: `docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d` で起動し、
    sampling begin/end の POST 後に `./states/{timestamp,stats}` にファイルができること、コンテナ再作成後も残ることを確認。
-5. リモートブランチの整理: playground `origin/add_state`、state-conductor `origin/add_states_dir` を削除 (取り込み後、または不要と判断した時点)。
+5. [未] リモートブランチの整理: playground `origin/add_state`、state-conductor `origin/add_states_dir` を削除 (取り込み後、または不要と判断した時点)。
 
 ## 未確認事項
 
-- state-conductor v1.1.0 のリリース予定。
 - `repos/state-conductor/venv` ディレクトリが追跡対象かどうか。

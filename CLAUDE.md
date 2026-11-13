@@ -23,6 +23,7 @@
 ## 重要な制約
 
 - **変更しないディレクトリ:** `queries/`, `topologies/`, `policies/` は自動生成。直接編集不可。
+- **`states/` は自動生成:** state-conductor の出力先 (`.gitignore` 済み)。直接編集不可。
 - **`profiles/` は人が書く:** netoviz2 の schematic レイアウト用のダイアグラムプロファイル (正本)。置き場所と使い方は [profiles/README.md](profiles/README.md)、書式は [repos/netoviz2/docs/design/profile_format.md](repos/netoviz2/docs/design/profile_format.md)。
 - **`configs/mddo-fw` はサブモジュール:** 変更は submodule 側でコミットしてから、playground 側で参照先を更新すること。
 - **`repos/` 下のサブモジュールのブランチ名にスラッシュを使わない:** CI はブランチ名をそのままコンテナイメージのタグにする (`ghcr.io/ool-mddo/<service>:<ブランチ名>`)。例: `feature/xxx` ではなく `v1.22.0-dev`。詳細は [docs/design_notes/development.md](docs/design_notes/development.md)。
@@ -37,6 +38,7 @@
 | `netomox-exp` | (内部) | トポロジモデル保存・変換・ユースケースロジック |
 | `batfish-wrapper` + `batfish` | (内部) | 機器設定解析 |
 | `firewall-policy-parser` | (内部) | Juniper FW 設定解析 → トポロジへのマージ |
+| `state-conductor` | (内部) | emulated 環境のトラフィック計測・state 管理 (可視化込み起動時のみ。出力は `./states` に永続化) |
 | `ansible-eda` | 48080 | ContainerLab デプロイの自動化 (webhook) |
 | `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (静的 SPA。データは netomox-exp の API。`repos/netoviz2`。ドキュメントは [repos/netoviz2/docs/](repos/netoviz2/docs/README.md))。旧 `netoviz` (port 3000) は compose から削除済み (`repos/netoviz` は残置) |
 
@@ -64,6 +66,10 @@ source demo_vars
 
 # 上で生成・登録済みの snapshot のうち1つだけをエミュレーション環境として起動
 ./22_up_conduit.sh -s emulated_asis -d   # -d: containerlab を使わない (config生成確認のみ)
+
+# 起動中の emulated 環境の FW (vSRX) に障害を注入 / 復旧 (-u)
+./23_fw_fault.sh -s emulated_asis -n site-a-fw-1 -i ge-0/0/1,ge-0/0/2
+./23_fw_fault.sh -s emulated_asis -n site-a-fw-1 -i ge-0/0/1,ge-0/0/2 -u
 
 # 候補モデル生成 + エミュレーション評価 (フルフロー、別シナリオ)
 ./00_run_phase.sh
