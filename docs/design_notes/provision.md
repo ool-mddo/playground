@@ -54,7 +54,7 @@ sudo apt install curl jq less csvtool bsdextrautils
 
 デモ用ツールがrubyで作成されているため、ruby および bundler をインストールしてください。
 
-開発では ruby/3.1 で動作確認しています。一部のスクリプトは ruby 3.1未満では動かないものがあります。ディストリビューションの ruby version が 3.1 未満の場合は [rbenv](https://github.com/rbenv/rbenv) 等でインストールしてください。
+開発では ruby/3.4 で動作確認しています (コンテナイメージも ruby 3.4 系。現行バージョンは [development.md](./development.md#ランタイムベースイメージのバージョン管理) を参照)。古い ruby では動かないスクリプトがあります。ディストリビューションの ruby version が 3.4 より古い場合は [rbenv](https://github.com/rbenv/rbenv) 等でインストールしてください。
 
 - ディストリビューションのruby packageでrubyをインストールする場合
 

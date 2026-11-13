@@ -2,7 +2,7 @@
 
 # runtime
 CRPD_IMAGE="crpd:23.4R1.9"
-ENDPOINT_IMAGE="ghcr.io/ool-mddo/ool-iperf:v0.0.2"
+ENDPOINT_IMAGE="ghcr.io/ool-mddo/ool-iperf:v0.0.3"
 # environment
 ANSIBLE_EDA="localhost:48080" # controller EDA
 API_PROXY="localhost:15000"
@@ -14,7 +14,7 @@ WORKER_PORT="48090" # worker EDA port
 #CONTROLLER_ADDRESS="192.168.23.33"
 #WORKER_ADDRESS="192.168.23.34" # e.g.) "192.168.0.1,192.168.0.2,..." when using multiple workers
 # single node
-CONTROLLER_ADDRESS="172.32.0.1"
+CONTROLLER_ADDRESS="192.168.109.128"
 WORKER_ADDRESS="172.32.0.1" # e.g.) "192.168.0.1,192.168.0.2,..." when using multiple workers
 
 # all steps: target network/usecase name
@@ -25,8 +25,8 @@ NETWORK_NAME="mddo-fw"
 USECASE_NAME="refocus_topology"
 
 # directory and file
-LOCALSERVER_USER=mddo
-PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/playground"
+LOCALSERVER_USER=hagiwara
+PLAYGROUND_DIR="/home/${LOCALSERVER_USER}/ool-mddo/playground"
 DEMO_DIR="${PLAYGROUND_DIR}/demo/candidate_model_ops"
 NETWORK_INDEX="${DEMO_DIR}/network_index/${NETWORK_NAME}.json"
 USECASE_SESSION_DIR="${DEMO_DIR}/playbooks/session"

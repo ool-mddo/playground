@@ -1,5 +1,11 @@
 # 開発用・開発者向け
 
+## サブモジュールのブランチ名のルール
+
+`repos` 下のサブモジュールは、CI が**ブランチ名をそのままコンテナイメージのタグ**にして build / push します (`ghcr.io/ool-mddo/<service>:<ブランチ名>`)。
+イメージタグにはスラッシュ (`/`) を使えないため、**サブモジュールのブランチ名にスラッシュを含めないでください** (例: `feature/xxx` ではなく `v1.22.0-dev`)。
+playground の `.env` のイメージタグには、このブランチ名を指定します。
+
 ## 開発用サブモジュールの更新チェック
 
 デモシステム開発のために、repos 下にソースコードを配置してコンテナにマウントしています。
@@ -189,6 +195,63 @@ cd demo/candidate_model_ops && source demo_vars && ./21_generate_conduit.sh
 * **override は開発用の一時的なものです。** コミットしないでください (`.gitignore` 済み。`git add -A` でも入りません)。
   動作確認の最後には必ず override を外し、公開イメージで確認してください。
 * ローカルの netomox を使った確認結果は、公開版 (イメージ) でも同じになることを確認してから完了とします。
+
+## netoviz2 の開発
+
+netoviz2 は、マルチレイヤのトポロジを表示する汎用ビューワーです (Vite + Vue 3 + TypeScript の静的 SPA。サブモジュール `repos/netoviz2`)。
+データの読み込み・加工は netomox-exp の `/topologies/:network/:snapshot/netoviz2/*` API が行い、netoviz2 は volume を持たず REST API だけを呼びます。schematic レイアウトのプロファイル (人が書く YAML。`profiles/`) は、netomox-exp が `profiles` ボリューム (read-only) から読んで JSON にし、`/topologies/:network/netoviz2/profiles` で返します。
+
+* データ形式・API 仕様: [netoviz2_data_format.md](../netoviz2_data_format.md) (netomox-exp と netoviz2 の共通の仕様)
+* 開発手順 (開発サーバ、コンテナ、CI、ブランチ名、ブラウザでの動作確認のヒント): [repos/netoviz2/docs/development.md](../../repos/netoviz2/docs/development.md)
+* 構成・設計: [repos/netoviz2/docs/README.md](../../repos/netoviz2/docs/README.md)
+
+playground 側で関係することだけを書きます。
+
+* `netoviz2` サービスは、CI が作ったイメージ (`ghcr.io/ool-mddo/netoviz2:<ブランチ名>`。タグは `.env` の `NETOVIZ2_IMAGE_TAG`) を使います。イメージは `repos/netoviz2/Dockerfile` (node でビルド → nginx で `/netoviz2/` 配下に静的配信) から作られます。ブランチ名にスラッシュを入れないでください。
+* 開発サーバ (`npm run dev`) の前に、playground を起動しておきます (api-proxy: localhost:15000)。
+* api-proxy の設定 (`assets/api-proxy/default.conf`) は bind mount なので、変更後は `docker compose exec api-proxy nginx -s reload` で反映します。`/netoviz2/` の転送と、netoviz2 API (`/topologies/:nw/:ss/netoviz2/...`) だけの gzip が入っています (他の API は圧縮しません)。
+* 属性・support 内の差分の表示には、netomox gem v0.15.1 以降 (`_diff_state_` の復元) が必要です (netomox-exp `v1.22.0-dev` 以降のイメージは 0.15.1 を使います)。
+* schematic レイアウトのプロファイルの正本は、このリポジトリの [profiles/](../../profiles/README.md) に置きます。
+
+## ランタイム/ベースイメージのバージョン管理
+
+各サブモジュールの Dockerfile は、ベースイメージのタグを **パッチ番号まで固定** します
+(例: `FROM python:3.12.16-slim`)。ビルド済みイメージを調べなくても、Dockerfile の 1 行目で
+そのイメージが使うランタイムのバージョンを特定できます。
+`3.12-slim` のような浮動タグは、再ビルドのたびに中身が変わるため使いません。
+その代わり、ランタイムのセキュリティ更新は Dockerfile を書き換えて取り込みます。
+
+現行のバージョン (2026-11 時点):
+
+| サブモジュール | ベースイメージ |
+|---|---|
+| netomox-exp / model-conductor | `ruby:3.4.12-slim` |
+| firewall-policy-parser / state-conductor | `python:3.12.16-slim` |
+| batfish-wrapper / bgp-policy-parser | `python:3.12.16-slim` (3.11 から移行) |
+| netoviz | `node:24.22.2-alpine` |
+| fish-tracer | `node:16.13-bullseye-slim` (EOL。現在は未使用で更新対象外) |
+
+### 更新手順
+
+1. 上流の最新パッチ版を調べ、Docker Hub に同名タグがあることを確認する
+   (`python`, `ruby`, `node` の公式イメージ)。サポート終了 (EOL) の状況も確認する。
+2. 各サブモジュールの `vX.Y.Z-dev` ブランチで Dockerfile の 1 行目を書き換えて push する。
+   CI がイメージ (`ghcr.io/ool-mddo/<service>:<ブランチ名>`) を build / push する。
+3. playground の `.env` のイメージタグを更新し、`docker compose pull && docker compose up -d` で
+   コンテナ内のランタイムを確認する (`ruby -v` / `python3 --version` / `node -v`)。
+   全体の動作確認として `demo/candidate_model_ops/21_generate_conduit.sh` を実行する。
+4. 必要ならサブモジュールをリリースする。
+
+Ruby のイメージを更新したときは、model-conductor の `Gemfile.lock` の `RUBY VERSION` も変わります
+(`Gemfile.lock` は `.gitignore` 対象)。Python のメジャー/マイナー更新では、依存パッケージ
+(pybatfish, pandas, Flask など) が新しい版に解決されるため、ビルドとテストで互換性を確認してください。
+
+### ローカル環境
+
+ローカルのランタイムは anyenv (rbenv / pyenv / nodenv) で管理しています。
+global はイメージに合わせて ruby 3.4 系 / python 3.12 系 / node 24 系にします。
+`anyenv install --list` の対象は各 `*-build` プラグインが知るバージョンだけなので、
+新しいパッチ版を入れる前に、各プラグイン (`~/.anyenv/envs/*/plugins/*-build`) を `git pull` してください。
 
 ## YAMLフォーマットチェック
 

@@ -35,7 +35,9 @@ interfaces {
 {% for group in vrrp_groups %}
                     vrrp-group {{ group['group-id'] }} {
 {% for vip in group['virtual-address'] %}
-                        virtual-address {{ vip }};
+                        virtual-address {{ vip }} {
+                            device-name  {{ interface.name | regex_replace('\.0', '') }};
+                        }
 {% endfor %}
                         priority {{ group['priority'] }};
 {% if not group['preempt'] %}

@@ -14,14 +14,13 @@
 graph TB
     subgraph Playground ["playground (Docker Compose)"]
         subgraph Frontend
-            netoviz["netoviz\n(Nuxt.js:3000)\nトポロジ可視化"]
-            fish["fish-tracer\n(Nuxt.js)\nパケット追跡UI"]
+            netoviz2["netoviz2\n(Vue SPA, nginx)\nトポロジ可視化 (api-proxy 経由)"]
         end
 
         subgraph Core
             proxy["api-proxy\n(nginx:15000)\nルーティング"]
-            mc["model-conductor\n(Ruby/Sinatra)\nオーケストレーター"]
-            ne["netomox-exp\n(Ruby/Sinatra)\nトポロジモデルAPI"]
+            mc["model-conductor\n(Ruby/Grape)\nオーケストレーター"]
+            ne["netomox-exp\n(Ruby/Grape)\nトポロジモデルAPI"]
             bw["batfish-wrapper\n(Python)\nBatfish APIラッパー"]
         end
 
@@ -57,6 +56,7 @@ graph TB
     proxy -->|/batfish /configs /queries| bw
     proxy -->|/topologies /usecases| ne
     proxy -->|/conduct| mc
+    proxy -->|/netoviz2| netoviz2
     proxy -->|/fw_policy| fpp
     proxy -->|/bgp_policy| bgpp
 
@@ -91,7 +91,7 @@ graph TB
 | `/conduct/` | model-conductor:9292 |
 | `/bgp_policy/` | bgp-policy-parser:5000 |
 | `/fw_policy/` | firewall-policy-parser:5000 |
-| `/` (default) | fish-tracer:3000 |
+| `/netoviz2/` | netoviz2:80 (静的 SPA) |
 
 ---
 
@@ -100,7 +100,6 @@ graph TB
 ```
 playground/
 ├── docker-compose.yaml          # フルスタック構成 (全サービス)
-├── docker-compose.min.yaml      # 最小構成 (ansible-eda, fish-tracer 除外)
 ├── docker-compose.visualize.yaml # 可視化追加 (grafana, prometheus, state-conductor)
 ├── .env                         # コンテナイメージタグ定義
 ├── check_repos.sh               # repos/ サブモジュールの状態確認スクリプト
@@ -151,6 +150,7 @@ playground/
 │   ├── model-conductor/
 │   ├── netomox-exp/
 │   ├── netoviz/
+│   ├── netoviz2/                # 汎用トポロジビューワー (独立リポジトリ、サブモジュール)
 │   ├── state-conductor/
 │   └── mddo-worker/
 │
@@ -178,7 +178,7 @@ playground/
     (usecases/refocus_topology/mddo-fw/params.yaml の FW クラスタ対定義を参照)
 
 出力: topologies/mddo-fw/original_asis/topology.json (FW属性付きL3トポロジ)
-      netoviz インデックス更新 → GUI で確認可能 (port 3000)
+      netoviz インデックス更新 → netoviz2 で確認可能 (http://localhost:15000/netoviz2/)
 ```
 
 ### フロー 2: `01_candidate_topology.sh` — 候補トポロジ生成
@@ -263,10 +263,13 @@ playground/
        - Firewall ノード (top-level flag に "firewall"): 元ノードをそのまま保持
        - Router ノード (blueprint でグループ化): 代表ノード 1 つに集約。
          外部 TP のみ eth1, eth2, ... に rename。並列リンクは 1 本に集約。
+         ただし元ノード 1 つだけのグループ (endpoint (host) など、集約しないもの) は TP 名を rename せず元の名前のまま保持。
          ただし `fhrp` (VRRP/HSRP) を持つ unlinked TP (エッジ) は、外部 TP に続けて残す:
          冗長を維持できる (メンバーが 2 つ以上の別 conduit ノードにいる) ときは `fhrp` を引き継ぎ、
          維持できない (畳んだ / パートナーが blueprint に無い) ときは `fhrp` を付けず virtual-address を IP にする
          (エッジセグメントのエンドポイントのデフォルトゲートウェイを変えない)
+         endpoint (host) を blueprint に含め、host 向けセグメントが外部セグメントになる場合も同様に、
+         同じ conduit ノードに集約された冗長ゲートウェイ (fhrp メンバー) の TP をセグメント上で代表 1 TP に畳む
        - Segment ノード: グループ間をまたぐ外部セグメントのみ自動生成
        - blueprint に定義されていないノード: conduit topology から省略 (Segment の該当 endpoint も除外。
          残りが 2 グループ未満になった Segment は生成しない)
@@ -403,7 +406,8 @@ Prometheus から scrape したトラフィックカウンタを集約。`diff2c
 `21_generate_conduit.sh -b <blueprint_snapshot>` で使用する blueprint を切り替えられる
 (デフォルト: `original_asis_blueprint1`)。
 現在、`original_asis_blueprint1`（site-a/site-b のみ）と `original_asis_blueprint2`（site-c を含む）
-の2つを用意している。
+の2つを用意している。どちらも対象サイトの endpoint (`site-*-host-1/2`) を含み、cr-1/cr-2 は `site-*-cr` に集約する
+(endpoint を収容する L2 スイッチは layer3 のノードではないので blueprint には現れない)。
 
 - `GET /usecases/:uc/:nw/:ss/topology` で netomox-exp から取得される
 - このファイルに含まれる `ietf-network:networks.network` 配列の要素数 = 生成される conduit スナップショットの数
@@ -432,6 +436,8 @@ netomox-exp が topology.json に追加する。TP に FHRP が無い場合は `
 - netomox-exp: `FhrpPropertiesTable` (`vrrp_props.csv` / `hsrp_props.csv`。無ければ空扱い) → `L3DataBuilder` が layer3 TP に付与。namespace 変換では保持される。
 - model-conductor (conduit): Firewall グループは保持。Router グループは、`fhrp` を持つ unlinked TP を残し、冗長を維持できれば `fhrp` を引き継ぎ、
   維持できなければ virtual-address を IP にして `fhrp` は付けない (エッジのエンドポイントのデフォルトゲートウェイを変えない)。
+  endpoint (host) を blueprint に含めて host 向けセグメントが外部セグメントになる場合は、同じ conduit ノードに集約された
+  冗長 gateway の TP をセグメント上で代表 1 TP に畳む。元ノード 1 つだけのグループ (host など) は TP 名を維持する。
 - netoviz: layer3 TP の tooltip に `FHRP:` を表示。
 - netomox v0.14.0 以降が必要 (`MddoL3TPAttribute#fhrp`)。
 

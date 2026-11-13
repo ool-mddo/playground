@@ -3,6 +3,16 @@
 {#   l3_interfaces : topology/layer3/interfaces response                          #}
 {#   ospf_areas    : topology/layer_type_ospf/interfaces?node_type=ospf_proc      #}
 {#   fw_mgmt_addresses (optional) : { <fw node name>: <fxp0 address> }            #}
+{# junos_list: JunOS match value. one element -> "x", multiple -> "[ x y z ]" (a string is accepted for old data) #}
+{% macro junos_list(values) -%}
+{%   if values is string -%}
+{{ values }}
+{%-   elif values | length == 1 -%}
+{{ values[0] }}
+{%-   else -%}
+[ {{ values | join(" ") }} ]
+{%-   endif %}
+{%- endmacro %}
 {% set fw = item["attribute"]["firewall"] %}
 {% set cluster_nodes = [fw["pair"]["primary"], fw["pair"]["secondary"]] %}
 {% set mgmt_addrs = fw_mgmt_addresses | default({}) %}
@@ -54,9 +64,9 @@ security {
 {%   for rule in policy["rules"] %}
             policy {{ rule["name"] }} {
                 match {
-                    source-address {{ rule["source_address"] }};
-                    destination-address {{ rule["destination_address"] }};
-                    application {{ rule["application"] }};
+                    source-address {{ junos_list(rule["source_address"]) }};
+                    destination-address {{ junos_list(rule["destination_address"]) }};
+                    application {{ junos_list(rule["application"]) }};
                 }
                 then {
                     {{ rule["action"] }};

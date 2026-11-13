@@ -32,6 +32,11 @@ blueprint に定義されていないノードは、conduit topology から単�
 
 `mddo-fw` には `original_asis_blueprint1`（site-a/site-b のみを対象）と
 `original_asis_blueprint2`（site-c を含む）の2つの blueprint snapshot を用意している。
+どちらも対象サイトの endpoint（`site-*-host-1/2`）を省略せず、original_asis と同じノードとして含む。
+endpoint を収容する L2 スイッチ（`site-*-seg1/2`）は layer3 topology ではノードにならないため blueprint には現れない。
+endpoint の gateway を担う `site-*-cr-1/2` は `site-*-cr` に集約する（冗長 gateway の virtual address が
+conduit topology 上の gateway TP のアドレスとして残り、endpoint の default gateway は変わらない）。
+endpoint ノードは集約しないので TP 名は元のまま（`eth0`）。
 どちらを使うかは `demo/candidate_model_ops/21_generate_conduit.sh -b <blueprint_snapshot>` で切り替える
 （デフォルトは `original_asis_blueprint1`）。
 

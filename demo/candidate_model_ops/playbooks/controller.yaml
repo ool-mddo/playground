@@ -166,6 +166,19 @@
   ## (Junos chassis-cluster configs are shared; "apply-groups "${node}"" picks the
   ## right node{0,1} stanza per member at load time).
 
+  ## an empty application/source_address/destination_address list is an invalid match condition (vSRX rejects it on commit).
+  ## It means the policy parser could not read the value: stop here instead of failing at the commit of the emulated env.
+  - name: collect firewall policy rules that have an empty match condition
+    set_fact:
+      vsrx_invalid_rules: "{{ layer3_nodes.json | json_query(query) }}"
+    vars:
+      query: "nodes[?attribute.firewall].{node: node, rules: attribute.firewall.policies[].rules[?length(application)==`0` || length(source_address)==`0` || length(destination_address)==`0`][].name}"
+
+  - name: check firewall policy rules (match conditions must not be empty)
+    assert:
+      that: "vsrx_invalid_rules | map(attribute='rules') | map('length') | sum == 0"
+      fail_msg: "firewall policy rule(s) with empty application/source_address/destination_address: {{ vsrx_invalid_rules | rejectattr('rules', 'equalto', []) | list }}"
+
   - name: generate vsrx cluster config
     template:
       src: template/vsrx/vsrx_cluster.j2

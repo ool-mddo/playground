@@ -76,6 +76,11 @@ RFC8346の付録にOSPFトポロジモデルがあり、これがベースにな
 現状の前提・制約:
 
 - 1ノードに複数のOSPFプロセスが動作することを想定していない
+- FW の HA クラスタ (fw-1/fw-2) は、制御上は1ノードに見えるが、トポロジでは物理構成に合わせて2ノードとして扱う。
+  両ノードは同名・同一 IP の IF を持つが、レイヤ3の segment に接続されるのは物理配線側の TP のみ (例: `ge-7/0/x` は fw-2 側)。
+  そのため OSPF の cost / network-type / timer / passive は、同名・同一 IP の IF を持つ相方ノードの設定を参照して
+  クラスタ内で一致させる (ノード名順で先頭 = primary の値を採用し、差異があれば netomox-exp が warn ログを出す)。
+- OSPF の priority / retransmission-interval は Batfish の query に含まれないため、トポロジ上は固定値 (priority 10 / retransmission 5) で、コンフィグの値は反映されない
 
 ### BGP
 

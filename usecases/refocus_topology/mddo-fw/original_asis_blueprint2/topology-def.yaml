@@ -11,6 +11,12 @@ zooms:
       site-a-wan-zone-rt: {supports: [site-a-br-1, site-a-br-2]}
       site-b-wan-zone-rt: {supports: [site-b-br-1, site-b-br-2]}
       site-c-wan-zone-rt: {supports: [site-c-br-1, site-c-br-2]}
+      site-a-host-1: {supports: [site-a-host-1]}
+      site-a-host-2: {supports: [site-a-host-2]}
+      site-b-host-1: {supports: [site-b-host-1]}
+      site-b-host-2: {supports: [site-b-host-2]}
+      site-c-host-1: {supports: [site-c-host-1]}
+      site-c-host-2: {supports: [site-c-host-2]}
     links:
       - endpoints: ['site-a-cr:eth1', 'site-a-fw:eth2']
       - endpoints: ['site-b-cr:eth1', 'site-b-fw:eth2']
@@ -21,6 +27,12 @@ zooms:
       - endpoints: ['site-a-wan-zone-rt:eth1', 'site-b-wan-zone-rt:eth1']
       - endpoints: ['site-b-wan-zone-rt:eth2', 'site-c-wan-zone-rt:eth1']
       - endpoints: ['site-c-wan-zone-rt:eth2', 'site-a-wan-zone-rt:eth2']
+      - endpoints: ['site-a-cr:eth2', 'site-a-host-1:eth0']
+      - endpoints: ['site-a-cr:eth3', 'site-a-host-2:eth0']
+      - endpoints: ['site-b-cr:eth2', 'site-b-host-1:eth0']
+      - endpoints: ['site-b-cr:eth3', 'site-b-host-2:eth0']
+      - endpoints: ['site-c-cr:eth2', 'site-c-host-1:eth0']
+      - endpoints: ['site-c-cr:eth3', 'site-c-host-2:eth0']
 
   - network: zoom1-layer3
     supports: zoom0-layer3
@@ -32,6 +44,12 @@ zooms:
       site-b-fw:   {supports: [site-b-fw]}
       site-c-fw:   {supports: [site-c-fw]}
       wan-zone-rt: {supports: [site-a-wan-zone-rt, site-b-wan-zone-rt, site-c-wan-zone-rt]}
+      site-a-host-1: {supports: [site-a-host-1]}
+      site-a-host-2: {supports: [site-a-host-2]}
+      site-b-host-1: {supports: [site-b-host-1]}
+      site-b-host-2: {supports: [site-b-host-2]}
+      site-c-host-1: {supports: [site-c-host-1]}
+      site-c-host-2: {supports: [site-c-host-2]}
     links:
       - endpoints: ['site-a-cr:eth1', 'site-a-fw:eth2']
       - endpoints: ['site-b-cr:eth1', 'site-b-fw:eth2']
@@ -39,3 +57,9 @@ zooms:
       - endpoints: ['site-a-fw:eth1', 'wan-zone-rt:eth1']
       - endpoints: ['site-b-fw:eth1', 'wan-zone-rt:eth2']
       - endpoints: ['site-c-fw:eth1', 'wan-zone-rt:eth3']
+      - endpoints: ['site-a-cr:eth2', 'site-a-host-1:eth0']
+      - endpoints: ['site-a-cr:eth3', 'site-a-host-2:eth0']
+      - endpoints: ['site-b-cr:eth2', 'site-b-host-1:eth0']
+      - endpoints: ['site-b-cr:eth3', 'site-b-host-2:eth0']
+      - endpoints: ['site-c-cr:eth2', 'site-c-host-1:eth0']
+      - endpoints: ['site-c-cr:eth3', 'site-c-host-2:eth0']

@@ -8,12 +8,20 @@ zooms:
       site-a-wan-zone-rt: {supports: [site-a-br-1, site-a-br-2]}
       site-a-fw:          {supports: [site-a-fw-1, site-a-fw-2]}
       site-a-cr:          {supports: [site-a-cr-1, site-a-cr-2]}
+      site-a-host-1: {supports: [site-a-host-1]}
+      site-a-host-2: {supports: [site-a-host-2]}
+      site-b-host-1: {supports: [site-b-host-1]}
+      site-b-host-2: {supports: [site-b-host-2]}
     links:
       - endpoints: ['site-b-cr:eth1', 'site-b-fw:eth2']
       - endpoints: ['site-b-fw:eth1', 'site-b-wan-zone-rt:eth2']
       - endpoints: ['site-b-wan-zone-rt:eth1', 'site-a-wan-zone-rt:eth1']
       - endpoints: ['site-a-wan-zone-rt:eth2', 'site-a-fw:eth1']
       - endpoints: ['site-a-fw:eth2', 'site-a-cr:eth1']
+      - endpoints: ['site-a-cr:eth2', 'site-a-host-1:eth0']
+      - endpoints: ['site-a-cr:eth3', 'site-a-host-2:eth0']
+      - endpoints: ['site-b-cr:eth2', 'site-b-host-1:eth0']
+      - endpoints: ['site-b-cr:eth3', 'site-b-host-2:eth0']
 
   - network: zoom1-layer3
     supports: zoom0-layer3
@@ -23,8 +31,16 @@ zooms:
       wan-zone-rt: {supports: [site-a-wan-zone-rt, site-b-wan-zone-rt]}
       site-a-fw:   {supports: [site-a-fw]}
       site-a-cr:   {supports: [site-a-cr]}
+      site-a-host-1: {supports: [site-a-host-1]}
+      site-a-host-2: {supports: [site-a-host-2]}
+      site-b-host-1: {supports: [site-b-host-1]}
+      site-b-host-2: {supports: [site-b-host-2]}
     links:
       - endpoints: ['site-b-cr:eth1', 'site-b-fw:eth2']
       - endpoints: ['site-b-fw:eth1', 'wan-zone-rt:eth2']
       - endpoints: ['wan-zone-rt:eth1', 'site-a-fw:eth1']
       - endpoints: ['site-a-fw:eth2', 'site-a-cr:eth1']
+      - endpoints: ['site-a-cr:eth2', 'site-a-host-1:eth0']
+      - endpoints: ['site-a-cr:eth3', 'site-a-host-2:eth0']
+      - endpoints: ['site-b-cr:eth2', 'site-b-host-1:eth0']
+      - endpoints: ['site-b-cr:eth3', 'site-b-host-2:eth0']

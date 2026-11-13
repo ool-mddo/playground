@@ -27,7 +27,7 @@ services:
       - model-conductor
       - netomox-exp
       - batfish-wrapper
-      - fish-tracer
+      - netoviz2
 
   batfish:
     image: ${BATFISH_IMAGE}:${BATFISH_IMAGE_TAG}
@@ -46,6 +46,7 @@ services:
       MDDO_QUERIES_DIR: ${MDDO_QUERIES_DIR}
       MDDO_TOPOLOGIES_DIR: ${MDDO_TOPOLOGIES_DIR}
       MDDO_USECASES_DIR: ${MDDO_USECASES_DIR}
+      MDDO_PROFILES_DIR: ${MDDO_PROFILES_DIR}
     volumes:
       # data dirs
       - type: volume
@@ -58,6 +59,11 @@ services:
       - type: volume
         source: usecases
         target: ${MDDO_USECASES_DIR}
+      # diagram profiles for netoviz2 (written by hand, only read)
+      - type: volume
+        source: profiles
+        target: ${MDDO_PROFILES_DIR}
+        read_only: true
       # for development
       - type: bind
         source: ./repos/netomox-exp/lib
@@ -180,67 +186,10 @@ services:
       - batfish-wrapper
       - netomox-exp
 
-  netoviz:
-    image: ${NETOVIZ_IMAGE}:${NETOVIZ_IMAGE_TAG}
-    ports:
-      - target: 3000
-        published: 3000
-    environment:
-      MDDO_TOPOLOGIES_DIR: /netoviz/static/model
-    volumes:
-      # data dirs
-      - type: volume
-        source: topologies
-        target: /netoviz/static/model
-      # for development
-      - type: bind
-        source: ./repos/netoviz/components
-        target: /netoviz/components
-      - type: bind
-        source: ./repos/netoviz/layouts
-        target: /netoviz/layouts
-      - type: bind
-        source: ./repos/netoviz/nuxt.config.js
-        target: /netoviz/nuxt.config.js
-      - type: bind
-        source: ./repos/netoviz/lib
-        target: /netoviz/lib
-      - type: bind
-        source: ./repos/netoviz/pages
-        target: /netoviz/pages
-      - type: bind
-        source: ./repos/netoviz/server
-        target: /netoviz/server
-      - type: bind
-        source: ./repos/netoviz/static
-        target: /netoviz/static
-      - type: bind
-        source: ./repos/netoviz/stores
-        target: /netoviz/stores
-
-  fish-tracer:
-    image: ${FISH_TRACER_IMAGE}:${FISH_TRACER_IMAGE_TAG}
-    environment:
-      BASE_URL: http://${FISH_TRACER_BASE_HOST}:${API_PROXY_PUB_PORT}
-    volumes:
-      # for development
-      - type: bind
-        source: ./repos/fish-tracer/components
-        target: /fish-tracer/components
-      - type: bind
-        source: ./repos/fish-tracer/nuxt.config.js
-        target: /fish-tracer/nuxt.config.js
-      - type: bind
-        source: ./repos/fish-tracer/pages
-        target: /fish-tracer/pages
-      - type: bind
-        source: ./repos/fish-tracer/static
-        target: /fish-tracer/static
-      - type: bind
-        source: ./repos/fish-tracer/store
-        target: /fish-tracer/store
-    depends_on:
-      - batfish-wrapper
+  # netoviz2: static files (SPA). It has no volume: data comes from netomox-exp through api-proxy.
+  # Access: http://localhost:${API_PROXY_PUB_PORT}/netoviz2/
+  netoviz2:
+    image: ${NETOVIZ2_IMAGE}:${NETOVIZ2_IMAGE_TAG}
 
 networks:
   default:
@@ -279,3 +228,9 @@ volumes:
       type: none
       o: bind
       device: ./${SHARED_USECASES_DIR}
+  profiles:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./${SHARED_PROFILES_DIR}
