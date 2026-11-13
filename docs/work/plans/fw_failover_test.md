@@ -1,5 +1,10 @@
 # Plan: vSRX chassis cluster の act 側「切り離し」障害試験 (emulated env)
 
+## 実装状況
+
+実装済み (#118)。`demo/candidate_model_ops/23_fw_fault.sh` と、手順は
+[README_refocus_topology.md](../../../demo/candidate_model_ops/README_refocus_topology.md) の「FW 障害の注入・復旧」に反映済み。
+
 ## 目的
 
 `mddo-fw` の FW クラスタ (vSRX chassis cluster, act/sby) を emulated env 上に起動した状態で、

@@ -101,7 +101,7 @@ graph TB
 playground/
 ├── docker-compose.yaml          # フルスタック構成 (全サービス)
 ├── docker-compose.visualize.yaml # 可視化追加 (grafana, prometheus, state-conductor)
-├── .env                         # コンテナイメージタグ定義
+├── .env                         # コンテナイメージタグ・共有ディレクトリ (SHARED_*_DIR / MDDO_*_DIR) 定義
 ├── check_repos.sh               # repos/ サブモジュールの状態確認スクリプト
 │
 ├── assets/
@@ -126,6 +126,7 @@ playground/
 │       ├── 11_manual_steps.sh   # 過去障害再現シナリオ
 │       ├── 21_generate_conduit.sh  # refocus_topology: トポロジ・conduit生成 + netoviz 登録 (環境起動は含まない)
 │       ├── 22_up_conduit.sh     # refocus_topology: 指定した1 snapshot のエミュレーション環境起動
+│       ├── 23_fw_fault.sh       # refocus_topology: 起動中 emulated 環境の FW (vSRX) への障害注入/復旧 (link / node / silent)
 │       ├── README_refocus_topology.md  # refocus_topology 操作手順・注意事項
 │       ├── scripts/             # 上記スクリプトから呼ばれる補助スクリプト群
 │       │   ├── up_emulated_env.sh   # ContainerLab 環境起動・計測・破棄
@@ -156,7 +157,8 @@ playground/
 │
 ├── queries/                     # 【自動生成】Batfish クエリ定義 — 編集不可
 ├── topologies/                  # 【自動生成】トポロジ JSON — 編集不可
-└── policies/                    # 【自動生成】解析済みポリシー — 編集不可
+├── policies/                    # 【自動生成】解析済みポリシー — 編集不可
+└── states/                      # 【自動生成】state-conductor の出力 (timestamp/, stats/)。.gitignore 済み。可視化込み起動時のみ使用
 ```
 
 ---
@@ -226,6 +228,25 @@ playground/
 > ansible-eda・`controller.yaml` まで伝播する。`snapshot_name` は emulated snapshot 名
 > (`up_emulated_env` が `reverse_snapshot_name()` で導出して渡す)。
 > emulated 側にも `ns_convert_table.json` が保存されるため、`controller.yaml` は emulated 側を参照する。
+
+### フロー 3b: `23_fw_fault.sh` — FW 障害の注入・復旧
+
+起動中の emulated 環境 (フロー 3 で `with_clab=true` 起動したもの) の FW (vSRX chassis cluster) に障害を注入/復旧する。
+
+```
+入力: emulated snapshot 名 (-s), FW ノード名 (-n), モード (-m link|node|silent),
+      JunOS IF 名 (-i, link 時必須), 復旧フラグ (-u)
+
+→ ansible-eda: POST /endpoint {message=fw_fault, ...}
+    → mddo-worker fw_fault.yaml:
+        → ns_convert_table で JunOS IF 名を Proxmox コンテナ側 ethN に変換
+        → link: 指定 IF のリンクを両端で down/up
+          node: VM 停止/起動 + 全リンク down/up
+          silent: VM 一時停止/再開 (リンクは up のまま転送停止)
+```
+
+操作手順・注意点は [demo/candidate_model_ops/README_refocus_topology.md](../demo/candidate_model_ops/README_refocus_topology.md)、
+注入方式と検証結果は [work/plans/fw_failover_test.md](work/plans/fw_failover_test.md) を参照。
 
 ### フロー 4: `determine_candidate.sh` — 候補評価
 
@@ -388,16 +409,24 @@ containerlab_nodes:
 
 ### State JSON (state-conductor 出力)
 
+`stats/<network>-<snapshot>-stats.json`:
+
 ```json
 {
-  "snapshot": "emulated_candidate_1",
-  "interfaces": {
-    "node-name/interface": { "in_bps": 1234567, "out_bps": 2345678 }
+  "node-name": {
+    "interface-name": {
+      "RX_BPS_AVG": 1234567, "RX_BPS_MAX": 2345678, "RX_BPS_MIN": 1000,
+      "TX_BPS_AVG": 1234567, "TX_BPS_MAX": 2345678, "TX_BPS_MIN": 1000
+    }
   }
 }
 ```
 
-Prometheus から scrape したトラフィックカウンタを集約。`diff2csv.py` でベンチマークとの差分を計算して候補評価に使用。
+出力先は state-conductor コンテナの `${MDDO_STATES_DIR}` (`/mddo/states`)。ホストの `./states` (`SHARED_STATES_DIR`) に
+bind mount され、コンテナを再作成しても残る。計測区間の begin/end 時刻は `timestamp/<network>-<snapshot>-<action>.txt` に保存される。
+IF 名は `ns_convert_table` でモデル側の名前に変換される。
+
+Prometheus (cAdvisor) から取得した `clab-*` コンテナのインターフェース帯域を、計測区間 (begin〜end+20秒) で集約。`diff2csv.py` でベンチマークとの差分を計算して候補評価に使用。
 
 ### Blueprint Topology (`usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`)
 
