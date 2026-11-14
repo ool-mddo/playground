@@ -20,7 +20,11 @@ tiers: # 上 = 上流。up_* は上流 AS、own_* は自 AS (AS65518)、down_* �
   - own_edge_down
   - down_edge
   - down_core
+  - down_dist # 下流 AS には無い (空の行。上流 AS の core01 の行と、自 AS を中心に上下を揃える)
   - down_endpoint
+
+# 使われていない tier も空の行として残す (自 AS を中心に、上流側と下流側の行数を揃える。netoviz2 v0.4.0 以降)
+keepEmptyTiers: true
 
 # 名前の分解。
 #   as65550-core00     → site=as65550, role=core, index=00
