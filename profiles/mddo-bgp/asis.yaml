@@ -26,6 +26,9 @@ tiers: # 上 = 上流。up_* は上流 AS、own_* は自 AS (AS65518)、down_* �
 # 使われていない tier も空の行として残す (自 AS を中心に、上流側と下流側の行数を揃える。netoviz2 v0.4.0 以降)
 keepEmptyTiers: true
 
+# 左右の上流 AS を、中央の列 (自 AS と AS65520) に対して等距離に置く (netoviz2 v0.4.0 以降)
+symmetry: { axis: center, mirror: [[as65550, as65560]] }
+
 # 名前の分解。
 #   as65550-core00     → site=as65550, role=core, index=00
 #   as65550-endpoint02 → site=as65550, role=endpoint, index=02
