@@ -60,3 +60,6 @@ rules: # 後に書いたものが勝つ
   - { select: "[site=as65550]", order: 1 }
   - { select: "[tk=tk]", order: 2 } # center 列の順位は、メンバーの order の最小値
   - { select: "[site=as65560]", order: 3 }
+
+  # 各 AS を左右対称にする (行を、その列の軸に揃える。netoviz2 v0.4.0 以降)
+  - { select: "*", align: center }
