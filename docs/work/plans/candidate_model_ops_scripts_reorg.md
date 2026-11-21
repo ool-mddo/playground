@@ -1,3 +1,9 @@
+---
+topic: demo-scripts
+type: plan
+status: done
+---
+
 # candidate_model_ops: ヘルパースクリプトを scripts/ に移動
 
 ## ステータス: 実施済み・動作確認済み (2026-09-30)

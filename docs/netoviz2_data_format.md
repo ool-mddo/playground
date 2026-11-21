@@ -1,3 +1,11 @@
+---
+topic: netoviz2
+type: spec
+related:
+  - work/plans/netoviz2_profile_api.md
+  - work/plans/netoviz2_docs_reorg.md
+---
+
 # netoviz2 データ形式・API 仕様
 
 > 状態: **netomox-exp 側は実装済み (netomox-exp ブランチ `v1.22.0-dev`)、netoviz2 側は実装済み (`repos/netoviz2`。MVP、レイアウト、dependency 表示まで)**。属性・support 内の差分 (4.4) は netomox gem v0.15.1 以降が必要。計画は [netoviz2 の要求・設計・計画 (経緯)](../repos/netoviz2/docs/work/plans/requirements.md) を参照。

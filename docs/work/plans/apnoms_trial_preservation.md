@@ -1,6 +1,12 @@
+---
+topic: apnoms-trial
+type: plan
+status: done
+---
+
 # apnoms-trial の保存と作業ブランチ整理
 
-状態: 手順 2・3 は実装済み (ブランチ `apnoms-demo-archive`、未 push)。手順 1 (runner のマージ・タグ) と手順 4 (ブランチ削除) は未実施。
+状態: 完了 (2026-11-21)。実施結果は末尾の「実施結果」を参照。
 
 実装で判明した点 (調査時の記述の訂正・追加):
 
@@ -127,3 +133,21 @@
 - runner の CI: 上記「CI への影響」のとおり。playground main の現行デモ (`:v3.1.0`) に影響なし。
 
 未決: なし。
+
+## 実施結果 (2026-11-21)
+
+| 手順 | 結果 |
+|---|---|
+| 1. runner | ool-mddo/mddo-ansible-runner#9 を **rebase merge** (main は保護されており PR 必須。rebase のためコミット SHA は変わったが、ツリーは旧 `v3.1.0-apnoms` と一致)。main 先頭 `5a11e1b` にタグ `v3.1.0-apnoms` を付与し、同名ブランチ (旧 `a8c9a8e`) を削除 |
+| 2・3. playground | PR #125 (main head `4d392c9`)。`demo/apnoms-trial/` (68 ファイル) と `configs/mddo-mregnw` submodule (`1cf4bc3`) を追加。`demo/apnoms-trial` のツリーは作業コミット (`72e986c`) と一致 |
+| 4. ブランチ削除 | playground の `apnoms-trial` (先頭 `e449c42`) と、ローカルの `apnoms-trial` / `apnoms-demo-archive` / `schematic-profiles` を削除。リモートのブランチは `main` のみ |
+
+補足:
+
+- runner の CI: タグ・main の push とも `build_and_push` ジョブは成功。後段の `delete_old_container_images` ジョブは `Invalid input combination` で失敗する (ワークフロー側の既存の不具合で、今回の変更とは無関係。イメージには影響しない)。
+- 完了時点でブランチ名に `v3.1.0-apnoms` を持つものは runner にタグのみ。ブランチと同名タグの曖昧さは残っていない。
+
+未確認 (実施していない):
+
+- `demo/apnoms-trial/` の実機動作 (compose 起動、containerlab、ansible-runner)。確認したのは `docker compose config -q` と `bash -n` のみ。
+- `ghcr.io/ool-mddo/mddo-ansible-runner:v3.1.0-apnoms` の pull。

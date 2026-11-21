@@ -1,3 +1,11 @@
+---
+topic: containerlab
+type: plan
+status: done
+related:
+  - work/plans/fw_failover_test.md
+---
+
 # Plan: containerlab_topology API — 環境名を snapshot 名に / FW クラスタ間 eth2・eth3 直結リンク
 
 (状態: 実装済み・実データで動作確認済み)

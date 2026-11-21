@@ -1,10 +1,17 @@
+---
+topic: state-conductor
+type: todo
+status: done
+---
+
 # TODO: state-conductor の states ディレクトリ永続化の取り込み
 
 ## ステータス
 
-取り込み済み (#121, v2.12.1 以降)。state-conductor v1.1.0 に更新し、`.env` / `docker-compose.visualize.yaml` /
-`states/.gitignore` を反映した。残りは「取り込み時にやること」の項目 4 (動作確認) と 5 (リモートブランチ整理) のみ。
-(playground の `add_state` は、本 TODO の調査をもとに削除してよい。未削除)
+実施済み (#121 で 2026-11-13 にマージ、v2.12.1 以降)。state-conductor v1.1.0 に更新し、`.env` / `docker-compose.visualize.yaml` /
+`states/.gitignore` を反映した。項目 4 (動作確認) も実施済み (ユーザー確認)。
+項目 5 (リモートブランチ整理): playground の `origin/add_state` は手元の remote-tracking に無い。
+state-conductor の `origin/add_states_dir` は手元の remote-tracking に残っている (`git fetch --prune` で要確認)。
 
 ## 背景
 
@@ -67,9 +74,9 @@ playground のリモートブランチ `origin/add_state` (73c7a7c "add states d
    - `docker-compose.visualize.yaml` の state-conductor に環境変数とボリュームを追加。
    - 既存の `SHARED_*_DIR` の命名・配置 (`.env`) に合わせる。
 3. [済: `states/.gitignore` で `*` を無視] `states/` の扱いを決める: `.gitignore` に追加するか (自動生成物。`queries/` 等と同様の扱い)。
-4. [未] 動作確認: `docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d` で起動し、
+4. [済] 動作確認: `docker compose -f docker-compose.yaml -f docker-compose.visualize.yaml up -d` で起動し、
    sampling begin/end の POST 後に `./states/{timestamp,stats}` にファイルができること、コンテナ再作成後も残ることを確認。
-5. [未] リモートブランチの整理: playground `origin/add_state`、state-conductor `origin/add_states_dir` を削除 (取り込み後、または不要と判断した時点)。
+5. [一部確認] リモートブランチの整理: playground `origin/add_state`、state-conductor `origin/add_states_dir` を削除 (取り込み後、または不要と判断した時点)。
 
 ## 未確認事項
 

@@ -1,3 +1,11 @@
+---
+topic: conduit
+type: investigation
+status: done
+related:
+  - work/todo/conduit_ospf_area_attributes.md
+---
+
 # 調査: conduit topology (emulated_asis_conduit{1,2}) のコンフィグ生成失敗
 
 **ステータス: 実施済み**（A〜D の修正を適用し、conduit1/2 と emulated_asis で `22_up_conduit.sh -d` によるコンフィグ生成が完走することを確認。ABR 挙動の実機確認とテスト追加は未実施）

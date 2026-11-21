@@ -1,6 +1,15 @@
+---
+topic: fw-policy
+type: plan
+status: in-progress
+related:
+  - firewall_node_attributes.md
+  - work/plans/fw_policy_application_list.md
+---
+
 # netomox gem: FW policy rule の application / source_address / destination_address 配列対応 plan
 
-状態: **netomox 側は実装済み (ブランチ v0.15-dev、未コミット)。決定: gem 更新する / 空文字は [] / 0.15.0 / DSL も Array 化**
+状態: **実装済み・リリース済み (netomox 0.15.0 → 0.15.1。netomox-exp / model-conductor は netomox 0.15.1 を使用)。決定: gem 更新する / 空文字は [] / 0.15.0 / DSL も Array 化**
 関連: [fw_policy_application_list.md](fw_policy_application_list.md) (Step 0 / Step 3 の詳細)
 
 ## Step 0 の結果

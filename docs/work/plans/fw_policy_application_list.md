@@ -1,6 +1,15 @@
+---
+topic: fw-policy
+type: plan
+status: in-progress
+related:
+  - firewall_node_attributes.md
+  - work/plans/netomox_fw_policy_rule_array.md
+---
+
 # FW policy の `application` 複数指定 (リスト) 対応 plan
 
-状態: **レビュー指摘 (M-1/M-2/L-2/L-5/テスト不足) 反映済み。Step 1, 2, 4 実装済み (未コミット)。Step 3 は netomox plan 側で実装済み。Step 6 は部分確認済み (下記)。**
+状態: **レビュー指摘 (M-1/M-2/L-2/L-5/テスト不足) 反映済み。Step 1, 2, 4 は実装済みでリリース済み (firewall-policy-parser v0.2.0、playground v2.12.1)。Step 3 は netomox plan 側で実装済み・リリース済み。Step 6 は部分確認済み (下記)。**
 
 進捗:
 - Step 1 (firewall-policy-parser): TTP は各キーを `*` サブグループで収集、`ttp_parse()` でリスト記法を事前展開し結果を平坦化。pytest 11 件成功。

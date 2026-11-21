@@ -1,3 +1,11 @@
+---
+topic: fw-policy
+type: spec
+related:
+  - work/plans/fw_policy_application_list.md
+  - work/plans/netomox_fw_policy_rule_array.md
+---
+
 # FW ノードアトリビュート JSON スキーマ
 
 複数リポジトリをまたがる **正規定義 (canonical definition)** として管理する。

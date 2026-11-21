@@ -1,6 +1,15 @@
+---
+topic: netoviz2
+type: plan
+status: approved
+related:
+  - netoviz2_data_format.md
+  - work/plans/netoviz2_docs_reorg.md
+---
+
 # ダイアグラムプロファイルの扱いの見直し (複数 snapshot への適用 + netomox-exp 経由の配信)
 
-状態: **方針承認済み (論点 E は 2026-11-06 に決定)。実装は P0 から、段階ごとに確認して進める**
+状態: **実装済み・リリース済み (P0〜P4。netomox-exp v1.22.0、netoviz2 v0.4.0、playground #124)。** 方針は 2026-11-06 に承認。実装結果と計画との差分は §6。
 
 ## 0. 決定事項
 

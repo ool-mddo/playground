@@ -1,3 +1,11 @@
+---
+topic: runtime-update
+type: investigation
+status: done
+related:
+  - design_notes/development.md
+---
+
 # 調査・実施記録: ランタイムのセキュリティ更新 (2026-11)
 
 **ステータス: 実施済み**(ローカル環境とコンテナイメージの更新を完了。未確認事項は末尾)
