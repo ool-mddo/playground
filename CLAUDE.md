@@ -10,8 +10,18 @@
 
 詳細なアーキテクチャは [docs/architecture.md](docs/architecture.md) を参照。
 
-作業メモ (plan / 調査 / todo) は `docs/work/{plans,investigations,todo}/` に置く
-(ファイル名に `plan_` 等の接頭辞は付けない)。`docs/` 直下と `docs/design_notes/` は現行仕様・設計の記述用。
+`docs/` 直下と `docs/design_notes/` は現行仕様・設計の記述用。
+作業メモ (plan / 調査 / todo) は `docs/work/{plans,investigations,todo}/` に置く (ファイル名に `plan_` 等の接頭辞は付けない)。
+`docs/` の文書は先頭に YAML front matter (`topic` / `type` / `status` / `related`) を付け、
+新規作成・状態変更時は [docs/README.md](docs/README.md) の索引も更新する (書式と運用は同ファイル参照)。
+
+## コミット前のドキュメント更新チェック
+
+`git commit` の前に、次を確認する (`.claude/hooks/docs-check.sh` が、同じステージ内容につき 1 回だけコミットをブロックして促す)。
+
+1. 変更に関連する `docs/` の文書の `status` と本文の状態記述 (「未コミット」「未実施」など) が、今回の変更と食い違っていないか。
+2. 新規・変更した `docs/` の文書に front matter があり、[docs/README.md](docs/README.md) の索引に載っているか。
+3. この CLAUDE.md や README などの入口文書 (サービス構成・コマンド・制約) に影響する変更がないか。
 
 ## 現在のターゲット
 
@@ -40,7 +50,9 @@
 | `firewall-policy-parser` | (内部) | Juniper FW 設定解析 → トポロジへのマージ |
 | `state-conductor` | (内部) | emulated 環境のトラフィック計測・state 管理 (可視化込み起動時のみ。出力は `./states` に永続化) |
 | `ansible-eda` | 48080 | ContainerLab デプロイの自動化 (webhook) |
-| `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (静的 SPA。データは netomox-exp の API。`repos/netoviz2`。ドキュメントは [repos/netoviz2/docs/](repos/netoviz2/docs/README.md))。旧 `netoviz` (port 3000) は compose から削除済み (`repos/netoviz` は残置) |
+| `netoviz2` | (api-proxy 経由: `/netoviz2/`) | 汎用トポロジビューワー (静的 SPA。データは netomox-exp の API)。`repos/netoviz2`、ドキュメントは [repos/netoviz2/docs/](repos/netoviz2/docs/README.md) |
+
+旧 `netoviz` は compose から削除済み (`repos/netoviz` は残置)。
 
 ## 起動コマンド
 
@@ -80,33 +92,27 @@ source demo_vars
 2. `splice_external_as_topology` — 外部 AS トポロジをマージ
 3. `splice_firewall_attributes` — FW 属性をマージ
 4. netoviz index に `original_asis` エントリを登録
-5. `generate_conduit_topology` — blueprint (`-b` オプションで指定。デフォルト `original_asis_blueprint1`) に
-   基づいた土管化トポロジ生成 (`original_asis_conduit*`) + netoviz index 追記
-6. `convert_namespace "original_asis"` — 名前空間変換: `original_asis` → `emulated_asis` + netoviz index 追記
-7. conduit snapshot ごとに `convert_namespace` — `original_asis_conduit*` → `emulated_asis_conduit*` + netoviz index 追記
+5. `generate_conduit_topology` — blueprint (`-b` で指定) に基づく土管化トポロジ生成 (`original_asis_conduit*`)
+6. `convert_namespace` — 名前空間変換: `original_asis` → `emulated_asis`
+7. conduit snapshot ごとに `convert_namespace` — `original_asis_conduit*` → `emulated_asis_conduit*`
+
+(5〜7 は、生成・変換した snapshot を netoviz index にも追記する)
 
 環境起動は含まない（`22_up_conduit.sh` が別スクリプトとして担当）。詳細な操作手順・注意事項は
 [demo/candidate_model_ops/README_refocus_topology.md](demo/candidate_model_ops/README_refocus_topology.md) を参照。
 
-`convert_namespace` は内部で `POST /topologies/:nw/:ss/ns_convert_table` を呼び出し、
-変換テーブルを各スナップショットディレクトリ (`topologies/<nw>/<ss>/ns_convert_table.json`) に保存する。
-`ns_convert` API は同一内容のテーブルを original / emulated の両 snapshot に保存する
-(作成時のみペアで扱う。snapshot 単体の DELETE ではペアの相手側は削除されない)。
+`convert_namespace` (`ns_convert` API) は、変換テーブルを `topologies/<nw>/<ss>/ns_convert_table.json` に、
+同一内容で original / emulated の両 snapshot に保存する (作成時のみペアで扱い、snapshot 単体の DELETE は相手側を削除しない)。
 
 > **blueprint ファイル:** `usecases/refocus_topology/mddo-fw/original_asis_blueprint1/topology.json`
-> を人が作成・配置することで conduit 処理の抽象化目標を定義する。
-> `21_generate_conduit.sh` の `-b` オプションで使用する blueprint snapshot を切り替えられる
+> を人が作成・配置することで conduit 処理の抽象化目標を定義する。`21_generate_conduit.sh -b` で切り替える
 > (デフォルト: `original_asis_blueprint1`)。
 
-> **FW ノードアトリビュート JSON スキーマ:** 複数リポジトリをまたがる canonical definition は
-> [docs/firewall_node_attributes.md](docs/firewall_node_attributes.md) を参照。
+複数リポジトリをまたがる JSON スキーマの canonical definition:
 
-> **FHRP (VRRP/HSRP) TP アトリビュート JSON スキーマ:** layer3 TP の `fhrp` アトリビュートの canonical definition は
-> [docs/fhrp_termination_point_attributes.md](docs/fhrp_termination_point_attributes.md) を参照。
-
-> **networks アトリビュート (conduit の生成元 blueprint) JSON スキーマ:** `ietf-network:networks` 直下の
-> `mddo-topology:networks-attributes` (`flag: ["blueprint=<snapshot>"]`) の canonical definition は
-> [docs/networks_attributes.md](docs/networks_attributes.md) を参照。
+- FW ノードアトリビュート: [docs/firewall_node_attributes.md](docs/firewall_node_attributes.md)
+- FHRP (VRRP/HSRP) の layer3 TP アトリビュート `fhrp`: [docs/fhrp_termination_point_attributes.md](docs/fhrp_termination_point_attributes.md)
+- networks アトリビュート (conduit の生成元 blueprint。`ietf-network:networks` 直下の `mddo-topology:networks-attributes`): [docs/networks_attributes.md](docs/networks_attributes.md)
 
 ## ライブ開発
 

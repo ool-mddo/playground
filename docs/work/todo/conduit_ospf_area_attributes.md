@@ -1,3 +1,11 @@
+---
+topic: conduit
+type: todo
+status: done
+related:
+  - work/investigations/conduit_ospf_config_failure.md
+---
+
 # TODO: conduit topology で OSPF area のネットワーク属性が欠落する
 
 ## ステータス

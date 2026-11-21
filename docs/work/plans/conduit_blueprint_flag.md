@@ -1,3 +1,13 @@
+---
+topic: conduit
+type: plan
+status: done
+related:
+  - networks_attributes.md
+  - work/plans/blueprint_with_endpoints.md
+  - work/plans/conduit_tp_description.md
+---
+
 # Plan: conduit topology に生成元 blueprint を示すメタデータを付記する
 
 (状態: 実装済み。netomox v0.14.1 を公開、netomox-exp / model-conductor のイメージに組み込み、実環境 (blueprint1 / 2) で確認済み)

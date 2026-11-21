@@ -1,3 +1,11 @@
+---
+topic: conduit
+type: plan
+status: done
+related:
+  - work/plans/conduit_blueprint_flag.md
+---
+
 # Plan: conduit topology の layer3 TP description を整合させる
 
 (状態: 実装済み。model-conductor の TpDescriptionResolver 追加、spec 追加、README 追記、実環境で再生成して検証済み)
@@ -149,7 +157,7 @@ router/firewall の p2p TP = segment の先の機器 TP、segment TP = 接続先
 
 ## 修正サマリ (リポジトリ別の変更対象と内容)
 
-コミットは未実施。変更したのは model-conductor と netomox-exp、および playground 側の README / plan。
+コミット・リリース済み (model-conductor v1.18.0 に TpDescriptionResolver を含む)。変更したのは model-conductor と netomox-exp、および playground 側の README / plan。
 
 ### model-conductor (conduit topology 生成側 = original 系)
 

@@ -1,9 +1,18 @@
+---
+topic: netoviz2
+type: plan
+status: done
+related:
+  - netoviz2_data_format.md
+  - work/plans/netoviz2_profile_api.md
+---
+
 # netoviz2 / schematic のドキュメント整理
 
-状態: **実施済み (netoviz2 側・playground 側とも未コミット)。H1 = playground に残す、H2 = CLAUDE.md は短い入口にして `@docs/agent_guide.md` を取り込む、で承認済み。**
+状態: **実施済み・コミット済み (netoviz2 v0.4.0、playground #122 / #124)。H1 = playground に残す、H2 = CLAUDE.md は短い入口にして `@docs/agent_guide.md` を取り込む、で承認済み。**
 
 実施結果: netoviz2 の `docs/` を新設 (architecture.md、development.md、agent_guide.md、design/{layout,schematic_layout,profile_format}.md、work/plans/{requirements,schematic_layout}.md、README.md)、README.md を公開用に書き直し、CLAUDE.md を短い入口にした。playground 側は、移動した 3 文書を削除し、`profiles/README.md` を案内に変え、`docs/design_notes/development.md` の netoviz2 の節を縮め、CLAUDE.md と `docs/netoviz2_data_format.md` のリンクを更新した。
-注意: netoviz2 の文書からの playground の文書 (`netoviz2_data_format.md`、`profiles/`) へのリンクは、GitHub の `main` ブランチの URL。playground の `main` には、まだ両方とも無い (開発ブランチ `v2.12.1-dev-netoviz2` にある)。playground のリリースで `main` に入った時点で有効になる。
+注意: netoviz2 の文書からの playground の文書 (`netoviz2_data_format.md`、`profiles/`) へのリンクは、GitHub の `main` ブランチの URL。playground の `main` には両方とも入っている (#124)。
 
 ## 1. 目的
 

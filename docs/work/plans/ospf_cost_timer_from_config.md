@@ -1,6 +1,14 @@
+---
+topic: conduit
+type: plan
+status: done
+related:
+  - work/investigations/conduit_ospf_config_failure.md
+---
+
 # Plan: OSPF cost/timer をコンフィグ値どおりにトポロジ→コンフィグ出力する
 
-**ステータス: 方針 B で承認・実装済み（netomox-exp `ospf_data_builder.rb`）。最終 conf 出力の再確認と spec 追加は未実施**
+**ステータス: 方針 B で承認・実装済み・リリース済み（netomox-exp `ospf_data_builder.rb`、v1.21.0 に含まれる）。最終 conf 出力の再確認と spec 追加は未実施（未確認）**
 
 承認された方針: クラスタ FW は物理構成ベースで 2 ノード扱いのまま、fw-1/fw-2 の OSPF パラメータを一致させる (B)。
 priority / retransmission-interval はスコープ外。

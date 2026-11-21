@@ -7,7 +7,18 @@ description: ool-mddo/playground 本体の統合リリース (vX.Y.Z-dev → mai
 
 playground は複数のサブモジュール (repos/*) を束ねる。リリースは **依存順にサブモジュールを先にリリースし、
 最後に playground** で、各リポジトリを `release-submodule` の手順で進める。
-PR のマージはユーザーが行い、SHA を受け取ってからタグを切る。
+
+## リリースの進め方 (各リポジトリ共通・4 段階。各段階の間でユーザーの指示を待つ)
+
+1. **PR 作成**: 必要ならバージョン bump / rebase をして dev ブランチを push し、`Release vX.Y.Z` の PR を作る。ここで止まる。
+2. **開発者が PR を確認**する (CI・内容)。確認が済み、**マージ実行の指示**を受けるまでマージしない。
+3. **指示を受けたら**、PR のコミットメッセージをサマライズして **squash merge** する
+   (`gh pr merge <N> --squash --subject "Release vX.Y.Z (#N)" --body "<サマリ>"`。直近の Release コミットの形式に合わせ、
+   個別コミットの羅列ではなく変更点を数行にまとめる)。マージ後、`origin/main` の head SHA とコミットメッセージを報告して止まる。
+4. **開発者が main head のコミットメッセージを確認**し、**リリース実行の指示**を受けたら
+   `gh release create vX.Y.Z --target <フル SHA>` を実行する。
+
+CI の結果は PR 作成後・マージ前に確認して報告する。指示のない段階 (マージ・リリース) には進まない。
 
 ## 0. 作業前: 全体計画を出して承認を得る (まだ何も変更しない)
 
@@ -28,8 +39,8 @@ mddo-worker 等、今回変更のないサブモジュールは既存タグの�
 
 ## 1. サブモジュール群
 
-各リポジトリを `release-submodule` で順に進める。1 リポジトリごとに
-「PR 作成 → ユーザーのマージ → SHA を受けてリリース」で止まる。
+各リポジトリを `release-submodule` で順に進める。1 リポジトリごとに上記 4 段階
+(PR 作成 → 確認 → squash merge 指示 → main head 確認 → リリース指示) で止まる。
 
 ## 2. playground 本体
 
@@ -87,14 +98,15 @@ cd repos/<name> && git fetch -q origin main --tags && git checkout -q -B main or
 
 - rebase した場合は force push が必要。ユーザー確認の上、
   `git push --force-with-lease=<dev>:<旧SHA> origin vX.Y.Z-dev-local:vX.Y.Z-dev`。
-- PR: `gh pr create --base main --head vX.Y.Z-dev --title "Release vX.Y.Z"`。本文は直近の Release PR
+- PR (段階 1 でここまで。マージはしない): `gh pr create --base main --head vX.Y.Z-dev --title "Release vX.Y.Z"`。本文は直近の Release PR
   (`gh pr list --state merged --limit 2`) の形式で、Summary (変更点・サブモジュールのバージョンと SHA・`.env` のタグ) と
   Test plan (`docker compose up -d` で全サービスが起動 / `demo/candidate_model_ops` の `./21_generate_conduit.sh`
   と `./22_up_conduit.sh -s emulated_asis -d` が通る) を載せる。
 
-### リリース (SHA を受け取ってから)
+### squash merge とリリース (開発者の指示を受けてから)
 
-`release-submodule` のフェーズ 2 と同じ (`gh release create vX.Y.Z --target <フル SHA>`、前バージョンの形式のリリースノート)。
+上記の段階 3・4 と同じ。マージ指示を受けたらコメントをサマライズして squash merge し、main head のコミットメッセージを報告する。
+確認後にリリース指示を受けたら `gh release create vX.Y.Z --target <フル SHA>` (前バージョンの形式のリリースノート)。
 その後、worktree とローカルブランチを片付ける:
 
 ```bash

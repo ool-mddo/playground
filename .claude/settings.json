@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/docs-check.sh",
+            "timeout": 10,
+            "statusMessage": "docs update check"
+          }
+        ]
+      }
+    ]
+  }
+}

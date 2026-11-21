@@ -1,3 +1,11 @@
+---
+topic: containerlab
+type: plan
+status: done
+related:
+  - work/plans/clab_topology_env_name_and_fw_links.md
+---
+
 # Plan: vSRX chassis cluster の act 側「切り離し」障害試験 (emulated env)
 
 ## 実装状況

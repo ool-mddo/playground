@@ -1,3 +1,11 @@
+---
+topic: fhrp-tp
+type: plan
+status: done
+related:
+  - fhrp_termination_point_attributes.md
+---
+
 # Plan: VRRP/HSRP 情報を layer3 termination-point attribute (`fhrp`) として扱う
 
 (状態: Step 1 (batfish-wrapper)、Phase A (netomox)、Phase B (ローカル bind mount での取り込み)、Phase C (netomox-exp)、Phase D (名前空間変換での保持の確認)、Phase E (model-conductor の conduit 生成)、Phase F (netoviz の tooltip 表示)、Phase G (結合確認・canonical definition・netomox 公開・イメージ更新)、Phase H (Junos VRRP config 生成) は実施済み)

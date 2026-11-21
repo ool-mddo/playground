@@ -1,3 +1,10 @@
+---
+topic: fhrp-tp
+type: spec
+related:
+  - work/plans/fhrp_termination_point_attributes.md
+---
+
 # FHRP (VRRP/HSRP) TP アトリビュート JSON スキーマ
 
 複数リポジトリをまたがる **正規定義 (canonical definition)** として管理する。

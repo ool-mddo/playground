@@ -1,6 +1,14 @@
+---
+topic: ns-convert
+type: plan
+status: done
+related:
+  - architecture.md
+---
+
 # Plan: ns_convert_table を original / emulated 両方の snapshot に保存する
 
-(状態: 調査のみ。コードは未修正。指示があるまで修正しない)
+(状態: 実施済み。model-conductor の `ns_convert` API が dst snapshot にも同一内容のテーブルを保存する (model-conductor #26 "save ns_convert_table to both source and destination snapshots"、v1.19.0 以降に含まれる)。CLAUDE.md と docs/architecture.md は更新済み。未確認: repos 側の CLAUDE.md 等の記述、ns_convert API の spec 追加、original/emulated のテーブルのバイト一致)
 
 ## 現状
 

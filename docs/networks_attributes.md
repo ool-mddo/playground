@@ -1,3 +1,10 @@
+---
+topic: conduit
+type: spec
+related:
+  - work/plans/conduit_blueprint_flag.md
+---
+
 # networks アトリビュート (`mddo-topology:networks-attributes`) JSON スキーマ
 
 複数リポジトリをまたがる **正規定義 (canonical definition)** として管理する。

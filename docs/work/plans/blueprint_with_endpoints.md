@@ -1,6 +1,14 @@
+---
+topic: conduit
+type: plan
+status: done
+related:
+  - work/plans/conduit_blueprint_flag.md
+---
+
 # Plan: blueprint (topology-def.yaml / topology.json) に endpoint を含める
 
-(状態: 実装済み (playground `v2.12.1-dev`、model-conductor `v1.19.0-dev`)。コミット・PR は未実施)
+(状態: 実装済み・リリース済み (playground v2.12.1、model-conductor v1.19.0))
 
 ## 目的
 
