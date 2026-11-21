@@ -43,3 +43,6 @@
 [submodule "repos/netoviz2"]
 	path = repos/netoviz2
 	url = https://github.com/ool-mddo/netoviz2
+[submodule "configs/mddo-mregnw"]
+	path = configs/mddo-mregnw
+	url = https://github.com/ool-mddo/mddo-mregnw.git

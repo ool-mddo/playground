@@ -1,0 +1,36 @@
+routing-options {
+{% if item["mddo-topology:l3-node-attributes"]["static-route"] %}
+    rib inet.0 {
+        static {
+{% for route in item["mddo-topology:l3-node-attributes"]["static-route"] %}
+            route {{ route.prefix }} {
+{% if "discard" in route["next-hop"]  %}
+                discard;
+{% else %}
+                next-hop {{ route["next-hop"] }};
+{% endif %}
+                preference {{ route["preference"] }};
+                metric {{ route["metric"] }};
+            }
+{% endfor  %}
+        }
+    }
+{% endif %}
+{% for ospf_node in ospf_list["json"][0]["nodes"] %}
+{% if ospf_node["node"] == item["node-id"] and "Seg" not in item["node-id"] %}
+    router-id {{ ospf_node["attribute"]["router-id"] }};
+{% endif %}
+{% endfor  %}
+{# search bgp node which has node-ref with item["node-id"] #}
+{% for bgp_node in topology.json["ietf-network:networks"]["network"][bgpindex]["node"] %}
+{% if bgp_node["supporting-node"][0]["node-ref"] == item["node-id"] and "mddo-topology:bgp-proc-node-attributes" in bgp_node%}
+    autonomous-system {{ bgp_node["ietf-network-topology:termination-point"][0]["mddo-topology:bgp-proc-termination-point-attributes"]["local-as"] }};
+{% if bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-member"] | length != 0 %}
+    confederation {{ bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-id"] }} members [
+{%- for conf_ASN in bgp_node["mddo-topology:bgp-proc-node-attributes"]["confederation-member"] %} {{ conf_ASN }}{% endfor %}
+ ];
+{% endif %}
+{% endif %}
+{% endfor %}
+}
+

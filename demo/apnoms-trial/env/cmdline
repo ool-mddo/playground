@@ -1,0 +1,1 @@
+-e nodered_url=http://172.25.0.2:1880 -e labname=demo202211 -e login_user=ubuntu -e netoviz_url=http://172.17.0.1:3000 -e network_name=mddo-ospf -k -K 

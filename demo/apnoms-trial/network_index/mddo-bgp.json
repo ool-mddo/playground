@@ -1,0 +1,26 @@
+[
+  {
+    "label": "MDDO-BGP (original_asis)",
+    "network": "mddo-bgp",
+    "snapshot": "original_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-BGP (emulated_asis)",
+    "network": "mddo-bgp",
+    "snapshot": "emulated_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-BGP (emulated_tobe)",
+    "network": "mddo-bgp",
+    "snapshot": "emulated_tobe",
+    "file": "topology.json"
+  },
+  {
+    "label": "MDDO-BGP (original_tobe)",
+    "network": "mddo-bgp",
+    "snapshot": "original_tobe",
+    "file": "topology.json"
+  }
+]
