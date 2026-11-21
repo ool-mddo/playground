@@ -1,0 +1,26 @@
+[
+  {
+    "label": "NTTCOM-TRIAL-2022 (original_asis)",
+    "network": "nttcom-trial-2022",
+    "snapshot": "original_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "NTTCOM-TRIAL-2022 (emulated_asis)",
+    "network": "nttcom-trial-2022",
+    "snapshot": "emulated_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "NTTCOM-TRIAL-2022 (emulated_tobe)",
+    "network": "nttcom-trial-2022",
+    "snapshot": "emulated_tobe",
+    "file": "topology.json"
+  },
+  {
+    "label": "NTTCOM-TRIAL-2022 (original_tobe)",
+    "network": "nttcom-trial-2022",
+    "snapshot": "original_tobe",
+    "file": "topology.json"
+  }
+]

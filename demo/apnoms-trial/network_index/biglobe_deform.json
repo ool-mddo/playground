@@ -1,0 +1,26 @@
+[
+  {
+    "label": "BIGLOBE_DEFORM (original_asis)",
+    "network": "biglobe_deform",
+    "snapshot": "original_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "BIGLOBE_DEFORM (emulated_asis)",
+    "network": "biglobe_deform",
+    "snapshot": "emulated_asis",
+    "file": "topology.json"
+  },
+  {
+    "label": "BIGLOBE_DEFORM (emulated_tobe)",
+    "network": "biglobe_deform",
+    "snapshot": "emulated_tobe",
+    "file": "topology.json"
+  },
+  {
+    "label": "BIGLOBE_DEFORM (original_tobe)",
+    "network": "biglobe_deform",
+    "snapshot": "original_tobe",
+    "file": "topology.json"
+  }
+]
