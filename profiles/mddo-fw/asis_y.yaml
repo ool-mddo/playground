@@ -1,0 +1,82 @@
+# mddo-fw の Y 字配置 (DC = site-a を中央の縦列、拠点 = site-b / site-c を上の左右に置く)。
+# asis.yaml の別案。自動では選ばれない (asis.yaml が先に選ばれる)。`?layout=schematic&profile=asis_y` で使う。
+# 構成:  拠点 b (左上) --- br --- 拠点 c (右上)
+#                      \        /
+#                       DC (a)  (中央の縦列: br → fw → cr → seg → host)
+# 拠点 b, c は DC と上下逆 (host が上、br が下) で、br どうしが向き合う。
+# 使う規則: group の固定値は使わない。align: center (列の中を左右対称)、symmetry (b, c を a から等距離)。
+# 書式: repos/netoviz2/docs/design/profile_format.md
+
+# --- original_asis の layer1 (機器)。上位レイヤ (layer2, layer3) は、この配置を継承する ---
+view: physical
+target: { network: mddo-fw, snapshot: original_asis, layer: layer1 }
+tiers: # 上 = 上流。up_* は拠点 (b, c)、dc_* は DC (a)
+  - up_host
+  - up_seg
+  - up_cr
+  - up_fw
+  - up_br
+  - dc_br
+  - dc_fw
+  - dc_cr
+  - dc_seg
+  - dc_host
+name: '^site-(?<site>[a-z])-(?<role>[a-z]+)-?(?<index>\d+)$'
+symmetry: { axis: a, mirror: [[b, c]] } # 拠点 b, c を、DC (a) の列から等距離に置く
+rules: # 後に書いたものが勝つ
+  - { select: "*", group: site, pair: { by: index, primary: "1" }, align: center }
+  # DC (a) の縦の並び: br → fw → cr → seg → host (上から下)
+  - { select: "[role=br]", tier: dc_br }
+  - { select: "[role=fw]", tier: dc_fw }
+  - { select: "[role=cr]", tier: dc_cr }
+  - { select: "[role=seg]", tier: dc_seg }
+  - { select: "[role=host]", tier: dc_host }
+  # 拠点 (b, c) は、DC と逆向き (host が上、br が下 = DC の br と向き合う)
+  - { select: "[site=b][role=br]", tier: up_br }
+  - { select: "[site=b][role=fw]", tier: up_fw }
+  - { select: "[site=b][role=cr]", tier: up_cr }
+  - { select: "[site=b][role=seg]", tier: up_seg }
+  - { select: "[site=b][role=host]", tier: up_host }
+  - { select: "[site=c][role=br]", tier: up_br }
+  - { select: "[site=c][role=fw]", tier: up_fw }
+  - { select: "[site=c][role=cr]", tier: up_cr }
+  - { select: "[site=c][role=seg]", tier: up_seg }
+  - { select: "[site=c][role=host]", tier: up_host }
+  - { select: "[site=b]", order: 1 } # 左から b, a, c
+  - { select: "[site=a]", order: 2 }
+  - { select: "[site=c]", order: 3 }
+
+---
+# --- emulated_asis の layer3 (layer1/layer2 が無いので継承できない。seg は接続点として置かれる) ---
+view: logical
+target: { network: mddo-fw, snapshot: emulated_asis, layer: layer3 }
+tiers: # 上 = 上流。up_* は拠点 (b, c)、dc_* は DC (a)
+  - up_host
+  - up_cr
+  - up_fw
+  - up_br
+  - dc_br
+  - dc_fw
+  - dc_cr
+  - dc_host
+name: '^site-(?<site>[a-z])-(?<role>[a-z]+)-?(?<index>\d+)$'
+symmetry: { axis: a, mirror: [[b, c]] } # 拠点 b, c を、DC (a) の列から等距離に置く
+rules: # 後に書いたものが勝つ
+  - { select: "*", group: site, pair: { by: index, primary: "1" }, align: center }
+  # DC (a) の縦の並び: br → fw → cr → host (上から下)
+  - { select: "[role=br]", tier: dc_br }
+  - { select: "[role=fw]", tier: dc_fw }
+  - { select: "[role=cr]", tier: dc_cr }
+  - { select: "[role=host]", tier: dc_host }
+  # 拠点 (b, c) は、DC と逆向き (host が上、br が下 = DC の br と向き合う)
+  - { select: "[site=b][role=br]", tier: up_br }
+  - { select: "[site=b][role=fw]", tier: up_fw }
+  - { select: "[site=b][role=cr]", tier: up_cr }
+  - { select: "[site=b][role=host]", tier: up_host }
+  - { select: "[site=c][role=br]", tier: up_br }
+  - { select: "[site=c][role=fw]", tier: up_fw }
+  - { select: "[site=c][role=cr]", tier: up_cr }
+  - { select: "[site=c][role=host]", tier: up_host }
+  - { select: "[site=b]", order: 1 } # 左から b, a, c
+  - { select: "[site=a]", order: 2 }
+  - { select: "[site=c]", order: 3 }

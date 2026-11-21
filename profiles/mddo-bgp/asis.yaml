@@ -1,0 +1,72 @@
+# mddo-bgp (as-is の構成) の図の定義。トポロジとは別に人が管理する。
+# 書式: repos/netoviz2/docs/design/profile_format.md
+# 構成 (上 = 上流):
+#   上流 (外部) AS: AS65550 / AS65560 … 各 AS の edge が自 AS の edge (edge-tkNN) とつながる
+#   自 AS: AS65518 (中核。名前に tk が付く機器) … edge-tk01〜03 (上流側) → core-tk01/02 → edge-tk11 (下流側)
+#   下流 (内部) AS: AS65520 … 自 AS の edge-tk11 とつながる
+#   つまり「上流 AS edge — 自 AS edge — core — 自 AS edge — 下流 AS edge」が上下に並ぶ。
+#   各 AS の内部は edge → core00 → core01 → endpoint (AS65520 は core00 が endpoint を直接収容)。
+
+# --- emulated_asis の layer3 (layer1/layer2 が無いので、継承できない) ---
+view: logical
+target: { network: mddo-bgp, snapshot: emulated_asis, layer: layer3 }
+tiers: # 上 = 上流。up_* は上流 AS、own_* は自 AS (AS65518)、down_* は下流 AS (AS65520)
+  - up_endpoint
+  - up_dist
+  - up_core
+  - up_edge
+  - own_edge_up
+  - own_core
+  - own_edge_down
+  - down_edge
+  - down_core
+  - down_dist # 下流 AS には無い (空の行。上流 AS の core01 の行と、自 AS を中心に上下を揃える)
+  - down_endpoint
+
+# 使われていない tier も空の行として残す (自 AS を中心に、上流側と下流側の行数を揃える。netoviz2 v0.4.0 以降)
+keepEmptyTiers: true
+
+# 左右の上流 AS を、中央の列 (自 AS と AS65520) に対して等距離に置く (netoviz2 v0.4.0 以降)
+symmetry: { axis: center, mirror: [[as65550, as65560]] }
+
+# 名前の分解。
+#   as65550-core00     → site=as65550, role=core, index=00
+#   as65550-endpoint02 → site=as65550, role=endpoint, index=02
+#   edge-tk01          → role=edge, tk=tk, index=01 (自 AS: site は無い)
+name: '^(?:(?<site>as\d+)-)?(?<role>[a-z]+)(?:-(?<tk>tk))?(?<index>\d+)$'
+
+rules: # 後に書いたものが勝つ
+  # group は「列」。同じ値のノードが 1 列にまとまる。order は列どうしの左右の順を決める (別の値の group は同じ列にならない)。
+  # 自 AS (tk には site が無い) と AS65520 は、固定値 `group: { value: center }` で同じ中央の列にする
+  # (netoviz2 v0.4.0 以降。固定値の書式: repos/netoviz2/docs/design/profile_format.md)。
+  - { select: "*", group: site } # AS ごとにまとまる
+  - { select: "[tk=tk]", group: { value: center } } # 自 AS (AS65518)
+  - { select: "[site=as65520]", group: { value: center } } # 下流 AS (AS65520)
+
+  # 上流 AS (AS65550 / AS65560): 自 AS に近い edge が下、endpoint が上
+  - { select: "[site=as65550][role=edge]", tier: up_edge }
+  - { select: "[site=as65550][role=core]", tier: up_core }
+  - { select: "[site=as65550][role=core][index=01]", tier: up_dist }
+  - { select: "[site=as65550][role=endpoint]", tier: up_endpoint }
+  - { select: "[site=as65560][role=edge]", tier: up_edge }
+  - { select: "[site=as65560][role=core]", tier: up_core }
+  - { select: "[site=as65560][role=core][index=01]", tier: up_dist }
+  - { select: "[site=as65560][role=endpoint]", tier: up_endpoint }
+
+  # 自 AS (AS65518): 上流側の edge → core → 下流側の edge (edge-tk11)
+  - { select: "[tk=tk][role=edge]", tier: own_edge_up }
+  - { select: "[tk=tk][role=core]", tier: own_core }
+  - { select: "#edge-tk11", tier: own_edge_down }
+
+  # 下流 AS (AS65520): 自 AS に近い edge が上、endpoint が下
+  - { select: "[site=as65520][role=edge]", tier: down_edge }
+  - { select: "[site=as65520][role=core]", tier: down_core }
+  - { select: "[site=as65520][role=endpoint]", tier: down_endpoint }
+
+  # 左右の順 (列): 上流 AS (左) | 自 AS + 下流 AS (中央) | 上流 AS (右) で、Y 字になる
+  - { select: "[site=as65550]", order: 1 }
+  - { select: "[tk=tk]", order: 2 } # center 列の順位は、メンバーの order の最小値
+  - { select: "[site=as65560]", order: 3 }
+
+  # 各 AS を左右対称にする (行を、その列の軸に揃える。netoviz2 v0.4.0 以降)
+  - { select: "*", align: center }
